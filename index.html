@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Mohammadia Library & Computer — Pro Offline</title>
+<style>
+:root{--ink:#202124;--pine:#1a73e8;--paper:#ffffff;--paper2:#f8f9fa;--card:#ffffff;--line:#e0e0e0;--brass:#1a73e8;--brass2:#1558b0;--forest:#188038;--amber:#e37400;--maroon:#d93025;--plum:#7c3aed;--steel:#1a73e8;--teal:#0b8043;--muted:#5f6368;--txt:#202124}
+*{box-sizing:border-box}body{margin:0;background:var(--paper2);font-family:'Inter',Arial,Helvetica,sans-serif;color:var(--txt);font-size:15px}.app{max-width:1560px;margin:auto;padding:20px}
+header{background:#ffffff;color:var(--ink);padding:24px 28px;border-radius:12px;box-shadow:0 1px 2px #00000014,0 1px 3px 1px #00000012;position:relative;overflow:visible;border:1px solid var(--line)}
+header::before{content:none}
+.brandrow{display:flex;align-items:center;gap:16px;position:relative}
+.menu-toggle{background:#ffffff;border:1px solid var(--line);color:var(--ink);font-size:20px;line-height:1;padding:13px 15px;border-radius:9px;cursor:pointer;flex-shrink:0}
+.menu-toggle:hover{background:#f1f3f4;transform:none;filter:none}
+.menu-dropdown{display:none;flex-direction:column;gap:6px;position:absolute;top:calc(100% + 10px);left:0;background:#ffffff;border-radius:12px;box-shadow:0 2px 6px 2px #00000024,0 1px 2px #00000030;padding:8px;min-width:220px;z-index:25;border:1px solid var(--line)}
+.menu-dropdown.show{display:flex}
+.menu-dropdown button{width:100%;text-align:left;background:#ffffff;color:var(--ink);border:1px solid var(--line);font-weight:600}
+.menu-dropdown button:hover{background:#f1f3f4}
+.menu-dropdown button.red{background:#ffffff;color:var(--maroon);border-color:var(--line)}
+.menu-dropdown button.red:hover{background:#fce8e6}
+.brand{font-size:clamp(21px,3vw,28px);font-weight:600;position:relative;color:var(--ink)}.sub{opacity:.65;margin-top:4px;position:relative;font-size:13px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;position:relative}
+button{border:1px solid transparent;border-radius:8px;padding:11px 16px;background:var(--brass);color:#fff;font-weight:600;cursor:pointer;transition:.15s;font-size:14px}
+button:hover{transform:none;filter:none;background:var(--brass2);box-shadow:none}button:active{transform:none}
+.light{background:#ffffff;border:1px solid var(--line);color:var(--ink)}.light:hover{background:#f1f3f4}
+.green{background:var(--forest)}.green:hover{filter:brightness(.92)}
+.gray{background:#ffffff;color:var(--ink);border:1px solid var(--line)}.gray:hover{background:#f1f3f4}
+.red{background:var(--maroon)}.red:hover{filter:brightness(.92)}
+.orange{background:var(--amber)}.orange:hover{filter:brightness(.92)}
+.steel{background:var(--steel)}.steel:hover{filter:brightness(.92)}
+.plum{background:var(--plum)}.plum:hover{filter:brightness(.92)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:14px;margin:18px 0}
+.card,.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px #00000010}
+.card{padding:16px 18px;border-left:1px solid var(--line);transition:box-shadow .2s ease,border-color .2s ease}
+.card:hover{transform:none;box-shadow:0 1px 3px #00000020;border-color:#c4c7c9}
+.card.m-stock{border-top:3px solid var(--steel)}.card.m-inv{border-top:3px solid var(--amber)}.card.m-today{border-top:3px solid var(--forest)}.card.m-total{border-top:3px solid var(--ink)}.card.m-alert{border-top:3px solid var(--maroon)}.card.m-return{border-top:3px solid var(--plum)}.card.m-sell{border-top:3px solid var(--teal)}.card.m-cost{border-top:3px solid var(--amber)}
+.icon{font-size:20px;background:#f1f3f4;padding:6px 10px;border-radius:10px;display:inline-block}
+.label{font-size:12.5px;color:var(--muted);margin-top:9px}.value{font-size:23px;font-weight:700;margin-top:3px;color:var(--ink)}
+.layout{display:grid;grid-template-columns:1fr 1.25fr;gap:16px}
+.panel{padding:20px;transition:box-shadow .2s ease}.panel:hover{box-shadow:0 1px 3px #00000020}
+.panel h2{font-size:17px;margin:0 0 16px;font-family:'Inter',Arial,Helvetica,sans-serif;color:var(--ink);border-left:3px solid var(--brass);padding-left:11px;font-weight:600}
+.form{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:8px;background:#ffffff;outline:0;font-size:14.5px;transition:border-color .15s,box-shadow .15s;color:var(--txt)}
+input:focus,select:focus{border-color:var(--brass);box-shadow:0 0 0 3px #1a73e822}
+.full{grid-column:1/-1}.status{margin-top:13px;padding:10px 13px;border-radius:8px;background:#e6f4ea;color:#188038;font-size:13.5px}
+.section{margin-top:16px}.sortbar{display:flex;gap:9px;margin-bottom:10px;flex-wrap:wrap}.sortbar .search{margin-bottom:0;flex:1;min-width:160px}.sortbar select{width:auto;min-width:170px}
+.tablewrap{overflow:auto;max-height:380px}table{width:100%;border-collapse:collapse;font-size:14px}th{position:sticky;top:0;background:#f8f9fa;text-align:left;z-index:1;color:var(--muted);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.3px}th,td{padding:10px}table tbody tr td{border-bottom:1px solid var(--line)}table tbody tr:hover td{background:#f8f9fa}
+.num{text-align:right;font-variant-numeric:tabular-nums}.low{color:var(--amber);font-weight:700}.out{color:var(--maroon);font-weight:700}
+.cost-cell{cursor:pointer;text-decoration:underline dotted;color:var(--muted)}.cost-cell.revealed{color:var(--maroon);font-weight:700;text-decoration:none}
+.returned-row td{opacity:.5;text-decoration:line-through}.badge-returned{background:#f3e8fd;color:var(--plum);padding:4px 9px;border-radius:7px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.cartsearch{display:flex;gap:9px;margin-bottom:10px;flex-wrap:wrap}.cartsearch input{flex:1;min-width:160px}.cartsearch select{width:auto;min-width:180px}
+.picker{max-height:190px;overflow:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:14px;background:#ffffff}
+.picker-row{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border-bottom:1px solid var(--line);transition:background .15s}
+.picker-row:last-child{border-bottom:0}.picker-row:hover{background:#f8f9fa}
+.picker-info b{color:var(--ink)}.picker-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.picker-row button{padding:8px 13px;font-size:13px}
+.picker-empty{padding:18px;text-align:center;color:#9aa0a6;font-size:14px}
+.cartwrap{overflow:auto;max-height:230px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
+.carttable{width:100%;border-collapse:collapse;font-size:14px}
+.carttable th{position:sticky;top:0;background:#f8f9fa;padding:9px;text-align:left}
+.carttable td{padding:8px 9px;border-bottom:1px solid var(--line)}
+.carttable input[type=number]{width:66px;padding:6px;text-align:right;font-size:13.5px}
+.cart-empty{padding:18px;text-align:center;color:#9aa0a6}
+.rm{background:var(--maroon);padding:7px 11px;font-size:12px}
+.cartsummary{background:#f8f9fa;border-radius:10px;padding:13px 15px;font-size:14.5px;line-height:1.85;margin-top:2px;border:1px solid var(--line)}
+.cartsummary .grand{font-size:17px;font-weight:700;color:var(--ink)}
+.invoice{overflow:auto}.sheet{display:flex;gap:9px;min-width:900px;background:white;padding:10px}.copy{width:50%;border:1px dashed #c4c7c9;padding:16px;position:relative}.copy.blank{border:none}
+.copyhead{display:flex;justify-content:space-between;border-bottom:2px solid var(--brass);padding-bottom:9px;margin-bottom:11px}.tag{font-size:11px;background:#e8f0fe;color:var(--brass2);padding:5px 9px;border-radius:20px;font-weight:700}
+.meta{font-size:12.5px;line-height:1.7;color:var(--muted)}.invtable{margin-top:13px;font-size:14px}.total{font-weight:700;background:#f8f9fa}
+.stamp{position:absolute;top:15px;right:15px;border:3px solid var(--maroon);color:var(--maroon);padding:5px 15px;border-radius:8px;transform:rotate(8deg);font-weight:800;font-size:14px;letter-spacing:2px}
+.empty{text-align:center;padding:48px;color:#9aa0a6}.modal{display:none;position:fixed;inset:0;background:#20212499;z-index:30;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}
+.modalbox{background:#ffffff;max-width:660px;width:100%;padding:24px;border-radius:16px;max-height:90vh;overflow:auto;box-shadow:0 2px 6px 2px #00000024,0 1px 2px #00000030}.modalbox h2{margin-top:0;font-family:'Inter',Arial,Helvetica,sans-serif}
+.hint{font-size:13.5px;color:var(--muted);line-height:1.7}.filebox{border:1px dashed #c4c7c9;padding:15px;border-radius:11px;margin-top:13px}.close{float:right;background:#ffffff;color:var(--maroon);border:1px solid var(--line)}.close:hover{background:#fce8e6}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}}
+@media(max-width:650px){.app{padding:9px}.form{grid-template-columns:1fr}.full{grid-column:auto}.sortbar{flex-direction:column;align-items:stretch}.sortbar select{width:100%}.cartsearch{flex-direction:column;align-items:stretch}.cartsearch select{width:100%}}
+@media print{body{background:white}.app{padding:0}.no-print,header,.cards,.layout,.section:not(.printarea){display:none!important}.printarea{display:block!important}.sheet{min-width:0;padding:0;gap:7mm}.copy{width:50%;padding:5mm;border:1px solid #777}.copy.blank{border:none}@page{size:A4 landscape;margin:7mm}}
+
+/* ===================== LOGIN SCREEN ===================== */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#f8f9fa;}
+.login-card{width:100%;max-width:400px;background:#ffffff;border-radius:16px;box-shadow:0 2px 6px 2px #00000024,0 1px 2px #00000030;padding:36px 32px;position:relative;overflow:hidden;opacity:0;transform:translateY(24px) scale(.97);animation:loginIn .55s cubic-bezier(.22,1,.36,1) forwards;border:1px solid var(--line)}
+@keyframes loginIn{to{opacity:1;transform:translateY(0) scale(1)}}
+.login-card::before{content:none}
+.login-logo{width:60px;height:60px;border-radius:14px;background:#e8f0fe;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;box-shadow:none;animation:logoPop .6s .1s cubic-bezier(.22,1,.36,1) backwards}
+@keyframes logoPop{from{transform:scale(.4) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.login-title{text-align:center;font-family:'Inter',Arial,Helvetica,sans-serif;font-size:20px;font-weight:600;color:var(--ink)}
+.login-sub{text-align:center;color:var(--muted);font-size:13px;margin-top:5px;margin-bottom:22px}
+.login-field{margin-bottom:15px;position:relative}
+.login-field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase}
+.role-select{display:flex;gap:9px}
+.role-btn{flex:1;padding:12px 8px;border-radius:10px;border:1px solid var(--line);background:#ffffff;cursor:pointer;font-weight:600;font-size:13.5px;color:var(--muted);transition:.15s}
+.role-btn:hover{border-color:var(--brass);background:#f8f9fa}
+.role-btn.active{border-color:var(--brass);background:#e8f0fe;color:var(--brass2);box-shadow:0 0 0 3px #1a73e822}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:44px}
+.pw-toggle{position:absolute;right:4px;top:4px;bottom:4px;width:38px;background:transparent;color:var(--muted);padding:0;font-size:16px;box-shadow:none;border:none}
+.pw-toggle:hover{transform:none;filter:none;background:#f1f3f4}
+.login-btn{width:100%;padding:13px;font-size:15px;background:var(--brass);margin-top:6px;display:flex;align-items:center;justify-content:center;gap:9px}
+.login-btn:hover{background:var(--brass2)}
+.login-error{margin-top:13px;padding:10px 13px;border-radius:8px;background:#fce8e6;color:var(--maroon);font-size:13px;font-weight:600;text-align:center;display:none;animation:shake .35s}
+.login-error.show{display:block}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.login-foot{margin-top:18px;text-align:center;font-size:11px;color:#9aa0a6;line-height:1.6}
+.spinner{width:16px;height:16px;border:2.5px solid #ffffff55;border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.spinner.show{display:inline-block}
+#loginScreen.leaving{animation:loginOut .35s ease forwards}
+@keyframes loginOut{to{opacity:0;transform:scale(.98)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+#mainApp{opacity:0}
+#mainApp.show{animation:appIn .5s ease forwards}
+@keyframes appIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sessioninfo{display:flex;align-items:center;gap:10px;margin-top:14px;position:relative;font-size:13px}
+.rolepill{background:#f1f3f4;border:1px solid var(--line);color:var(--muted);padding:6px 13px;border-radius:20px;font-weight:600;letter-spacing:.2px}
+.admin-only{}
+body.role-employee .admin-only{display:none!important}
+.pwmodalbox label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.3px}
+.pwmodalbox .role-select{margin-bottom:4px}
+</style></head>
+<body>
+
+<!-- ===================== LOGIN SCREEN ===================== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">📚</div>
+    <div class="login-title">Mohammadia Library &amp; Computer</div>
+    <div class="login-sub">Sign in to continue to your workspace</div>
+
+    <div class="login-field">
+      <label>Login as</label>
+      <div class="role-select">
+        <button type="button" class="role-btn active" id="roleBtnAdmin" onclick="selectLoginRole('admin')">🛡️ Admin</button>
+        <button type="button" class="role-btn" id="roleBtnEmployee" onclick="selectLoginRole('employee')">🧑‍💼 Employee</button>
+      </div>
+    </div>
+
+    <div class="login-field">
+      <label>Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="loginPassword" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+        <button type="button" class="pw-toggle" onclick="toggleLoginPw()" id="pwToggleBtn">👁️</button>
+      </div>
+    </div>
+
+    <button class="login-btn" id="loginBtn" onclick="doLogin()"><span id="loginBtnText">Login</span><span class="spinner" id="loginSpinner"></span></button>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-foot">Passwords and stock &amp; sales data now all sync live via Firebase across every device.</div>
+    <div class="login-foot" id="authCloudStatus" style="margin-top:4px">Checking Firebase connection…</div>
+  </div>
+</div>
+
+<div class="app" id="mainApp" style="display:none">
+<header>
+  <div class="brandrow">
+    <button class="menu-toggle no-print" onclick="toggleMenu(event)" aria-label="Menu">☰</button>
+    <div>
+      <div class="brand">📚 Mohammadia Library & Computer</div>
+      <div class="sub">Sales & Stock Management</div>
+    </div>
+  </div>
+  <div class="menu-dropdown no-print" id="menuDropdown">
+    <button class="admin-only" onclick="openData()">💾 Data Center</button>
+    <button onclick="focusSale()">➕ New Sale</button>
+    <button onclick="printInvoice()">🖨️ Print Invoice</button>
+    <button onclick="openPwModal()">🔑 Change Password</button>
+    <button class="red" onclick="doLogout()">🚪 Logout</button>
+  </div>
+<div class="sessioninfo no-print">Signed in as <span class="rolepill" id="sessionRolePill">—</span> <span class="rolepill" id="cloudSyncPill">☁️ Connecting…</span></div>
+</header>
+
+<div class="cards">
+<div class="card m-stock"><div class="icon">📦</div><div class="label">Stock units</div><div class="value" id="stockUnits">0</div></div>
+<div class="card m-sell"><div class="icon">💵</div><div class="label">Stock selling value</div><div class="value" id="sellValue">৳0.00</div></div>
+<div class="card m-cost admin-only"><div class="icon">🔒</div><div class="label">Stock cost value (tap to reveal)</div><div class="value cost-cell" id="costValue" onclick="revealCost(this, costValueTotal())">••••••</div></div>
+<div class="card m-inv"><div class="icon">🧾</div><div class="label">Today's invoices</div><div class="value" id="todayInvoices">0</div></div>
+<div class="card m-today"><div class="icon">৳</div><div class="label">Today's sales</div><div class="value" id="todaySales">৳0.00</div></div>
+<div class="card m-total"><div class="icon">💰</div><div class="label">Total sales</div><div class="value" id="allSales">৳0.00</div></div>
+<div class="card m-alert"><div class="icon">⚠️</div><div class="label">Low / out</div><div class="value" id="lowOut">0</div></div>
+<div class="card m-return"><div class="icon">↩️</div><div class="label">Returns</div><div class="value" id="returnsCount">0</div></div>
+</div>
+
+<div class="layout">
+<section class="panel admin-only" id="stockPanel"><h2>📦 Add / Update Stock</h2><div class="form">
+<input id="itemName" placeholder="Item name"><input id="itemQty" type="number" min="0" placeholder="Quantity">
+<input id="itemPrice" type="number" min="0" step=".01" placeholder="Selling price (৳)"><input id="itemCost" type="number" min="0" step=".01" placeholder="Purchase price (৳) — hidden">
+</div><div class="actions"><button id="saveStockBtn" onclick="addStock()">Save Stock</button><button class="gray" onclick="clearStock()">Clear</button><button class="steel" id="cancelEditBtn" style="display:none" onclick="cancelEdit()">Cancel Edit</button></div><div class="status" id="stockStatus">Automatically saved offline.</div></section>
+
+<section class="panel" id="salePanel"><h2>🛒 New Sale</h2>
+<div class="cartsearch"><input id="saleSearch" placeholder="🔍 Search a product to add..." oninput="renderPicker()"><select id="pickerSort" onchange="renderPicker()">
+<option value="nameAsc">Sort: Name (A–Z)</option>
+<option value="nameDesc">Sort: Name (Z–A)</option>
+<option value="qtyAsc">Sort: Stock (Low → High)</option>
+<option value="qtyDesc">Sort: Stock (High → Low)</option>
+<option value="priceAsc">Sort: Price (Low → High)</option>
+<option value="priceDesc">Sort: Price (High → Low)</option>
+</select></div>
+<div class="picker" id="productPicker"></div>
+<div class="cartwrap"><table class="carttable"><thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Total</th><th></th></tr></thead><tbody id="cartTable"></tbody></table></div>
+<div class="form">
+<input id="customer" class="full" placeholder="Customer name (optional)">
+<input id="discount" type="number" min="0" step=".01" value="0" placeholder="Discount value" oninput="renderCartSummary()">
+<select id="discountType" onchange="renderCartSummary()"><option value="cash">৳ Cash amount</option><option value="percent">% Percentage</option></select>
+</div>
+<div class="cartsummary" id="cartSummary"></div>
+<div class="actions"><button class="green" onclick="sell()">Complete Sale & Generate Invoice</button><button class="gray" onclick="clearCart()">Clear Cart</button></div>
+<div class="status" id="saleStatus">Purchase price is never printed on customer invoice.</div></section>
+</div>
+
+<section class="panel section no-print"><h2>📋 Stock Register</h2><div class="sortbar"><input class="search" id="stockSearch" placeholder="Search stock..." oninput="renderStock()"><select id="stockSortField" onchange="renderStock()">
+<option value="nameAsc">Sort: Name (A–Z)</option>
+<option value="nameDesc">Sort: Name (Z–A)</option>
+<option value="qtyAsc">Sort: Stock (Low → High)</option>
+<option value="qtyDesc">Sort: Stock (High → Low)</option>
+<option value="priceAsc">Sort: Price (Low → High)</option>
+<option value="priceDesc">Sort: Price (High → Low)</option>
+</select></div><div class="tablewrap"><table><thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Selling</th><th class="num admin-only" title="Click a value to reveal for 3 seconds">Purchase</th><th>Status</th><th class="admin-only">Action</th></tr></thead><tbody id="stockTable"></tbody></table></div></section>
+
+<section class="panel section no-print"><h2>📅 Today's Sales Details</h2><div class="status" style="margin-bottom:11px">Today's total: <b id="todayBar">৳0.00</b> · Invoices: <b id="todayBarCount">0</b></div><div class="tablewrap"><table><thead><tr><th>Invoice</th><th>Time</th><th>Customer</th><th>Items</th><th class="num">Discount</th><th class="num">Total</th><th>Action</th></tr></thead><tbody id="todayTable"></tbody></table></div></section>
+
+<section class="panel section no-print"><h2>🧾 Complete Sales History</h2><input class="search" id="salesSearch" placeholder="Search invoice, date, customer or item..." oninput="renderSales()"><div class="tablewrap"><table><thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Items</th><th class="num">Total</th><th>Action</th></tr></thead><tbody id="salesTable"></tbody></table></div></section>
+
+<section class="panel section printarea"><h2 class="no-print">🖨️ Latest Invoice — A4 Landscape / Customer Copy</h2><div class="invoice"><div class="sheet" id="invoiceSheet"></div></div><div class="actions no-print"><button onclick="printInvoice()">Print Latest Invoice</button></div></section>
+</div>
+
+<div class="modal" id="dataModal"><div class="modalbox"><button class="close" onclick="closeData()">Close</button><h2>💾 Data Center — Backup & Restore</h2><p class="hint">Stock &amp; sales now sync live to your Firebase cloud database, so every device signed into the same Firebase project sees the same data. For extra safety, still make regular backups below — CSV backup files can be opened in Excel and CSV files exported by this app can be restored here.</p>
+<h3>Export / Backup</h3><div class="actions"><button onclick="backupJSON()">⬇ Complete JSON Backup</button><button onclick="stockCSV()">⬇ Stock CSV</button><button onclick="salesCSV()">⬇ Sales CSV</button><button class="green" onclick="todayCSV()">⬇ Today's Sales CSV</button></div>
+<h3>Import / Restore</h3><div class="filebox"><b>Complete JSON Restore</b><p class="hint">Restores stock, sales and latest invoice.</p><button class="green" onclick="pick('json')">Choose JSON File</button></div>
+<div class="filebox"><b>Stock CSV Restore</b><p class="hint">Required columns: <code>name, qty, selling_price</code>. Optional: <code>id, purchase_price</code>.</p><button class="gray" onclick="pick('stock')">Choose Stock CSV</button></div>
+<div class="filebox"><b>Sales CSV Restore</b><p class="hint">Restores sales history from CSV exported by this app.</p><button class="gray" onclick="pick('sales')">Choose Sales CSV</button></div>
+<input id="fileInput" type="file" hidden></div></div>
+
+<div class="modal" id="pwModal"><div class="modalbox pwmodalbox"><button class="close" onclick="closePwModal()">Close</button><h2>🔑 Change Password</h2>
+<p class="hint">You must enter your current password to set a new one. Passwords are stored only as salted SHA-256 hashes — never in plain text — and now sync via Firebase, so a change here applies on every device automatically.</p>
+<div id="pwRoleRow" class="login-field" style="display:flex;flex-direction:column">
+<label>Account to update</label>
+<div class="role-select">
+<button type="button" class="role-btn active" id="pwRoleBtnAdmin" onclick="selectPwRole('admin')">🛡️ Admin</button>
+<button type="button" class="role-btn" id="pwRoleBtnEmployee" onclick="selectPwRole('employee')">🧑‍💼 Employee</button>
+</div>
+</div>
+<label>Current password (yours)</label><input type="password" id="pwCurrent" placeholder="Your current password">
+<label>New password</label><input type="password" id="pwNew" placeholder="New password (min 6 characters)">
+<label>Confirm new password</label><input type="password" id="pwConfirm" placeholder="Re-enter new password">
+<div class="actions" style="margin-top:16px"><button class="green" onclick="submitPwChange()">Update Password</button></div>
+<div class="status" id="pwModalStatus" style="margin-top:12px"></div>
+</div></div>
+
+<!-- ===================== FIREBASE (Cloud Sync) ===================== -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+/* 🔥 PASTE YOUR OWN FIREBASE PROJECT CONFIG HERE
+   Firebase Console → ⚙️ Project settings → General → "Your apps" → Web app → SDK setup and configuration
+   (This config is not secret — it's meant to be public in client code.
+    Real protection comes from your Firestore Security Rules, not from hiding this.) */
+const firebaseConfig = {
+  apiKey: "AIzaSyDCc9RXZKQqK_jHB5iV2cLWmt85yZ4Pd_0",
+  authDomain: "mohammadia-stock.firebaseapp.com",
+  projectId: "mohammadia-stock",
+  storageBucket: "mohammadia-stock.firebasestorage.app",
+  messagingSenderId: "140773236118",
+  appId: "1:140773236118:web:1b408f5610bb58404a51b7"
+};
+firebase.initializeApp(firebaseConfig);
+const fsdb = firebase.firestore();
+try{ fsdb.enablePersistence({synchronizeTabs:true}).catch(()=>{}); }catch(e){}
+// Everything (stock + sales + last invoice) lives in ONE document, mirroring
+// the old single localStorage key — simple, and perfectly fine at this scale.
+const CLOUD_DOC = fsdb.collection('mohammadia_library').doc('main_db');
+// Login credentials (salted password hashes for admin/employee) live in their
+// own small document, kept separate from the stock/sales document above so
+// that a password change never touches (or races with) business data.
+const AUTH_DOC = fsdb.collection('mohammadia_library').doc('auth_v1');
+</script>
+
+<script>
+/* ============================================================
+   AUTHENTICATION MODULE
+   ------------------------------------------------------------
+   SECURITY NOTE (please read):
+   This is a BROWSER-ONLY / CLIENT-SIDE authentication system.
+   - Passwords are never stored or written anywhere in plaintext.
+     Only a SHA-256 hash (salted) of each password is kept, so
+     opening "View Source", reading localStorage, or reading the
+     Firestore document below will NOT reveal any password.
+   - This is meaningfully better than a hard-coded plaintext
+     password, but it is still NOT equivalent to real server-side
+     security. Anyone with full physical/OS access to this
+     computer or browser profile could, in principle, open the
+     browser DevTools, read localStorage, or edit this HTML file
+     to bypass the check, change the stored hash, or patch the
+     JavaScript logic itself. Client-side code can always be
+     inspected and modified by whoever controls the machine it
+     runs on.
+   - Password hashes now live in Firebase Firestore (AUTH_DOC, see
+     the FIREBASE block above), the same as stock/sales data, so a
+     password change made on one device syncs to every other device
+     signed into the same Firebase project — no more re-entering a
+     changed password separately on each phone/computer. A local
+     copy is still cached in localStorage as a fast/offline fallback
+     for the login check itself. Role-checking (admin vs employee)
+     is still a LOCAL, client-side decision; it controls what THIS
+     browser shows/hides, not what Firestore will accept. For true
+     tamper-resistant access control (an employee device genuinely
+     cannot write admin-only data no matter what it does), the next
+     step would be Firebase Authentication + Firestore Security
+     Rules keyed to the signed-in user, which is not built here.
+   ============================================================ */
+const AUTH_KEY='mohammadia_auth_v4';
+const SESSION_KEY='mohammadia_session_v4';
+let currentRole=null; // 'admin' | 'employee' | null
+let loginRoleChoice='admin';
+
+function buf2hex(buf){return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+function randomSalt(){return buf2hex(crypto.getRandomValues(new Uint8Array(16)))}
+async function sha256Hex(str){const enc=new TextEncoder().encode(str);const digest=await crypto.subtle.digest('SHA-256',enc);return buf2hex(digest)}
+async function hashPassword(password,salt){return sha256Hex(salt+'::'+password)}
+
+function loadAuth(){try{return JSON.parse(localStorage.getItem(AUTH_KEY)||'null')}catch(e){return null}}
+function saveAuth(a){localStorage.setItem(AUTH_KEY,JSON.stringify(a))}
+
+// Live listener: whenever AUTH_DOC changes in Firestore (e.g. someone changed
+// the password on a different device), refresh this device's local cache so
+// the very next login check here already uses the new password — mirrors
+// startCloudSync() for the stock/sales document.
+let authSyncStarted=false;
+function startAuthSync(){
+  if(authSyncStarted)return;
+  authSyncStarted=true;
+  AUTH_DOC.onSnapshot(snap=>{
+    const data=snap.data();
+    if(data && data.admin && data.employee) saveAuth({admin:data.admin, employee:data.employee});
+  }, err=>console.error('Firebase auth sync error:', err));
+}
+
+function setAuthStatus(text,isWarning){const el=document.getElementById('authCloudStatus');if(!el)return;el.textContent=text;el.style.color=isWarning?'var(--maroon)':'';}
+
+async function ensureAuthInitialized(){
+  startAuthSync();
+  setAuthStatus('Checking Firebase connection…',false);
+  // Force a SERVER read (not Firestore's local cache) so a login check always
+  // sees the truly latest password — this is what makes a change made on one
+  // device show up immediately on another, instead of possibly reading a
+  // stale cached copy.
+  try{
+    const snap=await AUTH_DOC.get({source:'server'});
+    const data=snap.data();
+    if(data && data.admin && data.employee){
+      const a={admin:data.admin, employee:data.employee};
+      saveAuth(a);
+      setAuthStatus('☁️ Password synced with Firebase',false);
+      return a;
+    }
+    setAuthStatus('⚠️ No password record found yet in Firebase (auth_v1 is empty) — using local/default.',true);
+  }catch(e){
+    console.error('Could not reach Firebase server for auth:', e);
+    setAuthStatus('⚠️ Firebase auth error: '+(e && e.code ? e.code : e.message)+' — using local/default.',true);
+    try{
+      const snap=await AUTH_DOC.get({source:'cache'});
+      const data=snap.data();
+      if(data && data.admin && data.employee){
+        const a={admin:data.admin, employee:data.employee};
+        saveAuth(a);
+        setAuthStatus('☁️ Password loaded from offline cache (was: '+(e && e.code?e.code:'error')+')',true);
+        return a;
+      }
+    }catch(e2){ /* nothing cached either — fall through below */ }
+  }
+  // No usable record in the cloud (first run, or we're offline and Firestore
+  // has nothing cached yet). Fall back to whatever this device already has
+  // locally; if that also doesn't exist, create the default credentials.
+  // These defaults exist only so the app is usable on first open —
+  // change them immediately via "Change Password" after logging in.
+  let a=loadAuth();
+  if(!(a && a.admin && a.employee)){
+    const adminSalt=randomSalt(), employeeSalt=randomSalt();
+    a={
+      admin:{salt:adminSalt, hash:await hashPassword('Admin@1234', adminSalt)},
+      employee:{salt:employeeSalt, hash:await hashPassword('Employee@1234', employeeSalt)}
+    };
+    saveAuth(a);
+    setAuthStatus('⚠️ Could not reach Firebase — created fresh default password on this device only.',true);
+  }
+  // Best-effort push so other devices (and this one, next time) see it too.
+  AUTH_DOC.set(a,{merge:true}).catch(err=>console.error('Could not push auth to Firebase yet (offline?):', err));
+  return a;
+}
+
+async function verifyPassword(role,password){
+  const a=loadAuth();
+  if(!a||!a[role]) return false;
+  const test=await hashPassword(password,a[role].salt);
+  return test===a[role].hash;
+}
+
+async function setPassword(role,newPassword){
+  const a=loadAuth()||{};
+  const salt=randomSalt();
+  a[role]={salt, hash:await hashPassword(newPassword,salt)};
+  saveAuth(a);
+  // Push to Firestore so every other device signed into this project picks
+  // up the new password automatically via startAuthSync()'s listener. This
+  // is fire-and-forget on purpose: Firestore's offline persistence queues
+  // the write and delivers it once the connection comes back, so the
+  // password change on THIS device is never blocked by being offline.
+  AUTH_DOC.set({[role]:a[role]},{merge:true})
+    .then(()=>setSyncPill('☁️ Synced',false))
+    .catch(err=>{console.error('Password change could not sync to Firebase yet:', err);setSyncPill('⚠️ Offline — password changed locally, will sync later',true)});
+}
+
+function selectLoginRole(role){
+  loginRoleChoice=role;
+  roleBtnAdmin.classList.toggle('active',role==='admin');
+  roleBtnEmployee.classList.toggle('active',role==='employee');
+  loginError.classList.remove('show');
+}
+
+function toggleLoginPw(){
+  const inp=$('loginPassword');
+  inp.type = inp.type==='password' ? 'text' : 'password';
+  pwToggleBtn.textContent = inp.type==='password' ? '👁️' : '🙈';
+}
+
+async function doLogin(){
+  const pw=loginPassword.value;
+  if(!pw){loginError.textContent='Please enter a password.';loginError.classList.add('show');return}
+  loginBtnText.textContent='Signing in...';
+  loginSpinner.classList.add('show');
+  loginBtn.disabled=true;
+  await ensureAuthInitialized();
+  const ok=await verifyPassword(loginRoleChoice,pw);
+  loginBtnText.textContent='Login';
+  loginSpinner.classList.remove('show');
+  loginBtn.disabled=false;
+  if(!ok){
+    loginError.textContent='Incorrect password. Please try again.';
+    loginError.classList.remove('show');void loginError.offsetWidth;loginError.classList.add('show');
+    loginPassword.value='';loginPassword.focus();
+    return;
+  }
+  loginError.classList.remove('show');
+  startSession(loginRoleChoice);
+}
+
+function startSession(role){
+  currentRole=role;
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({role, ts:Date.now()}));
+  enterApp();
+}
+
+function enterApp(){
+  document.body.classList.toggle('role-employee', currentRole==='employee');
+  document.body.classList.toggle('role-admin', currentRole==='admin');
+  sessionRolePill.textContent = currentRole==='admin' ? '🛡️ Admin' : '🧑‍💼 Employee';
+  const ls=$('loginScreen');
+  ls.classList.add('leaving');
+  setTimeout(()=>{
+    ls.style.display='none';
+    mainApp.style.display='block';
+    mainApp.classList.add('show');
+  },320);
+  seed();render();startCloudSync();
+}
+
+function doLogout(){
+  if(!confirm('Log out of the current session?'))return;
+  sessionStorage.removeItem(SESSION_KEY);
+  currentRole=null;
+  location.reload();
+}
+
+function toggleMenu(e){
+  if(e)e.stopPropagation();
+  $('menuDropdown').classList.toggle('show');
+}
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('menuDropdown');
+  if(!dd||!dd.classList.contains('show'))return;
+  if(!dd.contains(e.target) && !e.target.closest('.menu-toggle')) dd.classList.remove('show');
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){const dd=document.getElementById('menuDropdown');if(dd)dd.classList.remove('show')}
+});
+// Close the menu automatically once one of its own buttons is used.
+document.getElementById('menuDropdown').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>document.getElementById('menuDropdown').classList.remove('show')));
+
+function requireAdmin(actionLabel){
+  if(currentRole!=='admin'){
+    alert('Access denied: "'+(actionLabel||'this action')+'" is available to Admin accounts only.');
+    return false;
+  }
+  return true;
+}
+
+/* ---- Change Password modal ---- */
+function openPwModal(){
+  const isAdmin=currentRole==='admin';
+  $('pwRoleRow').style.display=isAdmin?'flex':'none';
+  pwTargetRole = isAdmin ? 'admin' : 'employee';
+  $('pwRoleBtnAdmin').classList.toggle('active', pwTargetRole==='admin');
+  $('pwRoleBtnEmployee').classList.toggle('active', pwTargetRole==='employee');
+  $('pwCurrent').value=''; $('pwNew').value=''; $('pwConfirm').value='';
+  $('pwModalStatus').textContent='';
+  $('pwModal').classList.add('show');
+}
+function closePwModal(){$('pwModal').classList.remove('show')}
+let pwTargetRole='admin';
+function selectPwRole(role){
+  if(currentRole!=='admin')return; // employees can only change their own password
+  pwTargetRole=role;
+  $('pwRoleBtnAdmin').classList.toggle('active', role==='admin');
+  $('pwRoleBtnEmployee').classList.toggle('active', role==='employee');
+}
+async function submitPwChange(){
+  const cur=$('pwCurrent').value, next=$('pwNew').value, conf=$('pwConfirm').value;
+  const status=$('pwModalStatus');
+  if(!cur||!next||!conf){status.textContent='Please fill in all fields.';status.style.color='var(--maroon)';return}
+  if(next.length<6){status.textContent='New password must be at least 6 characters.';status.style.color='var(--maroon)';return}
+  if(next!==conf){status.textContent='New password and confirmation do not match.';status.style.color='var(--maroon)';return}
+  // Verifying against the CURRENT logged-in user's own password is required
+  // for everyone (including admin) before any password can be changed —
+  // this stops someone at an already-unlocked screen from silently
+  // resetting credentials without knowing the existing password.
+  const okCur=await verifyPassword(currentRole,cur);
+  if(!okCur){status.textContent='Current password is incorrect.';status.style.color='var(--maroon)';return}
+  await setPassword(pwTargetRole,next);
+  status.style.color='#2c5a3e';
+  status.textContent=(pwTargetRole==='admin'?'Admin':'Employee')+' password updated — it will sync to every device automatically.';
+  $('pwCurrent').value=''; $('pwNew').value=''; $('pwConfirm').value='';
+}
+
+const KEY='mohammadia_final_v4'; // now just a fast local cache — Firestore is the real source of truth
+let db=JSON.parse(localStorage.getItem(KEY)||'null')||{stock:[],sales:[],lastInvoice:null,seq:1000};
+let editingId=null, cart=[];
+let cloudReady=false;
+const $=id=>document.getElementById(id), money=n=>'৳'+Number(n||0).toFixed(2), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function setSyncPill(text,isWarning){const el=document.getElementById('cloudSyncPill');if(!el)return;el.textContent=text;el.style.background=isWarning?'#fbeaea':'';el.style.color=isWarning?'var(--maroon)':''}
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(db));
+  CLOUD_DOC.set(db)
+    .then(()=>setSyncPill('☁️ Synced',false))
+    .catch(err=>{console.error('Firebase save failed:',err);setSyncPill('⚠️ Offline — saved locally, will sync later',true)});
+}
+/* ---- Transactional cloud mutation ----
+   Reads the LATEST server document, applies `mutator` to it, and writes the
+   result back atomically. This fixes the "stale tab overwrites new changes"
+   bug that a plain save() has: instead of blindly pushing whatever this
+   device's local `db` happens to hold, every stock/sale change is now
+   applied on top of whatever is actually on the server at that instant, so
+   another tab/device open elsewhere can no longer resurrect a deleted item. */
+async function mutateCloud(mutator){
+  let result=null;
+  try{
+    await fsdb.runTransaction(async(tx)=>{
+      const snap=await tx.get(CLOUD_DOC);
+      let data=snap.exists?snap.data():{stock:[],sales:[],lastInvoice:null,seq:1000};
+      data.stock=data.stock||[]; data.sales=data.sales||[]; data.seq=data.seq||1000;
+      const ok=mutator(data);
+      if(ok===false)return;
+      tx.set(CLOUD_DOC,data);
+      result=data;
+    });
+  }catch(err){
+    console.error('Cloud transaction failed:',err);
+    setSyncPill('⚠️ Sync error — check Firebase config/rules',true);
+    alert('Could not save this change to the cloud. Check your internet connection and try again.');
+    return null;
+  }
+  if(!result){return null}
+  db=result;
+  localStorage.setItem(KEY,JSON.stringify(db));
+  setSyncPill('☁️ Synced',false);
+  return result;
+}
+function startCloudSync(){
+  setSyncPill('☁️ Connecting…',false);
+  CLOUD_DOC.onSnapshot(snap=>{
+    if(snap.exists){
+      db=snap.data()||db;
+      localStorage.setItem(KEY,JSON.stringify(db));
+      if(cloudReady)render();
+      setSyncPill(snap.metadata.fromCache?'☁️ Offline (cached)':'☁️ Synced', snap.metadata.fromCache);
+    } else {
+      // Nothing in the cloud yet for this shop — push what we have (or the demo seed) up.
+      seed();
+      CLOUD_DOC.set(db).catch(err=>console.error('Initial cloud push failed:',err));
+    }
+    cloudReady=true;
+  }, err=>{console.error('Firebase sync error:',err);setSyncPill('⚠️ Sync error — check Firebase config/rules',true)});
+}
+function seed(){/* no demo data — new shops start with an empty stock list */}
+function isToday(s){let d=new Date(s),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate()}
+function render(){cards();renderPicker();renderCart();renderStock();renderToday();renderSales();renderInvoice()}
+function costValueTotal(){return db.stock.reduce((a,x)=>a+x.qty*(x.cost||0),0)}
+function cards(){let notReturned=db.sales.filter(s=>!s.returned),today=notReturned.filter(s=>isToday(s.date)),ts=today.reduce((a,s)=>a+s.total,0),all=notReturned.reduce((a,s)=>a+s.total,0),returnedList=db.sales.filter(s=>s.returned);stockUnits.textContent=db.stock.reduce((a,x)=>a+x.qty,0);sellValue.textContent=money(db.stock.reduce((a,x)=>a+x.qty*x.price,0));todayInvoices.textContent=today.length;todaySales.textContent=money(ts);allSales.textContent=money(all);lowOut.textContent=db.stock.filter(x=>x.qty<=5).length;returnsCount.textContent=returnedList.length;todayBar.textContent=money(ts);todayBarCount.textContent=today.length}
+function renderStock(){let q=(stockSearch.value||'').toLowerCase();let key=stockSortField?stockSortField.value:'nameAsc';let list=db.stock.filter(x=>x.name.toLowerCase().includes(q)).slice().sort((a,b)=>{if(key==='nameAsc')return a.name.localeCompare(b.name);if(key==='nameDesc')return b.name.localeCompare(a.name);if(key==='qtyAsc')return a.qty-b.qty;if(key==='qtyDesc')return b.qty-a.qty;if(key==='priceAsc')return a.price-b.price;if(key==='priceDesc')return b.price-a.price;return 0});stockTable.innerHTML=list.map(x=>{
+  // The purchase-price cell is built differently per role so that the raw
+  // cost figure is never even present in the DOM/HTML for an Employee —
+  // not just visually hidden with CSS.
+  const costCell = currentRole==='admin'
+    ? `<td class="num cost-cell admin-only" onclick="revealCost(this,${x.cost||0})">••••••</td>`
+    : `<td class="num cost-cell admin-only">••••••</td>`;
+  const actionCellHtml = currentRole==='admin'
+    ? `<td class="admin-only"><button class="steel" onclick="editStock('${x.id}')">Edit</button> <button class="red" onclick="delStock('${x.id}')">Delete</button></td>`
+    : `<td class="admin-only"></td>`;
+  return `<tr><td>${esc(x.name)}</td><td class="num ${x.qty===0?'out':x.qty<=5?'low':''}">${x.qty}</td><td class="num">${money(x.price)}</td>${costCell}<td>${x.qty===0?'<span class="out">OUT</span>':x.qty<=5?'<span class="low">LOW</span>':'OK'}</td>${actionCellHtml}</tr>`;
+}).join('')||'<tr><td colspan="6" class="empty">No stock found.</td></tr>'}
+function revealCost(el,cost){if(!requireAdmin('Reveal Purchase Price'))return;el.textContent=money(cost);el.classList.add('revealed');clearTimeout(el._t);el._t=setTimeout(()=>{el.textContent='••••••';el.classList.remove('revealed')},3000)}
+function actionCell(s){if(s.returned)return '<span class="badge-returned">↩ Returned</span>';let btns=`<button onclick="show('${s.invoiceNo}')">View</button>`;if(currentRole==='admin')btns+=` <button class="plum" onclick="returnSale('${s.invoiceNo}')">Return</button>`;return btns}
+function renderToday(){let a=db.sales.filter(s=>isToday(s.date)).slice().reverse();todayTable.innerHTML=a.map(s=>`<tr class="${s.returned?'returned-row':''}"><td>${esc(s.invoiceNo)}</td><td>${esc(new Date(s.date).toLocaleTimeString())}</td><td>${esc(s.customer||'Walk-in')}</td><td>${esc(s.items.map(i=>i.name+' × '+i.qty).join(', '))}</td><td class="num">${money(s.discount)}</td><td class="num"><b>${money(s.total)}</b></td><td>${actionCell(s)}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No sales today.</td></tr>'}
+function renderSales(){let q=(salesSearch.value||'').toLowerCase();let a=db.sales.filter(s=>(s.invoiceNo+' '+s.date+' '+s.customer+' '+s.items.map(i=>i.name).join(' ')).toLowerCase().includes(q)).slice().reverse();salesTable.innerHTML=a.map(s=>`<tr class="${s.returned?'returned-row':''}"><td>${esc(s.invoiceNo)}</td><td>${esc(s.date)}</td><td>${esc(s.customer||'Walk-in')}</td><td>${esc(s.items.map(i=>i.name+' × '+i.qty).join(', '))}</td><td class="num">${money(s.total)}</td><td>${actionCell(s)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No sales found.</td></tr>'}
+function inv(s,label){return `<div class="copy">${s.returned?'<div class="stamp">RETURNED</div>':''}<div class="copyhead"><h3>👤 CUSTOMER COPY</h3><span class="tag">${label}</span></div><div class="meta"><b>MOHAMMADIA LIBRARY & COMPUTER</b><br>Invoice: ${esc(s.invoiceNo)}<br>Date: ${esc(s.date)}<br>Customer: ${esc(s.customer||'Walk-in Customer')}</div><table class="invtable"><thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Total</th></tr></thead><tbody>${s.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${i.qty}</td><td>${money(i.price)}</td><td>${money(i.total)}</td></tr>`).join('')}<tr><td colspan="3" class="num">Subtotal</td><td>${money(s.subtotal)}</td></tr><tr><td colspan="3" class="num">Discount</td><td>${money(s.discount)}</td></tr><tr class="total"><td colspan="3" class="num">GRAND TOTAL</td><td>${money(s.total)}</td></tr></tbody></table><p class="meta" style="margin-top:15px">Thank you for your purchase.</p></div>`}
+function renderInvoice(){invoiceSheet.innerHTML=db.lastInvoice?inv(db.lastInvoice,'CUSTOMER')+'<div class="copy blank"></div>':'<div class="empty" style="width:100%">Complete a sale to generate an invoice.</div>'}
+async function addStock(){
+  if(!requireAdmin('Add/Update Stock'))return;
+  let n=itemName.value.trim(),q=+itemQty.value,p=+itemPrice.value,c=+itemCost.value||0;
+  if(editingId){
+    if(!n||q<0||p<0)return alert('Enter valid stock details.');
+    const eid=editingId;
+    const ok=await mutateCloud(data=>{
+      let x=data.stock.find(a=>a.id===eid);
+      if(!x)return false;
+      x.name=n;x.qty=q;x.price=p;x.cost=c;
+    });
+    editingId=null;
+    if(!ok)return alert('Item no longer exists — it may have been deleted elsewhere.');
+    render();clearStock();saveStockBtn.textContent='Save Stock';cancelEditBtn.style.display='none';stockStatus.textContent='"'+n+'" updated successfully.';
+    return;
+  }
+  if(!n||q<=0||p<0)return alert('Enter valid stock details.');
+  const hadCost=!!itemCost.value;
+  const ok=await mutateCloud(data=>{
+    let x=data.stock.find(a=>a.name.toLowerCase()===n.toLowerCase());
+    if(x){x.qty+=q;x.price=p;if(hadCost)x.cost=c}
+    else data.stock.push({id:'s'+Date.now(),name:n,qty:q,price:p,cost:c});
+  });
+  if(!ok)return;
+  render();clearStock();stockStatus.textContent='Stock saved successfully.';
+}
+function clearStock(){itemName.value=itemQty.value=itemPrice.value=itemCost.value=''}
+function editStock(id){if(!requireAdmin('Edit Stock'))return;let x=db.stock.find(a=>a.id===id);if(!x)return;itemName.value=x.name;itemQty.value=x.qty;itemPrice.value=x.price;itemCost.value=x.cost;editingId=x.id;saveStockBtn.textContent='Update Stock';cancelEditBtn.style.display='inline-block';stockStatus.textContent='Editing "'+x.name+'" — quantity will be SET to the value entered, not added.';itemName.scrollIntoView({behavior:'smooth',block:'center'})}
+function cancelEdit(){editingId=null;clearStock();saveStockBtn.textContent='Save Stock';cancelEditBtn.style.display='none';stockStatus.textContent='Automatically saved offline.'}
+async function delStock(id){
+  if(!requireAdmin('Delete Stock'))return;
+  if(!confirm('Delete this stock item?'))return;
+  if(editingId===id)cancelEdit();
+  cart=cart.filter(i=>i.id!==id);
+  const ok=await mutateCloud(data=>{data.stock=data.stock.filter(x=>x.id!==id)});
+  if(ok)render();
+}
+async function returnSale(no){
+  if(!requireAdmin('Return Sale'))return;
+  const localS=db.sales.find(x=>x.invoiceNo===no);
+  if(!localS)return;
+  if(localS.returned)return alert('This invoice has already been returned.');
+  if(!confirm('Return invoice '+no+'? Stock will be restored and this sale removed from totals.'))return;
+  const ok=await mutateCloud(data=>{
+    let s=data.sales.find(x=>x.invoiceNo===no);
+    if(!s)return false;
+    if(s.returned)return false;
+    s.items.forEach(i=>{
+      let x=data.stock.find(a=>a.name.toLowerCase()===i.name.toLowerCase());
+      if(x)x.qty+=i.qty;
+      else data.stock.push({id:'s'+Date.now()+Math.random().toString(16).slice(2),name:i.name,qty:i.qty,price:i.price,cost:0});
+    });
+    s.returned=true;s.returnedAt=new Date().toISOString();
+  });
+  if(ok){render()}else{alert('Could not return this invoice — it may already have been returned elsewhere.')}
+}
+function renderPicker(){let q=(saleSearch.value||'').toLowerCase();let key=pickerSort?pickerSort.value:'nameAsc';let list=db.stock.filter(x=>x.qty>0&&x.name.toLowerCase().includes(q)).slice().sort((a,b)=>{if(key==='nameAsc')return a.name.localeCompare(b.name);if(key==='nameDesc')return b.name.localeCompare(a.name);if(key==='qtyAsc')return a.qty-b.qty;if(key==='qtyDesc')return b.qty-a.qty;if(key==='priceAsc')return a.price-b.price;if(key==='priceDesc')return b.price-a.price;return 0});productPicker.innerHTML=list.length?list.map(x=>`<div class="picker-row"><div class="picker-info"><b>${esc(x.name)}</b><div class="picker-meta">${x.qty} in stock · ${money(x.price)}</div></div><button onclick="addToCart('${x.id}')">+ Add</button></div>`).join(''):'<div class="picker-empty">No matching product in stock.</div>'}
+function addToCart(id){let x=db.stock.find(a=>a.id===id);if(!x)return;let c=cart.find(a=>a.id===id),already=c?c.qty:0;if(already+1>x.qty)return alert('Insufficient stock. Available: '+x.qty);if(c)c.qty+=1;else cart.push({id:x.id,name:x.name,price:x.price,qty:1});renderCart()}
+function renderCart(){cartTable.innerHTML=cart.length?cart.map((i,idx)=>`<tr><td>${esc(i.name)}</td><td class="num"><input type="number" min="1" value="${i.qty}" onchange="setCartQty(${idx},this.value)"></td><td class="num">${money(i.price)}</td><td class="num">${money(i.qty*i.price)}</td><td><button class="rm" onclick="removeFromCart(${idx})">✕</button></td></tr>`).join(''):'<tr><td colspan="5" class="cart-empty">Search and add products above.</td></tr>';renderCartSummary()}
+function setCartQty(idx,val){let q=Math.max(1,+val||1),item=cart[idx];if(!item)return;let x=db.stock.find(a=>a.id===item.id);if(x&&q>x.qty){alert('Insufficient stock. Available: '+x.qty);q=x.qty}item.qty=q;renderCart()}
+function removeFromCart(idx){cart.splice(idx,1);renderCart()}
+function clearCart(){cart=[];customer.value='';discount.value=0;discountType.value='cash';renderCart()}
+function cartTotals(){let subtotal=cart.reduce((a,i)=>a+i.qty*i.price,0),dv=Math.max(0,+discount.value||0),damt=discountType.value==='percent'?subtotal*dv/100:dv;damt=Math.min(Math.max(damt,0),subtotal);return{subtotal,discountAmt:damt,total:subtotal-damt}}
+function renderCartSummary(){let t=cartTotals();cartSummary.innerHTML=`Subtotal: <b>${money(t.subtotal)}</b><br>Discount: <b>${money(t.discountAmt)}</b><br><span class="grand">Grand Total: ${money(t.total)}</span>`}
+async function sell(){
+  if(!cart.length)return alert('Add at least one product to the cart.');
+  for(const i of cart){let x=db.stock.find(a=>a.id===i.id);if(!x||i.qty>x.qty)return alert('Insufficient stock for '+i.name+'. Available: '+(x?x.qty:0))}
+  const t=cartTotals(),now=new Date(),cartSnapshot=cart.map(i=>({...i})),custVal=customer.value.trim();
+  const ok=await mutateCloud(data=>{
+    for(const i of cartSnapshot){
+      let x=data.stock.find(a=>a.id===i.id);
+      if(!x||i.qty>x.qty)return false;
+    }
+    cartSnapshot.forEach(i=>{let x=data.stock.find(a=>a.id===i.id);x.qty-=i.qty});
+    data.seq=(data.seq||1000)+1;
+    const s={invoiceNo:'INV-'+data.seq,date:now.toISOString(),customer:custVal,items:cartSnapshot.map(i=>({name:i.name,qty:i.qty,price:i.price,total:i.qty*i.price})),subtotal:t.subtotal,discount:t.discountAmt,total:t.total,returned:false};
+    data.sales.push(s);
+    data.lastInvoice=s;
+  });
+  if(!ok)return alert('Insufficient stock — someone else may have just sold the same item. Please recheck stock and try again.');
+  cart=[];customer.value='';discount.value=0;discountType.value='cash';
+  render();
+  saleStatus.textContent='Sale completed: '+db.lastInvoice.invoiceNo;
+}
+function show(no){let s=db.sales.find(x=>x.invoiceNo===no);if(s){db.lastInvoice=s;localStorage.setItem(KEY,JSON.stringify(db));renderInvoice();document.querySelector('.printarea').scrollIntoView({behavior:'smooth'})}}
+function focusSale(){salePanel.scrollIntoView({behavior:'smooth'});setTimeout(()=>saleSearch.focus(),300)}
+function printInvoice(){if(!db.lastInvoice)return alert('Create a sale first.');window.print()}
+function openData(){if(!requireAdmin('Data Center'))return;$('dataModal').classList.add('show')}function closeData(){$('dataModal').classList.remove('show')}
+function csvEsc(v){let s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
+function dl(name,text,type='text/csv;charset=utf-8'){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function stamp(){return new Date().toISOString().slice(0,10)}
+function backupJSON(){if(!requireAdmin('Export Backup'))return;dl('mohammadia_complete_backup_'+stamp()+'.json',JSON.stringify(db,null,2),'application/json')}
+function stockCSV(){if(!requireAdmin('Export Stock CSV'))return;let r=[['id','name','qty','selling_price','purchase_price'],...db.stock.map(x=>[x.id,x.name,x.qty,x.price,x.cost])];dl('mohammadia_stock_'+stamp()+'.csv',r.map(x=>x.map(csvEsc).join(',')).join('\n'))}
+function salesCSV(){if(!requireAdmin('Export Sales CSV'))return;let r=[['invoice_no','date','customer','item','qty','unit_price','subtotal','discount','total','returned'],...db.sales.flatMap(s=>s.items.map(i=>[s.invoiceNo,s.date,s.customer||'',i.name,i.qty,i.price,s.subtotal,s.discount,s.total,s.returned?'yes':'no']))];dl('mohammadia_sales_'+stamp()+'.csv',r.map(x=>x.map(csvEsc).join(',')).join('\n'))}
+function todayCSV(){if(!requireAdmin("Export Today's Sales CSV"))return;let r=db.sales.filter(s=>isToday(s.date));let rows=[['invoice_no','date','customer','item','qty','unit_price','subtotal','discount','total','returned'],...r.flatMap(s=>s.items.map(i=>[s.invoiceNo,s.date,s.customer||'',i.name,i.qty,i.price,s.subtotal,s.discount,s.total,s.returned?'yes':'no']))];dl('mohammadia_today_sales_'+stamp()+'.csv',rows.map(x=>x.map(csvEsc).join(',')).join('\n'))}
+function pick(type){if(!requireAdmin('Import / Restore'))return;let f=$('fileInput');f.value='';f.accept=type==='json'?'.json':'.csv';f.onchange=()=>restore(f.files[0],type);f.click()}
+function parseCSV(t){let rows=[],row=[],c='',q=false;for(let i=0;i<t.length;i++){let ch=t[i],nx=t[i+1];if(ch==='"'&&q&&nx==='"'){c+='"';i++;continue}if(ch==='"'){q=!q;continue}if(ch===','&&!q){row.push(c);c='';continue}if((ch==='\n'||ch==='\r')&&!q){if(ch==='\r'&&nx==='\n')i++;row.push(c);if(row.some(v=>v.trim()))rows.push(row);row=[];c='';continue}c+=ch}if(c||row.length){row.push(c);rows.push(row)}return rows}
+function restore(file,type){if(!requireAdmin('Import / Restore'))return;if(!file)return;let r=new FileReader();r.onload=()=>{try{if(type==='json'){let x=JSON.parse(r.result);if(!Array.isArray(x.stock)||!Array.isArray(x.sales))throw 0;db=x;db.seq=db.seq||1000;save();render();alert('Complete JSON backup restored successfully.')}else{let rows=parseCSV(r.result);if(rows.length<2)throw 0;let h=rows[0].map(x=>x.trim().toLowerCase());let ix=n=>h.indexOf(n);if(type==='stock'){if(ix('name')<0||ix('qty')<0||ix('selling_price')<0)throw 0;db.stock=rows.slice(1).filter(r=>r[ix('name')]).map((r,i)=>({id:r[ix('id')]||'s'+Date.now()+i,name:r[ix('name')],qty:+r[ix('qty')]||0,price:+r[ix('selling_price')]||0,cost:ix('purchase_price')>=0?(+r[ix('purchase_price')]||0):0}));save();render();alert('Stock CSV imported successfully.')}else{if(ix('invoice_no')<0||ix('item')<0||ix('qty')<0)throw 0;let m={};rows.slice(1).forEach(r=>{let no=r[ix('invoice_no')];if(!no)return;if(!m[no])m[no]={invoiceNo:no,date:r[ix('date')]||new Date().toISOString(),customer:r[ix('customer')]||'',items:[],subtotal:+r[ix('subtotal')]||0,discount:+r[ix('discount')]||0,total:+r[ix('total')]||0,returned:(r[ix('returned')]||'').toLowerCase()==='yes'};m[no].items.push({name:r[ix('item')],qty:+r[ix('qty')]||0,price:+r[ix('unit_price')]||0,total:(+r[ix('qty')]||0)*(+r[ix('unit_price')]||0)});});db.sales=Object.values(m);db.lastInvoice=db.sales.at(-1)||null;save();render();alert('Sales CSV imported successfully.')}}closeData()}catch(e){alert('Import failed. Please select a valid CSV/JSON file exported by this app.')}};r.readAsText(file)}
+/* ============================================================
+   BOOTSTRAP
+   The main app (#mainApp) starts hidden. We never render/seed
+   business data until a role has been established either by a
+   fresh login or by an existing session in sessionStorage
+   (sessionStorage survives a page refresh but is cleared when the
+   browser/tab is closed, so a refresh won't kick a signed-in user
+   back out, but closing the browser will require signing in again).
+   ============================================================ */
+(async function bootstrap(){
+  await ensureAuthInitialized();
+  let existing=null;
+  try{existing=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null')}catch(e){}
+  if(existing && (existing.role==='admin'||existing.role==='employee')){
+    currentRole=existing.role;
+    document.body.classList.toggle('role-employee', currentRole==='employee');
+    document.body.classList.toggle('role-admin', currentRole==='admin');
+    sessionRolePill.textContent = currentRole==='admin' ? '🛡️ Admin' : '🧑‍💼 Employee';
+    $('loginScreen').style.display='none';
+    mainApp.style.display='block';
+    mainApp.classList.add('show');
+    seed();render();startCloudSync();
+  } else {
+    // Login screen is already visible by default; nothing else to do
+    // until the user submits the login form.
+    loginPassword.focus();
+  }
+})();
+</script></body></html>
