@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -203,16 +204,29 @@ body.role-employee .admin-only{display:none!important}
 <button type="button" class="role-btn" id="pwRoleBtnEmployee" onclick="selectPwRole('employee')">🧑‍💼 Employee</button>
 </div>
 </div>
+<div id="pwStep1">
 <label>Current password (yours)</label><input type="password" id="pwCurrent" placeholder="Your current password">
 <label>New password</label><input type="password" id="pwNew" placeholder="New password (min 6 characters)">
 <label>Confirm new password</label><input type="password" id="pwConfirm" placeholder="Re-enter new password">
-<div class="actions" style="margin-top:16px"><button class="green" onclick="submitPwChange()">Update Password</button></div>
+<div class="actions" style="margin-top:16px"><button class="green" id="pwSendOtpBtn" onclick="requestPwOtp()">Send verification code</button></div>
+</div>
+<div id="pwStep2" style="display:none">
+<p class="hint">A 6-digit verification code was sent to the registered email. Enter it below to finish updating the password.</p>
+<label>Verification code</label><input type="text" inputmode="numeric" maxlength="6" id="pwOtpInput" placeholder="6-digit code">
+<div class="actions" style="margin-top:16px"><button class="light" onclick="resendPwOtp()">Resend code</button><button class="green" onclick="confirmPwOtp()">Verify &amp; Update Password</button></div>
+</div>
 <div class="status" id="pwModalStatus" style="margin-top:12px"></div>
 </div></div>
 
 <!-- ===================== FIREBASE (Cloud Sync) ===================== -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<!-- ===================== EMAILJS (Password-change OTP) =====================
+     Free at https://www.emailjs.com — create an Email Service + a Template
+     with variables {{otp_code}} and {{to_email}}, then paste your own IDs
+     into EMAILJS_PUBLIC_KEY / EMAILJS_SERVICE_ID / EMAILJS_TEMPLATE_ID /
+     OTP_RECIPIENT_EMAIL below. Until filled in, OTP emails won't send. -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 /* 🔥 PASTE YOUR OWN FIREBASE PROJECT CONFIG HERE
    Firebase Console → ⚙️ Project settings → General → "Your apps" → Web app → SDK setup and configuration
@@ -384,6 +398,8 @@ function openPwModal(){
   $('pwRoleBtnEmployee').classList.toggle('active', pwTargetRole==='employee');
   $('pwCurrent').value=''; $('pwNew').value=''; $('pwConfirm').value='';
   $('pwModalStatus').textContent='';
+  $('pwStep1').style.display='block'; $('pwStep2').style.display='none';
+  pwPendingOtp=null; pwPendingNewPassword=null;
   $('pwModal').classList.add('show');
 }
 function closePwModal(){$('pwModal').classList.remove('show')}
@@ -394,22 +410,86 @@ function selectPwRole(role){
   $('pwRoleBtnAdmin').classList.toggle('active', role==='admin');
   $('pwRoleBtnEmployee').classList.toggle('active', role==='employee');
 }
-async function submitPwChange(){
+/* ---- Email OTP config (EmailJS) ----
+   Sign up free at https://www.emailjs.com, create an Email Service and a
+   Template with variables {{otp_code}} and {{to_email}}, then paste your
+   own IDs below. Until you do, OTP emails will not send. */
+const EMAILJS_PUBLIC_KEY   = "PASTE_EMAILJS_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID   = "PASTE_EMAILJS_SERVICE_ID";
+const EMAILJS_TEMPLATE_ID  = "PASTE_EMAILJS_TEMPLATE_ID";
+const OTP_RECIPIENT_EMAIL  = "PASTE_YOUR_EMAIL@example.com";
+if(typeof emailjs!=='undefined' && EMAILJS_PUBLIC_KEY.indexOf('PASTE_')!==0){
+  emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
+}
+
+let pwPendingOtp=null, pwPendingOtpExpiry=0, pwPendingNewPassword=null;
+function genOtp(){return String(Math.floor(100000+Math.random()*900000))}
+
+async function requestPwOtp(){
   const cur=$('pwCurrent').value, next=$('pwNew').value, conf=$('pwConfirm').value;
   const status=$('pwModalStatus');
-  if(!cur||!next||!conf){status.textContent='Please fill in all fields.';status.style.color='var(--maroon)';return}
-  if(next.length<6){status.textContent='New password must be at least 6 characters.';status.style.color='var(--maroon)';return}
-  if(next!==conf){status.textContent='New password and confirmation do not match.';status.style.color='var(--maroon)';return}
+  status.style.color='var(--maroon)';
+  if(!cur||!next||!conf){status.textContent='Please fill in all fields.';return}
+  if(next.length<6){status.textContent='New password must be at least 6 characters.';return}
+  if(next!==conf){status.textContent='New password and confirmation do not match.';return}
   // Verifying against the CURRENT logged-in user's own password is required
   // for everyone (including admin) before any password can be changed —
   // this stops someone at an already-unlocked screen from silently
   // resetting credentials without knowing the existing password.
   const okCur=await verifyPassword(currentRole,cur);
-  if(!okCur){status.textContent='Current password is incorrect.';status.style.color='var(--maroon)';return}
-  await setPassword(pwTargetRole,next);
+  if(!okCur){status.textContent='Current password is incorrect.';return}
+  if(typeof emailjs==='undefined' || EMAILJS_PUBLIC_KEY.indexOf('PASTE_')===0){
+    status.textContent='Email verification is not set up yet. Ask your admin to configure it.';
+    return;
+  }
+  pwPendingOtp=genOtp();
+  pwPendingOtpExpiry=Date.now()+10*60*1000; // 10 minutes
+  pwPendingNewPassword=next;
+  const btn=$('pwSendOtpBtn'); btn.disabled=true; btn.textContent='Sending...';
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {otp_code:pwPendingOtp, to_email:OTP_RECIPIENT_EMAIL});
+    status.style.color='#2c5a3e';
+    status.textContent='A verification code was sent to the registered email.';
+    $('pwStep1').style.display='none';
+    $('pwStep2').style.display='block';
+    $('pwOtpInput').value=''; $('pwOtpInput').focus();
+  }catch(err){
+    console.error('OTP email failed:',err);
+    status.style.color='var(--maroon)';
+    status.textContent='Could not send verification email. Check your internet connection and try again.';
+  }
+  btn.disabled=false; btn.textContent='Send verification code';
+}
+
+async function resendPwOtp(){
+  if(!pwPendingNewPassword)return;
+  const status=$('pwModalStatus');
+  pwPendingOtp=genOtp();
+  pwPendingOtpExpiry=Date.now()+10*60*1000;
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {otp_code:pwPendingOtp, to_email:OTP_RECIPIENT_EMAIL});
+    status.style.color='#2c5a3e';
+    status.textContent='A new verification code was sent.';
+  }catch(err){
+    console.error('OTP resend failed:',err);
+    status.style.color='var(--maroon)';
+    status.textContent='Could not resend the code. Try again.';
+  }
+}
+
+async function confirmPwOtp(){
+  const status=$('pwModalStatus');
+  const entered=$('pwOtpInput').value.trim();
+  status.style.color='var(--maroon)';
+  if(!entered){status.textContent='Please enter the verification code.';return}
+  if(!pwPendingOtp || Date.now()>pwPendingOtpExpiry){status.textContent='Code expired. Please resend a new code.';return}
+  if(entered!==pwPendingOtp){status.textContent='Incorrect verification code.';return}
+  await setPassword(pwTargetRole,pwPendingNewPassword);
   status.style.color='#2c5a3e';
   status.textContent=(pwTargetRole==='admin'?'Admin':'Employee')+' password updated successfully.';
-  $('pwCurrent').value=''; $('pwNew').value=''; $('pwConfirm').value='';
+  pwPendingOtp=null; pwPendingNewPassword=null;
+  $('pwCurrent').value=''; $('pwNew').value=''; $('pwConfirm').value=''; $('pwOtpInput').value='';
+  $('pwStep1').style.display='block'; $('pwStep2').style.display='none';
 }
 
 const KEY='mohammadia_final_v4'; // now just a fast local cache — Firestore is the real source of truth
@@ -423,6 +503,37 @@ function save(){
   CLOUD_DOC.set(db)
     .then(()=>setSyncPill('☁️ Synced',false))
     .catch(err=>{console.error('Firebase save failed:',err);setSyncPill('⚠️ Offline — saved locally, will sync later',true)});
+}
+/* ---- Transactional cloud mutation ----
+   Reads the LATEST server document, applies `mutator` to it, and writes the
+   result back atomically. This fixes the "stale tab overwrites new changes"
+   bug that a plain save() has: instead of blindly pushing whatever this
+   device's local `db` happens to hold, every stock/sale change is now
+   applied on top of whatever is actually on the server at that instant, so
+   another tab/device open elsewhere can no longer resurrect a deleted item. */
+async function mutateCloud(mutator){
+  let result=null;
+  try{
+    await fsdb.runTransaction(async(tx)=>{
+      const snap=await tx.get(CLOUD_DOC);
+      let data=snap.exists?snap.data():{stock:[],sales:[],lastInvoice:null,seq:1000};
+      data.stock=data.stock||[]; data.sales=data.sales||[]; data.seq=data.seq||1000;
+      const ok=mutator(data);
+      if(ok===false)return;
+      tx.set(CLOUD_DOC,data);
+      result=data;
+    });
+  }catch(err){
+    console.error('Cloud transaction failed:',err);
+    setSyncPill('⚠️ Sync error — check Firebase config/rules',true);
+    alert('Could not save this change to the cloud. Check your internet connection and try again.');
+    return null;
+  }
+  if(!result){return null}
+  db=result;
+  localStorage.setItem(KEY,JSON.stringify(db));
+  setSyncPill('☁️ Synced',false);
+  return result;
 }
 function startCloudSync(){
   setSyncPill('☁️ Connecting…',false);
@@ -440,7 +551,7 @@ function startCloudSync(){
     cloudReady=true;
   }, err=>{console.error('Firebase sync error:',err);setSyncPill('⚠️ Sync error — check Firebase config/rules',true)});
 }
-function seed(){if(db.stock.length)return;db.stock=[{id:'s1',name:'Notebook A5',qty:45,price:35,cost:25},{id:'s2',name:'Ball Pen (Blue)',qty:120,price:12,cost:7},{id:'s3',name:'Scientific Calculator',qty:8,price:250,cost:190},{id:'s4',name:'Stapler',qty:15,price:48,cost:35}];save()}
+function seed(){/* no demo data — new shops start with an empty stock list */}
 function isToday(s){let d=new Date(s),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate()}
 function render(){cards();renderPicker();renderCart();renderStock();renderToday();renderSales();renderInvoice()}
 function costValueTotal(){return db.stock.reduce((a,x)=>a+x.qty*(x.cost||0),0)}
@@ -463,12 +574,62 @@ function renderToday(){let a=db.sales.filter(s=>isToday(s.date)).slice().reverse
 function renderSales(){let q=(salesSearch.value||'').toLowerCase();let a=db.sales.filter(s=>(s.invoiceNo+' '+s.date+' '+s.customer+' '+s.items.map(i=>i.name).join(' ')).toLowerCase().includes(q)).slice().reverse();salesTable.innerHTML=a.map(s=>`<tr class="${s.returned?'returned-row':''}"><td>${esc(s.invoiceNo)}</td><td>${esc(s.date)}</td><td>${esc(s.customer||'Walk-in')}</td><td>${esc(s.items.map(i=>i.name+' × '+i.qty).join(', '))}</td><td class="num">${money(s.total)}</td><td>${actionCell(s)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No sales found.</td></tr>'}
 function inv(s,label){return `<div class="copy">${s.returned?'<div class="stamp">RETURNED</div>':''}<div class="copyhead"><h3>👤 CUSTOMER COPY</h3><span class="tag">${label}</span></div><div class="meta"><b>MOHAMMADIA LIBRARY & COMPUTER</b><br>Invoice: ${esc(s.invoiceNo)}<br>Date: ${esc(s.date)}<br>Customer: ${esc(s.customer||'Walk-in Customer')}</div><table class="invtable"><thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Total</th></tr></thead><tbody>${s.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${i.qty}</td><td>${money(i.price)}</td><td>${money(i.total)}</td></tr>`).join('')}<tr><td colspan="3" class="num">Subtotal</td><td>${money(s.subtotal)}</td></tr><tr><td colspan="3" class="num">Discount</td><td>${money(s.discount)}</td></tr><tr class="total"><td colspan="3" class="num">GRAND TOTAL</td><td>${money(s.total)}</td></tr></tbody></table><p class="meta" style="margin-top:15px">Thank you for your purchase.</p></div>`}
 function renderInvoice(){invoiceSheet.innerHTML=db.lastInvoice?inv(db.lastInvoice,'CUSTOMER')+'<div class="copy blank"></div>':'<div class="empty" style="width:100%">Complete a sale to generate an invoice.</div>'}
-function addStock(){if(!requireAdmin('Add/Update Stock'))return;let n=itemName.value.trim(),q=+itemQty.value,p=+itemPrice.value,c=+itemCost.value||0;if(editingId){if(!n||q<0||p<0)return alert('Enter valid stock details.');let x=db.stock.find(a=>a.id===editingId);if(!x){editingId=null;return alert('Item no longer exists.');}x.name=n;x.qty=q;x.price=p;x.cost=c;save();render();clearStock();editingId=null;saveStockBtn.textContent='Save Stock';cancelEditBtn.style.display='none';stockStatus.textContent='"'+n+'" updated successfully.';return}if(!n||q<=0||p<0)return alert('Enter valid stock details.');let x=db.stock.find(a=>a.name.toLowerCase()===n.toLowerCase());if(x){x.qty+=q;x.price=p;if(itemCost.value)x.cost=c}else db.stock.push({id:'s'+Date.now(),name:n,qty:q,price:p,cost:c});save();render();clearStock();stockStatus.textContent='Stock saved successfully.'}
+async function addStock(){
+  if(!requireAdmin('Add/Update Stock'))return;
+  let n=itemName.value.trim(),q=+itemQty.value,p=+itemPrice.value,c=+itemCost.value||0;
+  if(editingId){
+    if(!n||q<0||p<0)return alert('Enter valid stock details.');
+    const eid=editingId;
+    const ok=await mutateCloud(data=>{
+      let x=data.stock.find(a=>a.id===eid);
+      if(!x)return false;
+      x.name=n;x.qty=q;x.price=p;x.cost=c;
+    });
+    editingId=null;
+    if(!ok)return alert('Item no longer exists — it may have been deleted elsewhere.');
+    render();clearStock();saveStockBtn.textContent='Save Stock';cancelEditBtn.style.display='none';stockStatus.textContent='"'+n+'" updated successfully.';
+    return;
+  }
+  if(!n||q<=0||p<0)return alert('Enter valid stock details.');
+  const hadCost=!!itemCost.value;
+  const ok=await mutateCloud(data=>{
+    let x=data.stock.find(a=>a.name.toLowerCase()===n.toLowerCase());
+    if(x){x.qty+=q;x.price=p;if(hadCost)x.cost=c}
+    else data.stock.push({id:'s'+Date.now(),name:n,qty:q,price:p,cost:c});
+  });
+  if(!ok)return;
+  render();clearStock();stockStatus.textContent='Stock saved successfully.';
+}
 function clearStock(){itemName.value=itemQty.value=itemPrice.value=itemCost.value=''}
 function editStock(id){if(!requireAdmin('Edit Stock'))return;let x=db.stock.find(a=>a.id===id);if(!x)return;itemName.value=x.name;itemQty.value=x.qty;itemPrice.value=x.price;itemCost.value=x.cost;editingId=x.id;saveStockBtn.textContent='Update Stock';cancelEditBtn.style.display='inline-block';stockStatus.textContent='Editing "'+x.name+'" — quantity will be SET to the value entered, not added.';itemName.scrollIntoView({behavior:'smooth',block:'center'})}
 function cancelEdit(){editingId=null;clearStock();saveStockBtn.textContent='Save Stock';cancelEditBtn.style.display='none';stockStatus.textContent='Automatically saved offline.'}
-function delStock(id){if(!requireAdmin('Delete Stock'))return;if(confirm('Delete this stock item?')){db.stock=db.stock.filter(x=>x.id!==id);if(editingId===id)cancelEdit();cart=cart.filter(i=>i.id!==id);save();render()}}
-function returnSale(no){if(!requireAdmin('Return Sale'))return;let s=db.sales.find(x=>x.invoiceNo===no);if(!s)return;if(s.returned)return alert('This invoice has already been returned.');if(!confirm('Return invoice '+no+'? Stock will be restored and this sale removed from totals.'))return;s.items.forEach(i=>{let x=db.stock.find(a=>a.name.toLowerCase()===i.name.toLowerCase());if(x)x.qty+=i.qty;else db.stock.push({id:'s'+Date.now()+Math.random().toString(16).slice(2),name:i.name,qty:i.qty,price:i.price,cost:0})});s.returned=true;s.returnedAt=new Date().toISOString();save();render()}
+async function delStock(id){
+  if(!requireAdmin('Delete Stock'))return;
+  if(!confirm('Delete this stock item?'))return;
+  if(editingId===id)cancelEdit();
+  cart=cart.filter(i=>i.id!==id);
+  const ok=await mutateCloud(data=>{data.stock=data.stock.filter(x=>x.id!==id)});
+  if(ok)render();
+}
+async function returnSale(no){
+  if(!requireAdmin('Return Sale'))return;
+  const localS=db.sales.find(x=>x.invoiceNo===no);
+  if(!localS)return;
+  if(localS.returned)return alert('This invoice has already been returned.');
+  if(!confirm('Return invoice '+no+'? Stock will be restored and this sale removed from totals.'))return;
+  const ok=await mutateCloud(data=>{
+    let s=data.sales.find(x=>x.invoiceNo===no);
+    if(!s)return false;
+    if(s.returned)return false;
+    s.items.forEach(i=>{
+      let x=data.stock.find(a=>a.name.toLowerCase()===i.name.toLowerCase());
+      if(x)x.qty+=i.qty;
+      else data.stock.push({id:'s'+Date.now()+Math.random().toString(16).slice(2),name:i.name,qty:i.qty,price:i.price,cost:0});
+    });
+    s.returned=true;s.returnedAt=new Date().toISOString();
+  });
+  if(ok){render()}else{alert('Could not return this invoice — it may already have been returned elsewhere.')}
+}
 function renderPicker(){let q=(saleSearch.value||'').toLowerCase();let key=pickerSort?pickerSort.value:'nameAsc';let list=db.stock.filter(x=>x.qty>0&&x.name.toLowerCase().includes(q)).slice().sort((a,b)=>{if(key==='nameAsc')return a.name.localeCompare(b.name);if(key==='nameDesc')return b.name.localeCompare(a.name);if(key==='qtyAsc')return a.qty-b.qty;if(key==='qtyDesc')return b.qty-a.qty;if(key==='priceAsc')return a.price-b.price;if(key==='priceDesc')return b.price-a.price;return 0});productPicker.innerHTML=list.length?list.map(x=>`<div class="picker-row"><div class="picker-info"><b>${esc(x.name)}</b><div class="picker-meta">${x.qty} in stock · ${money(x.price)}</div></div><button onclick="addToCart('${x.id}')">+ Add</button></div>`).join(''):'<div class="picker-empty">No matching product in stock.</div>'}
 function addToCart(id){let x=db.stock.find(a=>a.id===id);if(!x)return;let c=cart.find(a=>a.id===id),already=c?c.qty:0;if(already+1>x.qty)return alert('Insufficient stock. Available: '+x.qty);if(c)c.qty+=1;else cart.push({id:x.id,name:x.name,price:x.price,qty:1});renderCart()}
 function renderCart(){cartTable.innerHTML=cart.length?cart.map((i,idx)=>`<tr><td>${esc(i.name)}</td><td class="num"><input type="number" min="1" value="${i.qty}" onchange="setCartQty(${idx},this.value)"></td><td class="num">${money(i.price)}</td><td class="num">${money(i.qty*i.price)}</td><td><button class="rm" onclick="removeFromCart(${idx})">✕</button></td></tr>`).join(''):'<tr><td colspan="5" class="cart-empty">Search and add products above.</td></tr>';renderCartSummary()}
@@ -477,8 +638,27 @@ function removeFromCart(idx){cart.splice(idx,1);renderCart()}
 function clearCart(){cart=[];customer.value='';discount.value=0;discountType.value='cash';renderCart()}
 function cartTotals(){let subtotal=cart.reduce((a,i)=>a+i.qty*i.price,0),dv=Math.max(0,+discount.value||0),damt=discountType.value==='percent'?subtotal*dv/100:dv;damt=Math.min(Math.max(damt,0),subtotal);return{subtotal,discountAmt:damt,total:subtotal-damt}}
 function renderCartSummary(){let t=cartTotals();cartSummary.innerHTML=`Subtotal: <b>${money(t.subtotal)}</b><br>Discount: <b>${money(t.discountAmt)}</b><br><span class="grand">Grand Total: ${money(t.total)}</span>`}
-function sell(){if(!cart.length)return alert('Add at least one product to the cart.');for(const i of cart){let x=db.stock.find(a=>a.id===i.id);if(!x||i.qty>x.qty)return alert('Insufficient stock for '+i.name+'. Available: '+(x?x.qty:0))}let t=cartTotals(),now=new Date();cart.forEach(i=>{let x=db.stock.find(a=>a.id===i.id);x.qty-=i.qty});let s={invoiceNo:'INV-'+(++db.seq),date:now.toISOString(),customer:customer.value.trim(),items:cart.map(i=>({name:i.name,qty:i.qty,price:i.price,total:i.qty*i.price})),subtotal:t.subtotal,discount:t.discountAmt,total:t.total,returned:false};db.sales.push(s);db.lastInvoice=s;cart=[];customer.value='';discount.value=0;discountType.value='cash';save();render();saleStatus.textContent='Sale completed: '+s.invoiceNo}
-function show(no){let s=db.sales.find(x=>x.invoiceNo===no);if(s){db.lastInvoice=s;save();renderInvoice();document.querySelector('.printarea').scrollIntoView({behavior:'smooth'})}}
+async function sell(){
+  if(!cart.length)return alert('Add at least one product to the cart.');
+  for(const i of cart){let x=db.stock.find(a=>a.id===i.id);if(!x||i.qty>x.qty)return alert('Insufficient stock for '+i.name+'. Available: '+(x?x.qty:0))}
+  const t=cartTotals(),now=new Date(),cartSnapshot=cart.map(i=>({...i})),custVal=customer.value.trim();
+  const ok=await mutateCloud(data=>{
+    for(const i of cartSnapshot){
+      let x=data.stock.find(a=>a.id===i.id);
+      if(!x||i.qty>x.qty)return false;
+    }
+    cartSnapshot.forEach(i=>{let x=data.stock.find(a=>a.id===i.id);x.qty-=i.qty});
+    data.seq=(data.seq||1000)+1;
+    const s={invoiceNo:'INV-'+data.seq,date:now.toISOString(),customer:custVal,items:cartSnapshot.map(i=>({name:i.name,qty:i.qty,price:i.price,total:i.qty*i.price})),subtotal:t.subtotal,discount:t.discountAmt,total:t.total,returned:false};
+    data.sales.push(s);
+    data.lastInvoice=s;
+  });
+  if(!ok)return alert('Insufficient stock — someone else may have just sold the same item. Please recheck stock and try again.');
+  cart=[];customer.value='';discount.value=0;discountType.value='cash';
+  render();
+  saleStatus.textContent='Sale completed: '+db.lastInvoice.invoiceNo;
+}
+function show(no){let s=db.sales.find(x=>x.invoiceNo===no);if(s){db.lastInvoice=s;localStorage.setItem(KEY,JSON.stringify(db));renderInvoice();document.querySelector('.printarea').scrollIntoView({behavior:'smooth'})}}
 function focusSale(){salePanel.scrollIntoView({behavior:'smooth'});setTimeout(()=>saleSearch.focus(),300)}
 function printInvoice(){if(!db.lastInvoice)return alert('Create a sale first.');window.print()}
 function openData(){if(!requireAdmin('Data Center'))return;$('dataModal').classList.add('show')}function closeData(){$('dataModal').classList.remove('show')}
