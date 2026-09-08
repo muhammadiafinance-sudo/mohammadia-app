@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -204,29 +203,16 @@ body.role-employee .admin-only{display:none!important}
 <button type="button" class="role-btn" id="pwRoleBtnEmployee" onclick="selectPwRole('employee')">🧑‍💼 Employee</button>
 </div>
 </div>
-<div id="pwStep1">
 <label>Current password (yours)</label><input type="password" id="pwCurrent" placeholder="Your current password">
 <label>New password</label><input type="password" id="pwNew" placeholder="New password (min 6 characters)">
 <label>Confirm new password</label><input type="password" id="pwConfirm" placeholder="Re-enter new password">
-<div class="actions" style="margin-top:16px"><button class="green" id="pwSendOtpBtn" onclick="requestPwOtp()">Send verification code</button></div>
-</div>
-<div id="pwStep2" style="display:none">
-<p class="hint">A 6-digit verification code was sent to the registered email. Enter it below to finish updating the password.</p>
-<label>Verification code</label><input type="text" inputmode="numeric" maxlength="6" id="pwOtpInput" placeholder="6-digit code">
-<div class="actions" style="margin-top:16px"><button class="light" onclick="resendPwOtp()">Resend code</button><button class="green" onclick="confirmPwOtp()">Verify &amp; Update Password</button></div>
-</div>
+<div class="actions" style="margin-top:16px"><button class="green" onclick="submitPwChange()">Update Password</button></div>
 <div class="status" id="pwModalStatus" style="margin-top:12px"></div>
 </div></div>
 
 <!-- ===================== FIREBASE (Cloud Sync) ===================== -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<!-- ===================== EMAILJS (Password-change OTP) =====================
-     Free at https://www.emailjs.com — create an Email Service + a Template
-     with variables {{otp_code}} and {{to_email}}, then paste your own IDs
-     into EMAILJS_PUBLIC_KEY / EMAILJS_SERVICE_ID / EMAILJS_TEMPLATE_ID /
-     OTP_RECIPIENT_EMAIL below. Until filled in, OTP emails won't send. -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 /* 🔥 PASTE YOUR OWN FIREBASE PROJECT CONFIG HERE
    Firebase Console → ⚙️ Project settings → General → "Your apps" → Web app → SDK setup and configuration
@@ -398,8 +384,6 @@ function openPwModal(){
   $('pwRoleBtnEmployee').classList.toggle('active', pwTargetRole==='employee');
   $('pwCurrent').value=''; $('pwNew').value=''; $('pwConfirm').value='';
   $('pwModalStatus').textContent='';
-  $('pwStep1').style.display='block'; $('pwStep2').style.display='none';
-  pwPendingOtp=null; pwPendingNewPassword=null;
   $('pwModal').classList.add('show');
 }
 function closePwModal(){$('pwModal').classList.remove('show')}
@@ -410,86 +394,22 @@ function selectPwRole(role){
   $('pwRoleBtnAdmin').classList.toggle('active', role==='admin');
   $('pwRoleBtnEmployee').classList.toggle('active', role==='employee');
 }
-/* ---- Email OTP config (EmailJS) ----
-   Sign up free at https://www.emailjs.com, create an Email Service and a
-   Template with variables {{otp_code}} and {{to_email}}, then paste your
-   own IDs below. Until you do, OTP emails will not send. */
-const EMAILJS_PUBLIC_KEY   = "PASTE_EMAILJS_PUBLIC_KEY";
-const EMAILJS_SERVICE_ID   = "PASTE_EMAILJS_SERVICE_ID";
-const EMAILJS_TEMPLATE_ID  = "PASTE_EMAILJS_TEMPLATE_ID";
-const OTP_RECIPIENT_EMAIL  = "PASTE_YOUR_EMAIL@example.com";
-if(typeof emailjs!=='undefined' && EMAILJS_PUBLIC_KEY.indexOf('PASTE_')!==0){
-  emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
-}
-
-let pwPendingOtp=null, pwPendingOtpExpiry=0, pwPendingNewPassword=null;
-function genOtp(){return String(Math.floor(100000+Math.random()*900000))}
-
-async function requestPwOtp(){
+async function submitPwChange(){
   const cur=$('pwCurrent').value, next=$('pwNew').value, conf=$('pwConfirm').value;
   const status=$('pwModalStatus');
-  status.style.color='var(--maroon)';
-  if(!cur||!next||!conf){status.textContent='Please fill in all fields.';return}
-  if(next.length<6){status.textContent='New password must be at least 6 characters.';return}
-  if(next!==conf){status.textContent='New password and confirmation do not match.';return}
+  if(!cur||!next||!conf){status.textContent='Please fill in all fields.';status.style.color='var(--maroon)';return}
+  if(next.length<6){status.textContent='New password must be at least 6 characters.';status.style.color='var(--maroon)';return}
+  if(next!==conf){status.textContent='New password and confirmation do not match.';status.style.color='var(--maroon)';return}
   // Verifying against the CURRENT logged-in user's own password is required
   // for everyone (including admin) before any password can be changed —
   // this stops someone at an already-unlocked screen from silently
   // resetting credentials without knowing the existing password.
   const okCur=await verifyPassword(currentRole,cur);
-  if(!okCur){status.textContent='Current password is incorrect.';return}
-  if(typeof emailjs==='undefined' || EMAILJS_PUBLIC_KEY.indexOf('PASTE_')===0){
-    status.textContent='Email verification is not set up yet. Ask your admin to configure it.';
-    return;
-  }
-  pwPendingOtp=genOtp();
-  pwPendingOtpExpiry=Date.now()+10*60*1000; // 10 minutes
-  pwPendingNewPassword=next;
-  const btn=$('pwSendOtpBtn'); btn.disabled=true; btn.textContent='Sending...';
-  try{
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {otp_code:pwPendingOtp, to_email:OTP_RECIPIENT_EMAIL});
-    status.style.color='#2c5a3e';
-    status.textContent='A verification code was sent to the registered email.';
-    $('pwStep1').style.display='none';
-    $('pwStep2').style.display='block';
-    $('pwOtpInput').value=''; $('pwOtpInput').focus();
-  }catch(err){
-    console.error('OTP email failed:',err);
-    status.style.color='var(--maroon)';
-    status.textContent='Could not send verification email. Check your internet connection and try again.';
-  }
-  btn.disabled=false; btn.textContent='Send verification code';
-}
-
-async function resendPwOtp(){
-  if(!pwPendingNewPassword)return;
-  const status=$('pwModalStatus');
-  pwPendingOtp=genOtp();
-  pwPendingOtpExpiry=Date.now()+10*60*1000;
-  try{
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {otp_code:pwPendingOtp, to_email:OTP_RECIPIENT_EMAIL});
-    status.style.color='#2c5a3e';
-    status.textContent='A new verification code was sent.';
-  }catch(err){
-    console.error('OTP resend failed:',err);
-    status.style.color='var(--maroon)';
-    status.textContent='Could not resend the code. Try again.';
-  }
-}
-
-async function confirmPwOtp(){
-  const status=$('pwModalStatus');
-  const entered=$('pwOtpInput').value.trim();
-  status.style.color='var(--maroon)';
-  if(!entered){status.textContent='Please enter the verification code.';return}
-  if(!pwPendingOtp || Date.now()>pwPendingOtpExpiry){status.textContent='Code expired. Please resend a new code.';return}
-  if(entered!==pwPendingOtp){status.textContent='Incorrect verification code.';return}
-  await setPassword(pwTargetRole,pwPendingNewPassword);
+  if(!okCur){status.textContent='Current password is incorrect.';status.style.color='var(--maroon)';return}
+  await setPassword(pwTargetRole,next);
   status.style.color='#2c5a3e';
   status.textContent=(pwTargetRole==='admin'?'Admin':'Employee')+' password updated successfully.';
-  pwPendingOtp=null; pwPendingNewPassword=null;
-  $('pwCurrent').value=''; $('pwNew').value=''; $('pwConfirm').value=''; $('pwOtpInput').value='';
-  $('pwStep1').style.display='block'; $('pwStep2').style.display='none';
+  $('pwCurrent').value=''; $('pwNew').value=''; $('pwConfirm').value='';
 }
 
 const KEY='mohammadia_final_v4'; // now just a fast local cache — Firestore is the real source of truth
