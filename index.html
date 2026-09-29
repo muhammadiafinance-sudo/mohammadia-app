@@ -292,6 +292,7 @@ body.modal-open.cash-open .bill-alert-fab.show svg{width:28px;height:28px}
 #dailyCashModal .cash-total em{font-style:normal;color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.5px}
 #dailyCashModal .cash-total span{font-size:17px;font-weight:800;color:var(--ink)}
 #dailyCashModal #cashGrid.cash-readonly .xl-cell{opacity:.75;cursor:not-allowed;background:#f1f3f4}
+#dailyCashModal .cash-row input:disabled{opacity:1;-webkit-text-fill-color:currentColor;cursor:default;background:transparent}
 .cp-bottom{flex:none;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 4px 4px;margin-top:14px;border-top:1px solid var(--line)}
 .cp-stat{display:flex;flex-direction:column;padding:6px 18px;border-radius:10px;border:1px solid var(--line);min-width:170px}
 .cp-stat small{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
@@ -707,7 +708,7 @@ body.modal-open.cash-open .bill-alert-fab.show svg{width:28px;height:28px}
   <div class="cp-stat sale"><small id="cashTodaySaleLabel">Today's Sale (POS)</small><b id="cashTodaySale">৳0.00</b></div>
   <div class="cp-stat total"><small>Total Cash</small><b id="cashGrandTotal">৳0.00</b></div>
   <div class="cp-status" id="dailyCashStatus">☁️ Synced automatically</div>
-  <button class="red" id="cashResetBtn" onclick="resetDailyCash()">🗑️ Clear Today's Entries</button>
+  <button class="red" id="cashResetBtn" style="display:none" disabled onclick="resetDailyCash()">🗑️ Clear Today's Entries</button>
 </div>
 </div>
 </div>
@@ -1167,7 +1168,7 @@ function loadCashView(dateKey){
   let picker=$('cashDatePicker');if(picker)picker.value=dateKey;
   let isTodayView=(dateKey===todayKey());
   let grid=$('cashGrid');if(grid)grid.classList.toggle('cash-readonly',!isTodayView);
-  let resetBtn=$('cashResetBtn');if(resetBtn)resetBtn.disabled=!isTodayView;
+  let resetBtn=$('cashResetBtn');if(resetBtn){resetBtn.disabled=true;resetBtn.style.display='none'}
   let saleLabel=$('cashTodaySaleLabel');if(saleLabel)saleLabel.textContent=isTodayView?"Today's Sale (POS)":"That Day's Sale (POS)";
   renderDailyCash();
   updateCashViewBanner();
@@ -1175,7 +1176,7 @@ function loadCashView(dateKey){
 function updateCashViewBanner(){
   let label=$('cashViewLabel');if(!label)return;
   if(cashViewDate===todayKey()){
-    label.className='cp-sub';label.textContent='Today · editable · saves automatically';
+    label.className='cp-sub';label.textContent='Today · add new entries only · saved entries are locked';
   }else{
     let d=new Date(cashViewDate+'T00:00:00');
     label.className='cp-sub ro';
@@ -1222,6 +1223,7 @@ function addCashEntry(col){
 }
 function cashAddKey(e,col){if(e.key==='Enter'){e.preventDefault();addCashEntry(col)}}
 function deleteCashEntry(col,i){
+  return; // entries cannot be deleted after adding
   if(!cashDraft||cashViewDate!==todayKey())return;
   (col==='due'?cashDraft.due:cashDraft[col]).splice(i,1);
   renderDailyCash();
@@ -1230,7 +1232,7 @@ function deleteCashEntry(col,i){
 function renderCashColumn(col,count){
   let list=$('cashList_'+col);if(!list)return;
   let arr=cashDraft[col]||[];
-  let ro=cashViewDate!==todayKey();
+  let ro=true; // saved entries are permanently read-only
   let isBill=col==='bill';
   let html='';
   arr.forEach((row,i)=>{
@@ -1249,7 +1251,7 @@ function renderCashColumn(col,count){
 function renderDueColumn(){
   let list=$('cashList_due');if(!list)return;
   let arr=cashDraft.due||[];
-  let ro=cashViewDate!==todayKey();
+  let ro=true; // saved entries are permanently read-only
   let html='';
   arr.forEach((row,i)=>{
     if(!row)return;
@@ -1258,8 +1260,8 @@ function renderDueColumn(){
   });
   list.innerHTML=html||'<div class="cash-empty-hint">Still empty — add an entry above.</div>';
 }
-function updateCashNote(col,i,val){if(!cashDraft||cashViewDate!==todayKey())return;if(!cashDraft[col][i])cashDraft[col][i]={note:'',amount:0};cashDraft[col][i].note=val;scheduleCashAutoSave()}
-function updateCashAmount(col,i,val){if(!cashDraft||cashViewDate!==todayKey())return;if(!cashDraft[col][i])cashDraft[col][i]={note:'',amount:0};cashDraft[col][i].amount=+val||0;recalcCashTotals();scheduleCashAutoSave()}
+function updateCashNote(col,i,val){return;if(!cashDraft||cashViewDate!==todayKey())return;if(!cashDraft[col][i])cashDraft[col][i]={note:'',amount:0};cashDraft[col][i].note=val;scheduleCashAutoSave()}
+function updateCashAmount(col,i,val){return;if(!cashDraft||cashViewDate!==todayKey())return;if(!cashDraft[col][i])cashDraft[col][i]={note:'',amount:0};cashDraft[col][i].amount=+val||0;recalcCashTotals();scheduleCashAutoSave()}
 /* ---- Electricity Bill "Last Date" alert logic ----
    Two cases, both keyed off the calendar day the bill row was entered on:
    1) Bill entered BEFORE its printed last date has passed -> the alert
@@ -1280,6 +1282,7 @@ function computeBillAlert(entryDateKey,dueDateStr){
   return{alertDate:dateKeyOf(alertD),daysLeft};
 }
 function updateCashDueDate(i,val){
+  return;
   if(!cashDraft||cashViewDate!==todayKey())return;
   if(!cashDraft.bill[i])cashDraft.bill[i]={note:'',amount:0,dueDate:''};
   cashDraft.bill[i].dueDate=val;
@@ -1502,8 +1505,8 @@ function showPaidAllSuccess(){
   clearTimeout(ov._hideTimer);
   ov._hideTimer=setTimeout(()=>ov.classList.remove('show'),2800);
 }
-function updateDueName(i,val){if(!cashDraft||cashViewDate!==todayKey())return;if(!cashDraft.due[i])cashDraft.due[i]={name:'',amount:0};cashDraft.due[i].name=val;scheduleCashAutoSave()}
-function updateDueAmount(i,val){if(!cashDraft||cashViewDate!==todayKey())return;if(!cashDraft.due[i])cashDraft.due[i]={name:'',amount:0};cashDraft.due[i].amount=+val||0;recalcCashTotals();scheduleCashAutoSave()}
+function updateDueName(i,val){return;if(!cashDraft||cashViewDate!==todayKey())return;if(!cashDraft.due[i])cashDraft.due[i]={name:'',amount:0};cashDraft.due[i].name=val;scheduleCashAutoSave()}
+function updateDueAmount(i,val){return;if(!cashDraft||cashViewDate!==todayKey())return;if(!cashDraft.due[i])cashDraft.due[i]={name:'',amount:0};cashDraft.due[i].amount=+val||0;recalcCashTotals();scheduleCashAutoSave()}
 function cashColTotal(col){return (cashDraft&&cashDraft[col]||[]).reduce((a,v)=>a+(+((v&&v.amount)||0)),0)}
 function cashDueTotal(){return (cashDraft&&cashDraft.due||[]).reduce((a,r)=>a+(+((r&&r.amount)||0)),0)}
 /* That day's POS sales (from stock-tied invoices, db.sales) — added into
@@ -1544,6 +1547,7 @@ async function commitCashAutoSave(){
   setCashSyncStatus(ok?'☁️ Synced automatically':'⚠️ Offline — saved locally, will sync when back online');
 }
 function resetDailyCash(){
+  return; // clearing entries is disabled
   if(cashViewDate!==todayKey())return;
   if(!confirm("Clear ALL of today's Daily Cash entries (Electricity Bill, Due Paid, Others, Cost)? This cannot be undone."))return;
   cashDraft=emptyDayData();
@@ -1602,8 +1606,7 @@ document.addEventListener('keydown',e=>{
     return;
   }
   if((e.key==='Backspace'||e.key==='Delete')&&cashSelected.size>1){
-    e.preventDefault();
-    cashSelected.forEach(el=>{el.value='';el.dispatchEvent(new Event('input',{bubbles:true}))});
+    e.preventDefault(); // bulk clear disabled: entries are locked
     return;
   }
 });
