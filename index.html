@@ -244,7 +244,7 @@ body.modal-open.cash-open .bill-alert-fab.show svg{width:28px;height:28px}
 .cp-date button{height:40px;padding:0 14px}
 .cp-close{float:none;height:40px;padding:0 16px;flex:none}
 .cp-main{flex:1;min-height:0;overflow:auto;padding:14px 20px;display:flex;flex-direction:column}
-#dailyCashModal .cash-grid{grid-template-columns:2.1fr 1fr 1fr 1fr;gap:14px;margin:0}
+#dailyCashModal .cash-grid{grid-template-columns:1.4fr 1fr 1fr 1fr;gap:14px;margin:0}
 #dailyCashModal .cash-col{background:#fff;border:1px solid var(--line);border-top:4px solid var(--brass);border-radius:12px;padding:12px 12px 10px;min-height:0;box-shadow:0 1px 3px #0000000f}
 #dailyCashModal .cash-col[data-col=due]{border-top-color:var(--forest)}
 #dailyCashModal .cash-col[data-col=others]{border-top-color:var(--plum)}
@@ -258,17 +258,18 @@ body.modal-open.cash-open .bill-alert-fab.show svg{width:28px;height:28px}
 #dailyCashModal .cash-add-date{flex:0 0 120px;font-size:11.5px;padding:0 5px}
 #dailyCashModal .cash-add-btn{flex:0 0 auto;height:36px;padding:0 14px;border-radius:7px;background:var(--forest);font-size:13px;font-weight:700;white-space:nowrap}
 #dailyCashModal .cash-add-btn:hover{background:#146c2e}
+@media(min-width:701px){#dailyCashModal .cash-col[data-col=bill] .cash-add{flex-wrap:wrap}#dailyCashModal .cash-col[data-col=bill] #cashAdd_bill_note{flex:1 1 100%}#dailyCashModal .cash-col[data-col=bill] .cash-add-amt{flex:1 1 80px}#dailyCashModal .cash-col[data-col=bill] .cash-add-date{flex:1 1 110px}}
 #dailyCashModal #cashGrid.cash-readonly .cash-add{display:none}
 #dailyCashModal .cash-del{flex:none;width:26px;height:26px;padding:0;border-radius:6px;background:transparent;color:var(--maroon);font-size:13px;border:0}
 #dailyCashModal .cash-del:hover{background:#fce8e6}
 #dailyCashModal .cash-empty-hint{padding:20px 6px;text-align:center;color:#9aa0a6;font-size:12.5px;font-style:italic}
 #dailyCashModal .cash-subhead{display:grid;grid-template-columns:24px minmax(0,1fr) 104px 28px;gap:6px;padding:0 0 6px;border-bottom:1px solid var(--line);margin-bottom:8px}
-#dailyCashModal .cash-subhead-bill{grid-template-columns:24px minmax(0,1fr) 92px 132px 28px}
+#dailyCashModal .cash-subhead-bill{grid-template-columns:24px minmax(0,1fr) 84px 116px 28px}
 #dailyCashModal .cash-subhead span{flex:none;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
 #dailyCashModal .cash-subhead span.r{text-align:right;padding-right:4px}
 #dailyCashModal .cash-list{max-height:380px;overflow-y:auto;gap:6px;padding-right:4px}
 #dailyCashModal .cash-row{display:grid;grid-template-columns:24px minmax(0,1fr) 104px 28px;gap:6px;align-items:center}
-#dailyCashModal .cash-row-bill{grid-template-columns:24px minmax(0,1fr) 92px 132px 28px}
+#dailyCashModal .cash-row-bill{grid-template-columns:24px minmax(0,1fr) 84px 116px 28px}
 #dailyCashModal .cash-idx{width:auto;font-size:11px;text-align:center;color:#9aa0a6;font-weight:600}
 #dailyCashModal .cash-row.filled{border-bottom:1px solid #ececec;padding:7px 2px}
 #dailyCashModal .cash-row.filled:last-child{border-bottom:0}
