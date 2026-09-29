@@ -7,59 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>Mohammadia Library & Computer — Pro Offline</title>
 <meta name="theme-color" content="#1a73e8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <script>
-/* ===================== PWA INSTALLABILITY =====================
-   Chrome only offers a real "Install app" prompt (instead of the
-   plain "Create shortcut" option) when the page has a valid Web
-   App Manifest + icons AND is served from a secure origin
-   (https://, or http://localhost). This is generated at runtime
-   so the app stays a single self-contained HTML file — icons are
-   drawn on a <canvas> and turned into PNG data URLs.
-   NOTE: opening this file directly as file:///... in Chrome will
-   NEVER show "Install app", no matter what is in the manifest —
-   Chrome disables PWA install on the file:// origin entirely, so
-   only "Create shortcut" appears there. To get real installability,
-   this file needs to be served over http/https (e.g. Firebase
-   Hosting, since this app already uses Firebase, or any static
-   host / a local dev server on http://localhost). */
-(function(){
-  function makeIcon(size){
-    var c=document.createElement('canvas');c.width=size;c.height=size;
-    var ctx=c.getContext('2d');
-    ctx.fillStyle='#1a73e8';ctx.fillRect(0,0,size,size);
-    ctx.fillStyle='#ffffff';ctx.font='bold '+Math.round(size*0.56)+'px Arial,sans-serif';
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('M',size/2,size/2+size*0.02);
-    return c.toDataURL('image/png');
-  }
-  function setup(){
-    var icon192=makeIcon(192),icon512=makeIcon(512);
-    var manifest={
-      name:'Mohammadia Library & Computer — Pro Offline',
-      short_name:'Mohammadia POS',
-      start_url:'.',
-      scope:'.',
-      display:'standalone',
-      background_color:'#f8f9fa',
-      theme_color:'#1a73e8',
-      icons:[
-        {src:icon192,sizes:'192x192',type:'image/png'},
-        {src:icon512,sizes:'512x512',type:'image/png'}
-      ]
-    };
-    var blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
-    var link=document.createElement('link');
-    link.rel='manifest';link.href=URL.createObjectURL(blob);
-    document.head.appendChild(link);
-    var favicon=document.createElement('link');
-    favicon.rel='icon';favicon.href=icon192;
-    document.head.appendChild(favicon);
-    var appleIcon=document.createElement('link');
-    appleIcon.rel='apple-touch-icon';appleIcon.href=icon192;
-    document.head.appendChild(appleIcon);
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
-})();
+/* PWA: real manifest.webmanifest + icon files + sw.js are served next to
+   index.html (needed for "Install app" on Android Chrome; a runtime blob
+   manifest only works on desktop). Requires https:// (or localhost). */
+if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
+  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(e){console.warn('SW register failed',e)})});
+}
 </script>
 <style>
 :root{--ink:#202124;--pine:#1a73e8;--paper:#ffffff;--paper2:#f8f9fa;--card:#ffffff;--line:#e0e0e0;--brass:#1a73e8;--brass2:#1558b0;--forest:#188038;--amber:#e37400;--maroon:#d93025;--plum:#7c3aed;--steel:#1a73e8;--teal:#0b8043;--muted:#5f6368;--txt:#202124}
