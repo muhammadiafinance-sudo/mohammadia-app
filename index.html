@@ -885,7 +885,7 @@ body.booting #mainApp,body #mainApp.show{display:flex!important}
     <div class="stat t-sell"><div class="stat-top"><span class="stat-label">Stock selling value</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12l-8 8-9-9V3h8l9 9z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg></span></div><div class="value" id="sellValue">৳0.00</div></div>
     <div class="stat t-cost admin-only"><div class="stat-top"><span class="stat-label">Stock cost value</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span></div><div class="value cost-cell" id="costValue" title="Tap to reveal for 3 seconds" onclick="revealCost(this, costValueTotal())">••••••</div></div>
     <div class="stat t-total"><div class="stat-top"><span class="stat-label">Total sales</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span></div><div class="value" id="allSales">৳0.00</div></div>
-    <div class="stat t-alert" id="lowOutCard"><div class="stat-top"><span class="stat-label">Low / out of stock</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></svg></span></div><div class="value" id="lowOut">0</div></div>
+    <div class="stat t-sell" id="totalCashCard"><div class="stat-top"><span class="stat-label">Total Cash (Today)</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M16 14.5h2"/></svg></span></div><div class="value" id="dashTotalCash">৳0.00</div></div>
     <div class="stat t-return"><div class="stat-top"><span class="stat-label">Returns</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg></span></div><div class="value" id="returnsCount">0</div></div>
   </section>
 
@@ -1829,6 +1829,17 @@ function cashDueTotal(){return (cashDraft&&cashDraft.due||[]).reduce((a,r)=>a+(+
    in hand for the day, not just the manually-entered pad amounts. Works
    for past dates too, so a reopened day shows an accurate picture. */
 function salesTotalForDate(k){return db.sales.filter(s=>!s.returned&&dateKeyOf(new Date(s.date))===k).reduce((a,s)=>a+s.total,0)}
+/* Dashboard "Total Cash" card = today's Daily Cash (bill + due + others - cost) + today's POS sales,
+   same formula as the Daily Cash screen's Total Cash. */
+function updateDashTotalCash(){
+  const el=$('dashTotalCash');if(!el)return;
+  try{
+    ensureDailyCash();
+    const k=todayKey(),day=((typeof cashDraft!=='undefined'&&cashDraft&&cashViewDate===k)?cashDraft:(db.dailyCashByDate&&db.dailyCashByDate[k]))||{bill:[],due:[],others:[],cost:[]};
+    const sum=a=>(a||[]).reduce((t,v)=>t+(+((v&&v.amount)||0)),0);
+    el.textContent=money(sum(day.bill)+sum(day.due)+sum(day.others)-sum(day.cost)+salesTotalForDate(k));
+  }catch(e){}
+}
 function recalcCashTotals(){
   if(!cashDraft)return;
   let billT=cashColTotal('bill'),othersT=cashColTotal('others'),costT=cashColTotal('cost'),dueT=cashDueTotal(),saleT=salesTotalForDate(cashViewDate);
@@ -1838,6 +1849,7 @@ function recalcCashTotals(){
   $('cashTotal_due').textContent=money(dueT);
   if($('cashTodaySale'))$('cashTodaySale').textContent=money(saleT);
   $('cashGrandTotal').textContent=money(billT+dueT+othersT-costT+saleT);
+  updateDashTotalCash();
 }
 function setCashSyncStatus(text){const el=$('dailyCashStatus');if(el)el.textContent=text}
 function scheduleCashAutoSave(){
@@ -2463,7 +2475,7 @@ function deferredHistoryRender(){
 }
 const SALES_HISTORY_CAP=300;
 function costValueTotal(){return db.stock.reduce((a,x)=>a+x.qty*(x.cost||0),0)}
-function cards(){let notReturned=db.sales.filter(s=>!s.returned),today=notReturned.filter(s=>isToday(s.date)),ts=today.reduce((a,s)=>a+s.total,0),all=notReturned.reduce((a,s)=>a+s.total,0),returnedList=db.sales.filter(s=>s.returned);stockUnits.textContent=db.stock.reduce((a,x)=>a+x.qty,0);sellValue.textContent=money(db.stock.reduce((a,x)=>a+x.qty*x.price,0));todayInvoices.textContent=today.length;todaySales.textContent=money(ts);allSales.textContent=money(all);lowOut.textContent=db.stock.filter(x=>!x.service&&x.qty<=(+x.lowStock||5)).length;returnsCount.textContent=returnedList.length;todayBar.textContent=money(ts);todayBarCount.textContent=today.length}
+function cards(){let notReturned=db.sales.filter(s=>!s.returned),today=notReturned.filter(s=>isToday(s.date)),ts=today.reduce((a,s)=>a+s.total,0),all=notReturned.reduce((a,s)=>a+s.total,0),returnedList=db.sales.filter(s=>s.returned);stockUnits.textContent=db.stock.reduce((a,x)=>a+x.qty,0);sellValue.textContent=money(db.stock.reduce((a,x)=>a+x.qty*x.price,0));todayInvoices.textContent=today.length;todaySales.textContent=money(ts);allSales.textContent=money(all);updateDashTotalCash();returnsCount.textContent=returnedList.length;todayBar.textContent=money(ts);todayBarCount.textContent=today.length}
 function renderStock(){refreshCategoryUI();let q=(stockSearch.value||'').toLowerCase();const catSel=($('stockCategoryFilter')||{}).value||'';let key=stockSortField?stockSortField.value:'nameAsc';let list=db.stock.filter(x=>textMatch(x,q)&&catMatch(x,catSel)).slice().sort((a,b)=>{if(key==='nameAsc')return a.name.localeCompare(b.name);if(key==='nameDesc')return b.name.localeCompare(a.name);if(key==='qtyAsc')return a.qty-b.qty;if(key==='qtyDesc')return b.qty-a.qty;if(key==='priceAsc')return a.price-b.price;if(key==='priceDesc')return b.price-a.price;return 0});stockTable.innerHTML=list.map(x=>{
   const costCell = currentRole==='admin'
     ? `<td class="num cost-cell admin-only" onclick="revealCost(this,${x.cost||0})">••••••</td>`
@@ -3432,7 +3444,7 @@ function dashRanges(period){
 function renderDashboard(){
   const dd=$('dashDate');if(dd)dd.textContent=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const low=db.stock.filter(x=>!x.service&&x.qty<=(+x.lowStock||5)).length;
-  const lc=$('lowOutCard');if(lc)lc.classList.toggle('is-alert',low>0);
+  updateDashTotalCash();
   const nb=$('navLowBadge');if(nb){nb.textContent=low;nb.style.display=low>0?'inline-flex':'none'}
   const admin=currentRole==='admin';
   const metric=admin?dashMetric:'sales';
