@@ -2325,7 +2325,7 @@ async function mutateCloud(mutator,opts){
   // `result` is only the small state document (stock/purchases/register/etc) —
   // db.sales is a separately-maintained mirror of the sales subcollection and
   // must be preserved, not overwritten with an empty/missing value here.
-  db={...result,sales:db.sales||[]};
+  db={...result,sales:db.sales||[],warranty:db.warranty||[]};
   schedulePersistDb();
   setSyncPill('☁️ Synced',false);
   return result;
@@ -2649,11 +2649,26 @@ function startCloudSync(){
   }, err=>{console.error('Sales sync error:',err);setSyncPill('⚠️ Sales sync error — check Firebase rules/connection',true)});
 
   // Mobile Warranty: live list shared by every device.
-  WARRANTY_COL.onSnapshot(snap=>{
-    db.warranty=snap.docs.map(d=>d.data());
-    schedulePersistDb();
-    if(typeof renderWarranty==='function')renderWarranty();
-  }, err=>{console.error('Warranty sync error:',err)});
+  // Re-subscribes by itself if the connection drops (a failed Firestore listener never restarts on its own).
+  if(!window._warUnsub){
+    let warTries=0;
+    const warListen=()=>{
+      window._warUnsub=WARRANTY_COL.onSnapshot(snap=>{
+        warTries=0;
+        if(snap.empty&&snap.metadata.fromCache&&(db.warranty||[]).length)return; // empty offline cache must not hide saved phones
+        db.warranty=snap.docs.map(d=>d.data());
+        schedulePersistDb();
+        if(typeof renderWarranty==='function')renderWarranty();
+      }, err=>{
+        console.error('Warranty sync error:',err);
+        try{window._warUnsub&&window._warUnsub()}catch(e){}
+        window._warUnsub=null;
+        setTimeout(()=>{if(!window._warUnsub)warListen()},Math.min(30000,2000*Math.pow(2,warTries++)));
+      });
+    };
+    warListen();
+    window.addEventListener('online',()=>{if(!window._warUnsub)warListen()});
+  }
 }
 function seed(){/* no demo data — new shops start with an empty stock list */}
 function isToday(s){let d=new Date(s),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate()}
