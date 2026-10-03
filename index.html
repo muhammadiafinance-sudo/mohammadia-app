@@ -789,6 +789,199 @@ body.booting #mainApp,body #mainApp.show{display:flex!important}
 .qs-amt em.qs-st{font-size:11px;font-weight:700;color:var(--muted)}
 .qs-amt{padding:0 2px}
 .qs-bar{display:none}
+
+/* ---- Thermal (machine) receipt invoice: narrow 80mm, with signatures ---- */
+.sheet{min-width:0;justify-content:center;padding:10px 0}
+.copy.blank{display:none}
+.copy.rc{width:302px;max-width:100%;padding:12px 12px 8px;border:1px dashed #c4c7c9;background:#fff;color:#111;font-family:'Courier New',Courier,monospace;font-size:12px;line-height:1.45}
+.inv-prev .sheet.one{display:flex}
+.inv-prev .sheet.one .copy.rc{width:302px}
+.rc-shop{text-align:center;font-weight:800;font-size:14px;line-height:1.3;letter-spacing:.3px}
+.rc-sub{text-align:center;font-size:11px;margin-top:2px;letter-spacing:1px}
+.rc-hr{border-top:1px dashed #000;margin:7px 0}.rc-hr.thin{margin:4px 0;border-top-style:dotted}
+.rc-r{display:flex;justify-content:space-between;gap:8px}
+.rc-r span:last-child{text-align:right;white-space:nowrap}
+.rc-r span:first-child{min-width:0;overflow-wrap:anywhere}
+.rc-th{font-weight:800;font-size:11px;text-transform:uppercase}
+.rc-item{margin-bottom:5px}.rc-name{font-weight:700;overflow-wrap:anywhere}
+.rc-grand{font-size:15px;font-weight:800}
+.rc-thanks{text-align:center;font-size:11.5px;margin:2px 0 10px}
+.rc-sign{display:flex;gap:14px;margin-top:6px}
+.rc-sign>div{flex:1;text-align:center;font-size:10px}
+.rc-sign i{display:block;height:38px;border-bottom:1px solid #000}
+.rc-sign span{display:block;margin-top:3px}
+.rc-cut{text-align:center;margin-top:10px;color:#888;font-size:10px;letter-spacing:1px}
+.copy.rc .stamp{top:70px;right:8px;font-size:12px;padding:3px 10px;letter-spacing:1px;font-family:inherit}
+@media print{
+  .sheet{padding:0;justify-content:flex-end}
+  .copy.rc{box-sizing:border-box;width:70mm;max-width:none;padding:2mm 3mm;border:none!important;font-size:11.5px;break-inside:avoid}
+  /* Rest of the page must be completely blank: no frame/border/padding/shadow from the panel wrapper. */
+  #invoicePrintArea,#invoicePrintArea.panel{border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;background:none!important;border-radius:0!important;outline:0!important}
+  #invoicePrintArea .invoice{overflow:visible!important;border:0!important;padding:0!important;background:none!important}
+  #invoicePrintArea .sheet{border:0!important;background:none!important;box-shadow:none!important}
+  #invoicePrintArea .copy.blank{display:none!important}
+  .rc-cut{display:none}
+}
+.rc-addr{text-align:center;font-size:11px;line-height:1.4;margin-top:3px}
+.rc-sub{margin-top:5px}
+
+/* ===== Quick Sell: soft card redesign (wider cards, one text size, no bottom lines) ===== */
+.qs-brand::after,.qs-bar{display:none!important}
+.qs-types,.qs-amts{border-left:0;padding-left:0}
+.qs-row,.qs-types,.qs-amts{gap:8px}
+.qs-row2{margin-top:8px}
+.qs-brand,.qs-type,.qs-amt{--tx:color-mix(in srgb,var(--qc,#5f6368) 72%,#000);border:0;box-shadow:0 1px 2px #0000000f,0 2px 6px #0000000a;font-size:15px;font-weight:700;letter-spacing:0;line-height:1.15;color:var(--tx)}
+/* brand cards */
+.qs-brand,.qs-brand.long{width:96px;height:52px;padding:0 8px;border-radius:14px;background:#f4f6f9;background:color-mix(in srgb,var(--qc) 11%,#fff);font-size:15px;text-align:center}
+.qs-brand span,.qs-brand.long span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qs-brand:hover{background:color-mix(in srgb,var(--qc) 17%,#fff);box-shadow:0 3px 10px #0000001a;border:0}
+.qs-brand.on{background:color-mix(in srgb,var(--qc) 24%,#fff);color:var(--tx);box-shadow:0 0 0 2px var(--qc),0 4px 12px #0000001f}
+/* MIN / MB pills */
+.qs-types{margin-top:10px}
+.qs-type{min-width:96px;height:40px;border-radius:12px;background:#eef1f5;color:#3c4043;padding:0 16px}
+.qs-type:hover{background:#e4e8ee}
+.qs-type.on{background:#dfe8fb;color:#174ea6;box-shadow:0 0 0 2px #1a73e8,0 3px 10px #1a73e82e}
+.qs-type:disabled{background:#f4f5f7}
+/* amount cards sit on a soft tray, no divider lines */
+.qs-amts{margin-top:10px;padding:10px;background:#f6f8fa;background:color-mix(in srgb,var(--qc,#5f6368) 6%,#fff);border-radius:16px;max-width:calc(5*96px + 4*8px + 20px)}
+.qs-amt{width:96px;height:58px;border-radius:13px;gap:3px;padding:0 6px;background:#fff;overflow:visible}
+.qs-amt:hover{box-shadow:0 0 0 1.5px color-mix(in srgb,var(--qc) 55%,#fff),0 4px 12px #00000018;border:0}
+.qs-amt b{font-size:15px;font-weight:700;color:var(--tx)}
+.qs-amt em,.qs-amt em.qs-st{font-size:11px;font-weight:600;color:#6b7280}
+.qs-amt.added-flash{animation:qsAmtFlash .55s ease-out}
+.qs-amt:disabled{opacity:.45;box-shadow:none;background:#f1f3f4}
+/* cart quantity badge: soft green pill */
+.qs-badge,.qs-amt .qs-badge{top:-7px;right:-5px;min-width:20px;height:20px;line-height:20px;padding:0 6px;border-radius:999px;border:2px solid #fff;box-sizing:content-box;background:#2e9e5b;color:#fff;font-size:11px;font-weight:700;box-shadow:0 2px 6px #00000030}
+/* bottom bar: soft, borderless */
+.qsale-quickbar{background:#f4f6f9;border:0;border-radius:14px}
+@media(max-width:560px){
+  .qs-brand,.qs-brand.long,.qs-amt{width:calc((100% - 24px)/4);min-width:70px}
+  .qs-type{min-width:84px}
+  .qs-amts{max-width:none}
+}
+
+/* hover must stay soft (global button:hover turns buttons dark blue) */
+.qs-amt:hover{background:color-mix(in srgb,var(--qc) 10%,#fff);color:var(--tx)}
+.qs-amt:disabled:hover{background:#f1f3f4;box-shadow:none}
+.qs-type:hover{color:#3c4043}.qs-type.on:hover{background:#dfe8fb;color:#174ea6}
+.qs-brand:hover{color:var(--tx)}
+/* long brand names (e.g. Passport Photo) wrap to 2 lines at the SAME text size */
+.qs-brand span,.qs-brand.long span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.15}
+
+/* ---- Quick Sale customization: card layout editor ---- */
+.qsl-h{font-size:15px;margin:6px 0 4px;color:var(--ink)}
+.qsl-lane{background:#f6f8fa;border:1.5px dashed #d5dae1;border-radius:14px;padding:8px 10px 10px;margin-top:10px;transition:background .15s,border-color .15s}
+.qsl-lane.over{background:#eaf2fe;border-color:#1a73e8}
+.qsl-lane-h{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.qsl-del{background:#fff;color:#c5221f;border:1px solid #e8eaed;border-radius:8px;padding:2px 9px;font-size:12px;line-height:1.4}
+.qsl-del:hover{background:#fce8e6;color:#c5221f}
+.qsl-cards{display:flex;flex-wrap:wrap;gap:8px;min-height:46px;align-items:center}
+.qsl-empty{display:none;font-size:12.5px;color:#9aa0a6;padding:0 6px}
+.qsl-lane:not(.has) .qsl-empty{display:block}
+.qsl-card{--tx:color-mix(in srgb,var(--qc) 72%,#000);min-width:92px;height:44px;padding:0 14px 0 10px;border-radius:12px;background:#fff;background:color-mix(in srgb,var(--qc) 12%,#fff);color:var(--tx);font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 1px 3px #00000018;white-space:nowrap}
+.qsl-card i{font-style:normal;opacity:.45;font-size:15px;line-height:1}
+.qsl-card:hover{box-shadow:0 2px 8px #00000028}
+.qsl-card.dragging{opacity:.35;outline:2px dashed var(--qc);outline-offset:-2px}
+.qsl-ghost{position:fixed;z-index:100000;pointer-events:none;margin:0;cursor:grabbing;box-shadow:0 10px 26px #00000040;transform:scale(1.06) rotate(-2deg)}
+.qsl-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.qsl-add{background:#e8f0fe;color:#174ea6;border:0;border-radius:10px;padding:9px 16px;font-size:13px}
+.qsl-add:hover{background:#d2e3fc;color:#174ea6}
+.qsl-reset{background:#f1f3f4;color:#3c4043;border:0;border-radius:10px;padding:9px 16px;font-size:13px}
+.qsl-reset:hover{background:#e8eaed;color:#3c4043}
+
+/* ---- phone fit: every card text same size, nothing overflows the card ---- */
+@media(max-width:560px){
+  .qs-row,.qs-types,.qs-amts{gap:6px}
+  .qs-brand,.qs-brand.long,.qs-amt{width:calc((100% - 18px)/4);min-width:0}
+  .qs-brand,.qs-brand.long{padding:0 3px;font-size:13.5px}
+  .qs-brand span,.qs-brand.long span{overflow-wrap:anywhere;word-break:normal}
+  .qs-type{font-size:13.5px;min-width:76px;padding:0 12px}
+  .qs-amt b{font-size:13.5px}
+  .qs-amts{padding:8px}
+}
+
+/* ===== Quick Sale card size (Customization → Card Size) ===== */
+.qsz-n2{--qsf:.72;--qsn:6}.qsz-n1{--qsf:.86;--qsn:5}.qsz-p1{--qsf:1.2;--qsn:3}.qsz-p2{--qsf:1.42;--qsn:2}
+[class*="qsz-"] .qs-brand,[class*="qsz-"] .qs-brand.long{width:calc(96px*var(--qsf,1));height:calc(52px*var(--qsf,1));padding:0 calc(8px*var(--qsf,1));font-size:max(9.5px,calc(15px*var(--qsf,1)))}
+[class*="qsz-"] .qs-type{min-width:calc(96px*var(--qsf,1));height:calc(40px*var(--qsf,1));padding:0 calc(16px*var(--qsf,1));font-size:max(9.5px,calc(15px*var(--qsf,1)))}
+[class*="qsz-"] .qs-amt{width:calc(96px*var(--qsf,1));height:calc(58px*var(--qsf,1));padding:0 calc(6px*var(--qsf,1))}
+[class*="qsz-"] .qs-amt b{font-size:max(9.5px,calc(15px*var(--qsf,1)))}
+[class*="qsz-"] .qs-amt em,[class*="qsz-"] .qs-amt em.qs-st{font-size:max(8.5px,calc(11px*var(--qsf,1)))}
+[class*="qsz-"] .qs-amts{max-width:calc(5*96px*var(--qsf,1) + 52px)}
+@media(max-width:560px){
+  [class*="qsz-"] .qs-brand,[class*="qsz-"] .qs-brand.long,[class*="qsz-"] .qs-amt{width:calc((100% - 6px*(var(--qsn,4) - 1))/var(--qsn,4));min-width:0}
+  [class*="qsz-"] .qs-type{min-width:calc(76px*var(--qsf,1))}
+  [class*="qsz-"] .qs-amts{max-width:none}
+  [class*="qsz-"] .qs-brand,[class*="qsz-"] .qs-brand.long{font-size:max(9px,calc(13.5px*var(--qsf,1)))}
+  [class*="qsz-"] .qs-amt b{font-size:max(9px,calc(13.5px*var(--qsf,1)))}
+}
+.qsz-ctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 12px}
+.qsz-ctl .qsz-step{width:44px;height:40px;border-radius:10px;background:#e8f0fe;color:#174ea6;border:0;font-size:22px;font-weight:700;line-height:1;padding:0}
+.qsz-ctl .qsz-step:hover{background:#d2e3fc;color:#174ea6}
+.qsz-ctl .qsz-step:disabled{opacity:.4;cursor:not-allowed}
+.qsz-ctl b{min-width:120px;text-align:center;font-size:15px;color:var(--ink)}
+.qszprev{background:#f6f8fa;border:1.5px dashed #d5dae1;border-radius:14px;padding:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.qszprev .qs-brand,.qszprev .qs-amt{pointer-events:none}
+
+/* ===== Dashboard: Total Cash card ===== */
+.stat.t-cash{--tone:#0b8043;--tint:#e3f4ea;cursor:pointer}
+
+/* ===== Mobile Warranty page ===== */
+.war-wrap{flex:none}
+.war-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:2px 0 12px}
+.war-tab{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:#fff;color:var(--ink);border:1.5px solid var(--line);border-radius:14px;padding:11px 13px;box-shadow:none;position:relative}
+.war-tab .n{font-size:26px;font-weight:800;line-height:1.05;color:var(--wc,#12213b)}
+.war-tab b{font-size:13.5px;font-weight:700}
+.war-tab small{font-size:11.5px;color:var(--muted);font-weight:500}
+.war-tab:hover{background:#f8f9fa;color:var(--ink)}
+.war-tab.on{background:var(--wt,#e9edf4);border-color:var(--wc,#12213b);box-shadow:0 0 0 1px var(--wc,#12213b)}
+.war-tab.on:hover{background:var(--wt,#e9edf4)}
+.st-all{--wc:#12213b;--wt:#e9edf4}.st-received{--wc:#e37400;--wt:#fdf0dc}.st-company{--wc:#1a73e8;--wt:#e8f0fe}.st-back{--wc:#0b8043;--wt:#e3f4ea}.st-delivered{--wc:#5f6368;--wt:#f1f3f4}
+.war-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.war-bar input{flex:1;min-width:200px}
+.war-add{background:var(--brass);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:700;white-space:nowrap}
+.war-card{background:#fff;border:1px solid var(--line);border-left:5px solid var(--wc,#5f6368);border-radius:14px;padding:13px 15px;margin-bottom:11px}
+.war-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.war-model{font-size:16px;font-weight:800;color:var(--ink)}
+.war-who{font-size:13.5px;color:var(--muted);margin-top:2px}
+.war-who a{color:inherit;text-decoration:none;font-weight:600}
+.war-pill{display:inline-flex;align-items:center;gap:6px;background:var(--wt);color:var(--wc);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:800;white-space:nowrap}
+.war-age{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:5px;text-align:right}
+.war-age.late{color:var(--maroon)}
+.war-prob{margin:9px 0 2px;font-size:13.5px;color:var(--ink)}
+.war-prob span{color:var(--muted);font-weight:600}
+.war-imei{font-size:12px;color:var(--muted);margin-top:2px}
+.war-tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:11px 0 9px}
+.war-step{display:flex;gap:7px;align-items:flex-start;background:#f8f9fa;border-radius:10px;padding:8px 9px;opacity:.55;min-width:0}
+.war-step.done{opacity:1;background:#f1f6f2}
+.war-step.cur{opacity:1;background:var(--wt);box-shadow:0 0 0 1.5px var(--wc)}
+.war-step i{font-style:normal;font-size:17px;line-height:1.2}
+.war-step b{display:block;font-size:12px;color:var(--ink)}
+.war-step span{display:block;font-size:12px;color:var(--muted)}
+.war-step em{display:block;font-style:normal;font-size:11.5px;color:var(--ink);margin-top:2px;overflow-wrap:anywhere}
+.war-next{font-size:13px;font-weight:700;color:var(--wc);margin:2px 0 8px}
+.war-act{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.war-go{background:var(--wc);color:#fff;border:0;border-radius:10px;padding:9px 15px;font-weight:700;font-size:13.5px}
+.war-go:hover{background:var(--wc);color:#fff;filter:brightness(.92)}
+.war-sec{background:#f1f3f4;color:#3c4043;border:0;border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:600}
+.war-sec:hover{background:#e8eaed;color:#3c4043}
+.war-sec.del{color:#c5221f}.war-sec.del:hover{background:#fce8e6;color:#c5221f}
+.war-note{font-size:12.5px;color:var(--muted);margin-top:6px;overflow-wrap:anywhere}
+.war-empty{text-align:center;color:#9aa0a6;padding:38px 12px;background:#fff;border:1px dashed var(--line);border-radius:14px}
+.war-ov{position:fixed;inset:0;background:#202124aa;z-index:900;display:flex;align-items:center;justify-content:center;padding:14px}
+.war-dlg{background:#fff;border-radius:16px;max-width:480px;width:100%;max-height:92vh;overflow:auto;padding:20px 20px 16px;box-shadow:0 8px 30px #00000040}
+.war-dlg h3{margin:0 0 12px;font-size:18px;color:var(--ink)}
+.war-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.war-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.war-f.full{grid-column:1/-1}
+.war-f i{color:#c5221f;font-style:normal}
+.war-f input,.war-f select,.war-f textarea{width:100%;box-sizing:border-box}
+.war-err{color:#c5221f;font-size:12.5px;font-weight:600;min-height:18px;margin-top:8px}
+.war-dlg-act{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+.war-cancel{background:#f1f3f4;color:#3c4043;border:0;border-radius:10px;padding:10px 16px}
+.war-cancel:hover{background:#e8eaed;color:#3c4043}
+.war-ok{background:var(--brass);color:#fff;border:0;border-radius:10px;padding:10px 18px;font-weight:700}
+@media(max-width:700px){.war-tl{grid-template-columns:1fr 1fr}.war-fields{grid-template-columns:1fr}.war-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head>
 <body class="booting">
 
@@ -851,6 +1044,7 @@ body.booting #mainApp,body #mainApp.show{display:flex!important}
     <button class="sb-item" data-page="productModal" onclick="openActionModal('productModal')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg><span>Add Product</span></button>
     <button class="sb-item" data-page="dailyCashModal" onclick="openDailyCash()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><span>Daily Cash / Others</span></button>
     <button class="sb-item" onclick="openBillAlertModal()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg><span>Bill Alerts</span></button>
+    <button class="sb-item" data-page="warrantyModal" onclick="openWarranty()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10.5 18.5h3M9.5 10.5l2 2 3.5-4"/></svg><span>Mobile Warranty</span><em class="sb-badge" id="navWarBadge"></em></button>
     <div class="sb-group">Records</div>
     <button class="sb-item" data-page="stockListModal" onclick="openStockList()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg><span>Stock Register</span></button>
     <button class="sb-item" data-page="todaySalesModal" onclick="openTodaySales()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Today's Sales</span></button>
@@ -885,7 +1079,7 @@ body.booting #mainApp,body #mainApp.show{display:flex!important}
     <div class="stat t-sell"><div class="stat-top"><span class="stat-label">Stock selling value</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12l-8 8-9-9V3h8l9 9z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg></span></div><div class="value" id="sellValue">৳0.00</div></div>
     <div class="stat t-cost admin-only"><div class="stat-top"><span class="stat-label">Stock cost value</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span></div><div class="value cost-cell" id="costValue" title="Tap to reveal for 3 seconds" onclick="revealCost(this, costValueTotal())">••••••</div></div>
     <div class="stat t-total"><div class="stat-top"><span class="stat-label">Total sales</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span></div><div class="value" id="allSales">৳0.00</div></div>
-    <div class="stat t-sell" id="totalCashCard"><div class="stat-top"><span class="stat-label">Total Cash (Today)</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M16 14.5h2"/></svg></span></div><div class="value" id="dashTotalCash">৳0.00</div></div>
+    <div class="stat t-cash" id="totalCashCard" onclick="openDailyCash()" title="Today's Total Cash (same as Daily Cash) — tap to open"><div class="stat-top"><span class="stat-label">Total Cash</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span></div><div class="value" id="totalCash">৳0.00</div></div>
     <div class="stat t-return"><div class="stat-top"><span class="stat-label">Returns</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg></span></div><div class="value" id="returnsCount">0</div></div>
   </section>
 
@@ -929,7 +1123,7 @@ body.booting #mainApp,body #mainApp.show{display:flex!important}
     <span class="qsale-topbar-title">⚡ Quick Sale</span>
     <button type="button" class="qsale-menu-toggle" onclick="toggleQsaleMenu(event)" aria-label="Quick Sale menu" title="Menu">⋮</button>
     <div class="menu-dropdown qsale-menu-dropdown" id="qsaleMenuDropdown">
-      <button type="button" onclick="openQsaleCustomizeModal()">🎨 Color Customization</button>
+      <button type="button" onclick="openQsaleCustomizeModal()">🎨 Customization</button>
     </div>
   </div>
   <div id="qsaleInner"></div>
@@ -959,7 +1153,7 @@ body.booting #mainApp,body #mainApp.show{display:flex!important}
 
 
 
-<section class="panel section printarea" id="invoicePrintArea" style="display:none"><h2 class="no-print">🖨️ Latest Invoice — A4 Landscape / Customer Copy</h2><div class="invoice"><div class="sheet" id="invoiceSheet"></div></div><div class="actions no-print"><button onclick="printInvoice()">Print Latest Invoice</button></div></section>
+<section class="panel section printarea" id="invoicePrintArea" style="display:none"><h2 class="no-print">🖨️ Latest Invoice — A4 Landscape (receipt on right ¼)</h2><div class="invoice"><div class="sheet" id="invoiceSheet"></div></div><div class="actions no-print"><button onclick="printInvoice()">Print Latest Invoice</button></div></section>
 
 <section class="panel section printarea" id="lowStockPrintArea" style="display:none">
   <div class="lowstock-print-head">
@@ -981,12 +1175,13 @@ body.booting #mainApp,body #mainApp.show{display:flex!important}
 <option value="priceAsc">Sort: Price (Low → High)</option>
 <option value="priceDesc">Sort: Price (High → Low)</option>
 </select></div><div class="tablewrap"><table><thead><tr><th>Item</th><th>Category</th><th>Barcode</th><th class="num">Qty</th><th class="num">Selling</th><th class="num admin-only" title="Click a value to reveal for 3 seconds">Purchase</th><th>Status</th><th class="admin-only">Action</th><th>Cart</th></tr></thead><tbody id="stockTable"></tbody></table></div></div></div>
+<div class="modal" id="warrantyModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('warrantyModal')" aria-label="Close">✕ Close</button><h2>📱 Mobile Warranty</h2><p class="hint">Customer's phone received → given to Company → Company returns it repaired or replaced → given back to Customer. Tap a box below to see which phones are in each step.</p><div class="war-wrap"><div class="war-tabs" id="warTabs"></div><div class="war-bar"><input type="search" id="warSearch" placeholder="Search customer, mobile no., model, IMEI, problem…" oninput="renderWarranty()"><button type="button" class="war-add" onclick="warOpenForm()">＋ New Warranty Phone</button></div><div id="warList"></div></div></div></div>
 <div class="modal" id="todaySalesModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('todaySalesModal')" aria-label="Close">✕ Close</button><h2>📅 Today's Sales</h2><p class="hint">Every invoice created today.</p><div class="status" style="margin-bottom:11px">Today's total: <b id="todayBar">৳0.00</b> · Invoices: <b id="todayBarCount">0</b></div><div class="tablewrap"><table><thead><tr><th>Invoice</th><th>Time</th><th>Customer</th><th>Items</th><th class="num">Discount</th><th class="num">Total</th><th>Action</th></tr></thead><tbody id="todayTable"></tbody></table></div></div></div>
 <div class="modal" id="salesHistoryModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('salesHistoryModal')" aria-label="Close">✕ Close</button><h2>🧾 Sales History</h2><p class="hint">Complete sales history — search by invoice, date, customer or item.</p><div class="search-wrap search-wrap-block"><input class="search" id="salesSearch" placeholder="Search invoice, date, customer or item..." oninput="renderSales();toggleSearchClear('salesSearch')" autocomplete="off"><button type="button" class="search-x" id="salesSearchX" onclick="clearSearchField('salesSearch',renderSales)" aria-label="Clear search">✕</button></div><div class="tablewrap"><table><thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Items</th><th class="num">Total</th><th>Action</th></tr></thead><tbody id="salesTable"></tbody></table></div></div></div>
 <div class="modal" id="invoiceHistoryModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('invoiceHistoryModal')" aria-label="Close">✕ Close</button><h2>🖨️ Print Invoice</h2><p class="hint">Invoice history — tap an invoice to preview it, or press Print.</p><div class="inv-split"><div class="inv-list"><div class="search-wrap search-wrap-block"><input class="search" id="invSearch" placeholder="Search invoice, date, customer or item..." oninput="renderInvoiceHistory();toggleSearchClear('invSearch')" autocomplete="off"><button type="button" class="search-x" id="invSearchX" onclick="clearSearchField('invSearch',renderInvoiceHistory)" aria-label="Clear search">✕</button></div><div class="tablewrap"><table><thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th class="num">Total</th><th>Action</th></tr></thead><tbody id="invHistTable"></tbody></table></div></div><div class="inv-prev"><div class="inv-prev-head"><b id="invPrevTitle">Invoice preview</b><button type="button" class="green" id="invPrevPrint" onclick="printSelectedInvoice()">🖨️ Print Invoice</button></div><div class="inv-prev-body" id="invPreview"><div class="empty">Select an invoice to preview it.</div></div></div></div></div></div>
 <div class="modal" id="productModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('productModal')" aria-label="Close">✕ Close</button><h2>➕ Add Product</h2><p class="hint">Add new inventory or update an existing product.</p><div id="productPanelHost"></div></div></div>
 <div class="modal" id="salesModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('salesModal')" aria-label="Close">✕ Close</button><h2>🛒 Sales</h2><p class="hint">Search products, build the cart, apply discounts and generate an invoice.</p><div id="salesPanelHost"></div></div></div>
-<div class="modal" id="qsaleCustomizeModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('qsaleCustomizeModal')" aria-label="Close">✕ Close</button><h2>🎨 Quick Sale Color Customization</h2><p class="hint">Every Quick Sale item is grouped and colored automatically by the <b>first word</b> of its name — items sharing the same first word always share the same color. Pick a custom color for a group below, or leave it on Auto.</p><div id="qsaleCustomizeList"></div></div></div>
+<div class="modal" id="qsaleCustomizeModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('qsaleCustomizeModal')" aria-label="Close">✕ Close</button><h2>🎨 Quick Sale Customization</h2><div class="qsl-sec"><h3 class="qsl-h">📏 Card Size</h3><p class="hint">Make the Quick Sale cards smaller or bigger. Saved on this device (phone and computer can have different sizes).</p><div class="qsz-ctl"><button type="button" class="qsz-step" id="qszMinus" onclick="qsSizeStep(-1)" aria-label="Smaller">−</button><b id="qsSizeLabel">Normal</b><button type="button" class="qsz-step" id="qszPlus" onclick="qsSizeStep(1)" aria-label="Bigger">+</button><button type="button" class="qsl-reset" onclick="qsSizeReset()">↺ Normal size</button></div><div class="qszprev" id="qsSizePrev"><button type="button" tabindex="-1" class="qs-brand" style="--qc:#1a73e8"><span>Sample</span></button><button type="button" tabindex="-1" class="qs-type" style="--qc:#1a73e8">MIN</button><button type="button" tabindex="-1" class="qs-amt" style="--qc:#1a73e8"><b>50</b><em class="qs-st">৳ 55</em></button></div></div><div class="qsl-sec" style="margin-top:20px"><h3 class="qsl-h">🧩 Card Layout</h3><p class="hint">Drag a card (hold &amp; move) to change its position or to move it to another line. Add as many lines as you like — 2, 3, 4 or more.</p><div id="qsLayoutEditor"></div><div class="qsl-actions"><button type="button" class="qsl-add" onclick="qsAddRow()">＋ Add line</button><button type="button" class="qsl-reset" onclick="qsResetLayout()">↺ Reset layout</button></div></div><h3 class="qsl-h" style="margin-top:22px">🎨 Colors</h3><p class="hint">Every Quick Sale item is grouped and colored automatically by the <b>first word</b> of its name — items sharing the same first word always share the same color. Pick a custom color for a group below, or leave it on Auto.</p><div id="qsaleCustomizeList"></div></div></div>
 <div class="modal" id="lowStockModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('lowStockModal')" aria-label="Close">✕ Close</button><h2>📉 Low Stock Report</h2><p class="hint">Items with stock below 10. Remove any item you don't want in the report using the ✕ button, then print or save as PDF.</p>
 <div class="cartsearch" style="margin-bottom:10px"><select id="lowStockSort" onchange="renderLowStockList()" style="flex:1">
 <option value="qtyAsc">Sort: Stock (Low → High)</option>
@@ -1129,6 +1324,7 @@ try{ fsdb.enablePersistence({synchronizeTabs:true}).catch(()=>{}); }catch(e){}
 // ever touch a few small documents, not the whole history.
 const CLOUD_DOC = fsdb.collection('mohammadia_library').doc('main_db');
 const SALES_COL = CLOUD_DOC.collection('sales');
+const WARRANTY_COL = CLOUD_DOC.collection('warranty'); // one tiny doc per warranty phone — no device can overwrite another's entries
 // Login credentials (salted password hashes for admin/employee) live in their
 // own small document, kept separate from the stock/sales document above so
 // that a password change never touches (or races with) business data.
@@ -1412,7 +1608,7 @@ function updateCloudReady(){
 let legacyEmbeddedSales=null, migrationAttempted=false;
 const $=id=>document.getElementById(id), money=n=>'৳'+Number(n||0).toFixed(2), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function setSyncPill(text,isWarning){const el=document.getElementById('cloudSyncPill');if(!el)return;el.textContent=text;el.style.background=isWarning?'#fbeaea':'';el.style.color=isWarning?'var(--maroon)':''}
-function ensureSchema(){if(!Array.isArray(db.stockRegister))db.stockRegister=[];if(!Array.isArray(db.purchases))db.purchases=[];if(!Array.isArray(db.dailyCashHistory))db.dailyCashHistory=[];if(!Array.isArray(db.stock))db.stock=[];db.stock.forEach(x=>{if(x.barcode===undefined||x.barcode===null)x.barcode='';if(x.service===undefined)x.service=false;if(x.quick===undefined)x.quick=false;if(x.lowStock===undefined||x.lowStock===null||x.lowStock==='')x.lowStock=5});if(!db.qsaleColors||typeof db.qsaleColors!=='object')db.qsaleColors={};ensureDailyCash()}
+function ensureSchema(){if(!Array.isArray(db.warranty))db.warranty=[];if(!Array.isArray(db.stockRegister))db.stockRegister=[];if(!Array.isArray(db.purchases))db.purchases=[];if(!Array.isArray(db.dailyCashHistory))db.dailyCashHistory=[];if(!Array.isArray(db.stock))db.stock=[];db.stock.forEach(x=>{if(x.barcode===undefined||x.barcode===null)x.barcode='';if(x.service===undefined)x.service=false;if(x.quick===undefined)x.quick=false;if(x.lowStock===undefined||x.lowStock===null||x.lowStock==='')x.lowStock=5});if(!db.qsaleColors||typeof db.qsaleColors!=='object')db.qsaleColors={};ensureDailyCash()}
 /* ---- Daily Cash / Others pad ----
    Manual cash-tracking sheet for sales that are NOT tied to stock items
    (e.g. photocopy, services, misc). Every calendar day gets its own
@@ -1829,17 +2025,6 @@ function cashDueTotal(){return (cashDraft&&cashDraft.due||[]).reduce((a,r)=>a+(+
    in hand for the day, not just the manually-entered pad amounts. Works
    for past dates too, so a reopened day shows an accurate picture. */
 function salesTotalForDate(k){return db.sales.filter(s=>!s.returned&&dateKeyOf(new Date(s.date))===k).reduce((a,s)=>a+s.total,0)}
-/* Dashboard "Total Cash" card = today's Daily Cash (bill + due + others - cost) + today's POS sales,
-   same formula as the Daily Cash screen's Total Cash. */
-function updateDashTotalCash(){
-  const el=$('dashTotalCash');if(!el)return;
-  try{
-    ensureDailyCash();
-    const k=todayKey(),day=((typeof cashDraft!=='undefined'&&cashDraft&&cashViewDate===k)?cashDraft:(db.dailyCashByDate&&db.dailyCashByDate[k]))||{bill:[],due:[],others:[],cost:[]};
-    const sum=a=>(a||[]).reduce((t,v)=>t+(+((v&&v.amount)||0)),0);
-    el.textContent=money(sum(day.bill)+sum(day.due)+sum(day.others)-sum(day.cost)+salesTotalForDate(k));
-  }catch(e){}
-}
 function recalcCashTotals(){
   if(!cashDraft)return;
   let billT=cashColTotal('bill'),othersT=cashColTotal('others'),costT=cashColTotal('cost'),dueT=cashDueTotal(),saleT=salesTotalForDate(cashViewDate);
@@ -1849,7 +2034,13 @@ function recalcCashTotals(){
   $('cashTotal_due').textContent=money(dueT);
   if($('cashTodaySale'))$('cashTodaySale').textContent=money(saleT);
   $('cashGrandTotal').textContent=money(billT+dueT+othersT-costT+saleT);
-  updateDashTotalCash();
+  {const tc=$('totalCash');if(tc&&cashViewDate===todayKey())tc.textContent=money(billT+dueT+othersT-costT+saleT)}
+}
+/* Same formula as the Daily Cash page's Total Cash — used by the dashboard card. */
+function cashGrandForDate(k){
+  const d=(k===cashViewDate&&cashDraft)?cashDraft:(db.dailyCashByDate&&db.dailyCashByDate[k]);
+  const sum=a=>(a||[]).reduce((s,v)=>s+(+((v&&v.amount)||0)),0);
+  return sum(d&&d.bill)+sum(d&&d.due)+sum(d&&d.others)-sum(d&&d.cost)+salesTotalForDate(k);
 }
 function setCashSyncStatus(text){const el=$('dailyCashStatus');if(el)el.textContent=text}
 function scheduleCashAutoSave(){
@@ -2034,7 +2225,7 @@ async function save(){
     // db.sales is kept in memory as a mirror of the `sales` subcollection —
     // it must never be written back into the small state document.
     // JSON round-trip drops `undefined` fields, which Firestore refuses to store.
-    const stateData=JSON.parse(JSON.stringify(db)); delete stateData.sales;
+    const stateData=JSON.parse(JSON.stringify(db)); delete stateData.sales; delete stateData.warranty;
     await CLOUD_DOC.set(stateData);
     setSyncPill('☁️ Synced',false);
     return true;
@@ -2110,7 +2301,7 @@ async function migrateLegacySalesIfNeeded(){
    device's local `db` happens to hold, every stock/sale change is now
    applied on top of whatever is actually on the server at that instant, so
    another tab/device open elsewhere can no longer resurrect a deleted item. */
-async function mutateCloud(mutator){
+async function mutateCloud(mutator,opts){
   let result=null;
   try{
     await fsdb.runTransaction(async(tx)=>{
@@ -2124,8 +2315,10 @@ async function mutateCloud(mutator){
     });
   }catch(err){
     console.error('Cloud transaction failed:',err);
-    setSyncPill('⚠️ Sync error — check Firebase config/rules',true);
-    alert('Could not save this change to the cloud. Check your internet connection and try again.');
+    if(!(opts&&opts.silent)){
+      setSyncPill('⚠️ Sync error — check Firebase config/rules',true);
+      alert('Could not save this change to the cloud. Check your internet connection and try again.');
+    }
     return null;
   }
   if(!result){return null}
@@ -2415,7 +2608,7 @@ function startCloudSync(){
       // Nothing in the cloud yet for this shop — push what we have (or the demo seed) up.
       seed();
       lastServerStock=db.stock||[];lastServerSeq=db.seq||1000;
-      const stateData={...db};delete stateData.sales;
+      const stateData={...db};delete stateData.sales;delete stateData.warranty;
       CLOUD_DOC.set(stateData).catch(err=>console.error('Initial cloud push failed:',err));
       stateReady=true;updateCloudReady();
       render();
@@ -2454,6 +2647,13 @@ function startCloudSync(){
     schedulePersistDb(); // never let a full-quota localStorage error stop the screen from updating
     render();
   }, err=>{console.error('Sales sync error:',err);setSyncPill('⚠️ Sales sync error — check Firebase rules/connection',true)});
+
+  // Mobile Warranty: live list shared by every device.
+  WARRANTY_COL.onSnapshot(snap=>{
+    db.warranty=snap.docs.map(d=>d.data());
+    schedulePersistDb();
+    if(typeof renderWarranty==='function')renderWarranty();
+  }, err=>{console.error('Warranty sync error:',err)});
 }
 function seed(){/* no demo data — new shops start with an empty stock list */}
 function isToday(s){let d=new Date(s),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate()}
@@ -2475,7 +2675,7 @@ function deferredHistoryRender(){
 }
 const SALES_HISTORY_CAP=300;
 function costValueTotal(){return db.stock.reduce((a,x)=>a+x.qty*(x.cost||0),0)}
-function cards(){let notReturned=db.sales.filter(s=>!s.returned),today=notReturned.filter(s=>isToday(s.date)),ts=today.reduce((a,s)=>a+s.total,0),all=notReturned.reduce((a,s)=>a+s.total,0),returnedList=db.sales.filter(s=>s.returned);stockUnits.textContent=db.stock.reduce((a,x)=>a+x.qty,0);sellValue.textContent=money(db.stock.reduce((a,x)=>a+x.qty*x.price,0));todayInvoices.textContent=today.length;todaySales.textContent=money(ts);allSales.textContent=money(all);updateDashTotalCash();returnsCount.textContent=returnedList.length;todayBar.textContent=money(ts);todayBarCount.textContent=today.length}
+function cards(){let notReturned=db.sales.filter(s=>!s.returned),today=notReturned.filter(s=>isToday(s.date)),ts=today.reduce((a,s)=>a+s.total,0),all=notReturned.reduce((a,s)=>a+s.total,0),returnedList=db.sales.filter(s=>s.returned);stockUnits.textContent=db.stock.reduce((a,x)=>a+x.qty,0);sellValue.textContent=money(db.stock.reduce((a,x)=>a+x.qty*x.price,0));todayInvoices.textContent=today.length;todaySales.textContent=money(ts);allSales.textContent=money(all);returnsCount.textContent=returnedList.length;todayBar.textContent=money(ts);todayBarCount.textContent=today.length}
 function renderStock(){refreshCategoryUI();let q=(stockSearch.value||'').toLowerCase();const catSel=($('stockCategoryFilter')||{}).value||'';let key=stockSortField?stockSortField.value:'nameAsc';let list=db.stock.filter(x=>textMatch(x,q)&&catMatch(x,catSel)).slice().sort((a,b)=>{if(key==='nameAsc')return a.name.localeCompare(b.name);if(key==='nameDesc')return b.name.localeCompare(a.name);if(key==='qtyAsc')return a.qty-b.qty;if(key==='qtyDesc')return b.qty-a.qty;if(key==='priceAsc')return a.price-b.price;if(key==='priceDesc')return b.price-a.price;return 0});stockTable.innerHTML=list.map(x=>{
   const costCell = currentRole==='admin'
     ? `<td class="num cost-cell admin-only" onclick="revealCost(this,${x.cost||0})">••••••</td>`
@@ -2497,7 +2697,30 @@ function revealCost(el,cost){if(!requireAdmin('Reveal Purchase Price'))return;el
 function actionCell(s){if(s.pending)return '<span class="badge-returned" style="background:#fff4d6;color:#8a5a00">⏳ Syncing…</span>';if(s.returned)return '<span class="badge-returned">↩ Returned</span>';let btns=`<button onclick="show('${s.invoiceNo}')">🧾 Invoice</button>`;if(currentRole==='admin')btns+=` <button class="plum" onclick="returnSale('${s.invoiceNo}')">Return</button>`;return btns}
 function renderToday(){let a=db.sales.filter(s=>isToday(s.date)).slice().reverse();todayTable.innerHTML=a.map(s=>`<tr class="${s.returned?'returned-row':''}"><td>${esc(s.invoiceNo)}</td><td>${esc(new Date(s.date).toLocaleTimeString())}</td><td>${esc(s.customer||'Walk-in')}</td><td>${esc(s.items.map(i=>i.name+' × '+i.qty).join(', '))}</td><td class="num">${money(s.discount)}</td><td class="num"><b>${money(s.total)}</b></td><td>${actionCell(s)}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No sales today.</td></tr>'}
 function renderSales(){let q=(salesSearch.value||'').toLowerCase();let all=db.sales.filter(s=>(s.invoiceNo+' '+s.date+' '+s.customer+' '+s.items.map(i=>i.name).join(' ')).toLowerCase().includes(q)).slice().reverse();let a=all.slice(0,SALES_HISTORY_CAP);salesTable.innerHTML=a.map(s=>`<tr class="${s.returned?'returned-row':''}"><td>${esc(s.invoiceNo)}</td><td>${esc(s.date)}</td><td>${esc(s.customer||'Walk-in')}</td><td>${esc(s.items.map(i=>i.name+' × '+i.qty).join(', '))}</td><td class="num">${money(s.total)}</td><td>${actionCell(s)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No sales found.</td></tr>';if(all.length>SALES_HISTORY_CAP)salesTable.innerHTML+=`<tr><td colspan="6" class="empty">Showing the most recent ${SALES_HISTORY_CAP} of ${all.length} matching invoices — search by invoice no., date or customer to find older ones.</td></tr>`}
-function inv(s,label){return `<div class="copy">${s.returned?'<div class="stamp">RETURNED</div>':''}<div class="copyhead"><h3>👤 CUSTOMER COPY</h3><span class="tag">${label}</span></div><div class="meta"><b>MOHAMMADIA LIBRARY & COMPUTER</b><br>Invoice: ${esc(s.invoiceNo)}<br>Date: ${esc(isNaN(new Date(s.date))?s.date:new Date(s.date).toLocaleString())}<br>Customer: ${esc(s.customer||'Walk-in Customer')}</div><table class="invtable"><thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Total</th></tr></thead><tbody>${s.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${i.qty}</td><td>${money(i.price)}</td><td>${money(i.total)}</td></tr>`).join('')}<tr><td colspan="3" class="num">Subtotal</td><td>${money(s.subtotal)}</td></tr><tr><td colspan="3" class="num">Discount</td><td>${money(s.discount)}</td></tr><tr><td colspan="3" class="num">Paid</td><td>${money(s.paid??s.total)}</td></tr><tr><td colspan="3" class="num">Due</td><td>${money(s.due??0)}</td></tr><tr class="total"><td colspan="3" class="num">GRAND TOTAL</td><td>${money(s.total)}</td></tr></tbody></table><p class="meta" style="margin-top:15px">Thank you for your purchase.</p></div>`}
+function inv(s,label){
+  const d=isNaN(new Date(s.date))?s.date:new Date(s.date).toLocaleString();
+  const row=(l,v,c)=>`<div class="rc-r${c?' '+c:''}"><span>${l}</span><span>${v}</span></div>`;
+  return `<div class="copy rc">${s.returned?'<div class="stamp">RETURNED</div>':''}
+<div class="rc-shop">MOHAMMADIA LIBRARY &amp; COMPUTER</div>
+<div class="rc-addr">Sirajganj Bazar, Chhatak, Sunamganj<br>Contact: +8801710-460845</div>
+<div class="rc-sub">CASH MEMO / INVOICE</div>
+<div class="rc-hr"></div>
+${row('Invoice',esc(s.invoiceNo))}${row('Date',esc(d))}${row('Customer',esc(s.customer||'Walk-in Customer'))}
+<div class="rc-hr"></div>
+<div class="rc-r rc-th"><span>Item</span><span>Total</span></div>
+<div class="rc-hr thin"></div>
+${s.items.map(i=>`<div class="rc-item"><div class="rc-name">${esc(i.name)}</div><div class="rc-r"><span>${i.qty} x ${money(i.price)}</span><span>${money(i.total)}</span></div></div>`).join('')}
+<div class="rc-hr"></div>
+${row('Subtotal',money(s.subtotal))}${row('Discount',money(s.discount))}
+<div class="rc-hr thin"></div>
+${row('TOTAL',money(s.total),'rc-grand')}
+<div class="rc-hr thin"></div>
+${row('Paid',money(s.paid??s.total))}${row('Due',money(s.due??0))}
+<div class="rc-hr"></div>
+<div class="rc-thanks">Thank you for your purchase.</div>
+<div class="rc-sign"><div><i></i><span>Customer Signature</span></div><div><i></i><span>Seller Signature</span></div></div>
+<div class="rc-cut">- - - - - - - - - - - - - - - -</div>
+</div>`}
 function renderInvoice(){invoiceSheet.innerHTML=db.lastInvoice?inv(db.lastInvoice,'CUSTOMER')+'<div class="copy blank"></div>':'<div class="empty" style="width:100%">Complete a sale to generate an invoice.</div>'}
 function addStockRegisterEntry(entry){ensureSchema();db.stockRegister.push({id:'sr'+Date.now()+Math.random().toString(16).slice(2),time:new Date().toISOString(),user:currentRole||'unknown',...entry});db.stockRegister=db.stockRegister.filter(x=>Date.now()-new Date(x.time).getTime()<=7*24*60*60*1000);}
 function latestStockRegister(){ensureSchema();const cutoff=Date.now()-7*24*60*60*1000;return db.stockRegister.filter(x=>new Date(x.time).getTime()>=cutoff).slice().sort((a,b)=>new Date(b.time)-new Date(a.time));}
@@ -2805,9 +3028,15 @@ function renderQuickSale(){
   </div>`;
 }
 function jsStr(s){return String(s??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
+/* Quick Sale customization is saved on THIS device first (instant, works offline);
+   the cloud copy is a silent best-effort extra, so no "could not save" popup. */
+const QS_PREF_KEY='qsalePrefs_v1';let qsPrefCache=null;
+function qsPrefs(){if(qsPrefCache)return qsPrefCache;try{qsPrefCache=JSON.parse(localStorage.getItem(QS_PREF_KEY))||{}}catch(e){qsPrefCache={}}return qsPrefCache}
+function qsPrefsSave(p){qsPrefCache=p;try{localStorage.setItem(QS_PREF_KEY,JSON.stringify(p))}catch(e){}}
+function qsColorOf(key){const c=qsPrefs().colors||{};if(key in c)return c[key]||null;return (db.qsaleColors&&db.qsaleColors[key])||null}
 function qsaleGroupColor(word){
   const key=(word||'').toLowerCase();
-  if(db.qsaleColors && db.qsaleColors[key])return db.qsaleColors[key];
+  {const c=qsColorOf(key);if(c)return c}
   let h=0;const s=key;
   for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))>>>0;}
   const hue=h%360;
@@ -2836,7 +3065,9 @@ document.addEventListener('click',e=>{
 });
 function openQsaleCustomizeModal(){
   const dd=$('qsaleMenuDropdown'); if(dd)dd.classList.remove('show');
+  renderQsLayoutEditor();
   renderQsaleCustomizeList();
+  qsApplySize();
   openActionModal('qsaleCustomizeModal');
 }
 function renderQsaleCustomizeList(){
@@ -2853,7 +3084,7 @@ function renderQsaleCustomizeList(){
   const list=[...groups.entries()].sort((a,b)=>a[1].label.localeCompare(b[1].label));
   if(!list.length){box.innerHTML='<div class="qsale-custom-empty">No Quick Sale or Service items yet — mark a product as "Quick" or "Service" first.</div>';return}
   box.innerHTML=list.map(([key,info])=>{
-    const custom=db.qsaleColors&&db.qsaleColors[key];
+    const custom=qsColorOf(key);
     const color=custom||qsaleGroupColor(info.label);
     return `<div class="qsale-custom-row">
       <div class="qsale-custom-swatch" style="background:${color}"></div>
@@ -2867,13 +3098,15 @@ function renderQsaleCustomizeList(){
 }
 async function setQsaleColor(word,color){
   const key=(word||'').toLowerCase();
-  const ok=await mutateCloud(data=>{data.qsaleColors=data.qsaleColors||{};data.qsaleColors[key]=color;});
-  if(ok){renderQuickSale();renderQsaleCustomizeList();}
+  const p=qsPrefs();p.colors=p.colors||{};p.colors[key]=color;qsPrefsSave(p);
+  renderQuickSale();renderQsaleCustomizeList();
+  mutateCloud(data=>{data.qsaleColors=data.qsaleColors||{};data.qsaleColors[key]=color},{silent:true});
 }
 async function resetQsaleColor(word){
   const key=(word||'').toLowerCase();
-  const ok=await mutateCloud(data=>{if(data.qsaleColors)delete data.qsaleColors[key];});
-  if(ok){renderQuickSale();renderQsaleCustomizeList();}
+  const p=qsPrefs();p.colors=p.colors||{};p.colors[key]=null;qsPrefsSave(p);
+  renderQuickSale();renderQsaleCustomizeList();
+  mutateCloud(data=>{if(data.qsaleColors)delete data.qsaleColors[key]},{silent:true});
 }
 
 /* =====================================================================
@@ -2898,7 +3131,7 @@ let qsBrand=null,qsType=null;
 function qsCartQty(id){const c=cart.find(a=>a.id===id);return c?c.qty:0}
 function qsFixed(k){return QS_FIXED.find(f=>f[0]===k)}
 function qsBrandColor(key){
-  if(db.qsaleColors&&db.qsaleColors[key])return db.qsaleColors[key];
+  {const c=qsColorOf(key);if(c)return c}
   const f=qsFixed(key);return f?f[2]:qsaleGroupColor(key);
 }
 function qsPrice(x){return '৳'+String(+(+x.price||0).toFixed(2))}
@@ -2930,7 +3163,7 @@ function qsBuildQuick(items){
   items.forEach(x=>{const p=qsParse(x);(groups[p.brand]=groups[p.brand]||{key:p.brand,label:p.brandLabel,items:[]}).items.push({x,...p})});
   const extras=Object.keys(groups).filter(k=>!qsFixed(k)).sort();
   QS_FIXED.forEach(f=>{if(!groups[f[0]])groups[f[0]]={key:f[0],label:f[1],items:[]}});
-  const row1=QS_FIXED.filter(f=>f[3]===1).map(f=>f[0]),row2=QS_FIXED.filter(f=>f[3]===2).map(f=>f[0]).concat(extras);
+  const rowsK=qsResolveRows(Object.keys(groups)).filter(r=>r.length);
   if(qsBrand&&!(groups[qsBrand]&&groups[qsBrand].items.length)){qsBrand=null;qsType=null}
   const g=qsBrand?groups[qsBrand]:null;
   const ids=arr=>arr.map(i=>i.x.id).join(',');
@@ -2951,12 +3184,121 @@ function qsBuildQuick(items){
   const amtHtml=amts.length?`<div class="qs-amts" style="--qc:${qsBrandColor(qsBrand)}">${amts.map(i=>{
       return `<button type="button" class="qs-amt${qsRem(i.x)<=0?' out':''}" data-id="${jsStr(i.x.id)}" ${qsRem(i.x)<=0?'disabled':''} title="${esc(i.x.name)}" onclick="qsAdd('${jsStr(i.x.id)}',event)"><b>${esc(i.label)}</b><em class="qs-st">${qsPrice(i.x)}</em>${qsBadge(qsCartQty(i.x.id))}</button>`}).join('')}</div>`:'';
   const t=cartTotals(),cnt=cart.reduce((a,i)=>a+i.qty,0);
-  return `<div class="qs-row qs-brands">${row1.map(brandBtn).join('')}</div>
-  <div class="qs-row qs-brands qs-row2">${row2.map(brandBtn).join('')}</div>
+  return `${rowsK.map((r,i)=>`<div class="qs-row qs-brands${i?' qs-row2':''}">${r.map(brandBtn).join('')}</div>`).join('')}
   ${typeHtml}
   ${amtHtml||`<div class="qs-hint">${hint}</div>`}
   <div class="qsale-quickbar"><span class="qsale-quickcount">${cnt?cnt+' item(s) in cart · '+money(t.total):'No items added yet'}</span><button type="button" class="green" onclick="sell()">✅ Complete Sale</button></div>`;
 }
+
+/* =====================================================================
+   QUICK SALE CARD LAYOUT — free positions, any number of lines, drag & drop
+   Saved as db.qsaleLayout = {rows:[[brandKey,...],[...],...]} (cloud-synced).
+   ===================================================================== */
+function qsBrandMapAll(){
+  const m=new Map();QS_FIXED.forEach(f=>m.set(f[0],f[1]));
+  (db.stock||[]).filter(x=>x.service||x.quick).forEach(x=>{const p=qsParse(x);if(!m.has(p.brand))m.set(p.brand,p.brandLabel)});
+  return m;
+}
+function qsDefaultRows(keys){
+  const r1=QS_FIXED.filter(f=>f[3]===1).map(f=>f[0]),r2=QS_FIXED.filter(f=>f[3]===2).map(f=>f[0]);
+  const extras=keys.filter(k=>!qsFixed(k)).sort();
+  return [r1.filter(k=>keys.includes(k)),r2.concat(extras).filter(k=>keys.includes(k))];
+}
+function qsResolveRows(keys){
+  const pr=qsPrefs();let saved=null;
+  if('layout' in pr)saved=Array.isArray(pr.layout)?pr.layout:null;
+  else if(db.qsaleLayout&&Array.isArray(db.qsaleLayout.rows))saved=db.qsaleLayout.rows;
+  if(!saved)return qsDefaultRows(keys);
+  const valid=new Set(keys),seen=new Set();
+  const rows=saved.map(r=>(Array.isArray(r)?r:[]).filter(k=>{if(!valid.has(k)||seen.has(k))return false;seen.add(k);return true}));
+  const missing=keys.filter(k=>!seen.has(k));
+  if(missing.length){if(rows.length)rows[rows.length-1].push(...missing);else rows.push(missing)}
+  return rows;
+}
+let qsLayoutLatest=null,qsLayoutSaving=false,qsLayoutDirty=false;
+function qsCurrentRows(){return qsResolveRows([...qsBrandMapAll().keys()]).map(r=>r.slice())}
+function qsCommitLayout(rows){
+  rows=rows.map(r=>r.slice());
+  const pr=qsPrefs();pr.layout=rows;qsPrefsSave(pr);
+  db.qsaleLayout={rows};qsLayoutLatest=rows;qsLayoutDirty=true;
+  renderQuickSale();renderQsLayoutEditor();qsFlushLayout();
+}
+async function qsFlushLayout(){
+  if(qsLayoutSaving)return;qsLayoutSaving=true;
+  try{
+    while(qsLayoutDirty){
+      qsLayoutDirty=false;const rows=qsLayoutLatest;
+      await mutateCloud(d=>{d.qsaleLayout={rows}},{silent:true});
+      if(qsLayoutLatest)db.qsaleLayout={rows:qsLayoutLatest};
+    }
+  }finally{qsLayoutSaving=false}
+}
+function qsAddRow(){const r=qsCurrentRows();r.push([]);qsCommitLayout(r)}
+function qsDelRow(i){
+  const r=qsCurrentRows();if(r.length<=1)return;
+  const moved=r.splice(i,1)[0];
+  const t=i>0?i-1:0;r[t]=r[t].concat(moved);
+  qsCommitLayout(r);
+}
+async function qsResetLayout(){
+  if(!confirm('Reset the Quick Sale card layout to default?'))return;
+  qsLayoutLatest=null;qsLayoutDirty=false;db.qsaleLayout=null;
+  const pr=qsPrefs();pr.layout=null;qsPrefsSave(pr);
+  renderQuickSale();renderQsLayoutEditor();
+  await mutateCloud(d=>{delete d.qsaleLayout},{silent:true});
+  db.qsaleLayout=null;renderQuickSale();renderQsLayoutEditor();
+}
+function renderQsLayoutEditor(){
+  const box=document.getElementById('qsLayoutEditor');if(!box)return;
+  const map=qsBrandMapAll(),rows=qsCurrentRows();
+  box.innerHTML=rows.map((r,i)=>`<div class="qsl-lane${r.length?' has':''}" data-row="${i}">
+    <div class="qsl-lane-h"><span>Line ${i+1}</span>${rows.length>1?`<button type="button" class="qsl-del" onclick="qsDelRow(${i})" title="Remove this line (cards move up)">✕</button>`:''}</div>
+    <div class="qsl-cards">${r.map(k=>`<div class="qsl-card" data-key="${esc(k)}" style="--qc:${qsBrandColor(k)}"><i>⠿</i>${esc(map.get(k)||k)}</div>`).join('')}<span class="qsl-empty">Drop cards here</span></div>
+  </div>`).join('');
+}
+/* pointer-based drag (works with mouse AND touch) */
+let qsDrag=null;
+document.addEventListener('pointerdown',e=>{
+  const card=e.target.closest&&e.target.closest('#qsLayoutEditor .qsl-card');
+  if(!card||(e.pointerType==='mouse'&&e.button!==0))return;
+  qsDrag={card,x:e.clientX,y:e.clientY,on:false,ghost:null};
+  e.preventDefault();
+});
+document.addEventListener('pointermove',e=>{
+  const d=qsDrag;if(!d)return;
+  if(!d.on){
+    if(Math.hypot(e.clientX-d.x,e.clientY-d.y)<6)return;
+    d.on=true;const r=d.card.getBoundingClientRect();
+    d.dx=e.clientX-r.left;d.dy=e.clientY-r.top;
+    const g=d.card.cloneNode(true);g.className='qsl-card qsl-ghost';g.style.width=r.width+'px';g.style.height=r.height+'px';
+    document.body.appendChild(g);d.ghost=g;d.card.classList.add('dragging');
+  }
+  d.ghost.style.left=(e.clientX-d.dx)+'px';d.ghost.style.top=(e.clientY-d.dy)+'px';
+  const el=document.elementFromPoint(e.clientX,e.clientY),lane=el&&el.closest('#qsLayoutEditor .qsl-lane');
+  document.querySelectorAll('#qsLayoutEditor .qsl-lane').forEach(l=>l.classList.toggle('over',l===lane));
+  if(!lane)return;
+  const cards=lane.querySelector('.qsl-cards');
+  let before=null;
+  for(const c of cards.querySelectorAll('.qsl-card:not(.dragging)')){
+    const r=c.getBoundingClientRect();
+    if(e.clientY<r.top||(e.clientY<=r.bottom&&e.clientX<r.left+r.width/2)){before=c;break}
+  }
+  const empty=cards.querySelector('.qsl-empty');
+  if(before){if(d.card.nextSibling!==before)cards.insertBefore(d.card,before)}
+  else if(d.card.parentNode!==cards||d.card.nextSibling!==empty)cards.insertBefore(d.card,empty);
+  document.querySelectorAll('#qsLayoutEditor .qsl-lane').forEach(l=>l.classList.toggle('has',!!l.querySelector('.qsl-card')));
+});
+function qsDragEnd(cancel){
+  const d=qsDrag;qsDrag=null;if(!d)return;
+  if(d.ghost)d.ghost.remove();
+  if(!d.on)return;
+  if(cancel){renderQsLayoutEditor();return}
+  const rows=[...document.querySelectorAll('#qsLayoutEditor .qsl-lane')].map(l=>[...l.querySelectorAll('.qsl-card')].map(c=>c.dataset.key));
+  qsCommitLayout(rows);
+}
+document.addEventListener('pointerup',()=>qsDragEnd(false));
+document.addEventListener('pointercancel',()=>qsDragEnd(true));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&qsDrag)qsDragEnd(true)});
 function qsPickBrand(k){qsBrand=(qsBrand===k)?null:k;qsType=null;renderQuickSale()}
 function qsPickType(t){qsType=(qsType===t)?null:t;renderQuickSale()}
 function qsAdd(id,ev){if(addToCart(id)){cartPop(ev,id);qsRefresh()}}
@@ -3247,7 +3589,7 @@ function restore(file,type){
         if(!confirm('FULL JSON RESTORE replaces ALL current sales, stock and settings with this backup.\nAny sale made after the backup was taken will be DELETED.\n\nTo bring back only missing sales, cancel and use the Sales CSV restore instead (it only adds). Continue with the full replace?'))return;
         let x=JSON.parse(r.result);
         if(!Array.isArray(x.stock)||!Array.isArray(x.sales))throw 0;
-        db=x;db.seq=db.seq||1000;
+        const keepWar=db.warranty;db=x;db.seq=db.seq||1000;db.warranty=keepWar||[];
         const importedSales=db.sales;
         const ok=await save();
         if(ok){
@@ -3380,7 +3722,7 @@ setupDraggableFab($('billAlertFab'));
    the area beside the sidebar. Only the Bill Alert (and small
    helper dialogs such as the barcode scanner) stay as popups.
    ============================================================ */
-var PAGE_MODALS=['productModal','salesModal','stockListModal','todaySalesModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','dailyCashModal','dailyCashStatementModal','stockRegisterModal','dataModal','pwModal'];
+var PAGE_MODALS=['productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','dailyCashModal','dailyCashStatementModal','stockRegisterModal','dataModal','pwModal'];
 function closeOtherPages(keep){PAGE_MODALS.forEach(function(id){if(id===keep)return;var m=document.getElementById(id);if(m&&m.classList.contains('show')){m.classList.remove('show');m.setAttribute('aria-hidden','true')}});syncCashOpenClass()}
 function goHome(){
   closeSidebar();
@@ -3444,7 +3786,7 @@ function dashRanges(period){
 function renderDashboard(){
   const dd=$('dashDate');if(dd)dd.textContent=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const low=db.stock.filter(x=>!x.service&&x.qty<=(+x.lowStock||5)).length;
-  updateDashTotalCash();
+  const tcEl=$('totalCash');if(tcEl)tcEl.textContent=money(cashGrandForDate(todayKey()));
   const nb=$('navLowBadge');if(nb){nb.textContent=low;nb.style.display=low>0?'inline-flex':'none'}
   const admin=currentRole==='admin';
   const metric=admin?dashMetric:'sales';
@@ -3595,4 +3937,182 @@ window.addEventListener('resize',()=>{if(window.innerWidth>960)closeSidebar()});
     loginPassword.focus();
   }
 })();
+
+/* ============================================================
+   QUICK SALE — card size (smaller / bigger), saved per device
+   ============================================================ */
+const QS_SIZE_KEY='qsCardSize_v1',QS_SIZE_NAMES={'-2':'Extra small','-1':'Small','0':'Normal','1':'Big','2':'Extra big'};
+let qsSize=0;try{const v=parseInt(localStorage.getItem(QS_SIZE_KEY),10);if(v>=-2&&v<=2)qsSize=v}catch(e){}
+function qsSizeClass(v){return v?'qsz-'+(v<0?'n':'p')+Math.abs(v):''}
+function qsApplySize(){
+  const w=$('qsaleWrap');
+  if(w){w.className=w.className.replace(/\bqsz-\w+\b/g,'').replace(/\s+/g,' ').trim();const c=qsSizeClass(qsSize);if(c)w.classList.add(c)}
+  const p=$('qsSizePrev');if(p)p.className='qszprev '+qsSizeClass(qsSize);
+  const l=$('qsSizeLabel');if(l)l.textContent=QS_SIZE_NAMES[String(qsSize)];
+  const m=$('qszMinus'),pl=$('qszPlus');if(m)m.disabled=qsSize<=-2;if(pl)pl.disabled=qsSize>=2;
+}
+function qsSizeSet(v){qsSize=Math.max(-2,Math.min(2,v));try{localStorage.setItem(QS_SIZE_KEY,String(qsSize))}catch(e){}qsApplySize()}
+function qsSizeStep(d){qsSizeSet(qsSize+d)}
+function qsSizeReset(){qsSizeSet(0)}
+qsApplySize();
+
+/* ============================================================
+   MOBILE WARRANTY
+   Flow: Received from customer → Given to Company → Back from
+   Company (repaired / replaced) → Given to Customer.
+   Each phone is its own cloud document (WARRANTY_COL).
+   ============================================================ */
+const WAR_STATUS={
+  received:{icon:'📥',label:'Received',hint:'Not given to Company yet',cls:'st-received',next:'Next: give this phone to the Company'},
+  company:{icon:'🏢',label:'With Company',hint:'Already given to Company',cls:'st-company',next:'Waiting for the Company to bring it back'},
+  back:{icon:'✅',label:'Back from Company',hint:'Give to Customer now',cls:'st-back',next:'Company brought it back — give it to the customer'},
+  delivered:{icon:'🤝',label:'Delivered',hint:'Already given to Customer',cls:'st-delivered',next:'All done — customer has the phone'}
+};
+const WAR_ORDER=['received','company','back','delivered'];
+let warFilter='all';
+function warList(){return Array.isArray(db.warranty)?db.warranty:(db.warranty=[])}
+function warFmt(k){if(!k)return '';const p=String(k).split('-');if(p.length!==3)return String(k);const d=new Date(+p[0],+p[1]-1,+p[2]);return isNaN(d)?String(k):d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}
+function warDays(a,b){const pa=String(a||'').split('-'),pb=String(b||'').split('-');if(pa.length!==3||pb.length!==3)return 0;return Math.max(0,Math.round((new Date(+pb[0],+pb[1]-1,+pb[2])-new Date(+pa[0],+pa[1]-1,+pa[2]))/86400000))}
+function openWarranty(){renderWarranty();openActionModal('warrantyModal')}
+function warSetFilter(f){warFilter=f;renderWarranty()}
+function warPut(rec){
+  rec.updatedAt=Date.now();
+  const clean=JSON.parse(JSON.stringify(rec));
+  const L=warList(),i=L.findIndex(x=>x.id===clean.id);
+  if(i>=0)L[i]=clean;else L.push(clean);
+  schedulePersistDb();renderWarranty();
+  return WARRANTY_COL.doc(clean.id).set(clean).catch(err=>{console.error('Warranty save failed:',err);alert('Could not save this warranty phone to the cloud'+(err&&err.code?' ('+err.code+')':'')+'. It is kept on this device — check the internet connection / Firebase rules.')});
+}
+function warDelete(id){
+  if(!requireAdmin('Delete warranty record'))return;
+  const r=warList().find(x=>x.id===id);if(!r)return;
+  if(!confirm('Delete this warranty record permanently?\n\n'+r.model+' — '+r.customer))return;
+  const L=warList();L.splice(L.findIndex(x=>x.id===id),1);
+  schedulePersistDb();renderWarranty();
+  WARRANTY_COL.doc(id).delete().catch(err=>{console.error('Warranty delete failed:',err);alert('Delete could not reach the cloud. Check the internet connection.')});
+}
+/* ---- small form dialog ---- */
+function warField(f){
+  const id='wf_'+f.k;let inp;
+  if(f.type==='select')inp=`<select id="${id}">${f.options.map(o=>`<option value="${esc(o[0])}"${o[0]===f.value?' selected':''}>${esc(o[1])}</option>`).join('')}</select>`;
+  else if(f.type==='textarea')inp=`<textarea id="${id}" rows="2" placeholder="${esc(f.ph||'')}">${esc(f.value||'')}</textarea>`;
+  else inp=`<input id="${id}" type="${f.type||'text'}" value="${esc(f.value||'')}" placeholder="${esc(f.ph||'')}" autocomplete="off"${f.type==='tel'?' inputmode="tel"':''}>`;
+  return `<label class="war-f${f.full?' full':''}" id="wfw_${f.k}"${f.hidden?' style="display:none"':''}>${esc(f.label)}${f.req?' <i>*</i>':''}${inp}</label>`;
+}
+function warDialog(title,fields,okLabel,onOk,after){
+  const old=$('warOv');if(old)old.remove();
+  const ov=document.createElement('div');ov.className='war-ov';ov.id='warOv';
+  ov.innerHTML=`<div class="war-dlg" role="dialog" aria-modal="true"><h3>${esc(title)}</h3><div class="war-fields">${fields.map(warField).join('')}</div><div class="war-err" id="warErr"></div><div class="war-dlg-act"><button type="button" class="war-cancel">Cancel</button><button type="button" class="war-ok">${esc(okLabel)}</button></div></div>`;
+  document.body.appendChild(ov);
+  const close=()=>{document.removeEventListener('keydown',onKey);ov.remove()};
+  const onKey=e=>{if(e.key==='Escape')close()};
+  document.addEventListener('keydown',onKey);
+  ov.querySelector('.war-cancel').onclick=close;
+  ov.querySelector('.war-ok').onclick=()=>{
+    const v={};
+    for(const f of fields){
+      const el=$('wf_'+f.k);v[f.k]=el?String(el.value||'').trim():'';
+      const hidden=$('wfw_'+f.k)&&$('wfw_'+f.k).style.display==='none';
+      if(f.req&&!v[f.k]&&!hidden){$('warErr').textContent='Please fill: '+f.label;el&&el.focus();return}
+    }
+    if(onOk(v)!==false)close();
+  };
+  if(after)after();
+  const first=ov.querySelector('input,textarea,select');if(first)first.focus();
+}
+function warOpenForm(id){
+  const r=id?warList().find(x=>x.id===id):null;
+  const val=k=>r?(r[k]||''):'';
+  warDialog(r?'Edit Warranty Phone':'New Warranty Phone',[
+    {k:'customer',label:'Customer name',req:1,value:val('customer'),full:1},
+    {k:'phone',label:'Customer mobile no.',type:'tel',req:1,value:val('phone')},
+    {k:'model',label:'Phone model',req:1,value:val('model'),ph:'e.g. Samsung A15'},
+    {k:'imei',label:'IMEI / Serial no.',value:val('imei')},
+    {k:'receivedAt',label:'Received on',type:'date',req:1,value:r?r.receivedAt:dateKeyOf(new Date())},
+    {k:'problem',label:'Problem',type:'textarea',req:1,full:1,value:val('problem'),ph:'What is wrong with the phone?'},
+    {k:'note',label:'Note (optional)',type:'textarea',full:1,value:val('note')}
+  ],r?'Save changes':'Save phone',v=>{
+    if(r){Object.assign(r,v);warPut(r)}
+    else warPut({id:'W'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),status:'received',createdAt:Date.now(),createdBy:currentRole||'',...v});
+  });
+}
+function warAdvance(id){
+  const r=warList().find(x=>x.id===id);if(!r)return;
+  const today=dateKeyOf(new Date());
+  if(r.status==='received'){
+    warDialog('🏢 Give phone to Company — '+r.model,[
+      {k:'date',label:'Given on',type:'date',req:1,value:today},
+      {k:'company',label:'Company / person who took it',full:1,ph:'e.g. Samsung rep — Rahim'},
+      {k:'note',label:'Note (optional)',type:'textarea',full:1}
+    ],'✔ Given to Company',v=>{r.status='company';r.givenCompanyAt=v.date;r.company=v.company;r.givenNote=v.note;warPut(r)});
+  }else if(r.status==='company'){
+    warDialog('✅ Company returned the phone — '+r.model,[
+      {k:'result',label:'What did the Company do?',type:'select',full:1,value:'fixed',options:[['fixed','🔧 Repaired (same phone)'],['replaced','🔁 Replaced (new phone)']]},
+      {k:'date',label:'Came back on',type:'date',req:1,value:today},
+      {k:'newImei',label:'New phone IMEI (if replaced)',hidden:true},
+      {k:'note',label:'Note (optional)',type:'textarea',full:1}
+    ],'✔ Mark as back',v=>{r.status='back';r.backAt=v.date;r.result=v.result;r.newImei=v.result==='replaced'?v.newImei:'';r.backNote=v.note;warPut(r)},()=>{
+      const sel=$('wf_result');sel.onchange=()=>{$('wfw_newImei').style.display=sel.value==='replaced'?'':'none'};
+    });
+  }else if(r.status==='back'){
+    warDialog('🤝 Give phone to Customer — '+r.customer,[
+      {k:'date',label:'Given on',type:'date',req:1,value:today},
+      {k:'by',label:'Taken by (if not the customer)',full:1},
+      {k:'note',label:'Note (optional)',type:'textarea',full:1}
+    ],'✔ Given to Customer',v=>{r.status='delivered';r.deliveredAt=v.date;r.collectedBy=v.by;r.deliveredNote=v.note;warPut(r)});
+  }
+}
+function warUndo(id){
+  const r=warList().find(x=>x.id===id);if(!r||r.status==='received')return;
+  const lbl={company:'"Given to Company"',back:'"Back from Company"',delivered:'"Given to Customer"'}[r.status];
+  if(!confirm('Undo the last step '+lbl+' for '+r.model+'?'))return;
+  if(r.status==='company'){r.status='received';r.givenCompanyAt='';r.company='';r.givenNote=''}
+  else if(r.status==='back'){r.status='company';r.backAt='';r.result='';r.newImei='';r.backNote=''}
+  else if(r.status==='delivered'){r.status='back';r.deliveredAt='';r.collectedBy='';r.deliveredNote=''}
+  warPut(r);
+}
+function warCardHtml(r){
+  const st=WAR_STATUS[r.status]||WAR_STATUS.received;
+  const age=warDays(r.receivedAt,r.status==='delivered'?r.deliveredAt:dateKeyOf(new Date()));
+  const replaced=r.result==='replaced';
+  const steps=[
+    {key:'received',icon:'📥',label:'Received',date:r.receivedAt,sub:''},
+    {key:'company',icon:'🏢',label:'Given to Company',date:r.givenCompanyAt,sub:[r.company,r.givenNote].filter(Boolean).join(' · ')},
+    {key:'back',icon:replaced?'🔁':'🔧',label:r.result?(replaced?'Back — Replaced':'Back — Repaired'):'Back from Company',date:r.backAt,sub:[replaced&&r.newImei?'New IMEI: '+r.newImei:'',r.backNote].filter(Boolean).join(' · ')},
+    {key:'delivered',icon:'🤝',label:'Given to Customer',date:r.deliveredAt,sub:[r.collectedBy?'Taken by '+r.collectedBy:'',r.deliveredNote].filter(Boolean).join(' · ')}
+  ];
+  const btn={received:'🏢 Give to Company',company:'✅ Company returned it',back:'🤝 Give to Customer'}[r.status];
+  return `<div class="war-card ${st.cls}">
+    <div class="war-top"><div><div class="war-model">📱 ${esc(r.model)}</div>
+      <div class="war-who">${esc(r.customer)}${r.phone?' · <a href="tel:'+esc(r.phone)+'">'+esc(r.phone)+'</a>':''}</div>
+      ${r.imei?'<div class="war-imei">IMEI / Serial: '+esc(r.imei)+'</div>':''}</div>
+      <div><span class="war-pill">${st.icon} ${st.label}</span><div class="war-age${r.status!=='delivered'&&age>=15?' late':''}">${r.status==='delivered'?'Took':'Open for'} ${age} day${age===1?'':'s'}</div></div></div>
+    <div class="war-prob"><span>Problem:</span> ${esc(r.problem)}</div>
+    <div class="war-tl">${steps.map(s=>{const done=!!s.date;return `<div class="war-step${done?' done':''}${s.key===r.status?' cur':''}"><i>${s.icon}</i><div><b>${s.label}</b><span>${done?warFmt(s.date):'—'}</span>${s.sub?'<em>'+esc(s.sub)+'</em>':''}</div></div>`}).join('')}</div>
+    <div class="war-next">${st.next}</div>
+    <div class="war-act">${btn?`<button type="button" class="war-go" onclick="warAdvance('${r.id}')">${btn}</button>`:''}
+      <button type="button" class="war-sec" onclick="warOpenForm('${r.id}')">✏️ Edit</button>
+      ${r.status!=='received'?`<button type="button" class="war-sec" onclick="warUndo('${r.id}')">↩ Undo last step</button>`:''}
+      <button type="button" class="war-sec del admin-only" onclick="warDelete('${r.id}')">🗑 Delete</button></div>
+    ${r.note?'<div class="war-note">📝 '+esc(r.note)+'</div>':''}
+  </div>`;
+}
+function renderWarranty(){
+  const L=warList();
+  const counts={all:L.length};WAR_ORDER.forEach(s=>counts[s]=L.filter(x=>x.status===s).length);
+  const nb=$('navWarBadge');
+  if(nb){const n=counts.received+counts.back;nb.textContent=n;nb.style.display=n>0?'inline-flex':'none'}
+  const tabsEl=$('warTabs'),host=$('warList');if(!tabsEl||!host)return;
+  const tabs=[['all','📋','All phones','Every warranty phone']].concat(WAR_ORDER.map(s=>[s,WAR_STATUS[s].icon,WAR_STATUS[s].label,WAR_STATUS[s].hint]));
+  tabsEl.innerHTML=tabs.map(t=>`<button type="button" class="war-tab ${t[0]==='all'?'st-all':WAR_STATUS[t[0]].cls}${warFilter===t[0]?' on':''}" onclick="warSetFilter('${t[0]}')"><span class="n">${counts[t[0]]}</span><b>${t[1]} ${t[2]}</b><small>${t[3]}</small></button>`).join('');
+  const q=(($('warSearch')||{}).value||'').trim().toLowerCase();
+  let rows=L.filter(r=>warFilter==='all'||r.status===warFilter);
+  if(q)rows=rows.filter(r=>[r.customer,r.phone,r.model,r.imei,r.newImei,r.problem,r.company].join(' ').toLowerCase().includes(q));
+  const act=rows.filter(r=>r.status!=='delivered').sort((a,b)=>String(a.receivedAt).localeCompare(String(b.receivedAt)));
+  const done=rows.filter(r=>r.status==='delivered').sort((a,b)=>String(b.deliveredAt).localeCompare(String(a.deliveredAt)));
+  rows=act.concat(done);
+  const cap=300,shown=rows.slice(0,cap);
+  host.innerHTML=shown.length?shown.map(warCardHtml).join('')+(rows.length>cap?`<div class="war-note" style="text-align:center">Showing ${cap} of ${rows.length} — use search to find older ones.</div>`:''):`<div class="war-empty">${L.length?'No phones match here.':'No warranty phones yet. Tap “＋ New Warranty Phone” when a customer brings one.'}</div>`;
+}
+renderWarranty();
 </script></body></html>
