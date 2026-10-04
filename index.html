@@ -1042,7 +1042,7 @@ body:has(.bill-ticker.show) .wd{top:42px}
 .dd-txt.empty{color:#9aa0a6;font-weight:500}
 .dd-txt.long{font-size:10.5px}
 .dd-txt.paid{color:#14532d;font-weight:700;gap:5px;padding-left:4px}
-.dd-txt.paid::before,.paid-stk{content:'✓';flex:none;width:17px;height:17px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,#4ade80,#16a34a 60%,#166534);color:#fff;font-size:11px;font-weight:900;line-height:1;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #22c55e,0 2px 5px rgba(22,101,52,.4);transform:rotate(-10deg);margin-right:2px}
+.dd-txt.paid::before,.paid-stk{content:'✓';flex:none;width:16px;height:16px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#22c55e,#15803d);color:#fff;font-size:11px;font-weight:900;line-height:1;margin-right:2px}
 .dd-txt.paid.long{font-size:10.5px}
 #dailyCashModal .cash-row-bill .dd-txt.paid{color:#146c2e}
 #dailyCashModal .cash-row-bill.bill-row-warn .dd-txt{color:var(--maroon);font-weight:700}
@@ -1727,7 +1727,7 @@ function normalizeDayData(day){
       if(v==null||v==='')return undefined;
       if(typeof v==='object'){
         let o={note:v.note||'',amount:+v.amount||0};
-        if(k==='bill'){o.dueDate=v.dueDate||'';if(v.paidAt)o.paidAt=v.paidAt}
+        if(k==='bill'){o.dueDate=v.dueDate||'';if(v.paidAt)o.paidAt=v.paidAt;if(v.v)o.v=1}
         return o;
       }
       let o={note:'',amount:+v||0};
@@ -1809,7 +1809,7 @@ function addCashEntry(col){
   let amount=+((amtEl&&amtEl.value)||0);
   if(!note&&!amount){if(noteEl)noteEl.focus();return}
   let entry=col==='due'?{name:note,amount:amount}:{note:note,amount:amount};
-  if(col==='bill')entry.dueDate=dateEl?dateEl.value:'';
+  if(col==='bill'){entry.dueDate=dateEl?dateEl.value:'';entry.v=1}
   (col==='due'?cashDraft.due:cashDraft[col]).push(entry);
   if(noteEl)noteEl.value='';
   if(amtEl)amtEl.value='';
@@ -1838,7 +1838,7 @@ function renderCashColumn(col,count){
     if(isBill){
       let dueVal=row.dueDate||'';
       if(dueVal&&computeBillAlert(cashViewDate,dueVal).daysLeft<=2)warnClass=' bill-row-warn';
-      {const pdKey=(!dueVal&&row.paidAt)?row.paidAt:'';const dTxt=dueVal?fmtBillDate(dueVal):(pdKey?fmtBillDate(pdKey):'—');dateHtml=`<span class="dd"><span class="dd-txt${dueVal||pdKey?'':' empty'}${pdKey?' paid':''}${dTxt.length>13?' long':''}" title="${esc(pdKey?'Paid on '+fmtBillDate(pdKey):dTxt)}">${esc(dTxt)}</span><input type="date" title="Last date to pay" value="${esc(dueVal)}" data-paid="${esc(pdKey)}" class="xl-cell" data-col="bill" data-row="${i}" data-part="dueDate" oninput="updateCashDueDate(${i},this.value)"${ro?' disabled':''}></span>`}
+      {const legacyPaid=(!dueVal&&!row.paidAt&&!row.v&&((+row.amount||0)||row.note));const pdKey=(!dueVal&&row.paidAt)?row.paidAt:(legacyPaid?'legacy':'');const dTxt=dueVal?fmtBillDate(dueVal):(pdKey==='legacy'?'Paid':(pdKey?fmtBillDate(pdKey):'—'));dateHtml=`<span class="dd"><span class="dd-txt${dueVal||pdKey?'':' empty'}${pdKey?' paid':''}${dTxt.length>13?' long':''}" title="${esc(pdKey&&pdKey!=='legacy'?'Paid on '+fmtBillDate(pdKey):dTxt)}">${esc(dTxt)}</span><input type="date" title="Last date to pay" value="${esc(dueVal)}" data-paid="${esc(pdKey)}" class="xl-cell" data-col="bill" data-row="${i}" data-part="dueDate" oninput="updateCashDueDate(${i},this.value)"${ro?' disabled':''}></span>`}
     }
     let delHtml=ro?'<span></span>':`<button type="button" class="cash-del" onclick="deleteCashEntry('${col}',${i})" aria-label="Delete row" title="Delete">🗑️</button>`;
     html+=`<div class="cash-row cash-row-due${isBill?' cash-row-bill':''}${warnClass} filled"><span class="cash-idx">${i+1}</span><input type="text" value="${esc(row.note||'')}" class="xl-cell" data-col="${col}" data-row="${i}" data-part="note" oninput="updateCashNote('${col}',${i},this.value)"${ro?' disabled':''}><label class="amt"><input type="number" inputmode="decimal" min="0" step=".01" value="${row.amount?row.amount:''}" class="xl-cell" data-col="${col}" data-row="${i}" data-part="amount" oninput="updateCashAmount('${col}',${i},this.value)"${ro?' disabled':''}></label>${dateHtml}${delHtml}</div>`;
@@ -1940,8 +1940,8 @@ function fmtDMY(dateStr){return fmtBillDate(dateStr)}   // used by the alert pop
 function ddSync(inp){
   const w=inp&&inp.parentNode;const t=w&&w.querySelector('.dd-txt');if(!t)return;
   const pd=(!inp.value&&inp.dataset&&inp.dataset.paid)?inp.dataset.paid:'';
-  const txt=inp.value?fmtBillDate(inp.value):(pd?fmtBillDate(pd):(inp.id==='cashAdd_bill_date'?'Last date':'—'));
-  t.textContent=txt;t.title=pd?'Paid on '+fmtBillDate(pd):txt;
+  const txt=inp.value?fmtBillDate(inp.value):(pd?(pd==='legacy'?'Paid':fmtBillDate(pd)):(inp.id==='cashAdd_bill_date'?'Last date':'—'));
+  t.textContent=txt;t.title=pd&&pd!=='legacy'?'Paid on '+fmtBillDate(pd):txt;
   t.classList.toggle('empty',!inp.value&&!pd);t.classList.toggle('paid',!!pd);t.classList.toggle('long',txt.length>13);
 }
 function ddPick(inp){if(!inp.disabled&&inp.showPicker){try{inp.showPicker()}catch(e){}}}
@@ -2333,7 +2333,7 @@ function runCashSearch(){
         let amtStr=String(amt);
         let nameHit=name.toLowerCase().includes(q);
         let amtHit=qNum!==''&&/^[0-9.]+$/.test(qNum)&&(amtStr.includes(qNum)||amt.toFixed(2).includes(qNum));
-        if(nameHit||amtHit)hits.push({k,col,idx,name,amt,dueDate:row.dueDate||'',paidAt:row.paidAt||''});
+        if(nameHit||amtHit)hits.push({k,col,idx,name,amt,dueDate:row.dueDate||'',paidAt:row.paidAt||(col==='bill'&&!row.dueDate&&!row.v?'legacy':'')});
       });
     });
   });
@@ -2349,7 +2349,7 @@ function runCashSearch(){
     hits.map(h=>{
       let d=new Date(h.k+'T00:00:00');
       let ds=d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'})+(h.k===today?' · Today':'');
-      return `<tr class="hit" onclick="openCashHit('${h.k}','${h.col}',${h.idx})"><td>${esc(ds)}</td><td><span class="csp-tag ${h.col}">${CASH_SECTION_LABEL[h.col]}</span></td><td>${highlightMatch(h.name||'—',q)}</td><td class="num">${qNum!==''&&/^[0-9.]+$/.test(qNum)&&String(h.amt).includes(qNum)?'৳<mark>'+esc(h.amt.toFixed(2))+'</mark>':money(h.amt)}</td><td>${h.dueDate?esc(fmtDMY(h.dueDate)):(h.paidAt?'<span style="color:#14532d;font-weight:700;display:inline-flex;align-items:center;gap:6px"><span class="paid-stk">✓</span>'+esc(fmtDMY(h.paidAt))+'</span>':'—')}</td></tr>`;
+      return `<tr class="hit" onclick="openCashHit('${h.k}','${h.col}',${h.idx})"><td>${esc(ds)}</td><td><span class="csp-tag ${h.col}">${CASH_SECTION_LABEL[h.col]}</span></td><td>${highlightMatch(h.name||'—',q)}</td><td class="num">${qNum!==''&&/^[0-9.]+$/.test(qNum)&&String(h.amt).includes(qNum)?'৳<mark>'+esc(h.amt.toFixed(2))+'</mark>':money(h.amt)}</td><td>${h.dueDate?esc(fmtDMY(h.dueDate)):(h.paidAt?'<span style="color:#14532d;font-weight:700;display:inline-flex;align-items:center;gap:6px"><span class="paid-stk">✓</span>'+(h.paidAt==='legacy'?'Paid':esc(fmtDMY(h.paidAt)))+'</span>':'—')}</td></tr>`;
     }).join('')+`</tbody></table><div class="csp-foot">Total of results: <b>${money(total)}</b> · tap a row to open that day</div>`;
 }
 function clearCashSearch(){
