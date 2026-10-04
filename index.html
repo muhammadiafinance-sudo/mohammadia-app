@@ -226,6 +226,44 @@ body.modal-open .app-footer{display:none}
 body.modal-open .bill-alert-fab{display:none!important}
 body.modal-open.cash-open .bill-alert-fab.show{display:flex!important;z-index:850;top:auto;bottom:84px;right:14px;width:60px;height:60px}
 body.modal-open.cash-open .bill-alert-fab.show svg{width:28px;height:28px}
+
+/* ---- Bill Alerts full page ---- */
+#billAlertModal.fullpage{z-index:15}
+@media(max-width:960px){#billAlertModal.fullpage{z-index:30}}
+#billAlertModal .pg-body{gap:14px}
+#billAlertModal #billAlertHint{margin:0;font-size:12px;line-height:1.55;padding:11px 14px;border-radius:10px}
+.ba-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px}
+.ba-kpi{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #e3e7ee;border-radius:14px;padding:14px 16px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.ba-kpi .ico{flex:none;width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;background:#eef2ff}
+.ba-kpi.red .ico{background:#fdecea}.ba-kpi.amber .ico{background:#fff4e0}.ba-kpi.green .ico{background:#e6f4ea}
+.ba-kpi small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#6b7280}
+.ba-kpi b{display:block;font-size:23px;font-weight:800;letter-spacing:-.4px;color:var(--ink);line-height:1.2;margin-top:2px}
+.ba-kpi.red b{color:#b3261e}
+.ba-kpi em{display:block;font-style:normal;font-size:11.5px;color:#6b7280;margin-top:1px}
+.ba-card{background:#fff;border:1px solid #e3e7ee;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04);overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.ba-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid #e9edf3}
+.ba-toolbar b{font-size:15px;color:var(--ink)}.ba-toolbar span{margin-left:8px;font-size:12px;color:#6b7280}
+.ba-toolbar .bill-alert-paidall{width:auto;margin:0;padding:9px 18px;border-radius:10px;font-weight:700}
+.ba-scroll{overflow:auto}
+.ba-table{width:100%;border-collapse:collapse;min-width:680px}
+.ba-table th{position:sticky;top:0;background:#f7f9fc;text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#6b7280;padding:11px 16px;border-bottom:1px solid #e9edf3;white-space:nowrap}
+.ba-table td{padding:14px 16px;border-bottom:1px solid #eef1f5;font-size:13.5px;color:var(--ink);vertical-align:middle}
+.ba-table tr:last-child td{border-bottom:0}
+.ba-table tr:hover td{background:#fafbfd}
+.ba-table .r{text-align:right}.ba-table .sn{width:44px;color:#9aa0a6;font-weight:600}
+.ba-table .nm{font-weight:700}
+.ba-table .amt{font-weight:800;font-variant-numeric:tabular-nums}
+.ba-table tr.u1 td:first-child{box-shadow:inset 4px 0 0 #b3261e}.ba-table tr.u2 td:first-child{box-shadow:inset 4px 0 0 #e37400}.ba-table tr.u3 td:first-child{box-shadow:inset 4px 0 0 #f0b429}.ba-table tr.u0 td:first-child{box-shadow:inset 4px 0 0 #188038}
+.ba-chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap}
+.ba-chip.overdue{background:#fdecea;color:#b3261e}.ba-chip.today{background:#fff0d6;color:#a35200}.ba-chip.soon{background:#fff8e1;color:#8a5300}.ba-chip.ok{background:#e6f4ea;color:#188038}
+.ba-table .ba-pay{font-size:12px;font-weight:700;padding:7px 14px;border-radius:9px;background:#fff;color:#188038;border:1.5px solid #188038}
+.ba-table .ba-pay:hover{background:#188038;color:#fff}
+.ba-table .ba-pay.confirm-pending{background:#d93025;border-color:#d93025;color:#fff}
+.ba-empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:52px 20px;color:#6b7280;text-align:center}
+.ba-empty .ck{width:56px;height:56px;border-radius:16px;background:#e6f4ea;color:#188038;font-size:28px;display:flex;align-items:center;justify-content:center;font-weight:900}
+.ba-empty b{color:var(--ink);font-size:16px}
+@media(max-width:960px){.ba-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.ba-kpi b{font-size:19px}.ba-kpi{padding:12px}}
 #billAlertModal{z-index:900}
 #dailyCashModal{padding:0;align-items:stretch;z-index:800;background:#f1f3f4}
 #dailyCashModal .modalbox.cash-page{max-width:none;width:100%;height:100%;max-height:none;border-radius:0;padding:0;display:flex;flex-direction:column;overflow:hidden;box-shadow:none;background:#f1f3f4;transform:none}
@@ -1132,7 +1170,7 @@ body:has(.bill-ticker.show) .wd{top:42px}
     <button class="sb-item" data-page="salesModal" onclick="openActionModal('salesModal')"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11l2-8H6"/></svg><span>Sales</span></button>
     <button class="sb-item" data-page="productModal" onclick="openActionModal('productModal')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg><span>Add Product</span></button>
     <button class="sb-item" data-page="dailyCashModal" onclick="openDailyCash()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><span>Daily Cash / Others</span></button>
-    <button class="sb-item" onclick="openBillAlertModal()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg><span>Bill Alerts</span></button>
+    <button class="sb-item" data-page="billAlertModal" onclick="openBillAlertModal()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg><span>Bill Alerts</span></button>
     <button class="sb-item" data-page="warrantyModal" onclick="openWarranty()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 5-5"/></svg><span>Warranty</span><em class="sb-badge" id="navWarBadge"></em></button>
     <div class="sb-group">Records</div>
     <button class="sb-item" data-page="stockListModal" onclick="openStockList()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg><span>Stock Register</span></button>
@@ -1320,7 +1358,7 @@ body:has(.bill-ticker.show) .wd{top:42px}
 
 <div class="modal" id="dailyCashStatementModal" aria-hidden="true"><div class="modalbox wide-modal stock-register-modal"><button class="close" onclick="closeActionModal('dailyCashStatementModal')" aria-label="Close">✕ Close</button><h2>📄 Daily Cash Statement</h2><p class="hint">Every day's Daily Cash entries are listed below. Tap a date to open and view it (past days are read-only).</p><div class="tablewrap stock-history-wrap"><table><thead><tr><th>Date</th><th class="num">Electricity Bill</th><th class="num">Due Paid</th><th class="num">Others</th><th class="num">Cost</th><th class="num">Sale (POS)</th><th class="num">Total Cash</th></tr></thead><tbody id="dailyCashStatementTable"></tbody></table></div></div></div>
 
-<div class="modal" id="billAlertModal" aria-hidden="true"><div class="modalbox" style="max-width:480px"><button class="close" onclick="closeActionModal('billAlertModal')" aria-label="Close">✕ Close</button><h2>⚠️ Bill Payment Alerts</h2><p id="billAlertHint"></p><div id="billAlertStatus"></div><button type="button" id="billAlertPaidAllBtn" class="steel bill-alert-paidall" onclick="markAllBillsPaid(this)" style="display:none">✓✓ Paid All</button><div id="billAlertList"></div></div></div>
+<div class="modal" id="billAlertModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('billAlertModal')" aria-label="Close">✕ Close</button><h2>⚠️ Bill Alerts</h2><div id="billAlertStatus"></div><p id="billAlertHint"></p><div class="ba-card"><div class="ba-toolbar"><div><b id="baTitle">Pending bills</b><span id="baSub"></span></div><button type="button" id="billAlertPaidAllBtn" class="steel bill-alert-paidall" onclick="markAllBillsPaid(this)" style="display:none">✓✓ Paid All</button></div><div id="billAlertList"></div></div></div></div></div>
 <div id="paidAllSuccessOverlay" class="paidall-success-overlay" aria-hidden="true">
   <div class="paidall-success-inner">
     <svg class="paidall-success-badge" viewBox="0 0 100 100" width="88" height="88" xmlns="http://www.w3.org/2000/svg">
@@ -2071,27 +2109,26 @@ function openBillAlertModal(){
 function renderBillAlertList(entries){
   let host=$('billAlertList'),statusHost=$('billAlertStatus'),paidAllBtn=$('billAlertPaidAllBtn'),hintHost=$('billAlertHint');
   if(!host)return;
+  let overdue=entries.filter(x=>x.daysLeft<0),today=entries.filter(x=>x.daysLeft===0),soon=entries.filter(x=>x.daysLeft>0&&x.daysLeft<=2);
   let urgent=entries.filter(x=>x.daysLeft<=2);
-  let totalAmount=entries.reduce((s,x)=>s+(+x.amount||0),0);
-  let urgentAmount=urgent.reduce((s,x)=>s+(+x.amount||0),0);
-  if(hintHost){hintHost.classList.toggle('all-clear',!entries.length);hintHost.textContent=entries.length?'Formal notice: All electricity bills must be paid on or before their last date. Unpaid bills may incur late-payment penalties and service disconnection. Daily bills are to be cleared on the same day.':'All bills are settled. No outstanding payments — thank you.'}
+  let sum=l=>l.reduce((t,x)=>t+(+x.amount||0),0);
+  let totalAmount=sum(entries);
+  if(hintHost){hintHost.style.display=entries.length?'':'none';hintHost.classList.toggle('all-clear',!entries.length);hintHost.textContent='Formal notice: All electricity bills must be paid on or before their last date. Unpaid bills may incur late-payment penalties and service disconnection. Daily bills are to be cleared on the same day.'}
   if(statusHost){
-    let statusMsg;
-    if(!entries.length){
-      statusMsg=`<div class="bill-alert-status"><span class="bas-ico">✅</span><span>No outstanding bills.</span></div>`;
-    } else if(!urgent.length){
-      let next=entries[0];
-      statusMsg=`<div class="bill-alert-status has-pending"><span class="bas-ico">🕒</span><span>${entries.length} bill${entries.length>1?'s':''} pending. None due within 2 days. Next last date: ${esc(fmtDMY(next.dueDate))}.</span></div>`;
-    } else {
-      statusMsg=`<div class="bill-alert-status has-urgent"><span class="bas-ico">⚠️</span><span>ACTION REQUIRED: ${urgent.length} bill${urgent.length>1?'s':''} require${urgent.length>1?'':'s'} immediate payment.</span></div>`;
-    }
-    let stats=`<div class="bill-alert-stats">
-      <div class="bas-item"><span class="bas-label">Total Due</span><span class="bas-value">${entries.length}</span></div>
-      <div class="bas-item"><span class="bas-label">Total Amount</span><span class="bas-value">${money(totalAmount)}</span></div>
-      <div class="bas-item urgent"><span class="bas-label">Urgent Amount</span><span class="bas-value">${money(urgentAmount)}</span></div>
+    let banner;
+    if(!entries.length)banner=`<div class="bill-alert-status"><span class="bas-ico">✅</span><span>All bills are settled. No outstanding payments.</span></div>`;
+    else if(!urgent.length)banner=`<div class="bill-alert-status has-pending"><span class="bas-ico">🕒</span><span>${entries.length} bill${entries.length>1?'s':''} pending. None due within 2 days. Next last date: ${esc(fmtDMY(entries[0].dueDate))}.</span></div>`;
+    else banner=`<div class="bill-alert-status has-urgent"><span class="bas-ico">⚠️</span><span>ACTION REQUIRED: ${urgent.length} bill${urgent.length>1?'s':''} require${urgent.length>1?'':'s'} immediate payment.</span></div>`;
+    statusHost.innerHTML=banner+`<div class="ba-kpis">
+      <div class="ba-kpi"><span class="ico">🧾</span><div><small>Pending bills</small><b>${entries.length}</b><em>Total ${money(totalAmount)}</em></div></div>
+      <div class="ba-kpi red"><span class="ico">⛔</span><div><small>Overdue</small><b>${overdue.length}</b><em>${money(sum(overdue))}</em></div></div>
+      <div class="ba-kpi amber"><span class="ico">⏰</span><div><small>Due today</small><b>${today.length}</b><em>${money(sum(today))}</em></div></div>
+      <div class="ba-kpi green"><span class="ico">📅</span><div><small>Due in 1–2 days</small><b>${soon.length}</b><em>${money(sum(soon))}</em></div></div>
     </div>`;
-    statusHost.innerHTML=statusMsg+stats;
   }
+  let ttl=$('baTitle'),sub=$('baSub');
+  if(ttl)ttl.textContent=entries.length?'Pending bills':'No pending bills';
+  if(sub)sub.textContent=entries.length?`${entries.length} unpaid · sorted by last date`:'';
   if(paidAllBtn){
     clearTimeout(paidAllBtn._confirmTimer);
     paidAllBtn.disabled=false;
@@ -2100,16 +2137,15 @@ function renderBillAlertList(entries){
     paidAllBtn.textContent='✓✓ Paid All';
     paidAllBtn.style.display=entries.length>0?'':'none';
   }
-  if(!entries.length){host.innerHTML='<p class="hint">No unpaid bills right now.</p>';return}
-  let rows=entries.map(x=>{
-    let isUrgent=x.daysLeft<=2;
-    let overdue=x.daysLeft<0;
-    let daysTxt=overdue?`Overdue · ${Math.abs(x.daysLeft)} day${Math.abs(x.daysLeft)>1?'s':''}`:(x.daysLeft===0?'Due today':`Due in ${x.daysLeft} day${x.daysLeft>1?'s':''}`);
-    let daysClass=isUrgent?(overdue?'overdue':(x.daysLeft===0?'today':'soon')):'ok';
-    let icon=isUrgent?'<span class="bai-alert-icon" aria-hidden="true">⚠️</span> ':'';
-    return `<div class="bill-alert-item${isUrgent?' urgent':''}${overdue?' overdue-item':''}"><div class="bai-info">${icon}<b>${money(x.amount)}</b><small>${esc(x.note||'Unknown')} · Received ${esc(fmtDMY(x.dateKey))} · Last date ${esc(fmtDMY(x.dueDate))}</small></div><div><div class="bai-days ${daysClass}">${daysTxt}</div><button class="light" style="margin-top:6px" onclick="markBillPaid(this,'${x.dateKey}',${x.idx})">✓ Paid</button></div></div>`;
+  if(!entries.length){host.innerHTML='<div class="ba-empty"><div class="ck">✓</div><b>You\'re all caught up</b><span>There are no unpaid bills right now.</span></div>';return}
+  let rows=entries.map((x,i)=>{
+    let od=x.daysLeft<0;
+    let daysTxt=od?`Overdue · ${Math.abs(x.daysLeft)} day${Math.abs(x.daysLeft)>1?'s':''}`:(x.daysLeft===0?'Due today':`Due in ${x.daysLeft} day${x.daysLeft>1?'s':''}`);
+    let cls=od?'overdue':(x.daysLeft===0?'today':(x.daysLeft<=2?'soon':'ok'));
+    let u=od?'u1':(x.daysLeft===0?'u2':(x.daysLeft<=2?'u3':'u0'));
+    return `<tr class="${u}"><td class="sn">${i+1}</td><td class="nm">${esc(x.note||'Unknown')}</td><td class="r amt">${money(x.amount)}</td><td>${esc(fmtDMY(x.dateKey))}</td><td>${esc(fmtDMY(x.dueDate))}</td><td><span class="ba-chip ${cls}">${daysTxt}</span></td><td class="r"><button type="button" class="ba-pay" onclick="markBillPaid(this,'${x.dateKey}',${x.idx})">✓ Paid</button></td></tr>`;
   }).join('');
-  host.innerHTML=rows;
+  host.innerHTML=`<div class="ba-scroll"><table class="ba-table"><thead><tr><th>#</th><th>Customer / SMS no</th><th class="r">Amount</th><th>Received</th><th>Last date</th><th>Status</th><th class="r">Action</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 /* Clears just the Last Date for one specific logged bill row so its alert
    stops. If it's today's own editable row, this goes through the normal
@@ -3922,7 +3958,7 @@ setupDraggableFab($('billAlertFab'));
    the area beside the sidebar. Only the Bill Alert (and small
    helper dialogs such as the barcode scanner) stay as popups.
    ============================================================ */
-var PAGE_MODALS=['productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','dailyCashModal','dailyCashStatementModal','stockRegisterModal','dataModal','pwModal'];
+var PAGE_MODALS=['productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','dailyCashModal','dailyCashStatementModal','billAlertModal','stockRegisterModal','dataModal','pwModal'];
 function closeOtherPages(keep){PAGE_MODALS.forEach(function(id){if(id===keep)return;var m=document.getElementById(id);if(m&&m.classList.contains('show')){m.classList.remove('show');m.setAttribute('aria-hidden','true')}});syncCashOpenClass()}
 function goHome(){
   closeSidebar();
