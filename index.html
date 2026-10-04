@@ -1041,6 +1041,10 @@ body:has(.bill-ticker.show) .wd{top:42px}
 .dd-txt{position:absolute;inset:0;display:flex;align-items:center;padding:0 7px;font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 .dd-txt.empty{color:#9aa0a6;font-weight:500}
 .dd-txt.long{font-size:10.5px}
+.dd-txt.paid{color:#14532d;font-weight:700;gap:5px;padding-left:4px}
+.dd-txt.paid::before,.paid-stk{content:'✓';flex:none;width:17px;height:17px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,#4ade80,#16a34a 60%,#166534);color:#fff;font-size:11px;font-weight:900;line-height:1;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #22c55e,0 2px 5px rgba(22,101,52,.4);transform:rotate(-10deg);margin-right:2px}
+.dd-txt.paid.long{font-size:10.5px}
+#dailyCashModal .cash-row-bill .dd-txt.paid{color:#146c2e}
 #dailyCashModal .cash-row-bill.bill-row-warn .dd-txt{color:var(--maroon);font-weight:700}
 @media(max-width:700px){.dd-txt{font-size:10.5px;padding:0 5px}.dd-txt.long{font-size:9px}}
 .bdf-btn{margin-left:8px;background:#e8f0fe;color:#174ea6;border:0;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;box-shadow:none;vertical-align:middle}
@@ -1723,7 +1727,7 @@ function normalizeDayData(day){
       if(v==null||v==='')return undefined;
       if(typeof v==='object'){
         let o={note:v.note||'',amount:+v.amount||0};
-        if(k==='bill')o.dueDate=v.dueDate||'';
+        if(k==='bill'){o.dueDate=v.dueDate||'';if(v.paidAt)o.paidAt=v.paidAt}
         return o;
       }
       let o={note:'',amount:+v||0};
@@ -1834,7 +1838,7 @@ function renderCashColumn(col,count){
     if(isBill){
       let dueVal=row.dueDate||'';
       if(dueVal&&computeBillAlert(cashViewDate,dueVal).daysLeft<=2)warnClass=' bill-row-warn';
-      {const dTxt=dueVal?fmtBillDate(dueVal):'—';dateHtml=`<span class="dd"><span class="dd-txt${dueVal?'':' empty'}${dTxt.length>13?' long':''}" title="${esc(dTxt)}">${esc(dTxt)}</span><input type="date" title="Last date to pay" value="${esc(dueVal)}" class="xl-cell" data-col="bill" data-row="${i}" data-part="dueDate" oninput="updateCashDueDate(${i},this.value)"${ro?' disabled':''}></span>`}
+      {const pdKey=(!dueVal&&row.paidAt)?row.paidAt:'';const dTxt=dueVal?fmtBillDate(dueVal):(pdKey?fmtBillDate(pdKey):'—');dateHtml=`<span class="dd"><span class="dd-txt${dueVal||pdKey?'':' empty'}${pdKey?' paid':''}${dTxt.length>13?' long':''}" title="${esc(pdKey?'Paid on '+fmtBillDate(pdKey):dTxt)}">${esc(dTxt)}</span><input type="date" title="Last date to pay" value="${esc(dueVal)}" data-paid="${esc(pdKey)}" class="xl-cell" data-col="bill" data-row="${i}" data-part="dueDate" oninput="updateCashDueDate(${i},this.value)"${ro?' disabled':''}></span>`}
     }
     let delHtml=ro?'<span></span>':`<button type="button" class="cash-del" onclick="deleteCashEntry('${col}',${i})" aria-label="Delete row" title="Delete">🗑️</button>`;
     html+=`<div class="cash-row cash-row-due${isBill?' cash-row-bill':''}${warnClass} filled"><span class="cash-idx">${i+1}</span><input type="text" value="${esc(row.note||'')}" class="xl-cell" data-col="${col}" data-row="${i}" data-part="note" oninput="updateCashNote('${col}',${i},this.value)"${ro?' disabled':''}><label class="amt"><input type="number" inputmode="decimal" min="0" step=".01" value="${row.amount?row.amount:''}" class="xl-cell" data-col="${col}" data-row="${i}" data-part="amount" oninput="updateCashAmount('${col}',${i},this.value)"${ro?' disabled':''}></label>${dateHtml}${delHtml}</div>`;
@@ -1935,9 +1939,10 @@ function fmtDMY(dateStr){return fmtBillDate(dateStr)}   // used by the alert pop
 /* overlay text on the Last-date inputs */
 function ddSync(inp){
   const w=inp&&inp.parentNode;const t=w&&w.querySelector('.dd-txt');if(!t)return;
-  const txt=inp.value?fmtBillDate(inp.value):(inp.id==='cashAdd_bill_date'?'Last date':'—');
-  t.textContent=txt;t.title=txt;
-  t.classList.toggle('empty',!inp.value);t.classList.toggle('long',txt.length>13);
+  const pd=(!inp.value&&inp.dataset&&inp.dataset.paid)?inp.dataset.paid:'';
+  const txt=inp.value?fmtBillDate(inp.value):(pd?fmtBillDate(pd):(inp.id==='cashAdd_bill_date'?'Last date':'—'));
+  t.textContent=txt;t.title=pd?'Paid on '+fmtBillDate(pd):txt;
+  t.classList.toggle('empty',!inp.value&&!pd);t.classList.toggle('paid',!!pd);t.classList.toggle('long',txt.length>13);
 }
 function ddPick(inp){if(!inp.disabled&&inp.showPicker){try{inp.showPicker()}catch(e){}}}
 function billDateRefresh(){
@@ -2087,7 +2092,7 @@ function renderBillAlertList(entries){
    patches that day directly in the cloud document via a transaction. */
 async function clearBillDueDate(dateKey,idx){
   if(cashViewDate===dateKey&&cashDraft&&cashDraft.bill[idx]){
-    cashDraft.bill[idx].dueDate='';
+    cashDraft.bill[idx].dueDate='';cashDraft.bill[idx].paidAt=todayKey();
     if(dateKey===todayKey()){
       renderCashColumn('bill',CASH_COUNTS.bill);
       scheduleCashAutoSave();
@@ -2095,10 +2100,11 @@ async function clearBillDueDate(dateKey,idx){
     }
   }
   if(!cloudReady){alert('Still connecting to the cloud. Please wait a few seconds, then try again.');return false}
+  const paidOn=todayKey();
   const ok=await mutateCloud(data=>{
     data.dailyCashByDate=data.dailyCashByDate||{};
     let day=data.dailyCashByDate[dateKey];
-    if(day&&Array.isArray(day.bill)&&day.bill[idx])day.bill[idx].dueDate='';
+    if(day&&Array.isArray(day.bill)&&day.bill[idx]){day.bill[idx].dueDate='';day.bill[idx].paidAt=paidOn}
   });
   if(ok&&cashViewDate===dateKey)loadCashView(dateKey);
   return ok;
@@ -2140,18 +2146,19 @@ async function markAllBillsPaid(btn){
   // (slow/dropped connection), only some bills ended up cleared — so
   // "Paid All" would silently leave a few behind. A single atomic write
   // either clears all of them or none, and always finishes in one round trip.
+  const paidOn=todayKey();
   const ok=await mutateCloud(data=>{
     data.dailyCashByDate=data.dailyCashByDate||{};
     entries.forEach(x=>{
       let day=data.dailyCashByDate[x.dateKey];
-      if(day&&Array.isArray(day.bill)&&day.bill[x.idx])day.bill[x.idx].dueDate='';
+      if(day&&Array.isArray(day.bill)&&day.bill[x.idx]){day.bill[x.idx].dueDate='';day.bill[x.idx].paidAt=paidOn}
     });
   });
   if(ok){
     // Keep today's in-memory draft (if open) in sync so it doesn't get
     // overwritten back to "unpaid" by the next autosave.
     entries.forEach(x=>{
-      if(cashDraft&&cashViewDate===x.dateKey&&cashDraft.bill&&cashDraft.bill[x.idx])cashDraft.bill[x.idx].dueDate='';
+      if(cashDraft&&cashViewDate===x.dateKey&&cashDraft.bill&&cashDraft.bill[x.idx]){cashDraft.bill[x.idx].dueDate='';cashDraft.bill[x.idx].paidAt=paidOn}
     });
     if(cashViewDate)loadCashView(cashViewDate);
     renderBillAlerts();
@@ -2326,7 +2333,7 @@ function runCashSearch(){
         let amtStr=String(amt);
         let nameHit=name.toLowerCase().includes(q);
         let amtHit=qNum!==''&&/^[0-9.]+$/.test(qNum)&&(amtStr.includes(qNum)||amt.toFixed(2).includes(qNum));
-        if(nameHit||amtHit)hits.push({k,col,idx,name,amt,dueDate:row.dueDate||''});
+        if(nameHit||amtHit)hits.push({k,col,idx,name,amt,dueDate:row.dueDate||'',paidAt:row.paidAt||''});
       });
     });
   });
@@ -2342,7 +2349,7 @@ function runCashSearch(){
     hits.map(h=>{
       let d=new Date(h.k+'T00:00:00');
       let ds=d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'})+(h.k===today?' · Today':'');
-      return `<tr class="hit" onclick="openCashHit('${h.k}','${h.col}',${h.idx})"><td>${esc(ds)}</td><td><span class="csp-tag ${h.col}">${CASH_SECTION_LABEL[h.col]}</span></td><td>${highlightMatch(h.name||'—',q)}</td><td class="num">${qNum!==''&&/^[0-9.]+$/.test(qNum)&&String(h.amt).includes(qNum)?'৳<mark>'+esc(h.amt.toFixed(2))+'</mark>':money(h.amt)}</td><td>${h.dueDate?esc(fmtDMY(h.dueDate)):'—'}</td></tr>`;
+      return `<tr class="hit" onclick="openCashHit('${h.k}','${h.col}',${h.idx})"><td>${esc(ds)}</td><td><span class="csp-tag ${h.col}">${CASH_SECTION_LABEL[h.col]}</span></td><td>${highlightMatch(h.name||'—',q)}</td><td class="num">${qNum!==''&&/^[0-9.]+$/.test(qNum)&&String(h.amt).includes(qNum)?'৳<mark>'+esc(h.amt.toFixed(2))+'</mark>':money(h.amt)}</td><td>${h.dueDate?esc(fmtDMY(h.dueDate)):(h.paidAt?'<span style="color:#14532d;font-weight:700;display:inline-flex;align-items:center;gap:6px"><span class="paid-stk">✓</span>'+esc(fmtDMY(h.paidAt))+'</span>':'—')}</td></tr>`;
     }).join('')+`</tbody></table><div class="csp-foot">Total of results: <b>${money(total)}</b> · tap a row to open that day</div>`;
 }
 function clearCashSearch(){
@@ -4268,7 +4275,7 @@ function renderWarranty(){
   const L=warList();
   const counts={all:L.length};WAR_ORDER.forEach(s=>counts[s]=L.filter(x=>x.status===s).length);
   const nb=$('navWarBadge');
-  if(nb){const n=counts.received+counts.back;nb.textContent=n;nb.style.display=n>0?'inline-flex':'none'}
+  if(nb){const n=counts.received+counts.company+counts.back;nb.textContent=n;nb.style.display=n>0?'inline-flex':'none'}
   const chips=$('warTabs'),host=$('warList');
   if(chips){
     const defs=[['all','All']].concat(WAR_ORDER.map(k=>[k,WAR_STATUS[k].label]));
