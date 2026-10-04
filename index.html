@@ -1044,6 +1044,8 @@ body:has(.bill-ticker.show) .wd{top:42px}
 .dd-txt.paid{color:#14532d;font-weight:700;gap:5px;padding-left:4px}
 .dd-txt.paid::before,.paid-stk{content:'✓';flex:none;width:16px;height:16px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#22c55e,#15803d);color:#fff;font-size:11px;font-weight:900;line-height:1;margin-right:2px}
 .dd-txt.paid.long{font-size:10.5px}
+.cash-add .dd.cash-err input{border-color:#dc2626!important;box-shadow:0 0 0 2px rgba(220,38,38,.18)!important}
+.cash-add-input.cash-err,.cash-add .amt.cash-err,.cash-add .dd.cash-err{border-color:#dc2626!important;box-shadow:0 0 0 2px rgba(220,38,38,.18)!important;border-radius:8px}
 #dailyCashModal .cash-row-bill .dd-txt.paid{color:#146c2e}
 #dailyCashModal .cash-row-bill.bill-row-warn .dd-txt{color:var(--maroon);font-weight:700}
 @media(max-width:700px){.dd-txt{font-size:10.5px;padding:0 5px}.dd-txt.long{font-size:9px}}
@@ -1301,8 +1303,8 @@ body:has(.bill-ticker.show) .wd{top:42px}
   <div class="csp-body" id="cashSearchResults"></div>
 </div>
 <div class="cash-grid" id="cashGrid">
-<div class="cash-col" data-col="bill"><h3>🧾 Electricity Bill<button type="button" class="bdf-btn" onclick="openBillDateFmt()" title="Change how the Last date is shown">📅 Date format</button></h3><div class="cash-add"><input type="text" id="cashAdd_bill_note" class="cash-add-input" placeholder="Customer name" onkeydown="cashAddKey(event,'bill')"><label class="amt cash-add-amt"><input type="number" id="cashAdd_bill_amount" class="cash-add-input" placeholder="0.00" step=".01" min="0" onkeydown="cashAddKey(event,'bill')"></label><span class="dd cash-add-date-wrap"><span class="dd-txt empty" id="cashAdd_bill_date_txt">Last date</span><input type="date" id="cashAdd_bill_date" class="cash-add-input cash-add-date" title="Last date (optional)" onclick="ddPick(this)" oninput="ddSync(this)" onchange="ddSync(this)"></span><button type="button" class="cash-add-btn" onclick="addCashEntry('bill')">+ Add</button></div><div class="cash-subhead cash-subhead-bill"><span></span><span>Customer name</span><span class="r">Amount</span><span>Last date</span></div><div class="cash-list cash-list-due cash-list-bill" id="cashList_bill"></div><div class="cash-total"><em>Total</em><span id="cashTotal_bill">৳0.00</span></div></div>
-<div class="cash-col" data-col="due"><h3>👤 Due Paid</h3><div class="cash-add"><input type="text" id="cashAdd_due_name" class="cash-add-input" placeholder="Customer name" onkeydown="cashAddKey(event,'due')"><label class="amt cash-add-amt"><input type="number" id="cashAdd_due_amount" class="cash-add-input" placeholder="0.00" step=".01" min="0" onkeydown="cashAddKey(event,'due')"></label><button type="button" class="cash-add-btn" onclick="addCashEntry('due')">+ Add</button></div><div class="cash-subhead"><span></span><span>Customer name</span><span class="r">Amount</span></div><div class="cash-list cash-list-due" id="cashList_due"></div><div class="cash-total"><em>Total</em><span id="cashTotal_due">৳0.00</span></div></div>
+<div class="cash-col" data-col="bill"><h3>🧾 Electricity Bill<button type="button" class="bdf-btn" onclick="openBillDateFmt()" title="Change how the Last date is shown">📅 Date format</button></h3><div class="cash-add"><input type="text" id="cashAdd_bill_note" class="cash-add-input" placeholder="Customer name or SMS no" onblur="billNoteHash(this)" onkeydown="cashAddKey(event,'bill')"><label class="amt cash-add-amt"><input type="number" id="cashAdd_bill_amount" class="cash-add-input" placeholder="0.00" step=".01" min="0" onkeydown="cashAddKey(event,'bill')"></label><span class="dd cash-add-date-wrap"><span class="dd-txt empty" id="cashAdd_bill_date_txt">Last date</span><input type="date" id="cashAdd_bill_date" class="cash-add-input cash-add-date" title="Last date (optional)" onclick="ddPick(this)" oninput="ddSync(this)" onchange="ddSync(this)"></span><button type="button" class="cash-add-btn" onclick="addCashEntry('bill')">+ Add</button></div><div class="cash-subhead cash-subhead-bill"><span></span><span>Customer name</span><span class="r">Amount</span><span>Last date</span></div><div class="cash-list cash-list-due cash-list-bill" id="cashList_bill"></div><div class="cash-total"><em>Total</em><span id="cashTotal_bill">৳0.00</span></div></div>
+<div class="cash-col" data-col="due"><h3>👤 Due Paid</h3><div class="cash-add"><input type="text" id="cashAdd_due_name" class="cash-add-input" placeholder="Customer name" onkeydown="cashAddKey(event,'due')"><label class="amt cash-add-amt"><input type="number" id="cashAdd_due_amount" class="cash-add-input" placeholder="0.00" step=".01" min="0" onkeydown="cashAddKey(event,'due')"></label><button type="button" class="cash-add-btn" onclick="addCashEntry('due')">+ Add</button></div><div class="cash-subhead"><span></span><span>Customer / SMS no</span><span class="r">Amount</span></div><div class="cash-list cash-list-due" id="cashList_due"></div><div class="cash-total"><em>Total</em><span id="cashTotal_due">৳0.00</span></div></div>
 <div class="cash-col" data-col="others"><h3>📦 Others</h3><div class="cash-add"><input type="text" id="cashAdd_others_note" class="cash-add-input" placeholder="Purpose" onkeydown="cashAddKey(event,'others')"><label class="amt cash-add-amt"><input type="number" id="cashAdd_others_amount" class="cash-add-input" placeholder="0.00" step=".01" min="0" onkeydown="cashAddKey(event,'others')"></label><button type="button" class="cash-add-btn" onclick="addCashEntry('others')">+ Add</button></div><div class="cash-subhead"><span></span><span>Purpose</span><span class="r">Amount</span></div><div class="cash-list cash-list-due" id="cashList_others"></div><div class="cash-total"><em>Total</em><span id="cashTotal_others">৳0.00</span></div></div>
 <div class="cash-col" data-col="cost"><h3>💸 Cost</h3><div class="cash-add"><input type="text" id="cashAdd_cost_note" class="cash-add-input" placeholder="Purpose" onkeydown="cashAddKey(event,'cost')"><label class="amt cash-add-amt"><input type="number" id="cashAdd_cost_amount" class="cash-add-input" placeholder="0.00" step=".01" min="0" onkeydown="cashAddKey(event,'cost')"></label><button type="button" class="cash-add-btn" onclick="addCashEntry('cost')">+ Add</button></div><div class="cash-subhead"><span></span><span>Purpose</span><span class="r">Amount</span></div><div class="cash-list cash-list-due" id="cashList_cost"></div><div class="cash-total"><em>Total</em><span id="cashTotal_cost">৳0.00</span></div></div>
 </div>
@@ -1801,19 +1803,42 @@ function cashAddIds(col){
     ?{note:'cashAdd_due_name',amount:'cashAdd_due_amount'}
     :{note:'cashAdd_'+col+'_note',amount:'cashAdd_'+col+'_amount',date:col==='bill'?'cashAdd_bill_date':null};
 }
+document.addEventListener('input',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('cash-add-input')){cashFieldErr(t,false)}if(t&&t.id==='cashAdd_bill_date')cashFieldErr(t,false)},true);
+function billNoteHash(el){
+  if(!el)return;
+  let v=(el.value||'').trim();
+  if(/^\d+$/.test(v))el.value='#'+v;
+}
+function cashFieldErr(el,on){
+  if(!el)return;
+  let t=el.classList&&el.classList.contains('cash-add-input')&&el.parentNode&&el.parentNode.classList.contains('amt')?el.parentNode:el;
+  if(el.type==='date'&&el.parentNode)t=el.parentNode;
+  t.classList.toggle('cash-err',!!on);
+}
 function addCashEntry(col){
   if(!cashDraft||cashViewDate!==todayKey())return;
   let ids=cashAddIds(col);
   let noteEl=$(ids.note),amtEl=$(ids.amount),dateEl=ids.date?$(ids.date):null;
+  if(col==='bill')billNoteHash(noteEl);
   let note=(noteEl&&noteEl.value||'').trim();
   let amount=+((amtEl&&amtEl.value)||0);
-  if(!note&&!amount){if(noteEl)noteEl.focus();return}
+  let dateVal=dateEl?dateEl.value:'';
+  let badNote=!note,badAmt=!(amount>0),badDate=!!dateEl&&!dateVal;
+  cashFieldErr(noteEl,badNote);cashFieldErr(amtEl,badAmt);if(dateEl)cashFieldErr(dateEl,badDate);
+  if(badNote||badAmt||badDate){
+    let first=badNote?noteEl:(badAmt?amtEl:dateEl);
+    if(first&&first.focus)first.focus();
+    let st=$('dailyCashStatus');
+    if(st){const prev=st.dataset.prev!==undefined?st.dataset.prev:st.textContent;st.dataset.prev=prev;st.textContent='⚠️ Please fill: '+[badNote?(col==='bill'?'Customer name / SMS no':(col==='due'?'Customer name':'Purpose')):'',badAmt?'Amount':'',badDate?'Last date':''].filter(Boolean).join(', ');clearTimeout(window._cashErrT);window._cashErrT=setTimeout(()=>{if(st.textContent.indexOf('Please fill')===0){st.textContent=st.dataset.prev}delete st.dataset.prev},3000)}
+    return;
+  }
   let entry=col==='due'?{name:note,amount:amount}:{note:note,amount:amount};
-  if(col==='bill'){entry.dueDate=dateEl?dateEl.value:'';entry.v=1}
+  if(col==='bill'){entry.dueDate=dateVal;entry.v=1}
   (col==='due'?cashDraft.due:cashDraft[col]).push(entry);
   if(noteEl)noteEl.value='';
   if(amtEl)amtEl.value='';
   if(dateEl){dateEl.value='';ddSync(dateEl)}
+  [noteEl,amtEl,dateEl].forEach(e=>cashFieldErr(e,false));
   renderDailyCash();
   scheduleCashAutoSave();
   if(noteEl)noteEl.focus();
