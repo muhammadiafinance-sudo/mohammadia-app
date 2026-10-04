@@ -1151,6 +1151,8 @@ body:has(.bill-ticker.show) .wd{top:42px}
 
     <button class="login-btn" id="loginBtn" onclick="doLogin()"><span id="loginBtnText">Login</span><span class="spinner" id="loginSpinner"></span></button>
     <div class="login-error" id="loginError"></div>
+    <div style="text-align:center;margin-top:14px"><button type="button" id="forgotBtn" onclick="forgotPassword()" style="background:none;border:0;box-shadow:none;color:var(--brass2);font-size:13px;font-weight:600;padding:6px 10px;text-decoration:underline;cursor:pointer">Forgot password?</button></div>
+    <div id="forgotMsg" style="display:none;margin-top:10px;padding:10px 13px;border-radius:8px;background:#e6f4ea;color:#188038;font-size:13px;font-weight:600;text-align:center"></div>
     <div class="login-foot" id="authCloudStatus" style="display:none" aria-hidden="true"></div>
   </div>
 </div>
@@ -1183,6 +1185,7 @@ body:has(.bill-ticker.show) .wd{top:42px}
     <div class="sb-group admin-only">Admin</div>
     <button class="sb-item admin-only" data-page="businessModal" onclick="openBusinessCenter()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V4h6v3M3 13h18"/></svg><span>Business Center</span></button>
     <button class="sb-item admin-only" data-page="dataModal" onclick="openData()"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg><span>Data Center</span></button>
+    <button class="sb-item admin-only" data-page="sessionsModal" onclick="openSessions()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span>Active Sessions</span></button>
   </nav>
   <div class="sb-account">
     <button class="sb-item" data-page="pwModal" onclick="openPwModal()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></svg><span>Change Password</span></button>
@@ -1392,6 +1395,8 @@ body:has(.bill-ticker.show) .wd{top:42px}
   </div>
 </div>
 
+<div class="modal" id="sessionsModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('sessionsModal')" aria-label="Close">✕ Close</button><h2>🖥️ Active Sessions</h2><p class="hint">Every device signed in to this app. Press Logout to sign a device out remotely — it logs out within a few seconds if it is online, or the next time it opens the app.</p><div class="actions" style="margin:0 0 10px"><button class="red" onclick="revokeOtherSessions()">Logout all other devices</button></div><div class="tablewrap"><table><thead><tr><th>Device</th><th>User</th><th>Logged in</th><th>Last active</th><th>Status</th><th>Action</th></tr></thead><tbody id="sessionsTable"></tbody></table></div></div></div>
+
 <div class="modal" id="dataModal"><div class="modalbox"><button class="close" onclick="closeData()">Close</button><h2>💾 Data Center — Backup & Restore</h2><p class="hint">Stock &amp; sales now sync live to your Firebase cloud database, so every device signed into the same Firebase project sees the same data. For extra safety, still make regular backups below — CSV backup files can be opened in Excel and CSV files exported by this app can be restored here.</p>
 <h3>Export / Backup</h3><div class="actions"><button onclick="backupJSON()">⬇ Complete JSON Backup</button><button onclick="stockCSV()">⬇ Stock CSV</button><button onclick="salesCSV()">⬇ Sales CSV</button><button class="green" onclick="todayCSV()">⬇ Today's Sales CSV</button></div>
 <h3>Import / Restore</h3><div class="filebox"><b>Complete JSON Restore</b><p class="hint">Restores stock, sales and latest invoice.</p><button class="green" onclick="pick('json')">Choose JSON File</button></div>
@@ -1400,24 +1405,17 @@ body:has(.bill-ticker.show) .wd{top:42px}
 <input id="fileInput" type="file" hidden></div></div>
 
 <div class="modal" id="pwModal"><div class="modalbox pwmodalbox"><button class="close" onclick="closePwModal()">Close</button><h2>🔑 Change Password</h2>
-<p class="hint">You must enter your current password to set a new one. Passwords are stored only as salted SHA-256 hashes — never in plain text — and now sync via Firebase, so a change here applies on every device automatically.</p>
-<div id="pwRoleRow" class="login-field" style="display:flex;flex-direction:column">
-<label>Account to update</label>
-<div class="role-select">
-<button type="button" class="role-btn active" id="pwRoleBtnAdmin" onclick="selectPwRole('admin')">🛡️ Admin</button>
-<button type="button" class="role-btn" id="pwRoleBtnEmployee" onclick="selectPwRole('employee')">🧑‍💼 Employee</button>
-</div>
-</div>
-<label>Current password (yours)</label><input type="password" id="pwCurrent" placeholder="Your current password">
-<label>New password</label><input type="password" id="pwNew" placeholder="New password (min 6 characters)">
-<label>Confirm new password</label><input type="password" id="pwConfirm" placeholder="Re-enter new password">
-<div class="actions" style="margin-top:16px"><button class="green" onclick="submitPwChange()">Update Password</button></div>
+<p class="hint">For security, a password-change link is sent to the shop's Gmail inbox. Open the email, tap the link and choose a new password there. Nothing is changed until you do that. Passwords are handled by Firebase Authentication and are never stored in this app.</p>
+<div id="pwRoleRow" style="display:none"></div>
+<div class="status" id="pwMailInfo" style="background:#f1f3f4;color:var(--ink)">Link will be sent to: <b>muhammadiafinance@gmail.com</b></div>
+<div class="actions" style="margin-top:16px"><button class="green" id="pwSendBtn" onclick="submitPwChange()">📧 Send password-change link</button></div>
 <div class="status" id="pwModalStatus" style="margin-top:12px"></div>
 </div></div>
 
 <!-- ===================== FIREBASE (Cloud Sync) ===================== -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 /* 🔥 PASTE YOUR OWN FIREBASE PROJECT CONFIG HERE
@@ -1455,42 +1453,14 @@ const WARRANTY_COL = CLOUD_DOC.collection('warranty'); // one tiny doc per warra
 // Login credentials (salted password hashes for admin/employee) live in their
 // own small document, kept separate from the stock/sales document above so
 // that a password change never touches (or races with) business data.
-const AUTH_DOC = fsdb.collection('mohammadia_library').doc('auth_v1');
+const fbAuth = firebase.auth();                     // Firebase Authentication (email/password)
+const SESSIONS_COL = CLOUD_DOC.collection('sessions'); // one doc per signed-in device
+// Which Firebase account is which role. Must match firestore.rules.
+const ROLE_EMAILS = {'muhammadiafinance+admin@gmail.com':'admin','muhammadiafinance+employee@gmail.com':'employee'};
 </script>
 
 <script>
-/* ============================================================
-   AUTHENTICATION MODULE
-   ------------------------------------------------------------
-   SECURITY NOTE (please read):
-   This is a BROWSER-ONLY / CLIENT-SIDE authentication system.
-   - Passwords are never stored or written anywhere in plaintext.
-     Only a SHA-256 hash (salted) of each password is kept, so
-     opening "View Source", reading localStorage, or reading the
-     Firestore document below will NOT reveal any password.
-   - This is meaningfully better than a hard-coded plaintext
-     password, but it is still NOT equivalent to real server-side
-     security. Anyone with full physical/OS access to this
-     computer or browser profile could, in principle, open the
-     browser DevTools, read localStorage, or edit this HTML file
-     to bypass the check, change the stored hash, or patch the
-     JavaScript logic itself. Client-side code can always be
-     inspected and modified by whoever controls the machine it
-     runs on.
-   - Password hashes now live in Firebase Firestore (AUTH_DOC, see
-     the FIREBASE block above), the same as stock/sales data, so a
-     password change made on one device syncs to every other device
-     signed into the same Firebase project — no more re-entering a
-     changed password separately on each phone/computer. A local
-     copy is still cached in localStorage as a fast/offline fallback
-     for the login check itself. Role-checking (admin vs employee)
-     is still a LOCAL, client-side decision; it controls what THIS
-     browser shows/hides, not what Firestore will accept. For true
-     tamper-resistant access control (an employee device genuinely
-     cannot write admin-only data no matter what it does), the next
-     step would be Firebase Authentication + Firestore Security
-     Rules keyed to the signed-in user, which is not built here.
-   ============================================================ */
+/* AUTHENTICATION MODULE — now backed by Firebase Authentication (see the FIREBASE AUTHENTICATION + DEVICE SESSIONS block below). */
 const AUTH_KEY='mohammadia_auth_v4';
 const SESSION_KEY='mohammadia_session_v4';
 const PERSIST_SESSION_KEY='mohammadia_persist_session_v4';
@@ -1505,96 +1475,160 @@ async function hashPassword(password,salt){return sha256Hex(salt+'::'+password)}
 function loadAuth(){try{return JSON.parse(localStorage.getItem(AUTH_KEY)||'null')}catch(e){return null}}
 function saveAuth(a){localStorage.setItem(AUTH_KEY,JSON.stringify(a))}
 
-// Live listener: whenever AUTH_DOC changes in Firestore (e.g. someone changed
-// the password on a different device), refresh this device's local cache so
-// the very next login check here already uses the new password — mirrors
-// startCloudSync() for the stock/sales document.
-let authSyncStarted=false;
-function startAuthSync(){
-  if(authSyncStarted)return;
-  authSyncStarted=true;
-  AUTH_DOC.onSnapshot(snap=>{
-    const data=snap.data();
-    if(data && data.admin && data.employee) saveAuth({admin:data.admin, employee:data.employee});
-  }, err=>console.error('Firebase auth sync error:', err));
+/* ============================================================
+   FIREBASE AUTHENTICATION + DEVICE SESSIONS
+   - Login uses Firebase Auth (email/password). Passwords never
+     touch this file or Firestore; Firebase stores them hashed.
+   - Role comes from the signed-in email (see ROLE_EMAILS above) and
+     is enforced server-side by firestore.rules.
+   - Every login creates a document in .../sessions so the admin can
+     see all devices and log any of them out remotely.
+   ============================================================ */
+const SID_KEY='mohammadia_sid_v1', SID_CONF_KEY='mohammadia_sid_conf_v1', FORCE_MSG_KEY='mohammadia_force_msg_v1';
+function roleOfUser(u){const e=String((u&&u.email)||'').toLowerCase();return ROLE_EMAILS[e]||null}
+function emailForRole(r){return Object.keys(ROLE_EMAILS).find(k=>ROLE_EMAILS[k]===r)}
+function setAuthStatus(){}
+async function ensureAuthInitialized(){return true}
+function authErrorText(e){
+  const c=(e&&e.code)||'';
+  if(c==='auth/invalid-credential'||c==='auth/wrong-password'||c==='auth/user-not-found'||c==='auth/invalid-login-credentials')return 'Incorrect password. Please try again.';
+  if(c==='auth/too-many-requests')return 'Too many wrong attempts. Please wait a few minutes and try again.';
+  if(c==='auth/network-request-failed')return 'No internet connection. Please check your network and try again.';
+  if(c==='auth/user-disabled')return 'This account has been disabled in Firebase.';
+  if(c==='auth/operation-not-allowed')return 'Email/Password sign-in is not enabled in Firebase Authentication.';
+  if(c==='app/no-role')return 'This account is not allowed to use this app.';
+  return 'Login failed'+(c?' ('+c+')':'')+'. Please try again.';
 }
 
-function setAuthStatus(text,isWarning){const el=document.getElementById('authCloudStatus');if(!el)return;el.textContent=text;el.style.color=isWarning?'var(--maroon)':'';}
+/* ---- device info (shown on the Active Sessions page) ---- */
+function deviceInfo(){
+  const ua=navigator.userAgent||'';
+  let os='Unknown';
+  if(/Android/i.test(ua))os='Android';else if(/iPhone|iPad|iPod/i.test(ua))os='iOS';else if(/Windows/i.test(ua))os='Windows';else if(/Mac OS X|Macintosh/i.test(ua))os='macOS';else if(/CrOS/i.test(ua))os='ChromeOS';else if(/Linux/i.test(ua))os='Linux';
+  let br='Browser';
+  if(/SamsungBrowser/i.test(ua))br='Samsung Internet';else if(/Edg\//i.test(ua))br='Edge';else if(/OPR\/|Opera/i.test(ua))br='Opera';else if(/Firefox|FxiOS/i.test(ua))br='Firefox';else if(/Chrome|CriOS/i.test(ua))br='Chrome';else if(/Safari/i.test(ua))br='Safari';
+  let model='';
+  const m=/Android[^;)]*;\s*([^;)]+)/.exec(ua);
+  if(m){model=m[1].replace(/\s*Build\/.*$/,'').trim();if(/^(K|Linux)$/i.test(model))model=''}
+  return{os,browser:br,model,label:(model?model+' · ':'')+os+' · '+br};
+}
 
-async function ensureAuthInitialized(){
-  startAuthSync();
-  setAuthStatus('Checking Firebase connection…',false);
-  // Force a SERVER read (not Firestore's local cache) so a login check always
-  // sees the truly latest password — this is what makes a change made on one
-  // device show up immediately on another, instead of possibly reading a
-  // stale cached copy.
-  try{
-    const snap=await Promise.race([
-      AUTH_DOC.get({source:'server'}),
-      new Promise((_,reject)=>setTimeout(()=>reject(new Error('Timed out waiting for Firebase — check your internet connection.')),8000))
-    ]);
-    const data=snap.data();
-    if(data && data.admin && data.employee){
-      const a={admin:data.admin, employee:data.employee};
-      saveAuth(a);
-      setAuthStatus('☁️ Password synced with Firebase',false);
-      return a;
+/* ---- session document for THIS device ---- */
+let mySid=null,sessUnsub=null,sessBeat=null,adminSessUnsub=null,sessSeenConfirmed=false,sessionsCache=[],loggingOut=false,sessVisHooked=false;
+function createSessionDoc(user){
+  const sid=user.uid+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  localStorage.setItem(SID_KEY,sid);localStorage.removeItem(SID_CONF_KEY);
+  mySid=sid;
+  const d=deviceInfo(),ts=firebase.firestore.FieldValue.serverTimestamp();
+  SESSIONS_COL.doc(sid).set({uid:user.uid,email:user.email,role:roleOfUser(user),device:d.label,os:d.os,browser:d.browser,model:d.model,loginAt:ts,lastActive:ts,revoked:false})
+    .catch(e=>console.error('Could not create session record (check Firestore rules):',e));
+  return sid;
+}
+function sessionBeat(){
+  if(document.hidden||!mySid)return;
+  SESSIONS_COL.doc(mySid).update({lastActive:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+}
+function startSessionWatch(user){
+  stopSessionWatch();
+  mySid=localStorage.getItem(SID_KEY);
+  if(!mySid||mySid.indexOf(user.uid+'_')!==0)createSessionDoc(user);
+  sessSeenConfirmed=localStorage.getItem(SID_CONF_KEY)===mySid;
+  const ref=SESSIONS_COL.doc(mySid);
+  sessUnsub=ref.onSnapshot(snap=>{
+    if(snap.exists){
+      if(!snap.metadata.hasPendingWrites){sessSeenConfirmed=true;try{localStorage.setItem(SID_CONF_KEY,mySid)}catch(e){}}
+      if(snap.data().revoked)forceLogout('An admin logged this device out. Please log in again.');
+    }else if(sessSeenConfirmed&&!snap.metadata.fromCache){
+      forceLogout('This device was removed by an admin. Please log in again.');
     }
-    setAuthStatus('⚠️ No password record found yet in Firebase (auth_v1 is empty) — using local/default.',true);
-  }catch(e){
-    console.error('Could not reach Firebase server for auth:', e);
-    setAuthStatus('⚠️ Firebase auth error: '+(e && e.code ? e.code : e.message)+' — using local/default.',true);
-    try{
-      const snap=await AUTH_DOC.get({source:'cache'});
-      const data=snap.data();
-      if(data && data.admin && data.employee){
-        const a={admin:data.admin, employee:data.employee};
-        saveAuth(a);
-        setAuthStatus('☁️ Password loaded from offline cache (was: '+(e && e.code?e.code:'error')+')',true);
-        return a;
-      }
-    }catch(e2){ /* nothing cached either — fall through below */ }
-  }
-  // No usable record in the cloud (first run, or we're offline and Firestore
-  // has nothing cached yet). Fall back to whatever this device already has
-  // locally; if that also doesn't exist, create the default credentials.
-  // These defaults exist only so the app is usable on first open —
-  // change them immediately via "Change Password" after logging in.
-  let a=loadAuth();
-  if(!(a && a.admin && a.employee)){
-    const adminSalt=randomSalt(), employeeSalt=randomSalt();
-    a={
-      admin:{salt:adminSalt, hash:await hashPassword('Admin@1234', adminSalt)},
-      employee:{salt:employeeSalt, hash:await hashPassword('Employee@1234', employeeSalt)}
-    };
-    saveAuth(a);
-    setAuthStatus('⚠️ Could not reach Firebase — created fresh default password on this device only.',true);
-  }
-  // Best-effort push so other devices (and this one, next time) see it too.
-  AUTH_DOC.set(a,{merge:true}).catch(err=>console.error('Could not push auth to Firebase yet (offline?):', err));
-  return a;
+  },err=>console.error('Session watch error:',err));
+  sessBeat=setInterval(sessionBeat,60000);
+  sessionBeat();
+  if(!sessVisHooked){sessVisHooked=true;document.addEventListener('visibilitychange',()=>{if(!document.hidden)sessionBeat()})}
+  if(roleOfUser(user)==='admin')startAdminSessionsListener();
 }
-
-async function verifyPassword(role,password){
-  const a=loadAuth();
-  if(!a||!a[role]) return false;
-  const test=await hashPassword(password,a[role].salt);
-  return test===a[role].hash;
+function stopSessionWatch(){
+  try{if(sessUnsub)sessUnsub()}catch(e){}
+  try{if(adminSessUnsub)adminSessUnsub()}catch(e){}
+  clearInterval(sessBeat);sessUnsub=adminSessUnsub=null;
 }
+async function hardSignOut(msg,deleteDoc){
+  if(loggingOut)return;loggingOut=true;
+  stopSessionWatch();
+  const sid=mySid||localStorage.getItem(SID_KEY);
+  if(deleteDoc&&sid){
+    try{await Promise.race([SESSIONS_COL.doc(sid).delete(),new Promise(r=>setTimeout(r,2500))])}catch(e){}
+  }
+  try{await fbAuth.signOut()}catch(e){}
+  localStorage.removeItem(SID_KEY);localStorage.removeItem(SID_CONF_KEY);
+  try{if(msg)sessionStorage.setItem(FORCE_MSG_KEY,msg)}catch(e){}
+  location.reload();
+}
+function forceLogout(msg){hardSignOut(msg,true)}
 
-async function setPassword(role,newPassword){
-  const a=loadAuth()||{};
-  const salt=randomSalt();
-  a[role]={salt, hash:await hashPassword(newPassword,salt)};
-  saveAuth(a);
-  // Push to Firestore so every other device signed into this project picks
-  // up the new password automatically via startAuthSync()'s listener. This
-  // is fire-and-forget on purpose: Firestore's offline persistence queues
-  // the write and delivers it once the connection comes back, so the
-  // password change on THIS device is never blocked by being offline.
-  AUTH_DOC.set({[role]:a[role]},{merge:true})
-    .then(()=>setSyncPill('☁️ Synced',false))
-    .catch(err=>{console.error('Password change could not sync to Firebase yet:', err);setSyncPill('⚠️ Offline — password changed locally, will sync later',true)});
+/* ---- Active Sessions page (admin only) ---- */
+function startAdminSessionsListener(){
+  if(adminSessUnsub)return;
+  adminSessUnsub=SESSIONS_COL.onSnapshot(snap=>{
+    sessionsCache=snap.docs.map(d=>({id:d.id,...d.data({serverTimestamps:'estimate'})}));
+    renderSessions();
+  },err=>console.error('Sessions list error:',err));
+}
+function tsMs(v){return v&&v.toMillis?v.toMillis():(typeof v==='number'?v:0)}
+function timeAgo(ms){
+  if(!ms)return '—';
+  const s=Math.max(0,Math.round((Date.now()-ms)/1000));
+  if(s<60)return 'Just now';
+  if(s<3600)return Math.floor(s/60)+' min ago';
+  if(s<86400)return Math.floor(s/3600)+' hr ago';
+  return Math.floor(s/86400)+' day'+(Math.floor(s/86400)===1?'':'s')+' ago';
+}
+function renderSessions(){
+  const tb=$('sessionsTable');if(!tb)return;
+  const now=Date.now();
+  const rows=sessionsCache.slice().sort((a,b)=>tsMs(b.lastActive)-tsMs(a.lastActive));
+  tb.innerHTML=rows.length?rows.map(s=>{
+    const mine=s.id===mySid,last=tsMs(s.lastActive),online=!s.revoked&&(now-last)<150000;
+    const roleTxt=s.role==='admin'?'🛡️ Admin':'🧑‍💼 Employee';
+    let status;
+    if(s.revoked)status='<span class="badge-returned" style="background:#fff4d6;color:#8a5a00">Logging out…</span>';
+    else if(online)status='<span class="badge-returned" style="background:#e6f4ea;color:#188038">● Online</span>';
+    else status='<span class="badge-returned" style="background:#f1f3f4;color:#5f6368">Idle</span>';
+    let action;
+    if(mine)action='<span class="barcode-tag">This device</span>';
+    else if(s.revoked)action=`<button class="gray" onclick="removeSession('${esc(s.id)}')">Remove</button>`;
+    else action=`<button class="red" onclick="revokeSession('${esc(s.id)}')">Logout</button>`;
+    return `<tr><td><b>${esc(s.device||'Unknown device')}</b>${mine?' <span class="barcode-tag">(you)</span>':''}</td><td>${roleTxt}<div class="barcode-tag">${esc(s.email||'')}</div></td><td>${esc(tsMs(s.loginAt)?new Date(tsMs(s.loginAt)).toLocaleString():'—')}</td><td>${esc(timeAgo(last))}</td><td>${status}</td><td>${action}</td></tr>`;
+  }).join(''):'<tr><td colspan="6" class="empty">No sessions yet.</td></tr>';
+}
+setInterval(()=>{const m=document.getElementById('sessionsModal');if(m&&m.classList.contains('show'))renderSessions()},30000);
+function openSessions(){
+  if(!requireAdmin('Active Sessions'))return;
+  startAdminSessionsListener();
+  renderSessions();
+  openActionModal('sessionsModal');
+}
+async function revokeSession(id){
+  if(!requireAdmin('Logout a device'))return;
+  if(id===mySid)return;
+  if(!confirm('Log this device out? It will be signed out within a few seconds if it is online, or the next time it opens the app.'))return;
+  try{await SESSIONS_COL.doc(id).update({revoked:true,revokedAt:firebase.firestore.FieldValue.serverTimestamp(),revokedBy:(fbAuth.currentUser&&fbAuth.currentUser.email)||''})}
+  catch(e){console.error(e);alert('Could not log that device out'+(e&&e.code?' ('+e.code+')':'')+'. Check your internet connection and Firestore rules.')}
+}
+async function removeSession(id){
+  if(!requireAdmin('Remove session'))return;
+  try{await SESSIONS_COL.doc(id).delete()}catch(e){console.error(e);alert('Could not remove this record'+(e&&e.code?' ('+e.code+')':'')+'.')}
+}
+async function revokeOtherSessions(){
+  if(!requireAdmin('Logout all other devices'))return;
+  const others=sessionsCache.filter(s=>s.id!==mySid&&!s.revoked);
+  if(!others.length)return alert('There is no other device signed in.');
+  if(!confirm('Log out '+others.length+' other device'+(others.length===1?'':'s')+'?'))return;
+  try{
+    const batch=fsdb.batch(),by=(fbAuth.currentUser&&fbAuth.currentUser.email)||'',ts=firebase.firestore.FieldValue.serverTimestamp();
+    others.forEach(s=>batch.update(SESSIONS_COL.doc(s.id),{revoked:true,revokedAt:ts,revokedBy:by}));
+    await batch.commit();
+  }catch(e){console.error(e);alert('Could not log the devices out'+(e&&e.code?' ('+e.code+')':'')+'.')}
 }
 
 function selectLoginRole(role){
@@ -1604,6 +1638,22 @@ function selectLoginRole(role){
   loginError.classList.remove('show');
 }
 
+async function forgotPassword(){
+  const btn=$('forgotBtn'),msg=$('forgotMsg');
+  const show=(txt,ok)=>{msg.style.display='block';msg.textContent=txt;msg.style.background=ok?'#e6f4ea':'#fce8e6';msg.style.color=ok?'#188038':'var(--maroon)'};
+  if(!confirm('Send a password reset link for the '+(loginRoleChoice==='admin'?'Admin':'Employee')+' account to muhammadiafinance@gmail.com?'))return;
+  btn.disabled=true;
+  try{
+    await fbAuth.sendPasswordResetEmail(emailForRole(loginRoleChoice));
+    show('Link sent to muhammadiafinance@gmail.com. Open the email (check Spam too), tap the link and set a new password.',true);
+    let n=60;const iv=setInterval(()=>{n--;btn.textContent=n>0?'Resend in '+n+'s':'Forgot password?';if(n<=0){clearInterval(iv);btn.disabled=false}},1000);
+  }catch(e){
+    console.error('Reset email failed:',e);
+    const c=(e&&e.code)||'';
+    show(c==='auth/too-many-requests'?'Too many requests. Please wait a few minutes.':c==='auth/network-request-failed'?'No internet connection.':'Could not send the email'+(c?' ('+c+')':'')+'.',false);
+    btn.disabled=false;
+  }
+}
 function toggleLoginPw(){
   const inp=$('loginPassword');
   inp.type = inp.type==='password' ? 'text' : 'password';
@@ -1616,27 +1666,31 @@ async function doLogin(){
   loginBtnText.textContent='Signing in...';
   loginSpinner.classList.add('show');
   loginBtn.disabled=true;
-  await ensureAuthInitialized();
-  const ok=await verifyPassword(loginRoleChoice,pw);
+  let ok=false;
+  try{
+    const cred=await fbAuth.signInWithEmailAndPassword(emailForRole(loginRoleChoice),pw);
+    const role=roleOfUser(cred.user);
+    if(!role){await fbAuth.signOut();throw {code:'app/no-role'}}
+    loginPassword.value='';
+    loginError.classList.remove('show');
+    startSession(role,cred.user);
+    ok=true;
+  }catch(e){
+    console.error('Login failed:',e);
+    loginError.textContent=authErrorText(e);
+    loginError.classList.remove('show');void loginError.offsetWidth;loginError.classList.add('show');
+    loginPassword.value='';loginPassword.focus();
+  }
   loginBtnText.textContent='Login';
   loginSpinner.classList.remove('show');
   loginBtn.disabled=false;
-  if(!ok){
-    loginError.textContent='Incorrect password. Please try again.';
-    loginError.classList.remove('show');void loginError.offsetWidth;loginError.classList.add('show');
-    loginPassword.value='';loginPassword.focus();
-    return;
-  }
-  loginError.classList.remove('show');
-  startSession(loginRoleChoice);
 }
 
-function startSession(role){
+function startSession(role,user){
   currentRole=role;
-  const session={role, ts:Date.now()};
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
-  localStorage.setItem(PERSIST_SESSION_KEY, JSON.stringify(session));
+  localStorage.removeItem(SID_KEY); // every login gets its own, fresh session record
   enterApp();
+  startSessionWatch(user);
 }
 
 function enterApp(){
@@ -1655,10 +1709,7 @@ function enterApp(){
 
 function doLogout(){
   if(!confirm('Log out of the current session?'))return;
-  sessionStorage.removeItem(SESSION_KEY);
-  localStorage.removeItem(PERSIST_SESSION_KEY);
-  currentRole=null;
-  location.reload();
+  hardSignOut('',true);
 }
 
 function toggleSidebar(){document.body.classList.toggle('sb-open')}
@@ -1683,42 +1734,38 @@ function requireAdmin(actionLabel){
   return true;
 }
 
-/* ---- Change Password modal ---- */
+/* ---- Change Password: Firebase emails a secure link to the shop Gmail ---- */
 function openPwModal(){
-  const isAdmin=currentRole==='admin';
-  $('pwRoleRow').style.display=isAdmin?'flex':'none';
-  pwTargetRole = isAdmin ? 'admin' : 'employee';
-  $('pwRoleBtnAdmin').classList.toggle('active', pwTargetRole==='admin');
-  $('pwRoleBtnEmployee').classList.toggle('active', pwTargetRole==='employee');
-  $('pwCurrent').value=''; $('pwNew').value=''; $('pwConfirm').value='';
+  pwTargetRole=currentRole;
   $('pwModalStatus').textContent='';
+  const b=$('pwSendBtn');if(b){b.disabled=false;b.textContent='📧 Send password-change link'}
   closeOtherPages('pwModal');
   $('pwModal').classList.add('show');
 }
 function closePwModal(){$('pwModal').classList.remove('show')}
 let pwTargetRole='admin';
-function selectPwRole(role){
-  if(currentRole!=='admin')return; // employees can only change their own password
-  pwTargetRole=role;
-  $('pwRoleBtnAdmin').classList.toggle('active', role==='admin');
-  $('pwRoleBtnEmployee').classList.toggle('active', role==='employee');
-}
+function selectPwRole(){}
 async function submitPwChange(){
-  const cur=$('pwCurrent').value, next=$('pwNew').value, conf=$('pwConfirm').value;
-  const status=$('pwModalStatus');
-  if(!cur||!next||!conf){status.textContent='Please fill in all fields.';status.style.color='var(--maroon)';return}
-  if(next.length<6){status.textContent='New password must be at least 6 characters.';status.style.color='var(--maroon)';return}
-  if(next!==conf){status.textContent='New password and confirmation do not match.';status.style.color='var(--maroon)';return}
-  // Verifying against the CURRENT logged-in user's own password is required
-  // for everyone (including admin) before any password can be changed —
-  // this stops someone at an already-unlocked screen from silently
-  // resetting credentials without knowing the existing password.
-  const okCur=await verifyPassword(currentRole,cur);
-  if(!okCur){status.textContent='Current password is incorrect.';status.style.color='var(--maroon)';return}
-  await setPassword(pwTargetRole,next);
-  status.style.color='#2c5a3e';
-  status.textContent=(pwTargetRole==='admin'?'Admin':'Employee')+' password updated — it will sync to every device automatically.';
-  $('pwCurrent').value=''; $('pwNew').value=''; $('pwConfirm').value='';
+  const status=$('pwModalStatus'),btn=$('pwSendBtn');
+  const bad=t=>{status.textContent=t;status.style.color='var(--maroon)'};
+  const user=fbAuth.currentUser;
+  if(!user)return bad('You are not signed in. Please log in again.');
+  btn.disabled=true;status.style.color='var(--muted)';status.textContent='Sending…';
+  try{
+    await fbAuth.sendPasswordResetEmail(user.email);
+    status.style.color='#2c5a3e';
+    status.textContent='Link sent to muhammadiafinance@gmail.com. Open that email (check Spam too), tap the link and set your new password. You can then log in with it.';
+    let n=60;btn.textContent='Resend in '+n+'s';
+    const iv=setInterval(()=>{n--;if(n<=0){clearInterval(iv);btn.disabled=false;btn.textContent='📧 Send the link again'}else btn.textContent='Resend in '+n+'s'},1000);
+  }catch(e){
+    console.error('Password email failed:',e);
+    const c=(e&&e.code)||'';
+    btn.disabled=false;
+    if(c==='auth/too-many-requests')bad('Too many requests. Please wait a few minutes and try again.');
+    else if(c==='auth/network-request-failed')bad('No internet connection.');
+    else if(c==='auth/user-not-found')bad('This account was not found in Firebase Authentication.');
+    else bad('Could not send the email'+(c?' ('+c+')':'')+'.');
+  }
 }
 
 const KEY='mohammadia_final_v4'; // now just a fast local cache — Firestore is the real source of truth
@@ -3958,7 +4005,7 @@ setupDraggableFab($('billAlertFab'));
    the area beside the sidebar. Only the Bill Alert (and small
    helper dialogs such as the barcode scanner) stay as popups.
    ============================================================ */
-var PAGE_MODALS=['productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','dailyCashModal','dailyCashStatementModal','billAlertModal','stockRegisterModal','dataModal','pwModal'];
+var PAGE_MODALS=['productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','dailyCashModal','dailyCashStatementModal','billAlertModal','stockRegisterModal','dataModal','pwModal','sessionsModal'];
 function closeOtherPages(keep){PAGE_MODALS.forEach(function(id){if(id===keep)return;var m=document.getElementById(id);if(m&&m.classList.contains('show')){m.classList.remove('show');m.setAttribute('aria-hidden','true')}});syncCashOpenClass()}
 function goHome(){
   closeSidebar();
@@ -4145,17 +4192,37 @@ window.addEventListener('resize',()=>{if(window.innerWidth>960)closeSidebar()});
    back out, but closing the browser will require signing in again).
    ============================================================ */
 (async function bootstrap(){
-  await ensureAuthInitialized();
-  let existing=null;
-  try{existing=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null')}catch(e){}
-  if(!existing){
-    try{existing=JSON.parse(localStorage.getItem(PERSIST_SESSION_KEY)||'null')}catch(e){}
+  let user=null;
+  try{user=await new Promise(res=>{const un=fbAuth.onAuthStateChanged(u=>{un();res(u)})})}catch(e){}
+  let role=user?roleOfUser(user):null;
+  if(user&&!role){try{await fbAuth.signOut()}catch(e){}user=null}
+  let msg='';
+  try{msg=sessionStorage.getItem(FORCE_MSG_KEY)||'';sessionStorage.removeItem(FORCE_MSG_KEY)}catch(e){}
+  // A refresh must not bring back a device the admin has logged out:
+  // check this device's session record before entering the app.
+  if(user&&role){
+    const sid=localStorage.getItem(SID_KEY);
+    if(sid&&sid.indexOf(user.uid+'_')===0){
+      try{
+        const snap=await Promise.race([
+          SESSIONS_COL.doc(sid).get({source:'server'}),
+          new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))
+        ]);
+        const confirmed=localStorage.getItem(SID_CONF_KEY)===sid;
+        if(snap.exists&&snap.data().revoked){
+          msg='An admin logged this device out. Please log in again.';
+          try{await SESSIONS_COL.doc(sid).delete()}catch(e){}
+          user=null;
+        }else if(!snap.exists&&confirmed){
+          msg='This device was removed by an admin. Please log in again.';
+          user=null;
+        }
+      }catch(e){ /* offline or slow network: let the user in, the live watcher will catch up */ }
+      if(!user){try{await fbAuth.signOut()}catch(e){}localStorage.removeItem(SID_KEY);localStorage.removeItem(SID_CONF_KEY)}
+    }
   }
-  if(existing && (existing.role==='admin'||existing.role==='employee')){
-    currentRole=existing.role;
-    const session={role:currentRole,ts:Date.now()};
-    sessionStorage.setItem(SESSION_KEY,JSON.stringify(session));
-    localStorage.setItem(PERSIST_SESSION_KEY,JSON.stringify(session));
+  if(user&&role){
+    currentRole=role;
     document.body.classList.toggle('role-employee', currentRole==='employee');
     document.body.classList.toggle('role-admin', currentRole==='admin');
     sessionRolePill.textContent = currentRole==='admin' ? '🛡️ Admin' : '🧑‍💼 Employee';
@@ -4166,10 +4233,12 @@ window.addEventListener('resize',()=>{if(window.innerWidth>960)closeSidebar()});
     db.stock=computeDisplayStock(lastServerStock);
     render();
     startCloudSync();
+    startSessionWatch(user);
     if(opQueue.length)kickQueue();
   } else {
     document.body.classList.remove('booting');
     hideBootOverlay();
+    if(msg){loginError.textContent=msg;loginError.classList.add('show')}
     loginPassword.focus();
   }
 })();
