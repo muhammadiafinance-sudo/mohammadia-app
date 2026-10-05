@@ -252,6 +252,7 @@ body.modal-open.cash-open .bill-alert-fab.show svg{width:28px;height:28px}
 .ba-table tr:hover td{background:#fafbfd}
 .ba-table .r{text-align:right}.ba-table .sn{width:44px;color:#9aa0a6;font-weight:600}
 .ba-table .nm{font-weight:700}
+.ba-table .ba-time{display:block;margin-top:2px;font-size:11px;font-weight:600;color:#80868b;white-space:nowrap}
 .ba-table .amt{font-weight:800;font-variant-numeric:tabular-nums}
 .ba-table tr.u1 td:first-child{box-shadow:inset 4px 0 0 #b3261e}.ba-table tr.u2 td:first-child{box-shadow:inset 4px 0 0 #e37400}.ba-table tr.u3 td:first-child{box-shadow:inset 4px 0 0 #f0b429}.ba-table tr.u0 td:first-child{box-shadow:inset 4px 0 0 #188038}
 .ba-chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap}
@@ -1778,6 +1779,7 @@ function updateCloudReady(){
   // check for (and run) the one-time legacy-sales migration, regardless of
   // which of the two listeners happened to settle first.
   if(cloudReady)migrateLegacySalesIfNeeded();
+  if(cloudReady&&typeof cashPending!=='undefined'&&cashPending.length)flushCashPending();
 }
 let legacyEmbeddedSales=null, migrationAttempted=false;
 const $=id=>document.getElementById(id), money=n=>'৳'+Number(n||0).toFixed(2), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1802,6 +1804,7 @@ const CASH_NOTE_LABELS={bill:'Customer Name',others:'Purpose',cost:'Purpose'};
 let cashDraft=null;
 let cashViewDate=null; // 'YYYY-MM-DD' currently displayed in the pad
 let cashSaveTimer=null;
+let cashFollowToday=false; // true while the pad was opened on 'today' (so it can roll over at midnight)
 function dateKeyOf(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function todayKey(){return dateKeyOf(new Date())}
 function emptyDayData(){return{bill:[],due:[],others:[],cost:[]}}
@@ -1813,7 +1816,7 @@ function normalizeDayData(day){
     out[k]=arr.map(v=>{
       if(v==null||v==='')return undefined;
       if(typeof v==='object'){
-        let o={note:v.note||'',amount:+v.amount||0};
+        let o={note:v.note||'',amount:+v.amount||0};if(v.id)o.id=v.id;if(v.at)o.at=+v.at;
         if(k==='bill'){o.dueDate=v.dueDate||'';if(v.paidAt)o.paidAt=v.paidAt;if(v.v)o.v=1}
         return o;
       }
@@ -1822,7 +1825,7 @@ function normalizeDayData(day){
       return o;
     });
   });
-  out.due=Array.isArray(day.due)?day.due.map(v=>v?{name:v.name||'',amount:+v.amount||0}:undefined):[];
+  out.due=Array.isArray(day.due)?day.due.map(v=>{if(!v)return undefined;const o={name:v.name||'',amount:+v.amount||0};if(v.id)o.id=v.id;if(v.at)o.at=+v.at;return o}):[];
   return out;
 }
 function ensureDailyCash(){
@@ -1849,6 +1852,8 @@ function loadCashView(dateKey){
   cashViewDate=dateKey;
   let stored=db.dailyCashByDate[dateKey];
   cashDraft=stored?JSON.parse(JSON.stringify(stored)):emptyDayData();
+  applyPendingToDraft(dateKey);
+  cashFollowToday=(dateKey===todayKey());
   let picker=$('cashDatePicker');if(picker)picker.value=dateKey;
   let isTodayView=(dateKey===todayKey());
   let grid=$('cashGrid');if(grid)grid.classList.toggle('cash-readonly',!isTodayView);
@@ -1901,6 +1906,8 @@ function cashFieldErr(el,on){
   t.classList.toggle('cash-err',!!on);
 }
 function addCashEntry(col){
+  // pad was left open past midnight: roll over to the new day instead of silently ignoring the entry
+  if(cashFollowToday&&cashViewDate!==todayKey())loadCashView(todayKey());
   if(!cashDraft||cashViewDate!==todayKey())return;
   let ids=cashAddIds(col);
   let noteEl=$(ids.note),amtEl=$(ids.amount),dateEl=ids.date?$(ids.date):null;
@@ -1919,7 +1926,11 @@ function addCashEntry(col){
   }
   let entry=col==='due'?{name:note,amount:amount}:{note:note,amount:amount};
   if(col==='bill'){entry.dueDate=dateVal;entry.v=1}
+  entry.at=Date.now();
+  entry.id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
   (col==='due'?cashDraft.due:cashDraft[col]).push(entry);
+  // queue it (also kept in localStorage) — it is ADDED to the cloud day, never replaces the whole day
+  cashPending.push({date:cashViewDate,col:col,entry:JSON.parse(JSON.stringify(entry))});persistCashPending();
   if(noteEl)noteEl.value='';
   if(amtEl)amtEl.value='';
   if(dateEl){dateEl.value='';ddSync(dateEl)}
@@ -2013,11 +2024,18 @@ function billAlertEntries(){
     (day&&Array.isArray(day.bill)?day.bill:[]).forEach((row,idx)=>{
       if(!row||!row.dueDate)return;
       let info=computeBillAlert(dateKey,row.dueDate);
-      list.push({dateKey,idx,note:row.note||'',amount:+row.amount||0,dueDate:row.dueDate,daysLeft:info.daysLeft});
+      list.push({dateKey,idx,note:row.note||'',amount:+row.amount||0,dueDate:row.dueDate,daysLeft:info.daysLeft,at:row.at||0});
     });
   });
   list.sort((a,b)=>a.daysLeft-b.daysLeft);
   return list;
+}
+/* Entry time shown under the Received date — always Bangladesh time (GMT+6, Asia/Dhaka),
+   whatever the device's own timezone is. Old entries (saved before this was added) have no time. */
+function fmtDhakaTime(ms){
+  if(!ms)return '';
+  try{return new Date(+ms).toLocaleTimeString('en-US',{timeZone:'Asia/Dhaka',hour:'2-digit',minute:'2-digit',hour12:true})}
+  catch(e){const d=new Date(+ms+6*3600000);let h=d.getUTCHours(),m=String(d.getUTCMinutes()).padStart(2,'0'),ap=h>=12?'PM':'AM';h=h%12||12;return String(h).padStart(2,'0')+':'+m+' '+ap}
 }
 /* DD/MM/YYYY display for a YYYY-MM-DD key. */
 /* ---- Bill date format (per device) ----
@@ -2190,7 +2208,7 @@ function renderBillAlertList(entries){
     let daysTxt=od?`Overdue · ${Math.abs(x.daysLeft)} day${Math.abs(x.daysLeft)>1?'s':''}`:(x.daysLeft===0?'Due today':`Due in ${x.daysLeft} day${x.daysLeft>1?'s':''}`);
     let cls=od?'overdue':(x.daysLeft===0?'today':(x.daysLeft<=2?'soon':'ok'));
     let u=od?'u1':(x.daysLeft===0?'u2':(x.daysLeft<=2?'u3':'u0'));
-    return `<tr class="${u}"><td class="sn">${i+1}</td><td class="nm">${esc(x.note||'Unknown')}</td><td class="r amt">${money(x.amount)}</td><td>${esc(fmtDMY(x.dateKey))}</td><td>${esc(fmtDMY(x.dueDate))}</td><td><span class="ba-chip ${cls}">${daysTxt}</span></td><td class="r"><button type="button" class="ba-pay" onclick="markBillPaid(this,'${x.dateKey}',${x.idx})">✓ Paid</button></td></tr>`;
+    return `<tr class="${u}"><td class="sn">${i+1}</td><td class="nm">${esc(x.note||'Unknown')}</td><td class="r amt">${money(x.amount)}</td><td>${esc(fmtDMY(x.dateKey))}${x.at?`<small class="ba-time">${esc(fmtDhakaTime(x.at))}</small>`:''}</td><td>${esc(fmtDMY(x.dueDate))}</td><td><span class="ba-chip ${cls}">${daysTxt}</span></td><td class="r"><button type="button" class="ba-pay" onclick="markBillPaid(this,'${x.dateKey}',${x.idx})">✓ Paid</button></td></tr>`;
   }).join('');
   host.innerHTML=`<div class="ba-scroll"><table class="ba-table"><thead><tr><th>#</th><th>Customer / SMS no</th><th class="r">Amount</th><th>Received</th><th>Last date</th><th>Status</th><th class="r">Action</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
@@ -2200,10 +2218,13 @@ function renderBillAlertList(entries){
    patches that day directly in the cloud document via a transaction. */
 async function clearBillDueDate(dateKey,idx){
   if(cashViewDate===dateKey&&cashDraft&&cashDraft.bill[idx]){
-    cashDraft.bill[idx].dueDate='';cashDraft.bill[idx].paidAt=todayKey();
-    if(dateKey===todayKey()){
-      renderCashColumn('bill',CASH_COUNTS.bill);
-      scheduleCashAutoSave();
+    const be=cashDraft.bill[idx];
+    const pp=be&&be.id?cashPending.find(p=>p.date===dateKey&&p.col==='bill'&&p.entry.id===be.id):null;
+    if(pp){ // entry not in the cloud yet: update its queued copy
+      pp.entry.dueDate='';pp.entry.paidAt=todayKey();persistCashPending();
+      be.dueDate='';be.paidAt=todayKey();
+      renderCashColumn('bill',CASH_COUNTS.bill);renderBillAlerts();
+      flushCashPending();
       return true;
     }
   }
@@ -2311,27 +2332,66 @@ function cashGrandForDate(k){
   return sum(d&&d.bill)+sum(d&&d.due)+sum(d&&d.others)-sum(d&&d.cost)+salesTotalForDate(k);
 }
 function setCashSyncStatus(text){const el=$('dailyCashStatus');if(el)el.textContent=text}
-function scheduleCashAutoSave(){
-  if(cashViewDate!==todayKey())return; // never autosave while viewing a past, read-only day
-  setCashSyncStatus('Typing…');
-  clearTimeout(cashSaveTimer);
-  cashSaveTimer=setTimeout(commitCashAutoSave,700);
-}
-async function commitCashAutoSave(){
-  if(cashViewDate!==todayKey()||!cashDraft)return;
-  const key=todayKey();
-  const snapshot=JSON.parse(JSON.stringify(cashDraft));
-  setCashSyncStatus('Saving…');
-  if(!cloudReady){
-    setCashSyncStatus('⚠️ Not connected yet — will sync once online');
-    return;
-  }
-  const ok=await mutateCloud(data=>{
-    data.dailyCashByDate=data.dailyCashByDate||{};
-    data.dailyCashByDate[key]=snapshot;
+const CASH_PENDING_KEY='mohammadia_cashpending_v1';
+let cashPending=[];try{cashPending=JSON.parse(localStorage.getItem(CASH_PENDING_KEY)||'[]')||[]}catch(e){cashPending=[]}
+let cashFlushing=false,cashRetryTimer=null;
+function persistCashPending(){try{localStorage.setItem(CASH_PENDING_KEY,JSON.stringify(cashPending))}catch(e){}}
+function applyPendingToDraft(dateKey){
+  if(!cashDraft)return;
+  cashPending.forEach(p=>{
+    if(p.date!==dateKey)return;
+    const arr=cashDraft[p.col];if(!Array.isArray(arr))return;
+    if(!arr.some(x=>x&&x.id&&x.id===p.entry.id))arr.push(JSON.parse(JSON.stringify(p.entry)));
   });
-  setCashSyncStatus(ok?'☁️ Synced automatically':'⚠️ Offline — saved locally, will sync when back online');
 }
+/* Rebuild today's pad from the LATEST cloud copy + this device's not-yet-saved entries,
+   so entries made on another phone/PC show up here and are never overwritten. */
+function refreshCashDraftFromDb(){
+  if(!cashDraft||!cashViewDate||!cashFollowToday)return;
+  if(cashViewDate!==todayKey()){loadCashView(todayKey());return}
+  const srv=db.dailyCashByDate&&db.dailyCashByDate[cashViewDate];
+  cashDraft=srv?JSON.parse(JSON.stringify(srv)):emptyDayData();
+  applyPendingToDraft(cashViewDate);
+  const m=$('dailyCashModal');
+  if(m&&m.classList.contains('show'))renderDailyCash();else recalcCashTotals();
+}
+function scheduleCashRetry(ms){clearTimeout(cashRetryTimer);cashRetryTimer=setTimeout(flushCashPending,ms||5000)}
+function scheduleCashAutoSave(){
+  if(!cashPending.length)return;
+  setCashSyncStatus('Saving…');
+  clearTimeout(cashSaveTimer);
+  cashSaveTimer=setTimeout(flushCashPending,300);
+}
+async function flushCashPending(){
+  if(cashFlushing||!cashPending.length)return;
+  if(!cloudReady){setCashSyncStatus('⚠️ Not connected yet — entry is kept safely, will sync once online');scheduleCashRetry(4000);return}
+  cashFlushing=true;
+  const batch=cashPending.slice();
+  setCashSyncStatus('Saving…');
+  const res=await mutateCloud(data=>{
+    data.dailyCashByDate=data.dailyCashByDate||{};
+    batch.forEach(p=>{
+      let day=data.dailyCashByDate[p.date];
+      if(!day||typeof day!=='object')day=data.dailyCashByDate[p.date]={};
+      ['bill','due','others','cost'].forEach(k=>{if(!Array.isArray(day[k]))day[k]=[]});
+      // append only if this exact entry is not already there (no duplicates, no overwrite of other devices' entries)
+      if(!day[p.col].some(x=>x&&x.id===p.entry.id))day[p.col].push(JSON.parse(JSON.stringify(p.entry)));
+    });
+  },{silent:true});
+  cashFlushing=false;
+  if(res){
+    const done=new Set(batch.map(p=>p.entry.id));
+    cashPending=cashPending.filter(p=>!done.has(p.entry.id));persistCashPending();
+    setCashSyncStatus('☁️ Synced automatically');
+    refreshCashDraftFromDb();
+    if(cashPending.length)flushCashPending();
+  }else{
+    setCashSyncStatus('⚠️ Offline — entry kept on this device, retrying automatically');
+    scheduleCashRetry(5000);
+  }
+}
+async function commitCashAutoSave(){return flushCashPending()}
+window.addEventListener('online',()=>{flushCashPending()});
 function resetDailyCash(){
   return; // clearing entries is disabled
   if(cashViewDate!==todayKey())return;
@@ -2866,6 +2926,7 @@ function startCloudSync(){
       db.stock=computeDisplayStock(lastServerStock);
       db.seq=Math.max(db.seq||1000,lastServerSeq);
       ensureSchema();
+      refreshCashDraftFromDb();
       schedulePersistDb();
       stateReady=true;updateCloudReady();
       render();
