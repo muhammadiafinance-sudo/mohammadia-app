@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
 <title>Mohammadia Library & Computer — Pro Offline</title>
 <meta name="theme-color" content="#1a73e8">
 <link rel="manifest" href="manifest.webmanifest">
@@ -17,6 +17,16 @@
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(e){console.warn('SW register failed',e)})});
 }
+</script>
+<script>
+/* Theme + language are applied before first paint so there is no flash. */
+(function(){try{
+  var p=localStorage.getItem('mh_theme')||'system';
+  var t=(p==='dark')?'dark':(p==='light'||p==='original')?'light':(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  document.documentElement.setAttribute('data-theme',t);
+  if(p==='original')document.documentElement.setAttribute('data-sb','navy');
+  document.documentElement.lang=(localStorage.getItem('mh_lang')==='bn')?'bn':'en';
+}catch(e){}})();
 </script>
 <style>
 :root{--ink:#202124;--pine:#1a73e8;--paper:#ffffff;--paper2:#f8f9fa;--card:#ffffff;--line:#e0e0e0;--brass:#1a73e8;--brass2:#1558b0;--forest:#188038;--amber:#e37400;--maroon:#d93025;--plum:#7c3aed;--steel:#1a73e8;--teal:#0b8043;--muted:#5f6368;--txt:#202124}
@@ -1110,6 +1120,457 @@ body:has(.bill-ticker.show) .wd{top:42px}
 .bdf-act .c{background:#f1f3f4;color:#3c4043;border:0;border-radius:10px;padding:10px 16px}
 .bdf-act .c:hover{background:#e8eaed;color:#3c4043}
 .bdf-act .o{background:var(--brass);color:#fff;border:0;border-radius:10px;padding:10px 18px;font-weight:700}
+
+/* ===================== v2.4 : Bill Alerts full page / Cash Reconciliation / Settings ===================== */
+/* Bill Alerts: no inner scroll pad — the list uses the whole page, the sidebar stays on the left */
+#billAlertList{max-height:none!important;overflow:visible!important}
+#billAlertModal .ba-card{flex:1 0 auto;overflow:hidden;overflow:clip}
+#billAlertModal .ba-scroll{overflow:visible}
+#billAlertModal .ba-table{min-width:0}
+@media(max-width:760px){#billAlertModal .ba-scroll{overflow-x:auto}#billAlertModal .ba-table{min-width:640px}}
+
+/* tighter sidebar so the two new items still fit on short screens */
+@media(max-height:860px){.sidebar .sb-item{padding:4px 12px;font-size:13px}.sb-group{padding:6px 12px 1px}.sb-brand{padding-bottom:4px}}
+
+/* Cash Reconciliation */
+.recon-wrap{display:flex;flex-direction:column;gap:16px;width:100%;max-width:1100px;margin:0}
+.recon-input-card{background:#fff;border:1px solid #e3e7ee;border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.recon-input-card label{display:block;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#6b7280;margin-bottom:8px}
+.recon-in{position:relative}
+.recon-in::before{content:"৳";position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:24px;font-weight:700;color:#80868b;pointer-events:none}
+.recon-in input{width:100%;height:60px;font-size:28px;font-weight:800;padding:0 16px 0 44px;border:2px solid #c9ccd0;border-radius:12px;background:#fff;color:var(--ink);-moz-appearance:textfield}
+.recon-in input::-webkit-outer-spin-button,.recon-in input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.recon-in input:focus{outline:0;border-color:var(--brass);box-shadow:0 0 0 4px #1a73e82e}
+.recon-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.recon-card{background:#fff;border:1px solid #e3e7ee;border-top:6px solid var(--brass);border-radius:20px;padding:28px 28px 24px;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 2px 6px rgba(16,24,40,.05)}
+.recon-card small{font-size:13px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#6b7280}
+.recon-card b{display:block;font-size:clamp(34px,5.2vw,60px);font-weight:800;letter-spacing:-1.2px;line-height:1.1;margin-top:12px;font-variant-numeric:tabular-nums;color:var(--ink);word-break:break-word}
+.recon-card em{display:block;font-style:normal;font-size:13.5px;font-weight:600;color:#6b7280;margin-top:14px}
+.recon-card.extra.zero{border-top-color:#9aa0a6}.recon-card.extra.zero b{color:#9aa0a6}
+.recon-card.extra.pos{border-top-color:var(--forest)}.recon-card.extra.pos b{color:var(--forest)}
+.recon-card.extra.neg{border-top-color:var(--maroon)}.recon-card.extra.neg b{color:var(--maroon)}
+.recon-card.extra.ok{border-top-color:var(--forest)}.recon-card.extra.ok b{color:var(--forest)}
+@media(max-width:700px){.recon-cards{grid-template-columns:1fr}.recon-card{min-height:150px;padding:20px}.recon-in input{height:54px;font-size:24px}}
+
+/* Settings */
+.set-wrap{display:flex;flex-direction:column;gap:16px;width:100%;max-width:720px;margin:0}
+.set-card{background:#fff;border:1px solid #e3e7ee;border-radius:16px;padding:20px 22px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.set-card h3{margin:0 0 4px;font-size:16px;color:var(--ink)}
+.set-card p{margin:0 0 14px;font-size:12.5px;line-height:1.5;color:var(--muted)}
+.set-seg{display:flex;gap:8px;flex-wrap:wrap}
+.set-seg button{flex:1 1 120px;padding:13px 16px;border-radius:12px;background:#fff;color:var(--ink);border:1.5px solid var(--line);font-size:14.5px;font-weight:600}
+.set-seg button:hover{background:#f1f3f4}
+.set-seg button.on{background:var(--brass);border-color:var(--brass);color:#fff}
+.set-seg button.on:hover{background:var(--brass2)}
+html[lang="bn"] body,html[lang="bn"] button,html[lang="bn"] input,html[lang="bn"] select,html[lang="bn"] textarea{font-family:'Inter','Noto Sans Bengali','Nirmala UI',Arial,sans-serif}
+
+@media screen{
+html[data-theme="dark"]{color-scheme:dark;--ink:#e6e9ef;--txt:#e6e9ef;--muted:#9aa6b8;--line:#2a3342;--paper:#151b25;--paper2:#0e131b;--card:#151b25;--canvas:#0e131b;--navy:#0a111d;--navy2:#111b2d}
+html[data-theme="dark"] header{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .menu-toggle{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .menu-toggle:hover{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .menu-dropdown{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .menu-dropdown button{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .menu-dropdown button:hover{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .menu-dropdown button.red{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .menu-dropdown button.red:hover{background-color:rgb(43,20,18)!important}
+html[data-theme="dark"] .light{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .light:hover{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .gray{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .gray:hover{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .card:hover{border-top-color:rgb(76,80,82)!important;border-right-color:rgb(76,80,82)!important;border-bottom-color:rgb(76,80,82)!important;border-left-color:rgb(76,80,82)!important}
+html[data-theme="dark"] .icon{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] input,html[data-theme="dark"] select{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .status{background-color:rgb(21,43,27)!important;color:rgb(164,233,186)!important}
+html[data-theme="dark"] .search-wrap .search-x{background-color:rgb(29,32,36)!important}
+html[data-theme="dark"] .search-wrap .search-x:hover{background-color:rgb(32,37,44)!important}
+html[data-theme="dark"] th{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] table tbody tr:hover td{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .cost-cell.revealed{color:var(--maroon)!important}
+html[data-theme="dark"] .badge-returned{background-color:rgb(31,18,42)!important}
+html[data-theme="dark"] .picker{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .picker-row:hover{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .picker-empty{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .carttable th{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .cart-empty{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .cartsummary{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .copy{border-top-color:rgb(76,80,82)!important;border-right-color:rgb(76,80,82)!important;border-bottom-color:rgb(76,80,82)!important;border-left-color:rgb(76,80,82)!important}
+html[data-theme="dark"] .tag{background-color:rgb(18,27,42)!important}
+html[data-theme="dark"] .total{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .qsale-cat-btn{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .qsale-cat-btn:hover{border-top-color:rgb(76,80,82)!important;border-right-color:rgb(76,80,82)!important;border-bottom-color:rgb(76,80,82)!important;border-left-color:rgb(76,80,82)!important}
+html[data-theme="dark"] .qsale-back{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .qsale-back:hover{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .qsale-btn{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .qsale-btn::before{background-color:rgba(21,25,30,0.22)!important}
+html[data-theme="dark"] .qsale-menu-toggle{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .qsale-menu-toggle:hover{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .qsale-custom-actions input[type="color"]{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .qsale-custom-reset{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .qsale-custom-reset:hover{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .qsale-custom-empty{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .qsale-btn:hover{border-top-color:rgb(76,80,82)!important;border-right-color:rgb(76,80,82)!important;border-bottom-color:rgb(76,80,82)!important;border-left-color:rgb(76,80,82)!important}
+html[data-theme="dark"] .qsale-btn.tapped{background-color:rgb(18,43,26)!important;color:rgb(167,231,183)!important}
+html[data-theme="dark"] .qsale-quickbar{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .sale-success-box{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .empty{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .modalbox{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .filebox{border-top-color:rgb(76,80,82)!important;border-right-color:rgb(76,80,82)!important;border-bottom-color:rgb(76,80,82)!important;border-left-color:rgb(76,80,82)!important}
+html[data-theme="dark"] .close{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .close:hover{background-color:rgb(43,20,18)!important}
+html[data-theme="dark"] #loginScreen{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .login-card{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .login-logo{background-color:rgb(18,27,42)!important}
+html[data-theme="dark"] .role-btn{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .role-btn:hover{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .role-btn.active{background-color:rgb(18,27,42)!important;color:var(--brass2)!important}
+html[data-theme="dark"] .pw-toggle:hover{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .login-error{background-color:rgb(43,20,18)!important}
+html[data-theme="dark"] .login-foot{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .spinner{border-right-color:rgba(51,51,51,0.333)!important;border-bottom-color:rgba(51,51,51,0.333)!important;border-left-color:rgba(51,51,51,0.333)!important;border-top-color:rgb(51,51,51)!important}
+html[data-theme="dark"] #bootOverlay{background-color:rgba(21,25,30,0.72)!important}
+html[data-theme="dark"] .bootbox{border-top-color:rgb(57,61,68)!important;border-right-color:rgb(57,61,68)!important;border-bottom-color:rgb(57,61,68)!important;border-left-color:rgb(57,61,68)!important;background-color:rgba(21,25,30,0.96)!important}
+html[data-theme="dark"] .bootspinner{border-right-color:rgb(56,61,67)!important;border-bottom-color:rgb(56,61,67)!important;border-left-color:rgb(56,61,67)!important}
+html[data-theme="dark"] .rolepill{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .quick-action{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .quick-action:hover{border-top-color:rgb(76,80,82)!important;border-right-color:rgb(76,80,82)!important;border-bottom-color:rgb(76,80,82)!important;border-left-color:rgb(76,80,82)!important}
+html[data-theme="dark"] #cashGrid.cash-readonly .xl-cell{background-color:rgb(27,31,37)!important}
+html[data-theme="dark"] .cash-viewbar{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .cash-col{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .cash-row input.xl-cell:focus{background-color:rgb(17,26,40)!important}
+html[data-theme="dark"] .cash-row input.xl-cell.cell-selected{background-color:rgb(18,27,42)!important}
+html[data-theme="dark"] .ba-kpi{background-color:rgb(21,25,30)!important;border-top-color:rgb(50,59,74)!important;border-right-color:rgb(50,59,74)!important;border-bottom-color:rgb(50,59,74)!important;border-left-color:rgb(50,59,74)!important}
+html[data-theme="dark"] .ba-kpi .ico{background-color:rgb(17,22,40)!important}
+html[data-theme="dark"] .ba-kpi.red .ico{background-color:rgb(42,20,18)!important}
+html[data-theme="dark"] .ba-kpi.amber .ico{background-color:rgb(44,35,18)!important}
+html[data-theme="dark"] .ba-kpi.green .ico{background-color:rgb(21,43,27)!important}
+html[data-theme="dark"] .ba-kpi small{color:rgb(188,192,199)!important}
+html[data-theme="dark"] .ba-kpi.red b{color:rgb(229,139,134)!important}
+html[data-theme="dark"] .ba-kpi em{color:rgb(188,192,199)!important}
+html[data-theme="dark"] .ba-card{background-color:rgb(21,25,30)!important;border-top-color:rgb(50,59,74)!important;border-right-color:rgb(50,59,74)!important;border-bottom-color:rgb(50,59,74)!important;border-left-color:rgb(50,59,74)!important}
+html[data-theme="dark"] .ba-toolbar{border-bottom-color:rgb(46,57,73)!important}
+html[data-theme="dark"] .ba-toolbar span{color:rgb(188,192,199)!important}
+html[data-theme="dark"] .ba-table th{background-color:rgb(16,25,39)!important;color:rgb(188,192,199)!important;border-bottom-color:rgb(46,57,73)!important}
+html[data-theme="dark"] .ba-table td{border-bottom-color:rgb(46,56,70)!important}
+html[data-theme="dark"] .ba-table tr:hover td{background-color:rgb(16,23,37)!important}
+html[data-theme="dark"] .ba-table .sn{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .ba-table .ba-time{color:rgb(185,188,191)!important}
+html[data-theme="dark"] .ba-chip.overdue{background-color:rgb(42,20,18)!important;color:rgb(229,139,134)!important}
+html[data-theme="dark"] .ba-chip.today{background-color:rgb(46,36,20)!important;color:rgb(249,199,148)!important}
+html[data-theme="dark"] .ba-chip.soon{background-color:rgb(43,38,18)!important;color:rgb(249,209,148)!important}
+html[data-theme="dark"] .ba-chip.ok{background-color:rgb(21,43,27)!important;color:rgb(164,233,186)!important}
+html[data-theme="dark"] .ba-table .ba-pay{background-color:rgb(21,25,30)!important;color:rgb(164,233,186)!important}
+html[data-theme="dark"] .ba-table .ba-pay:hover{background-color:rgb(24, 128, 56)!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .ba-table .ba-pay.confirm-pending{background-color:rgb(217, 48, 37)!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .ba-empty{color:rgb(188,192,199)!important}
+html[data-theme="dark"] .ba-empty .ck{background-color:rgb(21,43,27)!important;color:rgb(164,233,186)!important}
+html[data-theme="dark"] #dailyCashModal{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] #dailyCashModal .modalbox.cash-page{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .cp-top{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .cp-sub.ro{color:var(--maroon)!important}
+html[data-theme="dark"] .cp-search input{border-top-color:rgb(76,80,82)!important;border-right-color:rgb(76,80,82)!important;border-bottom-color:rgb(76,80,82)!important;border-left-color:rgb(76,80,82)!important;background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .cp-search input:focus{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .cp-x{background-color:rgb(29,32,36)!important}
+html[data-theme="dark"] #dailyCashModal .cash-col{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] #dailyCashModal .cash-add{background-color:rgb(17,26,40)!important;border-top-color:rgb(45,60,86)!important;border-right-color:rgb(45,60,86)!important;border-bottom-color:rgb(45,60,86)!important;border-left-color:rgb(45,60,86)!important}
+html[data-theme="dark"] #dailyCashModal .cash-add-input{border-top-color:rgb(72,76,80)!important;border-right-color:rgb(72,76,80)!important;border-bottom-color:rgb(72,76,80)!important;border-left-color:rgb(72,76,80)!important;background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] #dailyCashModal .cash-add-btn:hover{background-color:rgb(20, 108, 46)!important}
+html[data-theme="dark"] #dailyCashModal .cash-del:hover{background-color:rgb(43,20,18)!important}
+html[data-theme="dark"] #dailyCashModal .cash-empty-hint{color:rgb(174,179,183)!important}
+html[data-theme="dark"] #dailyCashModal .cash-idx{color:rgb(174,179,183)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row.filled{border-bottom-color:rgb(61,61,61)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row.filled .cash-idx{color:rgb(167,172,176)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row input::placeholder{color:rgb(174,177,181)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row input.xl-cell:focus{background-color:rgb(17,26,40)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row input.xl-cell.cell-selected{background-color:rgb(18,27,42)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row input[type="number"]{color:var(--brass2)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row input[type="date"]{color:var(--muted)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row-bill.bill-row-warn input[type="date"]{color:var(--maroon)!important;border-top-color:rgb(108,60,55)!important;border-right-color:rgb(108,60,55)!important;border-bottom-color:rgb(108,60,55)!important;border-left-color:rgb(108,60,55)!important;background-color:rgb(42,20,18)!important}
+html[data-theme="dark"] #dailyCashModal .amt::before{color:rgb(185,188,191)!important}
+html[data-theme="dark"] #dailyCashModal #cashGrid.cash-readonly .xl-cell{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .cp-stat.total{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .cp-search-panel{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .csp-scope button{background-color:rgb(21,25,30)!important;border-top-color:rgb(76,80,82)!important;border-right-color:rgb(76,80,82)!important;border-bottom-color:rgb(76,80,82)!important;border-left-color:rgb(76,80,82)!important}
+html[data-theme="dark"] .csp-scope button.on{color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .csp-table th{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .csp-table td{border-bottom-color:rgb(60,60,60)!important}
+html[data-theme="dark"] .csp-table tr.hit:hover{background-color:rgb(18,27,42)!important}
+html[data-theme="dark"] .csp-empty{color:rgb(185,188,191)!important}
+html[data-theme="dark"] .cash-row-bill input[type="date"]{color:var(--ink)!important}
+html[data-theme="dark"] .cash-row-bill.bill-row-warn input[type="date"]{color:var(--maroon)!important}
+html[data-theme="dark"] .bill-alert-fab{box-shadow:rgba(179, 38, 30, 0.55) 0px 6px 20px, rgba(0,0,0,.35) 0px 1px 0px inset!important}
+html[data-theme="dark"] .bill-alert-fab::before,html[data-theme="dark"] .bill-alert-fab::after{border-top-color:rgba(108,59,55,0.75)!important;border-right-color:rgba(108,59,55,0.75)!important;border-bottom-color:rgba(108,59,55,0.75)!important;border-left-color:rgba(108,59,55,0.75)!important}
+html[data-theme="dark"] .bill-alert-fab.ok{background-image:linear-gradient(145deg, rgb(47, 160, 80) 0%, rgb(20, 108, 46) 100%)!important;box-shadow:rgba(20, 108, 46, 0.45) 0px 6px 18px, rgba(0,0,0,.35) 0px 1px 0px inset!important}
+html[data-theme="dark"] .bill-alert-fab.pending{background-image:linear-gradient(145deg, rgb(255, 210, 63) 0%, rgb(240, 165, 0) 100%)!important;color:rgb(61, 38, 0)!important;box-shadow:rgba(240, 165, 0, 0.5) 0px 6px 18px, rgba(0,0,0,.35) 0px 1px 0px inset!important}
+html[data-theme="dark"] .bill-alert-fab.pending::before,html[data-theme="dark"] .bill-alert-fab.pending::after{border-top-color:rgba(108,91,55,0.65)!important;border-right-color:rgba(108,91,55,0.65)!important;border-bottom-color:rgba(108,91,55,0.65)!important;border-left-color:rgba(108,91,55,0.65)!important}
+html[data-theme="dark"] .bill-alert-fab.pending .bill-alert-badge{color:rgb(249,209,148)!important;border-top-color:rgb(108,91,55)!important;border-right-color:rgb(108,91,55)!important;border-bottom-color:rgb(108,91,55)!important;border-left-color:rgb(108,91,55)!important}
+html[data-theme="dark"] .bill-alert-badge{background-color:rgb(21,25,30)!important;color:rgb(229,139,134)!important;border-top-color:rgb(108,58,55)!important;border-right-color:rgb(108,58,55)!important;border-bottom-color:rgb(108,58,55)!important;border-left-color:rgb(108,58,55)!important}
+html[data-theme="dark"] .cart-fab{box-shadow:rgba(13, 71, 161, 0.5) 0px 8px 24px, rgba(0,0,0,.35) 0px 1px 0px inset!important}
+html[data-theme="dark"] .cart-fab .cart-fab-badge{background-color:rgb(21,25,30)!important;color:rgb(155,189,242)!important}
+html[data-theme="dark"] .stock-cart-btn.added{background-image:linear-gradient(145deg, rgb(47, 160, 80) 0%, rgb(20, 108, 46) 100%)!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .bill-ticker-label{background-color:rgb(21,25,30)!important;color:rgb(229,139,134)!important}
+html[data-theme="dark"] #billAlertHint{background-color:rgb(42,32,18)!important;color:rgb(249,208,148)!important}
+html[data-theme="dark"] #billAlertHint.all-clear{background-color:rgb(21,43,27)!important;color:rgb(160,238,188)!important}
+html[data-theme="dark"] .bill-alert-status{background-color:rgb(21,43,27)!important;color:rgb(164,233,186)!important}
+html[data-theme="dark"] .bill-alert-status.has-urgent{background-image:linear-gradient(90deg, rgb(179, 38, 30), rgb(217, 48, 37))!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .bill-alert-status.has-pending{background-color:rgb(46,39,20)!important;color:rgb(249,209,148)!important;border-left-color:rgb(108,91,55)!important}
+html[data-theme="dark"] .bas-item{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .bas-item.urgent{background-color:rgb(43,20,18)!important}
+html[data-theme="dark"] .bas-item.urgent .bas-value{color:var(--maroon)!important}
+html[data-theme="dark"] .bill-alert-item{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .bill-alert-item.urgent{border-top-color:rgb(97,54,50)!important;border-right-color:rgb(97,54,50)!important;border-bottom-color:rgb(97,54,50)!important;background-color:rgb(39,18,16)!important}
+html[data-theme="dark"] .bill-alert-item.overdue-item{background-color:rgb(41,19,18)!important}
+html[data-theme="dark"] .bill-alert-item .bai-days.overdue{background-color:rgb(179, 38, 30)!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .bill-alert-item .bai-days.soon{background-color:rgb(46,36,20)!important;color:rgb(249,199,148)!important;border-top-color:rgb(108,86,55)!important;border-right-color:rgb(108,86,55)!important;border-bottom-color:rgb(108,86,55)!important;border-left-color:rgb(108,86,55)!important}
+html[data-theme="dark"] .bill-alert-item .bai-days.today{background-color:rgb(227, 116, 0)!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .bill-alert-item .bai-days.ok{background-color:rgb(21,43,27)!important;color:var(--forest)!important}
+html[data-theme="dark"] #stockDetailsModal .modalbox{border-top-color:rgb(59,65,69)!important;border-right-color:rgb(59,65,69)!important;border-bottom-color:rgb(59,65,69)!important;border-left-color:rgb(59,65,69)!important}
+html[data-theme="dark"] .stock-detail-item{background-image:linear-gradient(rgb(21,25,30), rgb(21,27,33))!important;border-top-color:rgb(57,62,67)!important;border-right-color:rgb(57,62,67)!important;border-bottom-color:rgb(57,62,67)!important;border-left-color:rgb(57,62,67)!important}
+html[data-theme="dark"] .stock-detail-item:hover{border-top-color:rgb(68,72,76)!important;border-right-color:rgb(68,72,76)!important;border-bottom-color:rgb(68,72,76)!important;border-left-color:rgb(68,72,76)!important}
+html[data-theme="dark"] .detail-icon{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] table tbody tr:hover td{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .app-footer{color:rgb(187,190,193)!important;border-top-color:rgb(52,61,66)!important}
+html[data-theme="dark"] .scanner-status{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .menu-toggle{background-image:linear-gradient(145deg, rgb(21,25,30), rgb(22,30,36))!important}
+html[data-theme="dark"] .menu-toggle:hover{border-top-color:rgb(56,70,87)!important;border-right-color:rgb(56,70,87)!important;border-bottom-color:rgb(56,70,87)!important;border-left-color:rgb(56,70,87)!important;background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .menu-dropdown button:hover{background-color:rgb(17,27,40)!important}
+html[data-theme="dark"] .biz-kpi{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .biz-card{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .biz-tabs button{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .biz-tabs button.active{color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .sb-logo{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .sb-sub{color:rgb(134,151,182)!important}
+html[data-theme="dark"] .sb-group{color:rgb(165,177,198)!important}
+html[data-theme="dark"] .sidebar .sb-item:hover{background-color:rgba(21,25,30,0.08)!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .sidebar .sb-item[aria-current="page"]{background-color:rgb(21,25,30)!important;color:var(--navy)!important}
+html[data-theme="dark"] .sidebar .sb-item:focus-visible{outline-color:rgb(55,75,108)!important}
+html[data-theme="dark"] .sidebar .sb-item.danger{color:rgb(255, 180, 173)!important}
+html[data-theme="dark"] .sidebar .sb-item.danger:hover{background-color:rgba(217, 48, 37, 0.2)!important;color:rgb(255, 214, 210)!important}
+html[data-theme="dark"] .sb-account{border-top-color:rgba(51,51,51,0.1)!important}
+html[data-theme="dark"] .sidebar .rolepill{background-color:rgba(21,25,30,0.08)!important;color:rgb(129,151,187)!important}
+html[data-theme="dark"] .topbar .rolepill{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .sb-burger{background-color:rgb(21,25,30)!important;border-top-color:rgb(54,61,75)!important;border-right-color:rgb(54,61,75)!important;border-bottom-color:rgb(54,61,75)!important;border-left-color:rgb(54,61,75)!important}
+html[data-theme="dark"] .sb-burger:hover{background-color:rgb(24,28,35)!important}
+html[data-theme="dark"] .stat{background-color:rgb(21,25,30)!important;border-top-color:rgb(49,58,74)!important;border-right-color:rgb(49,58,74)!important;border-bottom-color:rgb(49,58,74)!important;border-left-color:rgb(49,58,74)!important}
+html[data-theme="dark"] .stat:hover{border-top-color:rgb(55,66,86)!important;border-right-color:rgb(55,66,86)!important;border-bottom-color:rgb(55,66,86)!important;border-left-color:rgb(55,66,86)!important}
+html[data-theme="dark"] .stat .value.cost-cell{color:var(--ink)!important}
+html[data-theme="dark"] .stat .value.cost-cell.revealed{color:var(--maroon)!important}
+html[data-theme="dark"] .stat.feature .stat-label{color:rgb(130,150,186)!important}
+html[data-theme="dark"] .stat.feature .stat-ico{background-color:rgba(21,25,30,0.14)!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .stat.feature .value{color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .stat.is-alert{background-color:rgb(38,19,16)!important;border-top-color:rgb(97,54,50)!important;border-right-color:rgb(97,54,50)!important;border-bottom-color:rgb(97,54,50)!important;border-left-color:rgb(97,54,50)!important}
+html[data-theme="dark"] .stat.is-alert .stat-ico{background-color:rgb(44,21,19)!important;color:var(--maroon)!important}
+html[data-theme="dark"] .stat.is-alert .value{color:var(--maroon)!important}
+html[data-theme="dark"] .profit-card{background-color:rgb(21,25,30)!important;border-top-color:rgb(49,58,74)!important;border-right-color:rgb(49,58,74)!important;border-bottom-color:rgb(49,58,74)!important;border-left-color:rgb(49,58,74)!important}
+html[data-theme="dark"] .pc-total.neg{color:var(--maroon)!important}
+html[data-theme="dark"] .pc-delta.up{background-color:rgb(20,45,30)!important;color:rgb(157,241,195)!important}
+html[data-theme="dark"] .pc-delta.down{background-color:rgb(44,21,19)!important;color:rgb(229,139,134)!important}
+html[data-theme="dark"] .seg{background-color:rgb(22,28,39)!important}
+html[data-theme="dark"] .seg button:hover{background-color:rgba(18, 33, 59, 0.06)!important;color:var(--ink)!important}
+html[data-theme="dark"] .seg button.on{background-color:rgb(21,25,30)!important;color:var(--ink)!important}
+html[data-theme="dark"] .pc-tip .pos{color:rgb(104,212,152)!important}
+html[data-theme="dark"] .pc-tip .neg{color:rgb(245,84,71)!important}
+html[data-theme="dark"] .modal.fullpage .modalbox > h2{color:var(--ink)!important}
+html[data-theme="dark"] .modal.fullpage .modalbox > .close{background-color:rgb(21,25,30)!important;color:var(--ink)!important;border-top-color:rgb(54,61,75)!important;border-right-color:rgb(54,61,75)!important;border-bottom-color:rgb(54,61,75)!important;border-left-color:rgb(54,61,75)!important}
+html[data-theme="dark"] .modal.fullpage .modalbox > .close:hover{background-color:rgb(22,28,39)!important}
+html[data-theme="dark"] .sb-copy{color:rgb(165,177,198)!important}
+html[data-theme="dark"] .pg-head > .close{background-color:rgb(21,25,30)!important;border-top-color:rgb(54,61,75)!important;border-right-color:rgb(54,61,75)!important;border-bottom-color:rgb(54,61,75)!important;border-left-color:rgb(54,61,75)!important}
+html[data-theme="dark"] .pg-head > .close:hover{background-color:rgb(22,28,39)!important}
+html[data-theme="dark"] .pg-body .tablewrap{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] #productPanelHost > .panel{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .sale-left,html[data-theme="dark"] .sale-right{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .inv-prev{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .inv-row.sel td{background-color:rgb(18,27,42)!important}
+html[data-theme="dark"] .picker-row:active{background-color:rgb(18,43,26)!important}
+html[data-theme="dark"] .cart-pop b{background-color:rgb(21,25,30)!important;color:rgb(164,233,186)!important}
+html[data-theme="dark"] .pc-tip{border-top-color:rgba(51,51,51,0.12)!important;border-right-color:rgba(51,51,51,0.12)!important;border-bottom-color:rgba(51,51,51,0.12)!important;border-left-color:rgba(51,51,51,0.12)!important}
+html[data-theme="dark"] .qs-types{border-left-color:rgb(54,61,75)!important}
+html[data-theme="dark"] .qs-hint{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .qs-brand{background-color:rgb(21,25,30)!important;border-top-color:rgb(54,61,75)!important;border-right-color:rgb(54,61,75)!important;border-bottom-color:rgb(54,61,75)!important;border-left-color:rgb(54,61,75)!important}
+html[data-theme="dark"] .qs-brand.on{color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .qs-brand.on::after{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .qs-type{background-color:rgb(27,31,33)!important;border-top-color:rgb(58,64,71)!important;border-right-color:rgb(58,64,71)!important;border-bottom-color:rgb(58,64,71)!important;border-left-color:rgb(58,64,71)!important;color:rgb(210,213,215)!important}
+html[data-theme="dark"] .qs-type:hover{background-color:rgb(29,32,36)!important}
+html[data-theme="dark"] .qs-type.on{background-color:rgb(32, 33, 36)!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .qs-amt.low em{color:rgb(249,202,146)!important}
+html[data-theme="dark"] .qs-amt.crit em{color:rgb(226,119,117)!important}
+html[data-theme="dark"] .qs-amt.low .qs-bar s{background-color:rgb(227, 116, 0)!important}
+html[data-theme="dark"] .qs-amt.crit .qs-bar s,html[data-theme="dark"] .qs-amt.out .qs-bar s{background-color:rgb(217, 48, 37)!important}
+html[data-theme="dark"] .copy.rc{border-top-color:rgb(76,80,82)!important;border-right-color:rgb(76,80,82)!important;border-bottom-color:rgb(76,80,82)!important;border-left-color:rgb(76,80,82)!important;background-color:rgb(21,25,30)!important;color:rgb(229,229,229)!important}
+html[data-theme="dark"] .rc-cut{color:rgb(187,187,187)!important}
+html[data-theme="dark"] .qs-brand.on{color:var(--tx)!important}
+html[data-theme="dark"] .qs-type{background-color:rgb(23,29,37)!important;color:rgb(210,213,215)!important}
+html[data-theme="dark"] .qs-type:hover{background-color:rgb(27,32,40)!important}
+html[data-theme="dark"] .qs-type.on{background-color:rgb(19,27,45)!important;color:rgb(148,181,235)!important}
+html[data-theme="dark"] .qs-type:disabled{background-color:rgb(25,28,33)!important}
+html[data-theme="dark"] .qs-amt{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .qs-amt em,html[data-theme="dark"] .qs-amt em.qs-st{color:rgb(188,192,199)!important}
+html[data-theme="dark"] .qs-amt:disabled{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .qsale-quickbar{background-color:rgb(21,27,36)!important}
+html[data-theme="dark"] .qs-amt:hover{color:var(--tx)!important}
+html[data-theme="dark"] .qs-amt:disabled:hover{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .qs-type:hover{color:rgb(210,213,215)!important}
+html[data-theme="dark"] .qs-type.on:hover{background-color:rgb(19,27,45)!important;color:rgb(148,181,235)!important}
+html[data-theme="dark"] .qs-brand:hover{color:var(--tx)!important}
+html[data-theme="dark"] .qsl-lane{background-color:rgb(21,28,35)!important;border-top-color:rgb(60,67,78)!important;border-right-color:rgb(60,67,78)!important;border-bottom-color:rgb(60,67,78)!important;border-left-color:rgb(60,67,78)!important}
+html[data-theme="dark"] .qsl-lane.over{background-color:rgb(18,27,41)!important;border-top-color:rgb(55,78,108)!important;border-right-color:rgb(55,78,108)!important;border-bottom-color:rgb(55,78,108)!important;border-left-color:rgb(55,78,108)!important}
+html[data-theme="dark"] .qsl-del{background-color:rgb(21,25,30)!important;color:rgb(226,119,117)!important;border-top-color:rgb(55,60,67)!important;border-right-color:rgb(55,60,67)!important;border-bottom-color:rgb(55,60,67)!important;border-left-color:rgb(55,60,67)!important}
+html[data-theme="dark"] .qsl-del:hover{background-color:rgb(43,20,18)!important;color:rgb(226,119,117)!important}
+html[data-theme="dark"] .qsl-empty{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .qsl-add{background-color:rgb(18,27,42)!important;color:rgb(148,181,235)!important}
+html[data-theme="dark"] .qsl-add:hover{background-color:rgb(20,32,48)!important;color:rgb(148,181,235)!important}
+html[data-theme="dark"] .qsl-reset{background-color:rgb(27,31,33)!important;color:rgb(210,213,215)!important}
+html[data-theme="dark"] .qsl-reset:hover{background-color:rgb(29,32,36)!important;color:rgb(210,213,215)!important}
+html[data-theme="dark"] .qsz-ctl .qsz-step{background-color:rgb(18,27,42)!important;color:rgb(148,181,235)!important}
+html[data-theme="dark"] .qsz-ctl .qsz-step:hover{background-color:rgb(20,32,48)!important;color:rgb(148,181,235)!important}
+html[data-theme="dark"] .qszprev{background-color:rgb(21,28,35)!important;border-top-color:rgb(60,67,78)!important;border-right-color:rgb(60,67,78)!important;border-bottom-color:rgb(60,67,78)!important;border-left-color:rgb(60,67,78)!important}
+html[data-theme="dark"] .wl-chip{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .wl-chip b{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .wl-chip:hover{background-color:rgb(24,28,32)!important;color:var(--ink)!important}
+html[data-theme="dark"] .wl-chip.on,html[data-theme="dark"] .wl-chip.on:hover{color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .wl-chip.on b{background-color:rgba(21,25,30,0.18)!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .wl-card{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .wl-head{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .wl-row:hover,html[data-theme="dark"] .wl-row:focus-visible{background-color:rgb(24,28,32)!important}
+html[data-theme="dark"] .wl-ico{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .wl-empty{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .wd{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .wd-top{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .wd-back{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .wd-back:hover{background-color:rgb(29,32,36)!important;color:var(--ink)!important}
+html[data-theme="dark"] .wd-card{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .wd-age.late{color:var(--maroon)!important}
+html[data-theme="dark"] .wd-step:not(:last-child)::after{background-color:rgb(32,37,44)!important}
+html[data-theme="dark"] .wd-step.done:not(:last-child)::after{background-color:rgb(11, 122, 62)!important}
+html[data-theme="dark"] .wd-dot{background-color:rgb(21,25,30)!important;border-top-color:rgb(63,66,73)!important;border-right-color:rgb(63,66,73)!important;border-bottom-color:rgb(63,66,73)!important;border-left-color:rgb(63,66,73)!important;color:rgb(174,179,183)!important}
+html[data-theme="dark"] .wd-step.done .wd-dot{background-color:rgb(11, 122, 62)!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .wd-step.cur .wd-dot{color:var(--wc)!important}
+html[data-theme="dark"] .wd-step.todo .wd-sl b{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .wd-kv{border-bottom-color:rgb(52,59,63)!important}
+html[data-theme="dark"] .wd-sec{background-color:rgb(21,25,30)!important;color:rgb(210,213,215)!important}
+html[data-theme="dark"] .wd-sec:hover{background-color:rgb(27,31,33)!important;color:rgb(210,213,215)!important}
+html[data-theme="dark"] .wd-sec.del{color:rgb(226,119,117)!important}
+html[data-theme="dark"] .wd-sec.del:hover{background-color:rgb(43,20,18)!important;color:rgb(226,119,117)!important}
+html[data-theme="dark"] .war-dlg{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .war-f i{color:rgb(226,119,117)!important}
+html[data-theme="dark"] .war-err{color:rgb(226,119,117)!important}
+html[data-theme="dark"] .war-cancel{background-color:rgb(27,31,33)!important;color:rgb(210,213,215)!important}
+html[data-theme="dark"] .war-cancel:hover{background-color:rgb(29,32,36)!important;color:rgb(210,213,215)!important}
+html[data-theme="dark"] .dd-txt.empty{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .dd-txt.paid{color:rgb(168,230,193)!important}
+html[data-theme="dark"] .dd-txt.paid::before,html[data-theme="dark"] .paid-stk{background-image:linear-gradient(135deg, rgb(34, 197, 94), rgb(21, 128, 61))!important;color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] .cash-add .dd.cash-err input{border-top-color:rgb(108,55,55)!important;border-right-color:rgb(108,55,55)!important;border-bottom-color:rgb(108,55,55)!important;border-left-color:rgb(108,55,55)!important}
+html[data-theme="dark"] .cash-add-input.cash-err,html[data-theme="dark"] .cash-add .amt.cash-err,html[data-theme="dark"] .cash-add .dd.cash-err{border-top-color:rgb(108,55,55)!important;border-right-color:rgb(108,55,55)!important;border-bottom-color:rgb(108,55,55)!important;border-left-color:rgb(108,55,55)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row-bill .dd-txt.paid{color:rgb(164,234,185)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row-bill.bill-row-warn .dd-txt{color:var(--maroon)!important}
+html[data-theme="dark"] .bdf-btn{background-color:rgb(18,27,42)!important;color:rgb(148,181,235)!important}
+html[data-theme="dark"] .bdf-btn:hover{background-color:rgb(20,32,48)!important;color:rgb(148,181,235)!important}
+html[data-theme="dark"] .bdf-dlg{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .bdf-opt{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .bdf-opt:hover{background-color:rgb(24,28,32)!important;color:var(--ink)!important}
+html[data-theme="dark"] .bdf-opt.on{background-color:rgb(18,27,42)!important}
+html[data-theme="dark"] .bdf-help code{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .bdf-prev{background-color:rgb(21,28,35)!important;border-top-color:rgb(60,67,78)!important;border-right-color:rgb(60,67,78)!important;border-bottom-color:rgb(60,67,78)!important;border-left-color:rgb(60,67,78)!important}
+html[data-theme="dark"] .bdf-act .c{background-color:rgb(27,31,33)!important;color:rgb(210,213,215)!important}
+html[data-theme="dark"] .bdf-act .c:hover{background-color:rgb(29,32,36)!important;color:rgb(210,213,215)!important}
+html[data-theme="dark"] .recon-input-card{background-color:rgb(21,25,30)!important;border-top-color:rgb(50,59,74)!important;border-right-color:rgb(50,59,74)!important;border-bottom-color:rgb(50,59,74)!important;border-left-color:rgb(50,59,74)!important}
+html[data-theme="dark"] .recon-input-card label{color:rgb(188,192,199)!important}
+html[data-theme="dark"] .recon-in::before{color:rgb(185,188,191)!important}
+html[data-theme="dark"] .recon-in input{border-top-color:rgb(72,76,80)!important;border-right-color:rgb(72,76,80)!important;border-bottom-color:rgb(72,76,80)!important;border-left-color:rgb(72,76,80)!important;background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .recon-card{background-color:rgb(21,25,30)!important;border-right-color:rgb(50,59,74)!important;border-bottom-color:rgb(50,59,74)!important;border-left-color:rgb(50,59,74)!important}
+html[data-theme="dark"] .recon-card small{color:rgb(188,192,199)!important}
+html[data-theme="dark"] .recon-card em{color:rgb(188,192,199)!important}
+html[data-theme="dark"] .recon-card.extra.zero{border-top-color:rgb(77,82,86)!important}
+html[data-theme="dark"] .recon-card.extra.zero b{color:rgb(174,179,183)!important}
+html[data-theme="dark"] .recon-card.extra.pos b{color:var(--forest)!important}
+html[data-theme="dark"] .recon-card.extra.neg b{color:var(--maroon)!important}
+html[data-theme="dark"] .recon-card.extra.ok b{color:var(--forest)!important}
+html[data-theme="dark"] .set-card{background-color:rgb(21,25,30)!important;border-top-color:rgb(50,59,74)!important;border-right-color:rgb(50,59,74)!important;border-bottom-color:rgb(50,59,74)!important;border-left-color:rgb(50,59,74)!important}
+html[data-theme="dark"] .set-seg button{background-color:rgb(21,25,30)!important}
+html[data-theme="dark"] .set-seg button:hover{background-color:rgb(27,31,33)!important}
+html[data-theme="dark"] .set-seg button.on{color:rgb(255, 255, 255)!important}
+html[data-theme="dark"] body{background:#0e131b;color:var(--ink)}
+html[data-theme="dark"] ::placeholder{color:#6f7b8d!important;opacity:1}
+html[data-theme="dark"] ::selection{background:#2b4a7a;color:#fff}
+/* inline-style chips used in a few templates */
+html[data-theme="dark"] [style*="background:#e6f4ea"],html[data-theme="dark"] [style*="background:#e8f5e9"]{background:#12301d!important;color:#7fd39a!important}
+html[data-theme="dark"] [style*="background:#fff4d6"]{background:#3a2f10!important;color:#f0c75e!important}
+html[data-theme="dark"] [style*="background:#e8f0fe"]{background:#142a4d!important;color:#8ab4f8!important}
+html[data-theme="dark"] [style*="background:#f1f3f4"]{background:#1d2532!important;color:#c3cbd8!important}
+html[data-theme="dark"] .sidebar .sb-item[aria-current="page"]{background:#243b63!important;color:#fff!important}
+html[data-theme="dark"] .recon-card.extra.pos b{color:#4cd07d!important}
+html[data-theme="dark"] .recon-card.extra.neg b{color:#ff7066!important}
+html[data-theme="dark"] .recon-card.extra.ok b{color:#4cd07d!important}
+html[data-theme="dark"] .set-seg button.on{background:#1a73e8!important;border-color:#1a73e8!important;color:#fff!important}
+/* dashboard chart (inline SVG) */
+html[data-theme="dark"] .pc-chart line[stroke="#eceff4"]{stroke:#232c3a}
+html[data-theme="dark"] .pc-chart line[stroke="#cdd3de"]{stroke:#3a4558}
+html[data-theme="dark"] .pc-chart text{fill:#8e9bb0}
+
+}
+
+
+/* ===== v2.5 : light sidebar (light mode) + Excel-style Cash Reconciliation ===== */
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sidebar{background:#fff;color:#3c4350;border-right:1px solid #e3e7ee}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sb-logo{background:#f1f3f4;border:1px solid #e3e7ee}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sb-name{color:var(--ink)}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sb-sub{color:#6b7280}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sb-group{color:#80868b}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sb-nav{scrollbar-color:#cfd5df transparent}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sidebar .sb-item{color:#3c4350}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sidebar .sb-item:hover{background:#f1f3f6;color:var(--ink)}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sidebar .sb-item[aria-current="page"]{background:#e8f0fe;color:#1a73e8;font-weight:700}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sidebar .sb-item:focus-visible{outline-color:#1a73e8}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sidebar .sb-item.danger{color:#d93025}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sidebar .sb-item.danger:hover{background:#fdecea;color:#b3261e}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sb-account{border-top-color:#e3e7ee}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sidebar .rolepill{background:#f1f3f4;color:#5f6368}
+html:not([data-theme="dark"]):not([data-sb="navy"]) .sb-copy{color:#80868b}
+html:not([data-theme="dark"]):not([data-sb="navy"]) body.sb-open .sidebar{box-shadow:12px 0 40px #00000026}
+
+#reconModal .modalbox{overflow:auto!important}
+.recon-layout{display:grid;grid-template-columns:minmax(300px,440px) minmax(0,1fr);gap:18px;align-items:start;width:100%;max-width:1100px}
+.recon-layout .recon-cards{grid-template-columns:1fr;gap:14px}
+.recon-layout .recon-card{min-height:150px;padding:20px 24px}
+.xl-wrap{background:#fff;border:1px solid #c6ccd6;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.06);font-family:Calibri,Carlito,'Segoe UI',Arial,sans-serif}
+.xl-bar{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#217346;color:#fff;font-size:13px;font-weight:600}
+.xl-bar span:last-child{margin-left:auto;font-weight:400;opacity:.85;font-size:12px}
+table.xl{border-collapse:collapse;width:100%;table-layout:fixed;font-size:15px;color:#202124}
+table.xl th,table.xl td{border:1px solid #d4d8df;padding:0;height:34px}
+table.xl thead th{background:#e6e8ec;color:#444;font-weight:600;text-align:center;font-size:13px;height:26px}
+table.xl tbody th{background:#e6e8ec;color:#444;font-weight:500;width:38px;text-align:center;font-size:13px}
+table.xl td.xl-note,table.xl td.xl-amt{padding:0 10px;text-align:right;font-variant-numeric:tabular-nums;background:#fff}
+table.xl td.xl-in{position:relative}
+table.xl td.xl-in input{display:block;width:100%;height:100%;min-height:33px;border:0;border-radius:0;box-shadow:none;background:transparent;padding:0 10px;font:inherit;text-align:right;color:inherit;-moz-appearance:textfield;margin:0}
+table.xl td.xl-in input::-webkit-outer-spin-button,table.xl td.xl-in input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+table.xl td.xl-in:focus-within{outline:2px solid #217346;outline-offset:-2px;z-index:1}
+table.xl td.xl-in input:focus{outline:0;box-shadow:none;border:0}
+table.xl tr.xl-total td,table.xl tr.xl-total th{background:#f3f6f4;font-weight:700;border-top:2px solid #217346}
+table.xl tr.xl-total td.xl-lbl{text-align:left;padding:0 10px}
+.xl-hint{padding:7px 10px;font-size:12px;color:#6b7280;background:#f8f9fa;border-top:1px solid #d4d8df}
+@media(max-width:900px){.recon-layout{grid-template-columns:1fr}}
+html[data-theme="dark"] .xl-wrap{background:#151b25;border-color:#323b4a}
+html[data-theme="dark"] table.xl{color:#e6e9ef}
+html[data-theme="dark"] table.xl th,html[data-theme="dark"] table.xl td{border-color:#2a3342}
+html[data-theme="dark"] table.xl thead th,html[data-theme="dark"] table.xl tbody th{background:#1d2532;color:#aeb7c5}
+html[data-theme="dark"] table.xl td.xl-note,html[data-theme="dark"] table.xl td.xl-amt{background:#151b25}
+html[data-theme="dark"] table.xl tr.xl-total td,html[data-theme="dark"] table.xl tr.xl-total th{background:#1a2430}
+html[data-theme="dark"] .xl-hint{background:#111721;border-top-color:#2a3342;color:#9aa6b8}
+
+/* Original theme: black sidebar */
+html[data-sb="navy"] .sidebar{background:#000}
+html[data-sb="navy"] .sb-account{border-top-color:rgba(255,255,255,.14)}
+html[data-sb="navy"] .sidebar .sb-item[aria-current="page"]{background:#fff;color:#000}
+html[data-sb="navy"] .sb-sub,html[data-sb="navy"] .sb-group,html[data-sb="navy"] .sb-copy{color:#9aa0a6}
+html[data-sb="navy"] .sb-nav{scrollbar-color:#333 transparent}
+
+/* no scrollbar / scroll indicator in the sidebar (still scrolls) */
+.sb-nav,.sidebar{scrollbar-width:none!important;-ms-overflow-style:none!important}
+.sb-nav::-webkit-scrollbar,.sidebar::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+
+.xl-clear{margin-left:auto;background:rgba(255,255,255,.18)!important;color:#fff!important;border:1px solid rgba(255,255,255,.4)!important;border-radius:4px;padding:2px 12px!important;font-size:12px!important;font-weight:600;box-shadow:none!important}
+.xl-clear:hover{background:rgba(255,255,255,.3)!important}
+.xl-bar span:last-child{margin-left:0}
 </style></head>
 <body class="booting">
 
@@ -1173,6 +1634,7 @@ body:has(.bill-ticker.show) .wd{top:42px}
     <button class="sb-item" data-page="salesModal" onclick="openActionModal('salesModal')"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11l2-8H6"/></svg><span>Sales</span></button>
     <button class="sb-item" data-page="productModal" onclick="openActionModal('productModal')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg><span>Add Product</span></button>
     <button class="sb-item" data-page="dailyCashModal" onclick="openDailyCash()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><span>Daily Cash / Others</span></button>
+    <button class="sb-item" data-page="reconModal" onclick="openRecon()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M14 11h2M8 15h2M14 15h2"/></svg><span>Cash Reconciliation</span></button>
     <button class="sb-item" data-page="billAlertModal" onclick="openBillAlertModal()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg><span>Bill Alerts</span></button>
     <button class="sb-item" data-page="warrantyModal" onclick="openWarranty()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 5-5"/></svg><span>Warranty</span><em class="sb-badge" id="navWarBadge"></em></button>
     <div class="sb-group">Records</div>
@@ -1189,6 +1651,7 @@ body:has(.bill-ticker.show) .wd{top:42px}
     <button class="sb-item admin-only" data-page="sessionsModal" onclick="openSessions()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span>Active Sessions</span></button>
   </nav>
   <div class="sb-account">
+    <button class="sb-item" data-page="settingsModal" onclick="openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg><span>Settings</span></button>
     <button class="sb-item" data-page="pwModal" onclick="openPwModal()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></svg><span>Change Password</span></button>
     <button class="sb-item danger" onclick="doLogout()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg><span>Logout</span></button>
     <div class="sb-copy">© 2026 Bidhu Nath. All rights reserved.</div><div class="sb-meta"><span class="rolepill" id="sessionRolePill">—</span><span class="rolepill" id="appVersionPill" title="If you do not see this badge, the old file is still running">v2.2 dashboard</span></div>
@@ -1363,6 +1826,32 @@ body:has(.bill-ticker.show) .wd{top:42px}
 <div class="modal" id="dailyCashStatementModal" aria-hidden="true"><div class="modalbox wide-modal stock-register-modal"><button class="close" onclick="closeActionModal('dailyCashStatementModal')" aria-label="Close">✕ Close</button><h2>📄 Daily Cash Statement</h2><p class="hint">Every day's Daily Cash entries are listed below. Tap a date to open and view it (past days are read-only).</p><div class="tablewrap stock-history-wrap"><table><thead><tr><th>Date</th><th class="num">Electricity Bill</th><th class="num">Due Paid</th><th class="num">Others</th><th class="num">Cost</th><th class="num">Sale (POS)</th><th class="num">Total Cash</th></tr></thead><tbody id="dailyCashStatementTable"></tbody></table></div></div></div>
 
 <div class="modal" id="billAlertModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('billAlertModal')" aria-label="Close">✕ Close</button><h2>⚠️ Bill Alerts</h2><div id="billAlertStatus"></div><p id="billAlertHint"></p><div class="ba-card"><div class="ba-toolbar"><div><b id="baTitle">Pending bills</b><span id="baSub"></span></div><button type="button" id="billAlertPaidAllBtn" class="steel bill-alert-paidall" onclick="markAllBillsPaid(this)" style="display:none">✓✓ Paid All</button></div><div id="billAlertList"></div></div></div></div></div>
+
+<div class="modal" id="reconModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('reconModal')" aria-label="Close">✕ Close</button><h2>🧮 Cash Reconciliation</h2><p class="hint">Count the cash in hand and type it below. Extra = Cash in Hand − Total Cash.</p>
+  <div class="recon-layout">
+    <div class="xl-wrap">
+      <div class="xl-bar"><span>&#9638;</span><span>Cash in Hand</span><button type="button" class="xl-clear" onclick="clearRecon()">Clear</button></div>
+      <table class="xl" id="reconGrid"><colgroup><col style="width:38px"><col><col><col></colgroup>
+        <thead><tr><th></th><th>A &mdash; Note (&#2547;)</th><th>B &mdash; Count</th><th>C &mdash; Amount (&#2547;)</th></tr></thead>
+        <tbody><tr><th>1</th><td class="xl-note">1000</td><td class="xl-in"><input type="number" inputmode="numeric" min="0" step="1" data-d="1000" class="xl-cnt" autocomplete="off" aria-label="Count of 1000 taka notes"></td><td class="xl-amt" id="xlAmt1000">0</td></tr><tr><th>2</th><td class="xl-note">500</td><td class="xl-in"><input type="number" inputmode="numeric" min="0" step="1" data-d="500" class="xl-cnt" autocomplete="off" aria-label="Count of 500 taka notes"></td><td class="xl-amt" id="xlAmt500">0</td></tr><tr><th>3</th><td class="xl-note">200</td><td class="xl-in"><input type="number" inputmode="numeric" min="0" step="1" data-d="200" class="xl-cnt" autocomplete="off" aria-label="Count of 200 taka notes"></td><td class="xl-amt" id="xlAmt200">0</td></tr><tr><th>4</th><td class="xl-note">100</td><td class="xl-in"><input type="number" inputmode="numeric" min="0" step="1" data-d="100" class="xl-cnt" autocomplete="off" aria-label="Count of 100 taka notes"></td><td class="xl-amt" id="xlAmt100">0</td></tr><tr><th>5</th><td class="xl-note">50</td><td class="xl-in"><input type="number" inputmode="numeric" min="0" step="1" data-d="50" class="xl-cnt" autocomplete="off" aria-label="Count of 50 taka notes"></td><td class="xl-amt" id="xlAmt50">0</td></tr><tr><th>6</th><td class="xl-note">20</td><td class="xl-in"><input type="number" inputmode="numeric" min="0" step="1" data-d="20" class="xl-cnt" autocomplete="off" aria-label="Count of 20 taka notes"></td><td class="xl-amt" id="xlAmt20">0</td></tr><tr><th>7</th><td class="xl-note">10</td><td class="xl-in"><input type="number" inputmode="numeric" min="0" step="1" data-d="10" class="xl-cnt" autocomplete="off" aria-label="Count of 10 taka notes"></td><td class="xl-amt" id="xlAmt10">0</td></tr><tr><th>8</th><td class="xl-note">5</td><td class="xl-in"><input type="number" inputmode="numeric" min="0" step="1" data-d="5" class="xl-cnt" autocomplete="off" aria-label="Count of 5 taka notes"></td><td class="xl-amt" id="xlAmt5">0</td></tr><tr><th>9</th><td class="xl-note">2</td><td class="xl-in"><input type="number" inputmode="numeric" min="0" step="1" data-d="2" class="xl-cnt" autocomplete="off" aria-label="Count of 2 taka notes"></td><td class="xl-amt" id="xlAmt2">0</td></tr><tr><th>10</th><td class="xl-note">1</td><td class="xl-in"><input type="number" inputmode="numeric" min="0" step="1" data-d="1" class="xl-cnt" autocomplete="off" aria-label="Count of 1 taka notes"></td><td class="xl-amt" id="xlAmt1">0</td></tr><tr class="xl-total"><th>11</th><td class="xl-lbl" colspan="2">Cash in Hand (Total)</td><td class="xl-amt" id="reconInHandTotal">0</td></tr></tbody>
+      </table>
+      <div class="xl-hint">Type the count of each note. Enter / &darr; = next row, &uarr; = previous row.</div>
+    </div>
+    <div class="recon-cards">
+      <div class="recon-card total"><div><small>Total Cash</small><b id="reconTotal">&#2547;0.00</b></div><em>Today's Daily Cash total (same as Dashboard)</em></div>
+      <div class="recon-card extra zero" id="reconExtraCard"><div><small>Extra</small><b id="reconExtra">&mdash;</b></div><em id="reconExtraNote">Enter Cash in Hand to compare</em></div>
+    </div>
+  </div>
+</div></div>
+<div class="modal" id="settingsModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('settingsModal')" aria-label="Close">✕ Close</button><h2>⚙️ Settings</h2><p class="hint">Language and theme for this device.</p>
+  <div class="set-wrap">
+    <div class="set-card"><h3>Language</h3><p>Choose the app language. Saved on this device.</p>
+      <div class="set-seg" id="setLang"><button type="button" data-lang="en" onclick="setLang('en')">English</button><button type="button" data-lang="bn" onclick="setLang('bn')">বাংলা</button></div></div>
+    <div class="set-card"><h3>Theme</h3><p>Choose how the app looks. System default follows your phone or computer.</p>
+      <div class="set-seg" id="setTheme"><button type="button" data-theme="light" onclick="setTheme('light')">Light</button><button type="button" data-theme="original" onclick="setTheme('original')">Original</button><button type="button" data-theme="dark" onclick="setTheme('dark')">Dark</button><button type="button" data-theme="system" onclick="setTheme('system')">System default</button></div></div>
+  </div>
+</div></div>
+
 <div id="paidAllSuccessOverlay" class="paidall-success-overlay" aria-hidden="true">
   <div class="paidall-success-inner">
     <svg class="paidall-success-badge" viewBox="0 0 100 100" width="88" height="88" xmlns="http://www.w3.org/2000/svg">
@@ -4066,7 +4555,7 @@ setupDraggableFab($('billAlertFab'));
    the area beside the sidebar. Only the Bill Alert (and small
    helper dialogs such as the barcode scanner) stay as popups.
    ============================================================ */
-var PAGE_MODALS=['productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','dailyCashModal','dailyCashStatementModal','billAlertModal','stockRegisterModal','dataModal','pwModal','sessionsModal'];
+var PAGE_MODALS=['productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','dailyCashModal','dailyCashStatementModal','billAlertModal','stockRegisterModal','dataModal','pwModal','sessionsModal','reconModal','settingsModal'];
 function closeOtherPages(keep){PAGE_MODALS.forEach(function(id){if(id===keep)return;var m=document.getElementById(id);if(m&&m.classList.contains('show')){m.classList.remove('show');m.setAttribute('aria-hidden','true')}});syncCashOpenClass()}
 function goHome(){
   closeSidebar();
@@ -4534,4 +5023,219 @@ function renderWarDetail(){
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&warDetailId&&!$('warOv'))warClose()});
 (function(){const m=$('warrantyModal');if(m)new MutationObserver(()=>{if(!m.classList.contains('show'))warClose()}).observe(m,{attributes:true,attributeFilter:['class']})})();
 renderWarranty();
-</script></body></html>
+</script>
+
+<script>
+/* ============================================================
+   v2.4 — Cash Reconciliation, Settings (Language + Theme)
+   ============================================================ */
+(function(){
+  "use strict";
+  var LANG_KEY='mh_lang',THEME_KEY='mh_theme';
+  var BN={"Mohammadia Library & Computer": "মোহাম্মদীয়া লাইব্রেরি ও কম্পিউটার", "Sales & Stock Management": "বিক্রয় ও স্টক ব্যবস্থাপনা", "Dashboard": "ড্যাশবোর্ড", "Daily work": "দৈনিক কাজ", "Sales": "বিক্রয়", "Add Product": "পণ্য যোগ করুন", "Daily Cash / Others": "দৈনিক ক্যাশ / অন্যান্য", "Cash Reconciliation": "ক্যাশ মিলানো", "Bill Alerts": "বিল অ্যালার্ট", "Warranty": "ওয়ারেন্টি", "Records": "রেকর্ড", "Stock Register": "স্টক রেজিস্টার", "Today's Sales": "আজকের বিক্রয়", "Sales History": "বিক্রয়ের ইতিহাস", "Print Invoice": "ইনভয়েস প্রিন্ট", "Daily Cash Statement": "দৈনিক ক্যাশ বিবরণী", "Latest Stock Register": "সর্বশেষ স্টক রেজিস্টার", "Low Stock Report": "স্বল্প স্টক রিপোর্ট", "Admin": "অ্যাডমিন", "Employee": "কর্মচারী", "Business Center": "বিজনেস সেন্টার", "Data Center": "ডেটা সেন্টার", "Active Sessions": "সক্রিয় সেশন", "Change Password": "পাসওয়ার্ড পরিবর্তন", "Settings": "সেটিংস", "Logout": "লগআউট", "Close": "বন্ধ করুন", "Today's sales": "আজকের বিক্রয়", "Today's invoices": "আজকের ইনভয়েস", "Stock units": "স্টক ইউনিট", "Stock selling value": "স্টকের বিক্রয় মূল্য", "Stock cost value": "স্টকের ক্রয় মূল্য", "Total sales": "মোট বিক্রয়", "Total Cash": "মোট ক্যাশ", "Returns": "রিটার্ন", "Profit": "লাভ", "Day": "দিন", "Week": "সপ্তাহ", "Month": "মাস", "Year": "বছর", "No earlier data to compare": "তুলনার জন্য আগের তথ্য নেই", "Margin": "মার্জিন", "Mon": "সোম", "Tue": "মঙ্গল", "Wed": "বুধ", "Thu": "বৃহস্পতি", "Fri": "শুক্র", "Sat": "শনি", "Sun": "রবি", "today": "আজ", "last 7 days": "শেষ ৭ দিন", "last 30 days": "শেষ ৩০ দিন", "last 12 months": "শেষ ১২ মাস", "vs yesterday": "গতকালের তুলনায়", "vs previous 7 days": "আগের ৭ দিনের তুলনায়", "vs previous 30 days": "আগের ৩০ দিনের তুলনায়", "vs previous 12 months": "আগের ১২ মাসের তুলনায়", "Dashboard, purchases, customer dues and profit analysis. Purchase prices and profit figures are Admin-only.": "ড্যাশবোর্ড, ক্রয়, ক্রেতাদের বাকি ও লাভের বিশ্লেষণ। ক্রয়মূল্য ও লাভের হিসাব শুধু অ্যাডমিন দেখতে পাবেন।", "Add": "যোগ করুন", "Optional:": "ঐচ্ছিক:", "Percentage": "শতাংশ", "7-Day Sales": "৭ দিনের বিক্রয়", "Action": "অ্যাকশন", "All": "সব", "All bills cleared": "সব বিল পরিশোধিত", "All categories": "সব ক্যাটাগরি", "All entries": "সব এন্ট্রি", "All products": "সব পণ্য", "Amount": "পরিমাণ", "Barcode": "বারকোড", "Cancel": "বাতিল", "Cancel Edit": "সম্পাদনা বাতিল", "Cart": "কার্ট", "Category": "ক্যাটাগরি", "Clear": "মুছুন", "Clear Cart": "কার্ট খালি করুন", "Cost": "খরচ", "Customer": "ক্রেতা", "Customer / SMS no": "ক্রেতা / SMS নম্বর", "Customer name": "ক্রেতার নাম", "Date": "তারিখ", "Date & Time": "তারিখ ও সময়", "Delivered": "হস্তান্তরিত", "Details": "বিস্তারিত", "Device": "ডিভাইস", "Discount": "ডিসকাউন্ট", "Discount:": "ডিসকাউন্ট:", "Due": "বাকি", "Due Paid": "বাকি পরিশোধ", "Due:": "বাকি:", "Due today": "আজই শেষ", "Due in 1–2 days": "১–২ দিনের মধ্যে", "Electricity Bill": "বিদ্যুৎ বিল", "Electricity Bill only": "শুধু বিদ্যুৎ বিল", "Estimated COGS": "আনুমানিক ক্রয়মূল্য", "Estimated Profit": "আনুমানিক লাভ", "COGS": "বিক্রীত পণ্যের ক্রয়মূল্য", "Gross Profit": "মোট লাভ", "Export / Backup": "এক্সপোর্ট / ব্যাকআপ", "Import / Restore": "ইমপোর্ট / রিস্টোর", "Forgot password?": "পাসওয়ার্ড ভুলে গেছেন?", "Go to Cart": "কার্টে যান", "Invoice": "ইনভয়েস", "Invoice preview": "ইনভয়েস প্রিভিউ", "Item": "আইটেম", "Items": "আইটেম", "Last 7 calendar days": "শেষ ৭ ক্যালেন্ডার দিন", "Last Date Alert": "শেষ তারিখ সতর্কতা", "Last active": "সর্বশেষ সক্রিয়", "Last date": "শেষ তারিখ", "Link will be sent to:": "লিংক পাঠানো হবে:", "Logged in": "লগইন করেছেন", "Login": "লগইন", "Login as": "যে ভূমিকায় লগইন", "Logout all other devices": "অন্য সব ডিভাইস লগআউট করুন", "MIN": "সর্বনিম্ন", "Normal": "সাধারণ", "Others": "অন্যান্য", "Outstanding Customer Dues": "ক্রেতাদের বকেয়া", "Outstanding Due": "বকেয়া", "Overdue": "মেয়াদোত্তীর্ণ", "Paid": "পরিশোধিত", "Paid:": "পরিশোধ:", "Password": "পাসওয়ার্ড", "Payment": "পেমেন্ট", "Payment: Due": "পেমেন্ট: বাকি", "Payment: Paid": "পেমেন্ট: পরিশোধিত", "Payment: Partial": "পেমেন্ট: আংশিক", "Pending bills": "অপরিশোধিত বিল", "No pending bills": "কোনো অপরিশোধিত বিল নেই", "Paid All": "সব পরিশোধ", "Price": "দাম", "Print Latest Invoice": "সর্বশেষ ইনভয়েস প্রিন্ট", "Problem": "সমস্যা", "Product": "পণ্য", "Profit by Product": "পণ্য অনুযায়ী লাভ", "Purchase": "ক্রয়", "Purchases": "ক্রয়", "Purpose": "উদ্দেশ্য", "Qty": "পরিমাণ", "Qty Sold": "বিক্রীত সংখ্যা", "Received": "গ্রহণের তারিখ", "Recent Purchases": "সাম্প্রতিক ক্রয়", "Required columns:": "প্রয়োজনীয় কলাম:", "Revenue": "আয়", "Sale (POS)": "বিক্রয় (POS)", "Sale Complete!": "বিক্রয় সম্পন্ন!", "Sales CSV Restore": "বিক্রয় CSV রিস্টোর", "Stock CSV Restore": "স্টক CSV রিস্টোর", "Sales Revenue": "বিক্রয় আয়", "Sales — Last 7 Days": "বিক্রয় — শেষ ৭ দিন", "Sample": "নমুনা", "Save Purchase": "ক্রয় সংরক্ষণ", "Save Stock": "স্টক সংরক্ষণ", "Scan Barcode": "বারকোড স্ক্যান", "Scan with Camera": "ক্যামেরায় স্ক্যান", "Search results": "অনুসন্ধানের ফলাফল", "Selling": "বিক্রয়মূল্য", "Status": "অবস্থা", "Subtotal:": "উপমোট:", "Supplier": "সরবরাহকারী", "Time": "সময়", "Today": "আজ", "Today's total:": "আজকের মোট:", "Today Sales": "আজকের বিক্রয়", "Today's Sale (POS)": "আজকের বিক্রয় (POS)", "Top Selling Products": "সর্বাধিক বিক্রীত পণ্য", "Total": "মোট", "User": "ব্যবহারকারী", "With Company": "কোম্পানির কাছে", "Back from Company": "কোম্পানি থেকে ফেরত", "first word": "প্রথম শব্দ", "Cash amount": "ক্যাশের পরিমাণ", "Reset layout": "লেআউট রিসেট", "Normal size": "স্বাভাবিক সাইজ", "Add line": "লাইন যোগ করুন", "New Warranty": "নতুন ওয়ারেন্টি", "Synced automatically": "স্বয়ংক্রিয়ভাবে সিঙ্ক হয়েছে", "Connecting…": "সংযুক্ত হচ্ছে…", "Quick Sale": "কুইক সেল", "Complete Sale": "বিক্রয় সম্পন্ন করুন", "Record Purchase / Stock Receive": "ক্রয় / স্টক গ্রহণ রেকর্ড করুন", "Complete JSON Backup": "সম্পূর্ণ JSON ব্যাকআপ", "Complete JSON Restore": "সম্পূর্ণ JSON রিস্টোর", "Sales CSV": "বিক্রয় CSV", "Stock CSV": "স্টক CSV", "Today's Sales CSV": "আজকের বিক্রয় CSV", "Choose JSON File": "JSON ফাইল বাছুন", "Choose Sales CSV": "বিক্রয় CSV বাছুন", "Choose Stock CSV": "স্টক CSV বাছুন", "Colors": "রঙ", "Customization": "কাস্টমাইজেশন", "Quick Sale Customization": "কুইক সেল কাস্টমাইজেশন", "Customers & Due": "ক্রেতা ও বাকি", "Profit & Loss": "লাভ-ক্ষতি", "Data Center — Backup & Restore": "ডেটা সেন্টার — ব্যাকআপ ও রিস্টোর", "Date format": "তারিখের ফরম্যাট", "Card Size": "কার্ডের সাইজ", "Card Layout": "কার্ড লেআউট", "Add / Update Stock": "স্টক যোগ / আপডেট", "Send password-change link": "পাসওয়ার্ড-পরিবর্তন লিংক পাঠান", "Print / Save as PDF": "প্রিন্ট / PDF সেভ", "Latest Invoice — A4 Landscape (receipt on right ¼)": "সর্বশেষ ইনভয়েস — A4 ল্যান্ডস্কেপ (ডানের ¼ অংশে রসিদ)", "Clear Today's Entries": "আজকের এন্ট্রি মুছুন", "New Sale": "নতুন বিক্রয়", "Generate Invoice": "ইনভয়েস তৈরি করুন", "Grand Total": "সর্বমোট", "Sign in to continue to your workspace": "আপনার ওয়ার্কস্পেসে যেতে সাইন-ইন করুন", "Starting camera…": "ক্যামেরা চালু হচ্ছে…", "add new entries only": "শুধু নতুন এন্ট্রি যোগ করা যাবে", "saved entries are locked": "সংরক্ষিত এন্ট্রি লক করা", "Sort: Name (A–Z)": "সাজান: নাম (A–Z)", "Sort: Name (Z–A)": "সাজান: নাম (Z–A)", "Sort: Price (High → Low)": "সাজান: দাম (বেশি → কম)", "Sort: Price (Low → High)": "সাজান: দাম (কম → বেশি)", "Sort: Stock (High → Low)": "সাজান: স্টক (বেশি → কম)", "Sort: Stock (Low → High)": "সাজান: স্টক (কম → বেশি)", "All products in stock — search, sort and add to cart.": "স্টকের সব পণ্য — খুঁজুন, সাজান ও কার্টে যোগ করুন।", "Automatically saved offline.": "অফলাইনে স্বয়ংক্রিয়ভাবে সংরক্ষিত।", "Based on recorded purchase prices": "রেকর্ডকৃত ক্রয়মূল্যের ভিত্তিতে", "Complete sales history — search by invoice, date, customer or item.": "সম্পূর্ণ বিক্রয়ের ইতিহাস — ইনভয়েস, তারিখ, ক্রেতা বা পণ্য দিয়ে খুঁজুন।", "Connecting to live data…": "লাইভ ডেটার সাথে সংযুক্ত হচ্ছে…", "Every invoice created today.": "আজ তৈরি হওয়া সব ইনভয়েস।", "Invoice history — tap an invoice to preview it, or press Print.": "ইনভয়েসের ইতিহাস — প্রিভিউ দেখতে ইনভয়েসে ট্যাপ করুন, অথবা প্রিন্ট চাপুন।", "Make the Quick Sale cards smaller or bigger. Saved on this device (phone and computer can have different sizes).": "কুইক সেল কার্ড ছোট বা বড় করুন। এই ডিভাইসে সংরক্ষিত থাকবে (ফোন ও কম্পিউটারে আলাদা সাইজ রাখা যাবে)।", "Mobile, charger or any product — tap an item to open its full details.": "মোবাইল, চার্জার বা যেকোনো পণ্য — পুরো বিবরণ দেখতে আইটেমে ট্যাপ করুন।", "No invoices found.": "কোনো ইনভয়েস পাওয়া যায়নি।", "No items in the report. Every item with stock below 10 has been removed, or none exist.": "রিপোর্টে কোনো আইটেম নেই। ১০-এর কম স্টকের সব আইটেম সরানো হয়েছে, অথবা এমন আইটেম নেই।", "No matching product in stock.": "স্টকে মিলে যাওয়া কোনো পণ্য নেই।", "No outstanding dues.": "কোনো বকেয়া নেই।", "No profit data yet.": "এখনো লাভের তথ্য নেই।", "No purchases recorded.": "কোনো ক্রয় রেকর্ড করা হয়নি।", "No sales data yet.": "এখনো বিক্রয়ের তথ্য নেই।", "No sales found.": "কোনো বিক্রয় পাওয়া যায়নি।", "No sales in this period yet": "এই সময়ে এখনো কোনো বিক্রয় নেই", "No sales today.": "আজ কোনো বিক্রয় নেই।", "No sessions yet.": "এখনো কোনো সেশন নেই।", "No stock found.": "কোনো স্টক পাওয়া যায়নি।", "No stock register activity in the last 7 days.": "গত ৭ দিনে স্টক রেজিস্টারে কোনো কার্যক্রম নেই।", "Point your phone camera at the product barcode. Camera access works on HTTPS or localhost.": "ফোনের ক্যামেরা পণ্যের বারকোডের দিকে ধরুন। ক্যামেরা HTTPS বা localhost-এ কাজ করে।", "Restores sales history from CSV exported by this app.": "এই অ্যাপ থেকে এক্সপোর্ট করা CSV থেকে বিক্রয়ের ইতিহাস ফিরিয়ে আনে।", "Restores stock, sales and latest invoice.": "স্টক, বিক্রয় ও সর্বশেষ ইনভয়েস ফিরিয়ে আনে।", "Sale completes instantly offline · invoice is generated only when you ask for it.": "অফলাইনেও বিক্রয় সাথে সাথে সম্পন্ন হয় · চাইলেই কেবল ইনভয়েস তৈরি হয়।", "Search products, build the cart, apply discounts and generate an invoice.": "পণ্য খুঁজুন, কার্ট বানান, ডিসকাউন্ট দিন ও ইনভয়েস তৈরি করুন।", "Select an invoice to preview it.": "প্রিভিউ দেখতে একটি ইনভয়েস বাছুন।", "Frequently sold item — show as a Quick Sale button (e.g. Pen, Khata, Kolom)": "ঘন ঘন বিক্রীত আইটেম — কুইক সেল বাটন হিসেবে দেখান (যেমন: কলম, খাতা)", "Service item — no stock limit (e.g. Photocopy, Print, Lamination, Binding)": "সার্ভিস আইটেম — স্টকের সীমা নেই (যেমন: ফটোকপি, প্রিন্ট, ল্যামিনেটিং, বাইন্ডিং)", "Drag a card (hold & move) to change its position or to move it to another line. Add as many lines as you like — 2, 3, 4 or more.": "কার্ডের অবস্থান বদলাতে বা অন্য লাইনে নিতে কার্ড চেপে ধরে টানুন। যত খুশি লাইন যোগ করতে পারবেন — ২, ৩, ৪ বা তার বেশি।", "Every day's Daily Cash entries are listed below. Tap a date to open and view it (past days are read-only).": "প্রতিদিনের দৈনিক ক্যাশ এন্ট্রি নিচে তালিকাভুক্ত। দেখতে তারিখে ট্যাপ করুন (আগের দিনগুলো শুধু দেখা যাবে)।", "Every device signed in to this app. Press Logout to sign a device out remotely — it logs out within a few seconds if it is online, or the next time it opens the app.": "এই অ্যাপে সাইন-ইন করা প্রতিটি ডিভাইস। কোনো ডিভাইস দূর থেকে সাইন-আউট করতে লগআউট চাপুন — অনলাইন থাকলে কয়েক সেকেন্ডের মধ্যে, নইলে পরের বার অ্যাপ খুললে লগআউট হবে।", "For security, a password-change link is sent to the shop's Gmail inbox. Open the email, tap the link and choose a new password there. Nothing is changed until you do that. Passwords are handled by Firebase Authentication and are never stored in this app.": "নিরাপত্তার জন্য দোকানের Gmail ইনবক্সে একটি পাসওয়ার্ড-পরিবর্তন লিংক পাঠানো হবে। ইমেইল খুলে লিংকে ট্যাপ করে সেখানে নতুন পাসওয়ার্ড দিন। তা না করা পর্যন্ত কিছুই বদলাবে না। পাসওয়ার্ড Firebase Authentication পরিচালনা করে এবং এই অ্যাপে কখনো সংরক্ষিত হয় না।", "Formal notice: All electricity bills must be paid on or before their last date. Unpaid bills may incur late-payment penalties and service disconnection. Daily bills are to be cleared on the same day.": "আনুষ্ঠানিক বিজ্ঞপ্তি: সব বিদ্যুৎ বিল অবশ্যই শেষ তারিখের মধ্যে বা তার আগে পরিশোধ করতে হবে। অপরিশোধিত বিলে বিলম্ব জরিমানা ও সংযোগ বিচ্ছিন্ন হতে পারে। দৈনিক বিল একই দিনে পরিশোধ করতে হবে।", "Items with stock below 10. Remove any item you don't want in the report using the ✕ button, then print or save as PDF.": "যেসব আইটেমের স্টক ১০-এর কম। রিপোর্টে যা রাখতে চান না তা ✕ বাটনে সরিয়ে দিন, তারপর প্রিন্ট করুন বা PDF হিসেবে সেভ করুন।", "Stock & sales now sync live to your Firebase cloud database, so every device signed into the same Firebase project sees the same data. For extra safety, still make regular backups below — CSV backup files can be opened in Excel and CSV files exported by this app can be restored here.": "স্টক ও বিক্রয় এখন লাইভ আপনার Firebase ক্লাউড ডেটাবেসে সিঙ্ক হয়, তাই একই Firebase প্রজেক্টে সাইন-ইন করা সব ডিভাইসে একই ডেটা দেখা যায়। বাড়তি নিরাপত্তার জন্য নিচে নিয়মিত ব্যাকআপ নিন — CSV ব্যাকআপ ফাইল Excel-এ খোলা যায় এবং এই অ্যাপ থেকে এক্সপোর্ট করা CSV এখানে রিস্টোর করা যায়।", "Stock added or edited during the last 7 days. This register is read-only and cannot be deleted or cleared.": "গত ৭ দিনে যোগ বা সম্পাদনা করা স্টক। এই রেজিস্টার শুধু দেখা যায়; মোছা বা খালি করা যায় না।", "Every Quick Sale item is grouped and colored automatically by the": "প্রতিটি কুইক সেল আইটেম স্বয়ংক্রিয়ভাবে গ্রুপ ও রঙিন হয় নামের", "of its name — items sharing the same first word always share the same color. Pick a custom color for a group below, or leave it on Auto.": "অনুযায়ী — একই প্রথম শব্দের আইটেম সবসময় একই রঙ পায়। নিচে কোনো গ্রুপের জন্য পছন্দের রঙ বাছুন, অথবা অটো রেখে দিন।", "Barcode (optional)": "বারকোড (ঐচ্ছিক)", "Category — pick or type a new one": "ক্যাটাগরি — বাছুন বা নতুন লিখুন", "Customer name (required for due/partial)": "ক্রেতার নাম (বাকি/আংশিকের জন্য আবশ্যক)", "Customer name or SMS no": "ক্রেতার নাম বা SMS নম্বর", "Discount value": "ডিসকাউন্টের মান", "Enter password": "পাসওয়ার্ড দিন", "Item name": "আইটেমের নাম", "Low stock alert at (e.g. 5)": "স্বল্প স্টক সতর্কতা (যেমন ৫)", "Model (optional) — e.g. Cello Butterflow": "মডেল (ঐচ্ছিক) — যেমন Cello Butterflow", "Note (optional)": "নোট (ঐচ্ছিক)", "Paid amount (৳)": "পরিশোধিত টাকা (৳)", "Product name": "পণ্যের নাম", "Purchase cost / unit (৳)": "ক্রয়মূল্য / ইউনিট (৳)", "Purchase price (৳) — hidden": "ক্রয়মূল্য (৳) — গোপন", "Quantity": "পরিমাণ", "Search all days — customer name or amount": "সব দিনে খুঁজুন — ক্রেতার নাম বা টাকার পরিমাণ", "Search customer, number, product, serial, problem…": "ক্রেতা, নম্বর, পণ্য, সিরিয়াল, সমস্যা খুঁজুন…", "Search invoice, date, customer or item...": "ইনভয়েস, তারিখ, ক্রেতা বা আইটেম খুঁজুন...", "Search stock...": "স্টক খুঁজুন...", "Selling price (৳)": "বিক্রয়মূল্য (৳)", "Selling price / unit (৳)": "বিক্রয়মূল্য / ইউনিট (৳)", "Supplier name": "সরবরাহকারীর নাম", "Search product name or barcode...": "পণ্যের নাম বা বারকোড খুঁজুন...", "Bigger": "বড়", "Smaller": "ছোট", "Bill payment alerts": "বিল পেমেন্ট সতর্কতা", "Clear search": "সার্চ মুছুন", "Go to cart": "কার্টে যান", "Open menu": "মেনু খুলুন", "Menu": "মেনু", "Change how the Last date is shown": "শেষ তারিখ কীভাবে দেখাবে তা বদলান", "Click a value to reveal for 3 seconds": "৩ সেকেন্ডের জন্য মান দেখতে ক্লিক করুন", "Tap to reveal for 3 seconds": "৩ সেকেন্ডের জন্য দেখতে ট্যাপ করুন", "Last date (optional)": "শেষ তারিখ (ঐচ্ছিক)", "Last date to pay": "পরিশোধের শেষ তারিখ", "Today's Total Cash (same as Daily Cash) — tap to open": "আজকের মোট ক্যাশ (দৈনিক ক্যাশের সমান) — খুলতে ট্যাপ করুন", "Search bills": "বিল খুঁজুন", "Quick Sale menu": "কুইক সেল মেনু", "Metric": "মেট্রিক", "Period": "সময়কাল", "You're all caught up": "সব বিল পরিশোধ করা হয়েছে", "There are no unpaid bills right now.": "এখন কোনো অপরিশোধিত বিল নেই।", "All bills are settled. No outstanding payments.": "সব বিল পরিশোধিত। কোনো বকেয়া নেই।", "Confirm?": "নিশ্চিত?", "Clearing…": "পরিষ্কার হচ্ছে…", "Overdue ": "মেয়াদোত্তীর্ণ ", "Due in 1 day": "১ দিন বাকি", "Cash in Hand": "হাতে থাকা ক্যাশ", "Extra": "অতিরিক্ত", "Today's Daily Cash total (same as Dashboard)": "আজকের দৈনিক ক্যাশের মোট (ড্যাশবোর্ডের সমান)", "Enter Cash in Hand to compare": "তুলনা করতে হাতে থাকা ক্যাশ লিখুন", "Extra cash — more than Total Cash": "অতিরিক্ত ক্যাশ — মোট ক্যাশের চেয়ে বেশি", "Short — less than Total Cash": "ঘাটতি — মোট ক্যাশের চেয়ে কম", "Perfectly matched": "হুবহু মিলে গেছে", "Count the cash in hand and type it below. Extra = Cash in Hand − Total Cash.": "হাতে থাকা ক্যাশ গুনে নিচে লিখুন। অতিরিক্ত = হাতে থাকা ক্যাশ − মোট ক্যাশ।", "Language": "ভাষা", "Theme": "থিম", "Light": "লাইট", "Dark": "ডার্ক", "System default": "সিস্টেম ডিফল্ট", "Language and theme for this device.": "এই ডিভাইসের ভাষা ও থিম।", "Choose the app language. Saved on this device.": "অ্যাপের ভাষা বাছুন। এই ডিভাইসে সংরক্ষিত থাকবে।", "Choose how the app looks. System default follows your phone or computer.": "অ্যাপ কেমন দেখাবে বাছুন। সিস্টেম ডিফল্ট আপনার ফোন বা কম্পিউটারের সেটিং অনুসরণ করে।", "No warranty items yet. Tap “＋ New Warranty” when a customer brings one.": "এখনো কোনো ওয়ারেন্টি আইটেম নেই। ক্রেতা কিছু নিয়ে এলে “＋ নতুন ওয়ারেন্টি” চাপুন।"};
+  var MSG={"Add at least one product to the cart.": "কার্টে অন্তত একটি পণ্য যোগ করুন।", "Complete a sale first.": "আগে একটি বিক্রয় সম্পন্ন করুন।", "Enter a payment amount.": "পেমেন্টের পরিমাণ লিখুন।", "Enter product, quantity, purchase cost and selling price.": "পণ্য, পরিমাণ, ক্রয়মূল্য ও বিক্রয়মূল্য লিখুন।", "Enter valid stock details.": "সঠিক স্টকের তথ্য দিন।", "Customer name is required for partial/due sales.": "আংশিক/বাকি বিক্রয়ের জন্য ক্রেতার নাম আবশ্যক।", "For partial payment, enter a paid amount less than the grand total.": "আংশিক পেমেন্টের ক্ষেত্রে সর্বমোটের চেয়ে কম পরিশোধিত টাকা লিখুন।", "Select an invoice first.": "আগে একটি ইনভয়েস বাছুন।", "This barcode is already assigned to another product.": "এই বারকোড ইতিমধ্যে অন্য পণ্যে দেওয়া আছে।", "This invoice has already been returned.": "এই ইনভয়েস ইতিমধ্যে রিটার্ন করা হয়েছে।", "There is no other device signed in.": "অন্য কোনো ডিভাইস সাইন-ইন করা নেই।", "Still connecting to the cloud. Please wait a few seconds, then try again.": "এখনো ক্লাউডে সংযুক্ত হচ্ছে। কয়েক সেকেন্ড অপেক্ষা করে আবার চেষ্টা করুন।", "Could not save this change to the cloud. Check your internet connection and try again.": "এই পরিবর্তন ক্লাউডে সংরক্ষণ করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।", "Delete this stock item?": "এই স্টক আইটেম মুছবেন?", "Log out of the current session?": "বর্তমান সেশন থেকে লগআউট করবেন?", "Reset the Quick Sale card layout to default?": "কুইক সেল কার্ডের লেআউট ডিফল্টে ফিরিয়ে নেবেন?", "Stock CSV imported successfully.": "স্টক CSV সফলভাবে ইমপোর্ট হয়েছে।", "Complete JSON backup restored successfully.": "সম্পূর্ণ JSON ব্যাকআপ সফলভাবে রিস্টোর হয়েছে।"};
+  var MSG_PREFIX=[["Delete this warranty record permanently?", "এই ওয়ারেন্টি রেকর্ড চিরতরে মুছবেন?"], ["Insufficient stock. Available: ", "স্টক যথেষ্ট নেই। আছে: "], ["Insufficient stock for ", "স্টক যথেষ্ট নেই: "], ["Log this device out?", "এই ডিভাইস লগআউট করবেন?"]];
+  var lang='en';try{lang=(localStorage.getItem(LANG_KEY)==='bn')?'bn':'en'}catch(e){}
+  var themePref='system';try{themePref=localStorage.getItem(THEME_KEY)||'system'}catch(e){}
+  var $=function(id){return document.getElementById(id)};
+
+  /* ---------------- Theme ---------------- */
+  var mq=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
+  function resolveTheme(){return themePref==='dark'?'dark':(themePref==='light'||themePref==='original')?'light':(mq&&mq.matches?'dark':'light')}
+  function applyTheme(){
+    var t=resolveTheme();
+    document.documentElement.setAttribute('data-theme',t);
+    if(themePref==='original')document.documentElement.setAttribute('data-sb','navy');else document.documentElement.removeAttribute('data-sb');
+    var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='dark'?'#0a111d':'#1a73e8');
+  }
+  function onSys(){if(themePref==='system')applyTheme()}
+  if(mq){if(mq.addEventListener)mq.addEventListener('change',onSys);else if(mq.addListener)mq.addListener(onSys)}
+  window.setTheme=function(p){
+    themePref=(p==='dark'||p==='light'||p==='original')?p:'system';
+    try{localStorage.setItem(THEME_KEY,themePref)}catch(e){}
+    applyTheme();renderSettings();
+  };
+
+  /* ---------------- Language ---------------- */
+  var PAT=[
+    [/^Due in (\d+) days?$/,function(m){return m[1]+' দিন বাকি'}],
+    [/^Overdue · (\d+) days?$/,function(m){return 'মেয়াদোত্তীর্ণ · '+m[1]+' দিন'}],
+    [/^(\d+) unpaid · sorted by last date$/,function(m){return m[1]+'টি অপরিশোধিত · শেষ তারিখ অনুযায়ী সাজানো'}],
+    [/^Total (৳[\d.,\-]+)$/,function(m){return 'মোট '+m[1]}],
+    [/^Grand Total: (.+)$/,function(m){return 'সর্বমোট: '+m[1]}],
+    [/^ACTION REQUIRED: (\d+) bills? requires? immediate payment\.$/,function(m){return 'জরুরি: '+m[1]+'টি বিল এখনই পরিশোধ করতে হবে।'}],
+    [/^(\d+) bills? pending\. None due within 2 days\. Next last date: (.+)\.$/,function(m){return m[1]+'টি বিল বাকি। ২ দিনের মধ্যে কোনোটির শেষ তারিখ নেই। পরবর্তী শেষ তারিখ: '+m[2]+'।'}],
+    [/^Today is the last date\. (\d+) bills?, total amount (৳[\d.,]+)\. Please pay now\.$/,function(m){return 'আজ শেষ তারিখ। '+m[1]+'টি বিল, মোট '+m[2]+'। এখনই পরিশোধ করুন।'}],
+    [/^(\d+) invoices?$/,function(m){return m[1]+'টি ইনভয়েস'}],
+    [/^Due in (\d+)–(\d+) days$/,function(m){return m[1]+'–'+m[2]+' দিনের মধ্যে'}],
+    [/^(Profit|Sales) · (.+)$/,function(m){var a=BN[m[1]],b=BN[m[2]];return (a||m[1])+' · '+(b||m[2])}],
+    [/^Margin (.+)$/,function(m){return 'মার্জিন '+m[1]}]
+  ];
+  function core(s){ // split off leading symbols/emoji so '💵 Daily Cash' and 'Daily Cash' share one entry
+    var m=s.match(/^([^A-Za-z0-9]*)([\s\S]*)$/);return [m[1],m[2]];
+  }
+  function lookup(str){
+    if(Object.prototype.hasOwnProperty.call(BN,str))return BN[str];
+    for(var i=0;i<PAT.length;i++){var m=str.match(PAT[i][0]);if(m)return PAT[i][1](m)}
+    var c=core(str);
+    if(c[1]&&c[1]!==str){
+      if(Object.prototype.hasOwnProperty.call(BN,c[1]))return c[0]+BN[c[1]];
+      for(var j=0;j<PAT.length;j++){var m2=c[1].match(PAT[j][0]);if(m2)return c[0]+PAT[j][1](m2)}
+    }
+    if(str.indexOf(' · ')>0){ // "a · b · c" — translate each part
+      var parts=str.split(' · '),hit=false;
+      var out=parts.map(function(p){var t=lookupSimple(p);if(t!==null){hit=true;return t}return p});
+      if(hit)return out.join(' · ');
+    }
+    return null;
+  }
+  function lookupSimple(p){
+    if(Object.prototype.hasOwnProperty.call(BN,p))return BN[p];
+    for(var i=0;i<PAT.length;i++){var m=p.match(PAT[i][0]);if(m)return PAT[i][1](m)}
+    var c=core(p);if(c[1]&&c[1]!==p&&Object.prototype.hasOwnProperty.call(BN,c[1]))return c[0]+BN[c[1]];
+    return null;
+  }
+  function translate(raw){
+    var m=raw.match(/^(\s*)([\s\S]*?)(\s*)$/);
+    if(!m[2]||!/[A-Za-z]/.test(m[2]))return null;
+    var t=lookup(m[2].replace(/\s+/g,' '));
+    return t===null?null:m[1]+t+m[3];
+  }
+  var txtRec=new WeakMap(),attrRec=new WeakMap();
+  function trText(n){
+    var v=n.nodeValue,rec=txtRec.get(n);
+    if(lang==='bn'){
+      if(rec&&v===rec.bn)return;
+      var t=translate(v);
+      if(t!==null&&t!==v){txtRec.set(n,{en:v,bn:t});n.nodeValue=t}
+    }else if(rec){
+      if(v===rec.bn)n.nodeValue=rec.en;
+      txtRec.delete(n);
+    }
+  }
+  var ATTRS=['placeholder','title','aria-label'];
+  function trAttr(el,a){
+    var v=el.getAttribute(a);if(v===null)return;
+    var rec=attrRec.get(el);if(!rec){rec={};attrRec.set(el,rec)}
+    var r=rec[a];
+    if(lang==='bn'){
+      if(r&&v===r.bn)return;
+      var t=translate(v);
+      if(t!==null&&t!==v){rec[a]={en:v,bn:t};el.setAttribute(a,t)}
+    }else if(r){
+      if(v===r.bn)el.setAttribute(a,r.en);
+      delete rec[a];
+    }
+  }
+  function walk(root){
+    if(!root)return;
+    if(root.nodeType===3){trText(root);return}
+    if(root.nodeType!==1)return;
+    var tag=root.tagName;if(tag==='SCRIPT'||tag==='STYLE'||tag==='TEXTAREA')return;
+    if(root.closest&&root.closest('[data-no-i18n]'))return;
+    ATTRS.forEach(function(a){if(root.hasAttribute(a))trAttr(root,a)});
+    var tw=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+      if(n.nodeType===1){var t=n.tagName;if(t==='SCRIPT'||t==='STYLE'||t==='TEXTAREA'||n.hasAttribute('data-no-i18n'))return NodeFilter.FILTER_REJECT;return NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    var n;
+    // element attributes of descendants
+    var els=root.querySelectorAll('[placeholder],[title],[aria-label]');
+    for(var i=0;i<els.length;i++){if(els[i].closest&&els[i].closest('[data-no-i18n]'))continue;ATTRS.forEach(function(a){if(els[i].hasAttribute(a))trAttr(els[i],a)})}
+    while((n=tw.nextNode()))trText(n);
+  }
+  var obs=null;
+  function startObs(){
+    if(obs||!window.MutationObserver)return;
+    obs=new MutationObserver(function(list){
+      for(var i=0;i<list.length;i++){
+        var r=list[i];
+        if(r.type==='characterData'){trText(r.target)}
+        else if(r.type==='attributes'){if(r.target.closest&&r.target.closest('[data-no-i18n]'))continue;trAttr(r.target,r.attributeName)}
+        else if(r.type==='childList'){for(var j=0;j<r.addedNodes.length;j++)walk(r.addedNodes[j])}
+      }
+    });
+    obs.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:ATTRS});
+  }
+  function fullPass(){walk(document.body);document.documentElement.lang=(lang==='bn')?'bn':'en'}
+  window.setLang=function(l){
+    lang=(l==='bn')?'bn':'en';
+    try{localStorage.setItem(LANG_KEY,lang)}catch(e){}
+    fullPass();renderSettings();
+    try{if(typeof renderBillAlerts==='function')renderBillAlerts();if(typeof renderDashboard==='function')renderDashboard()}catch(e){}
+  };
+  // native alert()/confirm() messages
+  function trMsg(m){
+    if(lang!=='bn'||typeof m!=='string')return m;
+    if(Object.prototype.hasOwnProperty.call(MSG,m))return MSG[m];
+    for(var i=0;i<MSG_PREFIX.length;i++){if(m.indexOf(MSG_PREFIX[i][0])===0)return MSG_PREFIX[i][1]+m.slice(MSG_PREFIX[i][0].length)}
+    return m;
+  }
+  var _alert=window.alert,_confirm=window.confirm;
+  window.alert=function(m){return _alert.call(window,trMsg(m))};
+  window.confirm=function(m){return _confirm.call(window,trMsg(m))};
+
+  /* ---------------- Settings page ---------------- */
+  function renderSettings(){
+    document.querySelectorAll('#setLang button').forEach(function(b){b.classList.toggle('on',b.dataset.lang===lang)});
+    document.querySelectorAll('#setTheme button').forEach(function(b){b.classList.toggle('on',b.dataset.theme===themePref)});
+  }
+  window.openSettings=function(){renderSettings();openActionModal('settingsModal')};
+
+  /* ---------------- Cash Reconciliation ---------------- */
+  function fmtSigned(n){return (n<0?'−\u2009':(n>0?'+\u2009':''))+money(Math.abs(n))}
+  function reconInputs(){return Array.prototype.slice.call(document.querySelectorAll('#reconGrid .xl-cnt'))}
+  function nfmt(n){return Number(n).toLocaleString('en-US')}
+  window.renderRecon=function(fromInput){
+    var ins=reconInputs();if(!ins.length)return;
+    var total=0;try{total=Math.round(cashGrandForDate(todayKey())*100)/100}catch(e){}
+    $('reconTotal').textContent=money(total);
+    var sum=0,any=false;
+    ins.forEach(function(inp){
+      var d=parseInt(inp.dataset.d,10),raw=inp.value,c=parseFloat(raw);
+      if(raw!==''&&isFinite(c)&&c>=0){any=true;sum+=c*d}else c=0;
+      var cell=$('xlAmt'+d);if(cell)cell.textContent=nfmt(c*d);
+    });
+    $('reconInHandTotal').textContent=nfmt(sum);
+    var card=$('reconExtraCard'),val=$('reconExtra'),note=$('reconExtraNote');
+    card.classList.remove('pos','neg','zero','ok');
+    if(!any){card.classList.add('zero');val.textContent='—';note.textContent='Enter Cash in Hand to compare';return}
+    var extra=Math.round((sum-total)*100)/100;
+    if(extra>0){card.classList.add('pos');val.textContent=fmtSigned(extra);note.textContent='Extra cash — more than Total Cash'}
+    else if(extra<0){card.classList.add('neg');val.textContent=fmtSigned(extra);note.textContent='Short — less than Total Cash'}
+    else{card.classList.add('ok');val.textContent=money(0);note.textContent='Perfectly matched'}
+  };
+  (function(){
+    var g=document.getElementById('reconGrid');if(!g)return;
+    g.addEventListener('input',function(e){if(e.target.classList.contains('xl-cnt'))renderRecon()});
+    g.addEventListener('focusin',function(e){if(e.target.classList.contains('xl-cnt'))try{e.target.select()}catch(x){}});
+    g.addEventListener('keydown',function(e){
+      var t=e.target;if(!t.classList.contains('xl-cnt'))return;
+      if(['e','E','+','-','.'].indexOf(e.key)>-1){e.preventDefault();return}
+      var ins=reconInputs(),i=ins.indexOf(t),n=null;
+      if(e.key==='Enter'||e.key==='ArrowDown')n=ins[(i+1)%ins.length];
+      else if(e.key==='ArrowUp')n=ins[(i-1+ins.length)%ins.length];
+      if(n){e.preventDefault();n.focus()}
+    });
+  })();
+  window.clearRecon=function(){var ins=reconInputs();ins.forEach(function(i){i.value=''});renderRecon();try{ins[0].focus()}catch(e){}};
+  window.openRecon=function(){
+    var ins=reconInputs();
+    renderRecon();openActionModal('reconModal');
+    setTimeout(function(){if(window.innerWidth>960)try{ins[0].focus()}catch(e){}},150);
+  };
+  // keep Total Cash live while the page is open
+  try{
+    var _rd=window.renderDashboard;
+    if(typeof _rd==='function'){
+      window.renderDashboard=function(){var r=_rd.apply(this,arguments);try{var m=$('reconModal');if(m&&m.classList.contains('show'))renderRecon()}catch(e){}return r};
+    }
+  }catch(e){}
+
+  /* ---------------- boot ---------------- */
+  applyTheme();
+  startObs();
+  if(lang==='bn')fullPass();
+  renderSettings();
+})();
+</script>
+</body></html>
