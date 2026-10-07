@@ -1571,6 +1571,96 @@ html[data-sb="navy"] .sb-nav{scrollbar-color:#333 transparent}
 .xl-clear{margin-left:auto;background:rgba(255,255,255,.18)!important;color:#fff!important;border:1px solid rgba(255,255,255,.4)!important;border-radius:4px;padding:2px 12px!important;font-size:12px!important;font-weight:600;box-shadow:none!important}
 .xl-clear:hover{background:rgba(255,255,255,.3)!important}
 .xl-bar span:last-child{margin-left:0}
+
+/* ===== Login: split layout (hero + form) ===== */
+#loginScreen{display:grid;grid-template-columns:1fr 1fr;padding:0;background:#fff;min-height:100vh;align-items:stretch;justify-content:stretch}
+#loginScreen .login-card{max-width:none;width:100%;border:0;border-radius:0;box-shadow:none;background:#fff;padding:32px 40px 24px;display:flex;flex-direction:column;justify-content:space-between;overflow:visible}
+.lg-hero{position:relative;overflow:hidden;min-height:100vh;color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:36px 56px 56px;
+  background:linear-gradient(180deg,#0e1d3f 0%,#26467f 30%,#7f86a8 52%,#e3a46d 78%,#f7d9a5 100%)}
+.lg-clouds{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 14% at 20% 62%,rgba(255,236,214,.55),transparent 70%),radial-gradient(ellipse 55% 12% at 78% 56%,rgba(255,222,190,.5),transparent 70%),radial-gradient(ellipse 70% 16% at 45% 74%,rgba(255,244,228,.6),transparent 72%),radial-gradient(ellipse 50% 10% at 85% 80%,rgba(255,235,205,.55),transparent 70%),radial-gradient(ellipse 40% 9% at 12% 85%,rgba(255,232,200,.5),transparent 70%),linear-gradient(0deg,rgba(0,0,0,.45) 0%,transparent 45%)}
+.lg-tabs{position:relative;display:flex;flex-wrap:wrap;gap:28px}
+.lg-tab{background:none;border:0;box-shadow:none;color:rgba(255,255,255,.78);font-weight:600;font-size:14px;padding:6px 0 8px;cursor:pointer;border-bottom:2px solid transparent;border-radius:0;transition:.2s}
+.lg-tab:hover{color:#fff;transform:none;filter:none;background:none}
+.lg-tab.on{color:#fff;border-bottom-color:#fff}
+.lg-cap{position:relative;max-width:440px}
+.lg-cap h2{font-size:32px;line-height:1.1;font-weight:700;letter-spacing:-.5px;margin:0 0 12px;color:#fff}
+.lg-cap p{font-size:15px;line-height:1.5;margin:0;color:rgba(255,255,255,.88)}
+.lg-form{width:100%;max-width:360px;margin:auto}
+.lg-dots{display:flex;gap:6px;justify-content:center;margin-bottom:26px}
+.lg-dots i{width:7px;height:7px;border-radius:50%;background:#dcdfe6}
+.lg-dots i.on{width:24px;border-radius:6px;background:#3b3bf5}
+.lg-h{font-size:30px;font-weight:700;letter-spacing:-.5px;text-align:center;margin:0 0 6px;color:#0b0b0f;font-family:'Inter',Arial,Helvetica,sans-serif}
+.lg-sub{text-align:center;color:#6b7280;font-size:14px;margin-bottom:26px}
+#loginScreen .login-field label{text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;color:#4b5563}
+#loginScreen .role-btn{border-radius:12px;padding:13px 8px;border:1px solid #d5d9e0;background:#fff;color:#374151;font-size:14px}
+#loginScreen .role-btn:hover{border-color:#0b0b0f;background:#fff}
+#loginScreen .role-btn.active{border-color:#0b0b0f;background:#0b0b0f0d;color:#0b0b0f;box-shadow:inset 0 0 0 1px #0b0b0f}
+#loginScreen .pw-wrap input{height:48px;border-radius:12px;border:1px solid #d5d9e0;padding:0 46px 0 14px;font-size:15px;background:#fff;color:#0b0b0f;width:100%;box-sizing:border-box}
+#loginScreen .pw-wrap input:focus{outline:0;border-color:#3b3bf5;box-shadow:0 0 0 1px #3b3bf5}
+#loginScreen .pw-toggle{top:6px;bottom:6px;right:6px;border-radius:8px}
+#loginScreen .login-btn{height:44px;border-radius:999px;background:#0b0b0f;color:#fff;font-weight:700;font-size:15px;margin-top:8px;padding:0}
+#loginScreen .login-btn:hover{background:#26262e}
+.lg-or{display:flex;align-items:center;gap:12px;color:#6b7280;font-size:13px;margin:20px 0 14px}
+.lg-or:before,.lg-or:after{content:"";flex:1;height:1px;background:#e5e7eb}
+.lg-have{text-align:center;font-size:14px;color:#374151}
+.lg-have button{background:none;border:0;box-shadow:none;padding:0 0 0 2px;color:#3b3bf5;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none}
+.lg-have button:hover{text-decoration:underline;background:none;transform:none;filter:none}
+.lg-bottom{font-size:12px;color:#9aa0a6;text-align:left}
+@media(max-width:860px){
+  #loginScreen{grid-template-columns:1fr}
+  .lg-hero{display:none}
+  #loginScreen .login-card{padding:28px 22px 18px;min-height:100vh}
+}
+html[data-theme="dark"] #loginScreen{background:#0f1318!important}
+html[data-theme="dark"] #loginScreen .login-card{background:#0f1318!important}
+html[data-theme="dark"] .lg-h{color:#fff}
+html[data-theme="dark"] .lg-sub,html[data-theme="dark"] .lg-have,html[data-theme="dark"] #loginScreen .login-field label{color:#aeb7c5}
+html[data-theme="dark"] #loginScreen .pw-wrap input{background:#171c24;border-color:#313a49;color:#fff}
+html[data-theme="dark"] #loginScreen .role-btn{background:#171c24;border-color:#313a49;color:#d5dae3}
+html[data-theme="dark"] #loginScreen .role-btn.active{border-color:#fff;background:#ffffff14;color:#fff;box-shadow:inset 0 0 0 1px #fff}
+html[data-theme="dark"] #loginScreen .login-btn{background:#fff;color:#0b0b0f}
+html[data-theme="dark"] #loginScreen .login-btn:hover{background:#e5e7eb}
+html[data-theme="dark"] #loginScreen .login-btn .spinner{border-color:#0b0b0f55;border-top-color:#0b0b0f}
+html[data-theme="dark"] .lg-or:before,html[data-theme="dark"] .lg-or:after{background:#2a3342}
+html[data-theme="dark"] .lg-have button{color:#8c8cff}
+html[data-theme="dark"] .lg-dots i{background:#2a3342}
+html[data-theme="dark"] .lg-dots i.on{background:#8c8cff}
+
+#lgCanvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.lg-clouds{background:linear-gradient(0deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.12) 38%,transparent 60%),linear-gradient(180deg,rgba(0,0,0,.28) 0%,transparent 22%)!important}
+.lg-tabs,.lg-cap{z-index:2}
+.lg-cap h2,.lg-cap p{transition:opacity .35s}
+.lg-tab{font-family:'Inter',Arial,Helvetica,sans-serif;letter-spacing:-.1px}
+.lg-cap h2{font-family:'Inter',Arial,Helvetica,sans-serif}
+
+.lg-hero{background:radial-gradient(900px 600px at 85% 105%,#4a3cff55,transparent 60%),radial-gradient(700px 500px at 0% 0%,#2a5cff33,transparent 60%),linear-gradient(160deg,#080d22 0%,#111c4f 55%,#1a1f6b 100%)!important}
+.lg-clouds{background:linear-gradient(0deg,rgba(5,8,25,.65) 0%,rgba(5,8,25,.0) 40%)!important}
+#lgCanvas{position:absolute!important;inset:auto!important;left:40px!important;top:92px!important;width:calc(100% - 80px)!important;height:calc(100% - 328px)!important;object-fit:initial!important}
+@media(max-height:760px){#lgCanvas{top:84px!important;height:calc(100% - 294px)!important}}
+
+.lg-dots{gap:8px;align-items:center}
+.lg-dots .lgd{width:9px;height:9px;min-width:0;padding:0;margin:0;border:0;border-radius:6px;background:#dcdfe6;box-shadow:none;cursor:pointer;transition:width .3s cubic-bezier(.22,1,.36,1),background .3s;position:relative}
+.lg-dots .lgd::after{content:"";position:absolute;inset:-8px -4px}
+.lg-dots .lgd:hover{transform:none;filter:none;background:#c3c8d3}
+.lg-dots .lgd.on{width:30px;background:#3b3bf5}
+.lg-brandwrap{text-align:center;margin-bottom:26px;cursor:pointer;user-select:none}
+.lg-brand{display:flex;flex-wrap:wrap;justify-content:center;gap:0 .32em;font-family:'Inter',Arial,Helvetica,sans-serif;font-size:20px;font-weight:700;letter-spacing:-.3px;color:#2b2f3a;line-height:1.35;min-height:27px}
+.lg-w{display:inline-block;white-space:nowrap}
+.lg-ch{display:inline-block;will-change:transform,opacity,filter}
+.lg-brandwrap.go .lg-ch{animation:chIn 1s cubic-bezier(.16,.84,.24,1) both;animation-delay:var(--d)}
+.lg-brandwrap.wave .lg-ch{animation:chWave .8s ease-in-out both;animation-delay:var(--w)}
+@keyframes chIn{0%{opacity:0;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(2.4);filter:blur(12px)}55%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none;filter:none}}
+@keyframes chWave{0%,100%{transform:none;color:inherit;text-shadow:none}50%{transform:translateY(-4px) scale(1.12);color:#3b3bf5;text-shadow:0 0 14px rgba(59,59,245,.45)}}
+.lg-bline{height:2px;width:0;margin:8px auto 0;border-radius:2px;background:linear-gradient(90deg,transparent,#3b3bf5,#6ff2b8,transparent);opacity:0}
+.lg-brandwrap.go .lg-bline{animation:bLine 1.6s .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes bLine{0%{width:0;opacity:0}30%{opacity:1}100%{width:78%;opacity:.9}}
+html[data-theme="dark"] .lg-brand{color:#e8ebf2}
+html[data-theme="dark"] .lg-dots .lgd{background:#2a3342}
+html[data-theme="dark"] .lg-dots .lgd.on{background:#8c8cff}
+html[data-theme="dark"] .lg-brandwrap.wave .lg-ch{animation-name:chWaveD}
+@keyframes chWaveD{0%,100%{transform:none;color:inherit;text-shadow:none}50%{transform:translateY(-4px) scale(1.12);color:#a9a9ff;text-shadow:0 0 14px rgba(140,140,255,.55)}}
+@media(prefers-reduced-motion:reduce){.lg-brandwrap.go .lg-ch,.lg-brandwrap.wave .lg-ch,.lg-brandwrap.go .lg-bline{animation:none!important;opacity:1}.lg-bline{width:78%;opacity:.9}}
 </style></head>
 <body class="booting">
 
@@ -1590,34 +1680,263 @@ html[data-sb="navy"] .sb-nav{scrollbar-color:#333 transparent}
 
 <!-- ===================== LOGIN SCREEN ===================== -->
 <div id="loginScreen">
+  <aside class="lg-hero" aria-hidden="true">
+    <canvas id="lgCanvas" width="200" height="200"></canvas><div class="lg-clouds"></div>
+    <nav class="lg-tabs"><button type="button" class="lg-tab on" data-i="0">Sales</button><button type="button" class="lg-tab" data-i="1">Stock</button><button type="button" class="lg-tab" data-i="2">Daily Cash</button><button type="button" class="lg-tab" data-i="3">Warranty</button></nav>
+    <div class="lg-cap"><h2 id="lgCapTitle">Watch your sales grow</h2><p id="lgCapText">Record every sale in seconds and see your business climb, day by day.</p></div>
+  </aside>
   <div class="login-card">
-    <div class="login-logo">📚</div>
-    <div class="login-title">Mohammadia Library &amp; Computer</div>
-    <div class="login-sub">Sign in to continue to your workspace</div>
+    <div class="lg-form">
+      <div class="lg-dots" role="tablist" aria-label="Login as"><button type="button" class="lgd on" data-role="admin" title="Admin" aria-label="Admin" onclick="selectLoginRole('admin')"></button><button type="button" class="lgd" data-role="employee" title="Employee" aria-label="Employee" onclick="selectLoginRole('employee')"></button></div>
+      <h1 class="lg-h">Sign in</h1>
+      <div class="lg-brandwrap" id="lgBrandWrap" title="Replay"><div class="lg-brand" id="lgBrand" aria-label="Mohammadia Library &amp; Computer">Mohammadia Library &amp; Computer</div><div class="lg-bline"></div></div>
 
-    <div class="login-field">
-      <label>Login as</label>
-      <div class="role-select">
-        <button type="button" class="role-btn active" id="roleBtnAdmin" onclick="selectLoginRole('admin')">🛡️ Admin</button>
-        <button type="button" class="role-btn" id="roleBtnEmployee" onclick="selectLoginRole('employee')">🧑‍💼 Employee</button>
+      <div class="login-field">
+        <label>Login as</label>
+        <div class="role-select">
+          <button type="button" class="role-btn active" id="roleBtnAdmin" onclick="selectLoginRole('admin')">Admin</button>
+          <button type="button" class="role-btn" id="roleBtnEmployee" onclick="selectLoginRole('employee')">Employee</button>
+        </div>
       </div>
-    </div>
 
-    <div class="login-field">
-      <label>Password</label>
-      <div class="pw-wrap">
-        <input type="password" id="loginPassword" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
-        <button type="button" class="pw-toggle" onclick="toggleLoginPw()" id="pwToggleBtn">👁️</button>
+      <div class="login-field">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+          <button type="button" class="pw-toggle" onclick="toggleLoginPw()" id="pwToggleBtn">&#128065;</button>
+        </div>
       </div>
-    </div>
 
-    <button class="login-btn" id="loginBtn" onclick="doLogin()"><span id="loginBtnText">Login</span><span class="spinner" id="loginSpinner"></span></button>
-    <div class="login-error" id="loginError"></div>
-    <div style="text-align:center;margin-top:14px"><button type="button" id="forgotBtn" onclick="forgotPassword()" style="background:none;border:0;box-shadow:none;color:var(--brass2);font-size:13px;font-weight:600;padding:6px 10px;text-decoration:underline;cursor:pointer">Forgot password?</button></div>
-    <div id="forgotMsg" style="display:none;margin-top:10px;padding:10px 13px;border-radius:8px;background:#e6f4ea;color:#188038;font-size:13px;font-weight:600;text-align:center"></div>
-    <div class="login-foot" id="authCloudStatus" style="display:none" aria-hidden="true"></div>
+      <button class="login-btn" id="loginBtn" onclick="doLogin()"><span id="loginBtnText">Continue</span><span class="spinner" id="loginSpinner"></span></button>
+      <div class="login-error" id="loginError"></div>
+      <div class="lg-or"><span>or</span></div>
+      <div class="lg-have">Forgot your password? <button type="button" id="forgotBtn" onclick="forgotPassword()">Reset it</button></div>
+      <div id="forgotMsg" style="display:none;margin-top:12px;padding:10px 13px;border-radius:10px;background:#e6f4ea;color:#188038;font-size:13px;font-weight:600;text-align:center"></div>
+      <div class="login-foot" id="authCloudStatus" style="display:none" aria-hidden="true"></div>
+    </div>
+    <div class="lg-bottom">Mohammadia Library &amp; Computer &middot; Sales &amp; Stock Management</div>
   </div>
 </div>
+<script>
+(function(){
+  var caps=[["Watch your sales grow", "Record every sale in seconds and see your business climb, day by day."], ["Stock that is always full", "Live stock and sales sync across every device, so nothing goes out of step."], ["Cash that adds up", "Track the day&rsquo;s cash and reconcile it note by note in a few taps."], ["Warranty, secured", "Chargers, power banks and more &mdash; every warranty safely recorded and easy to find."]],i=0,tabs=document.querySelectorAll('.lg-tab'),t1=document.getElementById('lgCapTitle'),t2=document.getElementById('lgCapText'),timer;
+  function show(n){i=n;if(window.lgGo)lgGo(n);tabs.forEach(function(b,k){b.classList.toggle('on',k===n)});t1.textContent=caps[n][0];t2.innerHTML=caps[n][1]}
+  tabs.forEach(function(b){b.addEventListener('click',function(){show(+b.dataset.i);clearInterval(timer);timer=setInterval(next,6600)})});
+  function next(){var ls=document.getElementById('loginScreen');if(!ls||ls.style.display==='none'){clearInterval(timer);return}show((i+1)%caps.length)}
+  timer=setInterval(next,6600);
+})();
+</script>
+
+
+
+<script>
+/* Login hero: business-growth animated clips (canvas, no video file) */
+(function(){
+  var cv=document.getElementById('lgCanvas');if(!cv||!cv.getContext)return;
+  var ctx=cv.getContext('2d'),LW=520,LH=420,sc=1,ox=0,oy=0;
+  function fit(){var r=cv.getBoundingClientRect(),d=Math.min(window.devicePixelRatio||1,2);if(!r.width)return;cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d);sc=Math.min(cv.width/LW,cv.height/LH);ox=(cv.width-LW*sc)/2;oy=(cv.height-LH*sc)/2}
+  window.addEventListener('resize',fit);
+  function cl(x){return x<0?0:x>1?1:x}
+  function pr(t,st,du){return cl((t-st)/du)}
+  function eo(x){x=cl(x);return 1-Math.pow(1-x,3)}
+  function ob(x){x=cl(x);var c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)}
+  function bounce(x){x=cl(x);var n=7.5625,d=2.75;if(x<1/d)return n*x*x;if(x<2/d){x-=1.5/d;return n*x*x+.75}if(x<2.5/d){x-=2.25/d;return n*x*x+.9375}x-=2.625/d;return n*x*x+.984375}
+  function rr(x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+  function font(px,wt){ctx.font=(wt||600)+' '+px+'px Inter,Arial,Helvetica,sans-serif'}
+  var GREEN='#6ff2b8',IND='#8b9bff',GOLD='#ffd36b';
+  function chip(x,y,w,h,label,value,col){
+    ctx.save();rr(x,y,w,h,14);ctx.fillStyle='rgba(255,255,255,.10)';ctx.fill();ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=1;ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.7)';font(12,500);ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.fillText(label,x+16,y+22);
+    ctx.fillStyle=col||'#fff';font(24,700);ctx.fillText(value,x+16,y+48);ctx.restore();
+  }
+  /* ambient rising particles */
+  var parts=[];for(var i=0;i<16;i++)parts.push({x:Math.random()*LW,y:Math.random()*LH,s:6+Math.random()*14,r:1+Math.random()*2});
+  function ambient(dt){
+    ctx.save();
+    parts.forEach(function(q){q.y-=q.s*dt;if(q.y<-10){q.y=LH+10;q.x=Math.random()*LW}
+      ctx.fillStyle='rgba(255,255,255,.18)';ctx.beginPath();ctx.arc(q.x,q.y,q.r,0,6.283);ctx.fill()});
+    ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+    for(var gx=0;gx<=LW;gx+=40){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,LH);ctx.stroke()}
+    for(var gy=0;gy<=LH;gy+=40){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(LW,gy);ctx.stroke()}
+    ctx.restore();
+  }
+
+  /* ---------- Scene 0: Sales growth ---------- */
+  function sceneSales(t){
+    var base=330,left=50,n=8,bw=34,gap=24,hs=[60,85,78,115,140,170,205,250];
+    ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;
+    for(var g=0;g<5;g++){var gy=base-g*62;ctx.beginPath();ctx.moveTo(40,gy);ctx.lineTo(490,gy);ctx.stroke()}
+    var pts=[];
+    for(var i=0;i<n;i++){
+      var p=ob(pr(t,.3+.12*i,.7)),h=hs[i]*Math.max(p,0),x=left+i*(bw+gap);
+      var gr=ctx.createLinearGradient(0,base-h,0,base);
+      if(i===n-1){gr.addColorStop(0,'#8bf7c9');gr.addColorStop(1,'#1fbf86')}else{gr.addColorStop(0,'#a1aeff');gr.addColorStop(1,'#4a55f0')}
+      ctx.fillStyle=gr;rr(x,base-h,bw,h,6);ctx.fill();
+      pts.push([x+bw/2,base-hs[i]-20]);
+    }
+    var L=pr(t,1.5,2.2),f=L*(n-1);
+    if(L>0){
+      ctx.save();ctx.lineWidth=3.5;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#fff';ctx.shadowColor='rgba(139,155,255,.95)';ctx.shadowBlur=14;
+      ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+      var k=Math.floor(f),hx=pts[0][0],hy=pts[0][1];
+      for(var j=1;j<=Math.min(k,n-1);j++){ctx.lineTo(pts[j][0],pts[j][1]);hx=pts[j][0];hy=pts[j][1]}
+      if(k<n-1){var fr=f-k;hx=pts[k][0]+(pts[k+1][0]-pts[k][0])*fr;hy=pts[k][1]+(pts[k+1][1]-pts[k][1])*fr;ctx.lineTo(hx,hy)}
+      ctx.stroke();ctx.restore();
+      for(var d=0;d<=Math.min(k,n-1);d++){ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(pts[d][0],pts[d][1],4,0,6.283);ctx.fill()}
+      var pul=(t*1.4)%1;ctx.strokeStyle='rgba(111,242,184,'+(1-pul)*.8+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(hx,hy,5+pul*14,0,6.283);ctx.stroke();
+      ctx.fillStyle=GREEN;ctx.beginPath();ctx.arc(hx,hy,5,0,6.283);ctx.fill();
+    }
+    var a=eo(pr(t,.2,.5));ctx.save();ctx.globalAlpha=a;
+    chip(40,22,200,60,'Sales growth','+'+Math.round(124*eo(pr(t,1.5,2.4)))+'%',GREEN);
+    ctx.fillStyle=GREEN;font(18,700);ctx.fillText('\u25B2',200,70);ctx.restore();
+  }
+
+  /* ---------- Scene 1: Stock fills up ---------- */
+  function sceneStock(t){
+    var rows=[118,200,282],cols=[IND,GREEN,GOLD];
+    for(var r=0;r<3;r++){
+      ctx.fillStyle='rgba(255,255,255,.28)';rr(50,rows[r],420,5,2);ctx.fill();
+      for(var c=0;c<5;c++){
+        var idx=r*5+c,p=pr(t,.3+.16*idx,.6),x=64+c*80,y=rows[r]-46;
+        if(p<=0)continue;
+        var yy=y-(1-bounce(p))*130;
+        ctx.save();ctx.globalAlpha=Math.min(1,p*3);
+        ctx.fillStyle=cols[(c+r)%3];rr(x,yy,60,46,6);ctx.fill();
+        ctx.fillStyle='rgba(255,255,255,.55)';ctx.fillRect(x+26,yy,8,46);
+        ctx.fillStyle='rgba(0,0,0,.12)';ctx.fillRect(x,yy+34,60,12);
+        ctx.restore();
+      }
+    }
+    var lv=eo(pr(t,.4,3.6));
+    ctx.fillStyle='rgba(255,255,255,.75)';font(13,500);ctx.textAlign='left';ctx.fillText('Stock level',50,352);
+    ctx.textAlign='right';ctx.fillStyle='#fff';font(15,700);ctx.fillText(Math.round(1240*lv).toLocaleString('en-US')+' items',470,352);
+    ctx.fillStyle='rgba(255,255,255,.14)';rr(50,362,420,12,6);ctx.fill();
+    var gr=ctx.createLinearGradient(50,0,470,0);gr.addColorStop(0,IND);gr.addColorStop(1,GREEN);
+    ctx.fillStyle=gr;rr(50,362,Math.max(12,420*.92*lv),12,6);ctx.fill();
+    ctx.textAlign='left';
+    if(t>3.6){var a=eo(pr(t,3.6,.4)),pu=.5+.5*Math.sin(t*5);ctx.save();ctx.globalAlpha=a;
+      rr(340,22,150,38,19);ctx.fillStyle='rgba(255,255,255,.12)';ctx.fill();ctx.strokeStyle='rgba(255,255,255,.22)';ctx.stroke();
+      ctx.fillStyle='rgba(111,242,184,'+(.5+pu*.5)+')';ctx.beginPath();ctx.arc(362,41,5,0,6.283);ctx.fill();
+      ctx.fillStyle='#fff';font(13,600);ctx.fillText('Live sync',376,46);ctx.restore()}
+  }
+
+  /* ---------- Scene 2: Cash piles up ---------- */
+  function coin(x,y,a){
+    ctx.save();ctx.globalAlpha=a;
+    ctx.fillStyle='#c98a14';ctx.beginPath();ctx.ellipse(x,y+7,26,9,0,0,6.283);ctx.fill();ctx.fillRect(x-26,y,52,7);
+    ctx.fillStyle='#c98a14';ctx.beginPath();ctx.ellipse(x,y+7,26,9,0,0,Math.PI);ctx.fill();
+    var g=ctx.createLinearGradient(x-26,0,x+26,0);g.addColorStop(0,'#e9b43a');g.addColorStop(.5,'#ffe08a');g.addColorStop(1,'#e0a62c');
+    ctx.fillStyle=g;ctx.fillRect(x-26,y,52,7);
+    ctx.beginPath();ctx.ellipse(x,y,26,9,0,0,6.283);ctx.fillStyle='#ffd36b';ctx.fill();
+    ctx.strokeStyle='#e0a62c';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(x,y,17,5.5,0,0,6.283);ctx.stroke();
+    ctx.restore();
+  }
+  function sceneCash(t){
+    var base=312,cnt=[2,3,5,6,8,11];
+    ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(40,base+16);ctx.lineTo(490,base+16);ctx.stroke();
+    for(var i=0;i<6;i++){
+      for(var j=0;j<cnt[i];j++){
+        var st=.3+i*.34+j*.11,p=pr(t,st,.4);if(p<=0)continue;
+        var y=base-j*8.5-(1-eo(p))*150;coin(78+i*70,y,Math.min(1,p*3));
+      }
+    }
+    var am=452300*eo(pr(t,.3,3.2));
+    ctx.textAlign='left';ctx.fillStyle='rgba(255,255,255,.7)';font(13,500);ctx.fillText("Today's cash",40,40);
+    ctx.fillStyle='#fff';font(42,700);ctx.fillText('\u09F3 '+Math.round(am).toLocaleString('en-IN'),40,86);
+    if(t>3.4){var a=ob(pr(t,3.4,.5));ctx.save();ctx.translate(430,70);ctx.scale(a,a);
+      rr(-60,-24,120,44,22);ctx.fillStyle='rgba(111,242,184,.18)';ctx.fill();ctx.strokeStyle='rgba(111,242,184,.5)';ctx.stroke();
+      ctx.fillStyle=GREEN;font(16,700);ctx.textAlign='center';ctx.fillText('\u25B2 18.4%',0,5);ctx.restore();ctx.textAlign='left'}
+  }
+
+  /* ---------- Scene 3: Warranty secured ---------- */
+  function sceneWarranty(t){
+    var cx=260,cy=150;
+    if(t>2.1){for(var k=0;k<2;k++){var ph=((t-2.1)/1.6+k*.5)%1;ctx.strokeStyle='rgba(139,155,255,'+(1-ph)*.5+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy+10,60+ph*80,0,6.283);ctx.stroke()}}
+    ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.beginPath();ctx.moveTo(260,76);ctx.lineTo(322,100);ctx.lineTo(322,158);ctx.bezierCurveTo(322,198,294,224,260,236);ctx.bezierCurveTo(226,224,198,198,198,158);ctx.lineTo(198,100);ctx.closePath();
+    var fa=eo(pr(t,1.2,.6));ctx.fillStyle='rgba(139,155,255,'+(.2*fa)+')';ctx.fill();
+    ctx.shadowColor='rgba(139,155,255,.9)';ctx.shadowBlur=16;ctx.strokeStyle=IND;ctx.lineWidth=5;
+    ctx.setLineDash([480*eo(pr(t,.3,1.1)),2000]);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+    var cp=eo(pr(t,1.5,.6));
+    if(cp>0){var p0=[232,158],p1=[253,180],p2=[291,134],l1=.42,f=cp,x,y;
+      ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=GREEN;ctx.lineWidth=9;ctx.shadowColor='rgba(111,242,184,.8)';ctx.shadowBlur=12;
+      ctx.beginPath();ctx.moveTo(p0[0],p0[1]);
+      if(f<=l1){var q=f/l1;x=p0[0]+(p1[0]-p0[0])*q;y=p0[1]+(p1[1]-p0[1])*q;ctx.lineTo(x,y)}
+      else{ctx.lineTo(p1[0],p1[1]);var q2=(f-l1)/(1-l1);ctx.lineTo(p1[0]+(p2[0]-p1[0])*q2,p1[1]+(p2[1]-p1[1])*q2)}
+      ctx.stroke();ctx.restore()}
+    var items=[['Mobile charger','6 months'],['Power bank','6 months'],['Earphone','3 months']];
+    for(var i=0;i<3;i++){
+      var p=eo(pr(t,2.2+.45*i,.5));if(p<=0)continue;var y=268+i*46,x=70+(1-p)*60;
+      ctx.save();ctx.globalAlpha=p;rr(x,y,380,36,10);ctx.fillStyle='rgba(255,255,255,.10)';ctx.fill();ctx.strokeStyle='rgba(255,255,255,.18)';ctx.stroke();
+      ctx.fillStyle='#fff';font(14,600);ctx.textAlign='left';ctx.fillText(items[i][0],x+16,y+23);
+      ctx.fillStyle='rgba(255,255,255,.65)';font(13,500);ctx.textAlign='right';ctx.fillText(items[i][1],x+330,y+23);
+      var cp2=ob(pr(t,2.5+.45*i,.4));ctx.fillStyle='rgba(111,242,184,.9)';ctx.beginPath();ctx.arc(x+354,y+18,10*Math.max(cp2,0),0,6.283);ctx.fill();
+      if(cp2>.6){ctx.strokeStyle='#0b1a2a';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x+349,y+18);ctx.lineTo(x+353,y+22);ctx.lineTo(x+360,y+14);ctx.stroke()}
+      ctx.restore();
+    }
+    ctx.textAlign='left';
+  }
+
+  var scenes=[sceneSales,sceneStock,sceneCash,sceneWarranty],cur=0,t0=performance.now(),lastNow=t0,D=6.4;
+  window.lgGo=function(n){cur=((n%scenes.length)+scenes.length)%scenes.length;t0=performance.now()};
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function frame(now,still){
+    var rb=cv.getBoundingClientRect(),dd=Math.min(window.devicePixelRatio||1,2);if(!rb.width)return;
+    if(cv.width!==Math.round(rb.width*dd)||cv.height!==Math.round(rb.height*dd))fit();
+    var dt=Math.min(.05,(now-lastNow)/1000);lastNow=now;
+    var ts=still?4:(now-t0)/1000;
+    ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.setTransform(sc,0,0,sc,ox,oy);
+    ambient(still?0:dt);
+    ctx.save();ctx.globalAlpha=still?1:Math.max(0,Math.min(1,ts/.35,(D-ts)/.35));
+    ctx.textAlign='left';scenes[cur](ts);ctx.restore();
+  }
+  function loop(now){
+    var ls=document.getElementById('loginScreen');
+    if(!ls||ls.style.display==='none'){return}
+    if(!document.hidden&&cv.offsetParent!==null)frame(now,false);
+    requestAnimationFrame(loop);
+  }
+  fit();
+  if(reduce)frame(performance.now(),true);else requestAnimationFrame(loop);
+})();
+</script>
+
+<script>
+/* Login: brand name assembles letter by letter, replays every few seconds */
+(function(){
+  var wrap=document.getElementById('lgBrandWrap'),el=document.getElementById('lgBrand');if(!wrap||!el)return;
+  var text=el.textContent,words=text.split(' '),seed=11,n=0,total=0;
+  function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647}
+  el.textContent='';
+  words.forEach(function(w){
+    var ws=document.createElement('span');ws.className='lg-w';
+    for(var i=0;i<w.length;i++){
+      var c=document.createElement('span');c.className='lg-ch';c.textContent=w[i];
+      c.style.setProperty('--x',Math.round((rnd()-.5)*240)+'px');
+      c.style.setProperty('--y',Math.round((rnd()-.5)*160-30)+'px');
+      c.style.setProperty('--r',Math.round((rnd()-.5)*160)+'deg');
+      c.style.setProperty('--d',(n*38)+'ms');c.style.setProperty('--w',(n*32)+'ms');
+      ws.appendChild(c);n++;
+    }
+    el.appendChild(ws);
+  });
+  total=n;
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches,tw;
+  function play(){
+    clearTimeout(tw);wrap.classList.remove('go','wave');void wrap.offsetWidth;wrap.classList.add('go');
+    tw=setTimeout(function(){wrap.classList.remove('go');wrap.classList.add('wave')},total*38+1100);
+  }
+  wrap.addEventListener('click',play);
+  if(reduce)return;
+  play();
+  var iv=setInterval(function(){
+    var ls=document.getElementById('loginScreen');
+    if(!ls||ls.style.display==='none'){clearInterval(iv);return}
+    if(!document.hidden)play();
+  },9000);
+})();
+</script>
 
 <div class="app" id="mainApp" style="display:none">
 <div id="billTicker" class="bill-ticker no-print" role="alert" aria-live="assertive"><div class="bill-ticker-label"><span class="bill-ticker-dot"></span>Last Date Alert</div><div class="bill-ticker-view"><span class="bill-ticker-track" id="billTickerTrack"></span></div></div>
@@ -2125,6 +2444,7 @@ function selectLoginRole(role){
   loginRoleChoice=role;
   roleBtnAdmin.classList.toggle('active',role==='admin');
   roleBtnEmployee.classList.toggle('active',role==='employee');
+  document.querySelectorAll('.lg-dots .lgd').forEach(function(b){var on=b.dataset.role===role;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
   loginError.classList.remove('show');
 }
 
@@ -2171,7 +2491,7 @@ async function doLogin(){
     loginError.classList.remove('show');void loginError.offsetWidth;loginError.classList.add('show');
     loginPassword.value='';loginPassword.focus();
   }
-  loginBtnText.textContent='Login';
+  loginBtnText.textContent='Continue';
   loginSpinner.classList.remove('show');
   loginBtn.disabled=false;
 }
