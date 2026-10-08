@@ -311,6 +311,29 @@ body.modal-open.cash-open .bill-alert-fab.show svg{width:28px;height:28px}
 #dailyCashModal #cashGrid.cash-readonly .cash-add{display:none}
 #dailyCashModal .cash-del{flex:none;width:26px;height:26px;padding:0;border-radius:6px;background:transparent;color:var(--maroon);font-size:13px;border:0}
 #dailyCashModal .cash-del:hover{background:#fce8e6}
+
+/* ---- Daily Cash: WhatsApp-style "view details" (ⓘ) on every saved entry ---- */
+#dailyCashModal .cash-info{flex:none;width:100%;max-width:28px;height:26px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;justify-self:center}
+#dailyCashModal .cash-info svg{width:17px;height:17px;display:block}
+#dailyCashModal .cash-info:hover,#dailyCashModal .cash-info:focus-visible{background:#e8f0fe;color:var(--brass)}
+#cashInfoOv{position:fixed;inset:0;z-index:3000;background:#0000006b;display:flex;align-items:center;justify-content:center;padding:14px;opacity:0;transition:opacity .15s ease}
+#cashInfoOv.show{opacity:1}
+#cashInfoOv .ci-box{width:100%;max-width:380px;max-height:90vh;overflow:auto;background:var(--card,#fff);color:var(--ink);border-radius:16px;box-shadow:0 18px 55px #00000050;transform:translateY(12px) scale(.98);transition:transform .2s cubic-bezier(.22,1,.36,1)}
+#cashInfoOv.show .ci-box{transform:none}
+#cashInfoOv .ci-head{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line)}
+#cashInfoOv .ci-head b{flex:1;font-size:16px}
+#cashInfoOv .ci-x{width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:16px;cursor:pointer}
+#cashInfoOv .ci-x:hover{background:#80868b22}
+#cashInfoOv .ci-top{padding:16px;text-align:center;border-bottom:1px solid var(--line)}
+#cashInfoOv .ci-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 10px;border-radius:99px;color:#fff;background:var(--brass)}
+#cashInfoOv .ci-amt{font-size:28px;font-weight:800;margin:8px 0 2px}
+#cashInfoOv .ci-name{font-size:14.5px;color:var(--muted);word-break:break-word}
+#cashInfoOv .ci-rows{padding:6px 16px 14px}
+#cashInfoOv .ci-r{display:flex;gap:12px;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+#cashInfoOv .ci-r:last-child{border-bottom:0}
+#cashInfoOv .ci-r span{color:var(--muted);flex:none}
+#cashInfoOv .ci-r b{text-align:right;font-weight:600;word-break:break-word}
+#cashInfoOv .ci-r b.ok{color:var(--forest)}#cashInfoOv .ci-r b.wait{color:var(--amber)}
 #dailyCashModal .cash-empty-hint{padding:20px 6px;text-align:center;color:#9aa0a6;font-size:12.5px;font-style:italic}
 #dailyCashModal .cash-subhead{display:grid;grid-template-columns:24px minmax(0,1fr) 104px 28px;gap:6px;padding:0 0 6px;border-bottom:1px solid var(--line);margin-bottom:8px}
 #dailyCashModal .cash-subhead-bill{grid-template-columns:24px minmax(0,1fr) 84px 116px 28px}
@@ -2625,7 +2648,7 @@ function normalizeDayData(day){
     out[k]=arr.map(v=>{
       if(v==null||v==='')return undefined;
       if(typeof v==='object'){
-        let o={note:v.note||'',amount:+v.amount||0};if(v.id)o.id=v.id;if(v.at)o.at=+v.at;
+        let o={note:v.note||'',amount:+v.amount||0};if(v.id)o.id=v.id;if(v.at)o.at=+v.at;if(v.by)o.by=String(v.by);
         if(k==='bill'){o.dueDate=v.dueDate||'';if(v.paidAt)o.paidAt=v.paidAt;if(v.v)o.v=1}
         return o;
       }
@@ -2634,7 +2657,7 @@ function normalizeDayData(day){
       return o;
     });
   });
-  out.due=Array.isArray(day.due)?day.due.map(v=>{if(!v)return undefined;const o={name:v.name||'',amount:+v.amount||0};if(v.id)o.id=v.id;if(v.at)o.at=+v.at;return o}):[];
+  out.due=Array.isArray(day.due)?day.due.map(v=>{if(!v)return undefined;const o={name:v.name||'',amount:+v.amount||0};if(v.id)o.id=v.id;if(v.at)o.at=+v.at;if(v.by)o.by=String(v.by);return o}):[];
   return out;
 }
 function ensureDailyCash(){
@@ -2736,6 +2759,7 @@ function addCashEntry(col){
   let entry=col==='due'?{name:note,amount:amount}:{note:note,amount:amount};
   if(col==='bill'){entry.dueDate=dateVal;entry.v=1}
   entry.at=Date.now();
+  try{const _u=(typeof fbAuth!=='undefined'&&fbAuth&&fbAuth.currentUser&&fbAuth.currentUser.email)||'';if(_u)entry.by=_u}catch(_e){}
   entry.id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
   (col==='due'?cashDraft.due:cashDraft[col]).push(entry);
   // queue it (also kept in localStorage) — it is ADDED to the cloud day, never replaces the whole day
@@ -2756,6 +2780,50 @@ function deleteCashEntry(col,i){
   renderDailyCash();
   scheduleCashAutoSave();
 }
+
+/* ---- Daily Cash: entry details (read-only popup, reads only — never writes to the cloud) ---- */
+const CASH_INFO_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></svg>';
+const CASH_INFO_TITLES={bill:'🧾 Electricity Bill',due:'👤 Due Paid',others:'📦 Others',cost:'💸 Cost'};
+const CASH_INFO_COLORS={bill:'#1a73e8',due:'#188038',others:'#7c3aed',cost:'#d93025'};
+function closeCashInfo(){
+  const ov=document.getElementById('cashInfoOv');if(!ov)return;
+  document.removeEventListener('keydown',ov._k,true);
+  ov.classList.remove('show');setTimeout(()=>ov.remove(),160);
+}
+function showCashInfo(col,i){
+  if(!cashDraft)return;
+  const row=(cashDraft[col]||[])[i];if(!row)return;
+  closeCashInfo();
+  const isDue=col==='due',isBill=col==='bill';
+  const name=isDue?(row.name||''):(row.note||'');
+  const amt=(+row.amount||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const at=row.at?new Date(+row.at):null;
+  const dayKey=cashViewDate||todayKey();
+  const dObj=at||new Date(dayKey+'T00:00:00');
+  const dateTxt=dObj.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const timeTxt=at?at.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}):'Not recorded (older entry)';
+  const pending=!!(row.id&&cashPending.some(p=>p.entry&&p.entry.id===row.id));
+  const R=(k,v,cls)=>`<div class="ci-r"><span>${k}</span><b${cls?' class="'+cls+'"':''}>${v}</b></div>`;
+  let rows='';
+  rows+=R('Entry date',esc(dateTxt));
+  rows+=R('Entry time',esc(timeTxt));
+  if(isBill){
+    if(row.dueDate)rows+=R('Last date to pay',esc(fmtBillDate(row.dueDate)));
+    if(row.paidAt)rows+=R('Paid on',esc(fmtBillDate(row.paidAt)));
+  }
+  rows+=R('Serial no.','#'+(i+1)+' · '+esc(CASH_INFO_TITLES[col].replace(/^\S+\s/,'')));
+  if(row.by)rows+=R('Added by',esc(row.by));
+  rows+=R('Cloud status',pending?'⏳ Waiting to sync (safe on this device)':'☁️ Saved in cloud',pending?'wait':'ok');
+  if(row.id)rows+=R('Entry ID',esc(row.id));
+  const ov=document.createElement('div');ov.id='cashInfoOv';
+  ov.innerHTML=`<div class="ci-box" role="dialog" aria-modal="true" aria-label="Entry details"><div class="ci-head"><b>Entry details</b><button type="button" class="ci-x" aria-label="Close">✕</button></div><div class="ci-top"><span class="ci-badge" style="background:${CASH_INFO_COLORS[col]}">${esc(CASH_INFO_TITLES[col])}</span><div class="ci-amt">৳${amt}</div><div class="ci-name">${esc(name||'—')}</div></div><div class="ci-rows">${rows}</div></div>`;
+  ov.addEventListener('click',e=>{if(e.target===ov)closeCashInfo()});
+  ov.querySelector('.ci-x').addEventListener('click',closeCashInfo);
+  ov._k=e=>{if(e.key==='Escape'){e.stopPropagation();e.preventDefault();closeCashInfo()}};
+  document.addEventListener('keydown',ov._k,true);
+  document.body.appendChild(ov);
+  requestAnimationFrame(()=>ov.classList.add('show'));
+}
 function renderCashColumn(col,count){
   let list=$('cashList_'+col);if(!list)return;
   let arr=cashDraft[col]||[];
@@ -2770,7 +2838,7 @@ function renderCashColumn(col,count){
       if(dueVal&&computeBillAlert(cashViewDate,dueVal).daysLeft<=2)warnClass=' bill-row-warn';
       {const legacyPaid=(!dueVal&&!row.paidAt&&!row.v&&((+row.amount||0)||row.note));const pdKey=(!dueVal&&row.paidAt)?row.paidAt:(legacyPaid?'legacy':'');const dTxt=dueVal?fmtBillDate(dueVal):(pdKey==='legacy'?'Paid':(pdKey?fmtBillDate(pdKey):'—'));dateHtml=`<span class="dd"><span class="dd-txt${dueVal||pdKey?'':' empty'}${pdKey?' paid':''}${dTxt.length>13?' long':''}" title="${esc(pdKey&&pdKey!=='legacy'?'Paid on '+fmtBillDate(pdKey):dTxt)}">${esc(dTxt)}</span><input type="date" title="Last date to pay" value="${esc(dueVal)}" data-paid="${esc(pdKey)}" class="xl-cell" data-col="bill" data-row="${i}" data-part="dueDate" oninput="updateCashDueDate(${i},this.value)"${ro?' disabled':''}></span>`}
     }
-    let delHtml=ro?'<span></span>':`<button type="button" class="cash-del" onclick="deleteCashEntry('${col}',${i})" aria-label="Delete row" title="Delete">🗑️</button>`;
+    let delHtml=ro?`<button type="button" class="cash-info" onclick="showCashInfo('${col}',${i})" aria-label="View details" title="View details">${CASH_INFO_SVG}</button>`:`<button type="button" class="cash-del" onclick="deleteCashEntry('${col}',${i})" aria-label="Delete row" title="Delete">🗑️</button>`;
     html+=`<div class="cash-row cash-row-due${isBill?' cash-row-bill':''}${warnClass} filled"><span class="cash-idx">${i+1}</span><input type="text" value="${esc(row.note||'')}" class="xl-cell" data-col="${col}" data-row="${i}" data-part="note" oninput="updateCashNote('${col}',${i},this.value)"${ro?' disabled':''}><label class="amt"><input type="number" inputmode="decimal" min="0" step=".01" value="${row.amount?row.amount:''}" class="xl-cell" data-col="${col}" data-row="${i}" data-part="amount" oninput="updateCashAmount('${col}',${i},this.value)"${ro?' disabled':''}></label>${dateHtml}${delHtml}</div>`;
   });
   list.innerHTML=html||'<div class="cash-empty-hint">Still empty — add an entry above.</div>';
@@ -2782,7 +2850,7 @@ function renderDueColumn(){
   let html='';
   arr.forEach((row,i)=>{
     if(!row)return;
-    let delHtml=ro?'<span></span>':`<button type="button" class="cash-del" onclick="deleteCashEntry('due',${i})" aria-label="Delete row" title="Delete">🗑️</button>`;
+    let delHtml=ro?`<button type="button" class="cash-info" onclick="showCashInfo('due',${i})" aria-label="View details" title="View details">${CASH_INFO_SVG}</button>`:`<button type="button" class="cash-del" onclick="deleteCashEntry('due',${i})" aria-label="Delete row" title="Delete">🗑️</button>`;
     html+=`<div class="cash-row cash-row-due filled"><span class="cash-idx">${i+1}</span><input type="text" value="${esc(row.name||'')}" class="xl-cell" data-col="due" data-row="${i}" data-part="name" oninput="updateDueName(${i},this.value)"${ro?' disabled':''}><label class="amt"><input type="number" inputmode="decimal" min="0" step=".01" value="${row.amount?row.amount:''}" class="xl-cell" data-col="due" data-row="${i}" data-part="amount" oninput="updateDueAmount(${i},this.value)"${ro?' disabled':''}></label>${delHtml}</div>`;
   });
   list.innerHTML=html||'<div class="cash-empty-hint">Still empty — add an entry above.</div>';
