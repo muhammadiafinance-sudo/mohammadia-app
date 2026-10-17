@@ -1703,6 +1703,69 @@ html[data-theme="dark"] .lg-dots .lgd.on{background:#8c8cff}
 html[data-theme="dark"] .lg-brandwrap.wave .lg-ch{animation-name:chWaveD}
 @keyframes chWaveD{0%,100%{transform:none;color:inherit;text-shadow:none}50%{transform:translateY(-4px) scale(1.12);color:#a9a9ff;text-shadow:0 0 14px rgba(140,140,255,.55)}}
 @media(prefers-reduced-motion:reduce){.lg-brandwrap.go .lg-ch,.lg-brandwrap.wave .lg-ch,.lg-brandwrap.go .lg-bline{animation:none!important;opacity:1}.lg-bline{width:78%;opacity:.9}}
+
+/* ===== Settings — clean, Google-style ===== */
+#settingsModal.fullpage .modalbox{padding-left:max(20px,calc((100% - 780px)/2));padding-right:max(20px,calc((100% - 780px)/2))}
+.gs{display:flex;flex-direction:column;gap:6px;padding-bottom:40px}
+.gs-sec{font-size:14px;font-weight:600;color:var(--brass);margin:22px 4px 8px;letter-spacing:.1px}
+.gs-card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.gs-row{display:flex;align-items:center;gap:16px;padding:16px 20px;flex-wrap:wrap}
+.gs-row+.gs-row{border-top:1px solid var(--line)}
+.gs-ic{flex:none;width:24px;height:24px;color:var(--muted);display:grid;place-items:center}
+.gs-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.gs-tx{flex:1 1 220px;min-width:0}
+.gs-t{font-size:15px;font-weight:500;color:var(--ink);line-height:1.3}
+.gs-d{font-size:13px;color:var(--muted);margin-top:2px;line-height:1.45}
+.gs .gs-seg{display:inline-flex;border:1px solid #c4c7c5;border-radius:999px;overflow:hidden;flex:none;max-width:100%}
+html[data-theme="dark"] .gs .gs-seg{border-color:#3c4656}
+.gs .gs-seg button{background:transparent;color:var(--ink);border:0;border-radius:0;padding:8px 16px;font-size:13.5px;font-weight:500;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:background .12s}
+.gs .gs-seg button+button{border-left:1px solid #c4c7c5}
+html[data-theme="dark"] .gs .gs-seg button+button{border-left-color:#3c4656}
+.gs .gs-seg button:hover{background:rgba(26,115,232,.08);color:var(--ink)}
+.gs .gs-seg button.on{background:#e8f0fe;color:#0b57d0;font-weight:600}
+.gs .gs-seg button.on::before{content:"";width:14px;height:14px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/contain no-repeat}
+html[data-theme="dark"] .gs .gs-seg button.on{background:#1b2f52;color:#a8c7fa}
+.gs .gs-seg button:focus-visible,.gs .gs-btn:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+@media(max-width:640px){.gs-row{padding:14px 16px}.gs .gs-seg{width:100%}.gs .gs-seg button{flex:1;justify-content:center;padding:9px 6px;font-size:13px}.gs-ic{display:none}}
+.gs .gs-btn{border-radius:999px;padding:9px 22px;font-size:14px;font-weight:600;border:1px solid transparent;background:var(--brass);color:#fff;cursor:pointer}
+.gs .gs-btn:hover{background:var(--brass2);color:#fff}
+.gs .gs-btn:disabled{background:#e8eaed;color:#9aa0a6;cursor:not-allowed}
+html[data-theme="dark"] .gs .gs-btn:disabled{background:#232c3a;color:#6f7b8d}
+.gs .gs-btn.o{background:transparent;color:var(--brass);border-color:#c4c7c5}
+.gs .gs-btn.o:hover{background:rgba(26,115,232,.08);color:var(--brass)}
+html[data-theme="dark"] .gs .gs-btn.o{color:#8ab4f8;border-color:#3c4656}
+.gs .gs-btn.t{background:transparent;color:var(--brass);padding:9px 14px}
+.gs .gs-btn.t:hover{background:rgba(26,115,232,.08);color:var(--brass)}
+html[data-theme="dark"] .gs .gs-btn.t{color:#8ab4f8}
+.gs .gs-btn.t.danger{color:var(--maroon)}
+.gs .gs-btn.t.danger:hover{background:rgba(217,48,37,.08);color:var(--maroon)}
+.gs-thumb{flex:none;width:40px;height:40px;border-radius:12px;background:#f1f3f4;border:1px solid var(--line);display:grid;place-items:center;font-size:22px;overflow:hidden;position:relative}
+html[data-theme="dark"] .gs-thumb,html[data-theme="dark"] .lg-mini{background:#121b2a}
+.gs-thumb img,.lg-mini img,.lg-stage img{display:block;width:100%;height:100%}
+
+.lg-panel{display:none;border-top:1px solid var(--line);padding:22px 20px 18px;background:var(--card)}
+.lg-panel.open{display:block}
+.lg-edit{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.lg-stagewrap{flex:none;width:min(100%,264px)}
+.lg-stage{position:relative;width:100%;aspect-ratio:1/1;border-radius:30%;overflow:hidden;background:repeating-conic-gradient(#e9ecef 0% 25%,#f8f9fa 0% 50%) 0 0/16px 16px;border:1px solid var(--line);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;outline:none}
+html[data-theme="dark"] .lg-stage{background:repeating-conic-gradient(#1b2433 0% 25%,#121b2a 0% 50%) 0 0/16px 16px}
+.lg-stage:focus-visible{box-shadow:0 0 0 3px rgba(26,115,232,.35)}
+.lg-stage.drag{cursor:grabbing}
+.lg-stage.empty{cursor:default;display:grid;place-items:center;text-align:center;padding:20px;color:var(--muted);font-size:13px;line-height:1.5}
+.lg-stage img{position:absolute;inset:0;pointer-events:none;-webkit-user-drag:none;transform-origin:center;max-width:none}
+.lg-grid{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .15s;background:linear-gradient(to right,transparent calc(33.33% - .5px),rgba(255,255,255,.75) calc(33.33% - .5px),rgba(255,255,255,.75) calc(33.33% + .5px),transparent calc(33.33% + .5px),transparent calc(66.66% - .5px),rgba(255,255,255,.75) calc(66.66% - .5px),rgba(255,255,255,.75) calc(66.66% + .5px),transparent calc(66.66% + .5px)),linear-gradient(to bottom,transparent calc(33.33% - .5px),rgba(255,255,255,.75) calc(33.33% - .5px),rgba(255,255,255,.75) calc(33.33% + .5px),transparent calc(33.33% + .5px),transparent calc(66.66% - .5px),rgba(255,255,255,.75) calc(66.66% - .5px),rgba(255,255,255,.75) calc(66.66% + .5px),transparent calc(66.66% + .5px));box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.lg-stage.drag .lg-grid{opacity:1}
+.lg-tip{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+.lg-side{flex:1 1 220px;min-width:210px;display:flex;flex-direction:column;gap:6px}
+.gs-lbl{font-size:12.5px;font-weight:600;color:var(--muted);margin:10px 0 6px;display:flex;justify-content:space-between}
+.gs-lbl:first-child{margin-top:0}
+.lg-side input[type=range]{width:100%;padding:0;margin:4px 0;accent-color:var(--brass);height:22px;background:transparent;border:0}
+.lg-mini{width:40px;height:40px;border-radius:12px;background:#f1f3f4;border:1px solid var(--line);overflow:hidden;display:grid;place-items:center;font-size:22px}
+.lg-miniwrap{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted)}
+.lg-tools{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.lg-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.lg-status{flex:1 1 180px;font-size:13px;color:var(--muted);min-height:18px}
+.lg-rules{font-size:12px;color:var(--muted);margin-top:12px}
 </style></head>
 <body class="booting">
 
@@ -1986,7 +2049,7 @@ html[data-theme="dark"] .lg-brandwrap.wave .lg-ch{animation-name:chWaveD}
 <button type="button" id="cartFab" class="cart-fab no-print" onclick="openActionModal('salesModal')" title="Go to cart" aria-label="Go to cart"><span class="icon">🛒</span><span>Go to Cart</span><span id="cartFabBadge" class="cart-fab-badge">0</span></button>
 <aside class="sidebar no-print" id="sidebar" aria-label="Main navigation">
   <div class="sb-brand">
-    <div class="sb-logo">📚</div>
+    <div class="sb-logo" id="sbLogo">📚</div>
     <div><div class="sb-name">Mohammadia Library &amp; Computer</div><div class="sb-sub">Sales &amp; Stock Management</div></div>
   </div>
   <nav class="sb-nav" id="sidebarNav">
@@ -2204,12 +2267,45 @@ html[data-theme="dark"] .lg-brandwrap.wave .lg-ch{animation-name:chWaveD}
     </div>
   </div>
 </div></div>
-<div class="modal" id="settingsModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('settingsModal')" aria-label="Close">✕ Close</button><h2>⚙️ Settings</h2><p class="hint">Language and theme for this device.</p>
-  <div class="set-wrap">
-    <div class="set-card"><h3>Language</h3><p>Choose the app language. Saved on this device.</p>
-      <div class="set-seg" id="setLang"><button type="button" data-lang="en" onclick="setLang('en')">English</button><button type="button" data-lang="bn" onclick="setLang('bn')">বাংলা</button></div></div>
-    <div class="set-card"><h3>Theme</h3><p>Choose how the app looks. System default follows your phone or computer.</p>
-      <div class="set-seg" id="setTheme"><button type="button" data-theme="light" onclick="setTheme('light')">Light</button><button type="button" data-theme="original" onclick="setTheme('original')">Original</button><button type="button" data-theme="dark" onclick="setTheme('dark')">Dark</button><button type="button" data-theme="system" onclick="setTheme('system')">System default</button></div></div>
+<div class="modal" id="settingsModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('settingsModal')" aria-label="Close">✕ Close</button><h2>Settings</h2><p class="hint">Language and theme for this device.</p>
+  <div class="gs">
+    <div class="gs-sec">Appearance</div>
+    <div class="gs-card">
+      <div class="gs-row"><span class="gs-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9S14.5 18.3 12 21c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></span>
+        <div class="gs-tx"><div class="gs-t">Language</div><div class="gs-d">Choose the app language. Saved on this device.</div></div>
+        <div class="gs-seg" id="setLang"><button type="button" data-lang="en" onclick="setLang('en')">English</button><button type="button" data-lang="bn" onclick="setLang('bn')">বাংলা</button></div></div>
+      <div class="gs-row"><span class="gs-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" opacity=".35"/></svg></span>
+        <div class="gs-tx"><div class="gs-t">Theme</div><div class="gs-d">Choose how the app looks. System default follows your phone or computer.</div></div>
+        <div class="gs-seg" id="setTheme"><button type="button" data-theme="light" onclick="setTheme('light')">Light</button><button type="button" data-theme="original" onclick="setTheme('original')">Original</button><button type="button" data-theme="dark" onclick="setTheme('dark')">Dark</button><button type="button" data-theme="system" onclick="setTheme('system')">System default</button></div></div>
+    </div>
+
+    <div class="gs-sec admin-only">Shop</div>
+    <div class="gs-card admin-only" id="logoCard">
+      <div class="gs-row"><span class="gs-ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M21 16l-5-5-9 9"/></svg></span>
+        <div class="gs-tx"><div class="gs-t">Shop logo</div><div class="gs-d">Shown at the top of the sidebar on every device.</div></div>
+        <span class="gs-thumb" id="lgThumb">📚</span>
+        <button type="button" class="gs-btn o" id="lgToggle" onclick="lgToggle()">Change</button></div>
+      <div class="lg-panel" id="lgPanel">
+        <div class="lg-edit">
+          <div class="lg-stagewrap">
+            <div class="lg-stage empty" id="lgStage" tabindex="0" aria-label="Logo editor. Drag to move, scroll to zoom, arrow keys to nudge."><img id="lgImg" alt="" hidden><div class="lg-grid"></div><span id="lgEmpty">No photo yet.<br>Upload a 300 × 300 px image to start.</span></div>
+            <div class="lg-tip" id="lgTip">Drag to reposition · scroll or pinch to zoom</div>
+          </div>
+          <div class="lg-side">
+            <div class="gs-lbl">Fit</div>
+            <div class="gs-seg" id="lgFit"><button type="button" data-fit="cover" onclick="lgSet('fit','cover')">Fill</button><button type="button" data-fit="contain" onclick="lgSet('fit','contain')">Fit</button><button type="button" data-fit="fill" onclick="lgSet('fit','fill')">Stretch</button></div>
+            <div class="gs-lbl"><span>Zoom</span><span id="lgZv">100%</span></div>
+            <input type="range" id="lgZoom" min="50" max="300" step="1" value="100" oninput="lgSet('zoom',this.value/100)" aria-label="Zoom">
+            <div class="gs-lbl">Sidebar preview</div>
+            <div class="lg-miniwrap"><span class="lg-mini" id="lgMini">📚</span><span>How it will look</span></div>
+            <div class="lg-tools"><button type="button" class="gs-btn o" onclick="document.getElementById('lgFile').click()">Upload photo</button><button type="button" class="gs-btn t" onclick="lgCenter()">Reset position</button></div>
+          </div>
+        </div>
+        <div class="lg-foot"><span class="lg-status" id="lgStatus"></span><button type="button" class="gs-btn t danger" onclick="shopLogoReset()">Reset to default</button><button type="button" class="gs-btn" id="lgSave" onclick="shopLogoSave()" disabled>Save logo</button></div>
+        <div class="lg-rules">Upload: exactly 300 × 300 px, under 100 KB · PNG, JPG or WebP</div>
+        <input type="file" id="lgFile" accept="image/png,image/jpeg,image/webp" hidden onchange="shopLogoPick(this)">
+      </div>
+    </div>
   </div>
 </div></div>
 
@@ -5144,9 +5240,16 @@ function drawDashChart(){
   const host=$('pcChart');if(!host)return;
   const {R,vals,metric}=dashData,anim=!!dashData.anim;dashData.anim=false;
   const W=Math.max(260,host.clientWidth),H=Math.max(150,host.clientHeight||260);
-  const L=50,Rr=16,T=26,B=28,n=vals.length;
+  const L=50,Rr=16,B=28,n=vals.length;
   const data=vals.map(v=>v[metric]);
   const hasData=data.some(v=>v!==0);
+  /* Amount label for every point: full amount if it fits, else compact (৳1.2k), else rotated. */
+  const slot0=(W-L-Rr)/n,lfs=slot0<14?9:10.5,lcw=lfs*.62;
+  const fmtFull=v=>(v<0?'-':'')+'৳'+Math.round(Math.abs(v)).toLocaleString('en-US');
+  const lblW=arr=>Math.max(...arr.map(s=>s.length))*lcw;
+  let LB=data.map(fmtFull),lrot=false;
+  if(lblW(LB)+4>slot0){const sh=data.map(dashShort);if(lblW(sh)+4<=slot0)LB=sh;else lrot=true}
+  const T=hasData&&lrot?Math.max(28,Math.round(lblW(LB))+18):28;
   const sc=hasData?dcNice(Math.min(0,...data),Math.max(0,...data),4):dcNice(0,100,4);
   const top=sc.max,bot=sc.min,span=(top-bot)||1;
   const y=v=>T+(top-v)/span*(H-T-B),y0=y(0);
@@ -5161,14 +5264,20 @@ function drawDashChart(){
     const lp=dcMono(pts);
     const ap=lp+'L'+pts[n-1][0].toFixed(1)+' '+y0.toFixed(1)+'L'+pts[0][0].toFixed(1)+' '+y0.toFixed(1)+'Z';
     series=`<defs><linearGradient id="dcGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tone}" stop-opacity=".28"/><stop offset="1" stop-color="${tone}" stop-opacity=".02"/></linearGradient></defs><path class="dc-area${F}" d="${ap}" fill="url(#dcGrad)"/><path class="dc-line${F}" d="${lp}" pathLength="1" fill="none" stroke="${tone}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-    if(n<=12)pts.forEach(p=>{marks+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="#fff" stroke="${tone}" stroke-width="2"/>`});
+    pts.forEach(p=>{marks+=n<=12?`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="#fff" stroke="${tone}" stroke-width="2"/>`:`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.2" fill="${tone}"/>`});
     const lp2=pts[n-1];
     marks+=`<circle class="dc-pulse" cx="${lp2[0].toFixed(1)}" cy="${lp2[1].toFixed(1)}" r="5" fill="${tone}"/><circle cx="${lp2[0].toFixed(1)}" cy="${lp2[1].toFixed(1)}" r="4.5" fill="${tone}" stroke="#fff" stroke-width="2"/>`;
     let pk=0;data.forEach((v,i)=>{if(v>data[pk])pk=i});
-    if(data[pk]>0&&n>1){
-      const t=dashShort(data[pk]),w=t.length*6.4+16,px=Math.max(L+w/2,Math.min(X(pk),W-Rr-w/2)),py=pts[pk][1]-14;
-      marks+=`<g><rect x="${(px-w/2).toFixed(1)}" y="${(py-9).toFixed(1)}" width="${w.toFixed(1)}" height="18" rx="9" fill="${tone}"/><text x="${px.toFixed(1)}" y="${(py+3.8).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">${t}</text></g>`;
-    }
+    const halo='paint-order:stroke;stroke:var(--card,#fff);stroke-width:3px;stroke-linejoin:round';
+    data.forEach((v,i)=>{
+      const px=pts[i][0],py=pts[i][1],col=v<0?'#d93025':tone,wt=(i===pk&&v>0)?800:600;
+      if(lrot){
+        marks+=`<text transform="translate(${(px+lfs*.35).toFixed(1)},${(py-9).toFixed(1)}) rotate(-90)" text-anchor="start" font-size="${lfs}" font-weight="${wt}" fill="${col}" style="${halo}">${LB[i]}</text>`;
+      }else{
+        const ty=v<0?py+lfs+7:py-9;
+        marks+=`<text x="${px.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="${lfs}" font-weight="${wt}" fill="${col}" style="${halo}">${LB[i]}</text>`;
+      }
+    });
   }
   let labels='',hits='';
   data.forEach((v,i)=>{
@@ -5500,7 +5609,7 @@ renderWarranty();
 (function(){
   "use strict";
   var LANG_KEY='mh_lang',THEME_KEY='mh_theme';
-  var BN={"Mohammadia Library & Computer": "মোহাম্মদীয়া লাইব্রেরি ও কম্পিউটার", "Sales & Stock Management": "বিক্রয় ও স্টক ব্যবস্থাপনা", "Dashboard": "ড্যাশবোর্ড", "Daily work": "দৈনিক কাজ", "Sales": "বিক্রয়", "Add Product": "পণ্য যোগ করুন", "Daily Cash / Others": "দৈনিক ক্যাশ / অন্যান্য", "Cash Reconciliation": "ক্যাশ মিলানো", "Bill Alerts": "বিল অ্যালার্ট", "Warranty": "ওয়ারেন্টি", "Records": "রেকর্ড", "Stock Register": "স্টক রেজিস্টার", "Today's Sales": "আজকের বিক্রয়", "Sales History": "বিক্রয়ের ইতিহাস", "Print Invoice": "ইনভয়েস প্রিন্ট", "Daily Cash Statement": "দৈনিক ক্যাশ বিবরণী", "Latest Stock Register": "সর্বশেষ স্টক রেজিস্টার", "Low Stock Report": "স্বল্প স্টক রিপোর্ট", "Admin": "অ্যাডমিন", "Employee": "কর্মচারী", "Business Center": "বিজনেস সেন্টার", "Data Center": "ডেটা সেন্টার", "Active Sessions": "সক্রিয় সেশন", "Change Password": "পাসওয়ার্ড পরিবর্তন", "Settings": "সেটিংস", "Logout": "লগআউট", "Close": "বন্ধ করুন", "Today's sales": "আজকের বিক্রয়", "Today's invoices": "আজকের ইনভয়েস", "Stock units": "স্টক ইউনিট", "Stock selling value": "স্টকের বিক্রয় মূল্য", "Stock cost value": "স্টকের ক্রয় মূল্য", "Total sales": "মোট বিক্রয়", "Total Cash": "মোট ক্যাশ", "Returns": "রিটার্ন", "Profit": "লাভ", "Day": "দিন", "Week": "সপ্তাহ", "Month": "মাস", "Year": "বছর", "No earlier data to compare": "তুলনার জন্য আগের তথ্য নেই", "Margin": "মার্জিন", "Mon": "সোম", "Tue": "মঙ্গল", "Wed": "বুধ", "Thu": "বৃহস্পতি", "Fri": "শুক্র", "Sat": "শনি", "Sun": "রবি", "today": "আজ", "last 7 days": "শেষ ৭ দিন", "last 30 days": "শেষ ৩০ দিন", "last 12 months": "শেষ ১২ মাস", "vs yesterday": "গতকালের তুলনায়", "vs previous 7 days": "আগের ৭ দিনের তুলনায়", "vs previous 30 days": "আগের ৩০ দিনের তুলনায়", "vs previous 12 months": "আগের ১২ মাসের তুলনায়", "Dashboard, purchases, customer dues and profit analysis. Purchase prices and profit figures are Admin-only.": "ড্যাশবোর্ড, ক্রয়, ক্রেতাদের বাকি ও লাভের বিশ্লেষণ। ক্রয়মূল্য ও লাভের হিসাব শুধু অ্যাডমিন দেখতে পাবেন।", "Add": "যোগ করুন", "Optional:": "ঐচ্ছিক:", "Percentage": "শতাংশ", "7-Day Sales": "৭ দিনের বিক্রয়", "Action": "অ্যাকশন", "All": "সব", "All bills cleared": "সব বিল পরিশোধিত", "All categories": "সব ক্যাটাগরি", "All entries": "সব এন্ট্রি", "All products": "সব পণ্য", "Amount": "পরিমাণ", "Barcode": "বারকোড", "Cancel": "বাতিল", "Cancel Edit": "সম্পাদনা বাতিল", "Cart": "কার্ট", "Category": "ক্যাটাগরি", "Clear": "মুছুন", "Clear Cart": "কার্ট খালি করুন", "Cost": "খরচ", "Customer": "ক্রেতা", "Customer / SMS no": "ক্রেতা / SMS নম্বর", "Customer name": "ক্রেতার নাম", "Date": "তারিখ", "Date & Time": "তারিখ ও সময়", "Delivered": "হস্তান্তরিত", "Details": "বিস্তারিত", "Device": "ডিভাইস", "Discount": "ডিসকাউন্ট", "Discount:": "ডিসকাউন্ট:", "Due": "বাকি", "Due Paid": "বাকি পরিশোধ", "Due:": "বাকি:", "Due today": "আজই শেষ", "Due in 1–2 days": "১–২ দিনের মধ্যে", "Electricity Bill": "বিদ্যুৎ বিল", "Electricity Bill only": "শুধু বিদ্যুৎ বিল", "Estimated COGS": "আনুমানিক ক্রয়মূল্য", "Estimated Profit": "আনুমানিক লাভ", "COGS": "বিক্রীত পণ্যের ক্রয়মূল্য", "Gross Profit": "মোট লাভ", "Export / Backup": "এক্সপোর্ট / ব্যাকআপ", "Import / Restore": "ইমপোর্ট / রিস্টোর", "Forgot password?": "পাসওয়ার্ড ভুলে গেছেন?", "Go to Cart": "কার্টে যান", "Invoice": "ইনভয়েস", "Invoice preview": "ইনভয়েস প্রিভিউ", "Item": "আইটেম", "Items": "আইটেম", "Last 7 calendar days": "শেষ ৭ ক্যালেন্ডার দিন", "Last Date Alert": "শেষ তারিখ সতর্কতা", "Last active": "সর্বশেষ সক্রিয়", "Last date": "শেষ তারিখ", "Link will be sent to:": "লিংক পাঠানো হবে:", "Logged in": "লগইন করেছেন", "Login": "লগইন", "Login as": "যে ভূমিকায় লগইন", "Logout all other devices": "অন্য সব ডিভাইস লগআউট করুন", "MIN": "সর্বনিম্ন", "Normal": "সাধারণ", "Others": "অন্যান্য", "Outstanding Customer Dues": "ক্রেতাদের বকেয়া", "Outstanding Due": "বকেয়া", "Overdue": "মেয়াদোত্তীর্ণ", "Paid": "পরিশোধিত", "Paid:": "পরিশোধ:", "Password": "পাসওয়ার্ড", "Payment": "পেমেন্ট", "Payment: Due": "পেমেন্ট: বাকি", "Payment: Paid": "পেমেন্ট: পরিশোধিত", "Payment: Partial": "পেমেন্ট: আংশিক", "Pending bills": "অপরিশোধিত বিল", "No pending bills": "কোনো অপরিশোধিত বিল নেই", "Paid All": "সব পরিশোধ", "Price": "দাম", "Print Latest Invoice": "সর্বশেষ ইনভয়েস প্রিন্ট", "Problem": "সমস্যা", "Product": "পণ্য", "Profit by Product": "পণ্য অনুযায়ী লাভ", "Purchase": "ক্রয়", "Purchases": "ক্রয়", "Purpose": "উদ্দেশ্য", "Qty": "পরিমাণ", "Qty Sold": "বিক্রীত সংখ্যা", "Received": "গ্রহণের তারিখ", "Recent Purchases": "সাম্প্রতিক ক্রয়", "Required columns:": "প্রয়োজনীয় কলাম:", "Revenue": "আয়", "Sale (POS)": "বিক্রয় (POS)", "Sale Complete!": "বিক্রয় সম্পন্ন!", "Sales CSV Restore": "বিক্রয় CSV রিস্টোর", "Stock CSV Restore": "স্টক CSV রিস্টোর", "Sales Revenue": "বিক্রয় আয়", "Sales — Last 7 Days": "বিক্রয় — শেষ ৭ দিন", "Sample": "নমুনা", "Save Purchase": "ক্রয় সংরক্ষণ", "Save Stock": "স্টক সংরক্ষণ", "Scan Barcode": "বারকোড স্ক্যান", "Scan with Camera": "ক্যামেরায় স্ক্যান", "Search results": "অনুসন্ধানের ফলাফল", "Selling": "বিক্রয়মূল্য", "Status": "অবস্থা", "Subtotal:": "উপমোট:", "Supplier": "সরবরাহকারী", "Time": "সময়", "Today": "আজ", "Today's total:": "আজকের মোট:", "Today Sales": "আজকের বিক্রয়", "Today's Sale (POS)": "আজকের বিক্রয় (POS)", "Top Selling Products": "সর্বাধিক বিক্রীত পণ্য", "Total": "মোট", "User": "ব্যবহারকারী", "With Company": "কোম্পানির কাছে", "Back from Company": "কোম্পানি থেকে ফেরত", "first word": "প্রথম শব্দ", "Cash amount": "ক্যাশের পরিমাণ", "Reset layout": "লেআউট রিসেট", "Normal size": "স্বাভাবিক সাইজ", "Add line": "লাইন যোগ করুন", "New Warranty": "নতুন ওয়ারেন্টি", "Synced automatically": "স্বয়ংক্রিয়ভাবে সিঙ্ক হয়েছে", "Connecting…": "সংযুক্ত হচ্ছে…", "Quick Sale": "কুইক সেল", "Complete Sale": "বিক্রয় সম্পন্ন করুন", "Record Purchase / Stock Receive": "ক্রয় / স্টক গ্রহণ রেকর্ড করুন", "Complete JSON Backup": "সম্পূর্ণ JSON ব্যাকআপ", "Complete JSON Restore": "সম্পূর্ণ JSON রিস্টোর", "Sales CSV": "বিক্রয় CSV", "Stock CSV": "স্টক CSV", "Today's Sales CSV": "আজকের বিক্রয় CSV", "Choose JSON File": "JSON ফাইল বাছুন", "Choose Sales CSV": "বিক্রয় CSV বাছুন", "Choose Stock CSV": "স্টক CSV বাছুন", "Colors": "রঙ", "Customization": "কাস্টমাইজেশন", "Quick Sale Customization": "কুইক সেল কাস্টমাইজেশন", "Customers & Due": "ক্রেতা ও বাকি", "Profit & Loss": "লাভ-ক্ষতি", "Data Center — Backup & Restore": "ডেটা সেন্টার — ব্যাকআপ ও রিস্টোর", "Date format": "তারিখের ফরম্যাট", "Card Size": "কার্ডের সাইজ", "Card Layout": "কার্ড লেআউট", "Add / Update Stock": "স্টক যোগ / আপডেট", "Send password-change link": "পাসওয়ার্ড-পরিবর্তন লিংক পাঠান", "Print / Save as PDF": "প্রিন্ট / PDF সেভ", "Latest Invoice — A4 Landscape (receipt on right ¼)": "সর্বশেষ ইনভয়েস — A4 ল্যান্ডস্কেপ (ডানের ¼ অংশে রসিদ)", "Clear Today's Entries": "আজকের এন্ট্রি মুছুন", "New Sale": "নতুন বিক্রয়", "Generate Invoice": "ইনভয়েস তৈরি করুন", "Grand Total": "সর্বমোট", "Sign in to continue to your workspace": "আপনার ওয়ার্কস্পেসে যেতে সাইন-ইন করুন", "Starting camera…": "ক্যামেরা চালু হচ্ছে…", "add new entries only": "শুধু নতুন এন্ট্রি যোগ করা যাবে", "saved entries are locked": "সংরক্ষিত এন্ট্রি লক করা", "Sort: Name (A–Z)": "সাজান: নাম (A–Z)", "Sort: Name (Z–A)": "সাজান: নাম (Z–A)", "Sort: Price (High → Low)": "সাজান: দাম (বেশি → কম)", "Sort: Price (Low → High)": "সাজান: দাম (কম → বেশি)", "Sort: Stock (High → Low)": "সাজান: স্টক (বেশি → কম)", "Sort: Stock (Low → High)": "সাজান: স্টক (কম → বেশি)", "All products in stock — search, sort and add to cart.": "স্টকের সব পণ্য — খুঁজুন, সাজান ও কার্টে যোগ করুন।", "Automatically saved offline.": "অফলাইনে স্বয়ংক্রিয়ভাবে সংরক্ষিত।", "Based on recorded purchase prices": "রেকর্ডকৃত ক্রয়মূল্যের ভিত্তিতে", "Complete sales history — search by invoice, date, customer or item.": "সম্পূর্ণ বিক্রয়ের ইতিহাস — ইনভয়েস, তারিখ, ক্রেতা বা পণ্য দিয়ে খুঁজুন।", "Connecting to live data…": "লাইভ ডেটার সাথে সংযুক্ত হচ্ছে…", "Every invoice created today.": "আজ তৈরি হওয়া সব ইনভয়েস।", "Invoice history — tap an invoice to preview it, or press Print.": "ইনভয়েসের ইতিহাস — প্রিভিউ দেখতে ইনভয়েসে ট্যাপ করুন, অথবা প্রিন্ট চাপুন।", "Make the Quick Sale cards smaller or bigger. Saved on this device (phone and computer can have different sizes).": "কুইক সেল কার্ড ছোট বা বড় করুন। এই ডিভাইসে সংরক্ষিত থাকবে (ফোন ও কম্পিউটারে আলাদা সাইজ রাখা যাবে)।", "Mobile, charger or any product — tap an item to open its full details.": "মোবাইল, চার্জার বা যেকোনো পণ্য — পুরো বিবরণ দেখতে আইটেমে ট্যাপ করুন।", "No invoices found.": "কোনো ইনভয়েস পাওয়া যায়নি।", "No items in the report. Every item with stock below 10 has been removed, or none exist.": "রিপোর্টে কোনো আইটেম নেই। ১০-এর কম স্টকের সব আইটেম সরানো হয়েছে, অথবা এমন আইটেম নেই।", "No matching product in stock.": "স্টকে মিলে যাওয়া কোনো পণ্য নেই।", "No outstanding dues.": "কোনো বকেয়া নেই।", "No profit data yet.": "এখনো লাভের তথ্য নেই।", "No purchases recorded.": "কোনো ক্রয় রেকর্ড করা হয়নি।", "No sales data yet.": "এখনো বিক্রয়ের তথ্য নেই।", "No sales found.": "কোনো বিক্রয় পাওয়া যায়নি।", "No sales in this period yet": "এই সময়ে এখনো কোনো বিক্রয় নেই", "No sales today.": "আজ কোনো বিক্রয় নেই।", "No sessions yet.": "এখনো কোনো সেশন নেই।", "No stock found.": "কোনো স্টক পাওয়া যায়নি।", "No stock register activity in the last 7 days.": "গত ৭ দিনে স্টক রেজিস্টারে কোনো কার্যক্রম নেই।", "Point your phone camera at the product barcode. Camera access works on HTTPS or localhost.": "ফোনের ক্যামেরা পণ্যের বারকোডের দিকে ধরুন। ক্যামেরা HTTPS বা localhost-এ কাজ করে।", "Restores sales history from CSV exported by this app.": "এই অ্যাপ থেকে এক্সপোর্ট করা CSV থেকে বিক্রয়ের ইতিহাস ফিরিয়ে আনে।", "Restores stock, sales and latest invoice.": "স্টক, বিক্রয় ও সর্বশেষ ইনভয়েস ফিরিয়ে আনে।", "Sale completes instantly offline · invoice is generated only when you ask for it.": "অফলাইনেও বিক্রয় সাথে সাথে সম্পন্ন হয় · চাইলেই কেবল ইনভয়েস তৈরি হয়।", "Search products, build the cart, apply discounts and generate an invoice.": "পণ্য খুঁজুন, কার্ট বানান, ডিসকাউন্ট দিন ও ইনভয়েস তৈরি করুন।", "Select an invoice to preview it.": "প্রিভিউ দেখতে একটি ইনভয়েস বাছুন।", "Frequently sold item — show as a Quick Sale button (e.g. Pen, Khata, Kolom)": "ঘন ঘন বিক্রীত আইটেম — কুইক সেল বাটন হিসেবে দেখান (যেমন: কলম, খাতা)", "Service item — no stock limit (e.g. Photocopy, Print, Lamination, Binding)": "সার্ভিস আইটেম — স্টকের সীমা নেই (যেমন: ফটোকপি, প্রিন্ট, ল্যামিনেটিং, বাইন্ডিং)", "Drag a card (hold & move) to change its position or to move it to another line. Add as many lines as you like — 2, 3, 4 or more.": "কার্ডের অবস্থান বদলাতে বা অন্য লাইনে নিতে কার্ড চেপে ধরে টানুন। যত খুশি লাইন যোগ করতে পারবেন — ২, ৩, ৪ বা তার বেশি।", "Every day's Daily Cash entries are listed below. Tap a date to open and view it (past days are read-only).": "প্রতিদিনের দৈনিক ক্যাশ এন্ট্রি নিচে তালিকাভুক্ত। দেখতে তারিখে ট্যাপ করুন (আগের দিনগুলো শুধু দেখা যাবে)।", "Every device signed in to this app. Press Logout to sign a device out remotely — it logs out within a few seconds if it is online, or the next time it opens the app.": "এই অ্যাপে সাইন-ইন করা প্রতিটি ডিভাইস। কোনো ডিভাইস দূর থেকে সাইন-আউট করতে লগআউট চাপুন — অনলাইন থাকলে কয়েক সেকেন্ডের মধ্যে, নইলে পরের বার অ্যাপ খুললে লগআউট হবে।", "For security, a password-change link is sent to the shop's Gmail inbox. Open the email, tap the link and choose a new password there. Nothing is changed until you do that. Passwords are handled by Firebase Authentication and are never stored in this app.": "নিরাপত্তার জন্য দোকানের Gmail ইনবক্সে একটি পাসওয়ার্ড-পরিবর্তন লিংক পাঠানো হবে। ইমেইল খুলে লিংকে ট্যাপ করে সেখানে নতুন পাসওয়ার্ড দিন। তা না করা পর্যন্ত কিছুই বদলাবে না। পাসওয়ার্ড Firebase Authentication পরিচালনা করে এবং এই অ্যাপে কখনো সংরক্ষিত হয় না।", "Formal notice: All electricity bills must be paid on or before their last date. Unpaid bills may incur late-payment penalties and service disconnection. Daily bills are to be cleared on the same day.": "আনুষ্ঠানিক বিজ্ঞপ্তি: সব বিদ্যুৎ বিল অবশ্যই শেষ তারিখের মধ্যে বা তার আগে পরিশোধ করতে হবে। অপরিশোধিত বিলে বিলম্ব জরিমানা ও সংযোগ বিচ্ছিন্ন হতে পারে। দৈনিক বিল একই দিনে পরিশোধ করতে হবে।", "Items with stock below 10. Remove any item you don't want in the report using the ✕ button, then print or save as PDF.": "যেসব আইটেমের স্টক ১০-এর কম। রিপোর্টে যা রাখতে চান না তা ✕ বাটনে সরিয়ে দিন, তারপর প্রিন্ট করুন বা PDF হিসেবে সেভ করুন।", "Stock & sales now sync live to your Firebase cloud database, so every device signed into the same Firebase project sees the same data. For extra safety, still make regular backups below — CSV backup files can be opened in Excel and CSV files exported by this app can be restored here.": "স্টক ও বিক্রয় এখন লাইভ আপনার Firebase ক্লাউড ডেটাবেসে সিঙ্ক হয়, তাই একই Firebase প্রজেক্টে সাইন-ইন করা সব ডিভাইসে একই ডেটা দেখা যায়। বাড়তি নিরাপত্তার জন্য নিচে নিয়মিত ব্যাকআপ নিন — CSV ব্যাকআপ ফাইল Excel-এ খোলা যায় এবং এই অ্যাপ থেকে এক্সপোর্ট করা CSV এখানে রিস্টোর করা যায়।", "Stock added or edited during the last 7 days. This register is read-only and cannot be deleted or cleared.": "গত ৭ দিনে যোগ বা সম্পাদনা করা স্টক। এই রেজিস্টার শুধু দেখা যায়; মোছা বা খালি করা যায় না।", "Every Quick Sale item is grouped and colored automatically by the": "প্রতিটি কুইক সেল আইটেম স্বয়ংক্রিয়ভাবে গ্রুপ ও রঙিন হয় নামের", "of its name — items sharing the same first word always share the same color. Pick a custom color for a group below, or leave it on Auto.": "অনুযায়ী — একই প্রথম শব্দের আইটেম সবসময় একই রঙ পায়। নিচে কোনো গ্রুপের জন্য পছন্দের রঙ বাছুন, অথবা অটো রেখে দিন।", "Barcode (optional)": "বারকোড (ঐচ্ছিক)", "Category — pick or type a new one": "ক্যাটাগরি — বাছুন বা নতুন লিখুন", "Customer name (required for due/partial)": "ক্রেতার নাম (বাকি/আংশিকের জন্য আবশ্যক)", "Customer name or SMS no": "ক্রেতার নাম বা SMS নম্বর", "Discount value": "ডিসকাউন্টের মান", "Enter password": "পাসওয়ার্ড দিন", "Item name": "আইটেমের নাম", "Low stock alert at (e.g. 5)": "স্বল্প স্টক সতর্কতা (যেমন ৫)", "Model (optional) — e.g. Cello Butterflow": "মডেল (ঐচ্ছিক) — যেমন Cello Butterflow", "Note (optional)": "নোট (ঐচ্ছিক)", "Paid amount (৳)": "পরিশোধিত টাকা (৳)", "Product name": "পণ্যের নাম", "Purchase cost / unit (৳)": "ক্রয়মূল্য / ইউনিট (৳)", "Purchase price (৳) — hidden": "ক্রয়মূল্য (৳) — গোপন", "Quantity": "পরিমাণ", "Search all days — customer name or amount": "সব দিনে খুঁজুন — ক্রেতার নাম বা টাকার পরিমাণ", "Search customer, number, product, serial, problem…": "ক্রেতা, নম্বর, পণ্য, সিরিয়াল, সমস্যা খুঁজুন…", "Search invoice, date, customer or item...": "ইনভয়েস, তারিখ, ক্রেতা বা আইটেম খুঁজুন...", "Search stock...": "স্টক খুঁজুন...", "Selling price (৳)": "বিক্রয়মূল্য (৳)", "Selling price / unit (৳)": "বিক্রয়মূল্য / ইউনিট (৳)", "Supplier name": "সরবরাহকারীর নাম", "Search product name or barcode...": "পণ্যের নাম বা বারকোড খুঁজুন...", "Bigger": "বড়", "Smaller": "ছোট", "Bill payment alerts": "বিল পেমেন্ট সতর্কতা", "Clear search": "সার্চ মুছুন", "Go to cart": "কার্টে যান", "Open menu": "মেনু খুলুন", "Menu": "মেনু", "Change how the Last date is shown": "শেষ তারিখ কীভাবে দেখাবে তা বদলান", "Click a value to reveal for 3 seconds": "৩ সেকেন্ডের জন্য মান দেখতে ক্লিক করুন", "Tap to reveal for 3 seconds": "৩ সেকেন্ডের জন্য দেখতে ট্যাপ করুন", "Last date (optional)": "শেষ তারিখ (ঐচ্ছিক)", "Last date to pay": "পরিশোধের শেষ তারিখ", "Today's Total Cash (same as Daily Cash) — tap to open": "আজকের মোট ক্যাশ (দৈনিক ক্যাশের সমান) — খুলতে ট্যাপ করুন", "Search bills": "বিল খুঁজুন", "Quick Sale menu": "কুইক সেল মেনু", "Metric": "মেট্রিক", "Period": "সময়কাল", "You're all caught up": "সব বিল পরিশোধ করা হয়েছে", "There are no unpaid bills right now.": "এখন কোনো অপরিশোধিত বিল নেই।", "All bills are settled. No outstanding payments.": "সব বিল পরিশোধিত। কোনো বকেয়া নেই।", "Confirm?": "নিশ্চিত?", "Clearing…": "পরিষ্কার হচ্ছে…", "Overdue ": "মেয়াদোত্তীর্ণ ", "Due in 1 day": "১ দিন বাকি", "Cash in Hand": "হাতে থাকা ক্যাশ", "Extra": "অতিরিক্ত", "Today's Daily Cash total (same as Dashboard)": "আজকের দৈনিক ক্যাশের মোট (ড্যাশবোর্ডের সমান)", "Enter Cash in Hand to compare": "তুলনা করতে হাতে থাকা ক্যাশ লিখুন", "Extra cash — more than Total Cash": "অতিরিক্ত ক্যাশ — মোট ক্যাশের চেয়ে বেশি", "Short — less than Total Cash": "ঘাটতি — মোট ক্যাশের চেয়ে কম", "Perfectly matched": "হুবহু মিলে গেছে", "Count the cash in hand and type it below. Extra = Cash in Hand − Total Cash.": "হাতে থাকা ক্যাশ গুনে নিচে লিখুন। অতিরিক্ত = হাতে থাকা ক্যাশ − মোট ক্যাশ।", "Language": "ভাষা", "Theme": "থিম", "Light": "লাইট", "Dark": "ডার্ক", "System default": "সিস্টেম ডিফল্ট", "Language and theme for this device.": "এই ডিভাইসের ভাষা ও থিম।", "Choose the app language. Saved on this device.": "অ্যাপের ভাষা বাছুন। এই ডিভাইসে সংরক্ষিত থাকবে।", "Choose how the app looks. System default follows your phone or computer.": "অ্যাপ কেমন দেখাবে বাছুন। সিস্টেম ডিফল্ট আপনার ফোন বা কম্পিউটারের সেটিং অনুসরণ করে।", "No warranty items yet. Tap “＋ New Warranty” when a customer brings one.": "এখনো কোনো ওয়ারেন্টি আইটেম নেই। ক্রেতা কিছু নিয়ে এলে “＋ নতুন ওয়ারেন্টি” চাপুন।"};
+  var BN={"Appearance": "চেহারা", "Shop": "দোকান", "Shop logo": "দোকানের লোগো", "Change": "পরিবর্তন", "Done": "সম্পন্ন", "Upload photo": "ছবি আপলোড", "Save logo": "লোগো সংরক্ষণ", "Reset to default": "ডিফল্টে ফিরুন", "Reset position": "অবস্থান রিসেট", "Fill": "ভরাট", "Fit": "ফিট", "Stretch": "টানা", "Shown at the top of the sidebar on every device.": "সব ডিভাইসে সাইডবারের উপরে দেখানো হয়।", "Mohammadia Library & Computer": "মোহাম্মদীয়া লাইব্রেরি ও কম্পিউটার", "Sales & Stock Management": "বিক্রয় ও স্টক ব্যবস্থাপনা", "Dashboard": "ড্যাশবোর্ড", "Daily work": "দৈনিক কাজ", "Sales": "বিক্রয়", "Add Product": "পণ্য যোগ করুন", "Daily Cash / Others": "দৈনিক ক্যাশ / অন্যান্য", "Cash Reconciliation": "ক্যাশ মিলানো", "Bill Alerts": "বিল অ্যালার্ট", "Warranty": "ওয়ারেন্টি", "Records": "রেকর্ড", "Stock Register": "স্টক রেজিস্টার", "Today's Sales": "আজকের বিক্রয়", "Sales History": "বিক্রয়ের ইতিহাস", "Print Invoice": "ইনভয়েস প্রিন্ট", "Daily Cash Statement": "দৈনিক ক্যাশ বিবরণী", "Latest Stock Register": "সর্বশেষ স্টক রেজিস্টার", "Low Stock Report": "স্বল্প স্টক রিপোর্ট", "Admin": "অ্যাডমিন", "Employee": "কর্মচারী", "Business Center": "বিজনেস সেন্টার", "Data Center": "ডেটা সেন্টার", "Active Sessions": "সক্রিয় সেশন", "Change Password": "পাসওয়ার্ড পরিবর্তন", "Settings": "সেটিংস", "Logout": "লগআউট", "Close": "বন্ধ করুন", "Today's sales": "আজকের বিক্রয়", "Today's invoices": "আজকের ইনভয়েস", "Stock units": "স্টক ইউনিট", "Stock selling value": "স্টকের বিক্রয় মূল্য", "Stock cost value": "স্টকের ক্রয় মূল্য", "Total sales": "মোট বিক্রয়", "Total Cash": "মোট ক্যাশ", "Returns": "রিটার্ন", "Profit": "লাভ", "Day": "দিন", "Week": "সপ্তাহ", "Month": "মাস", "Year": "বছর", "No earlier data to compare": "তুলনার জন্য আগের তথ্য নেই", "Margin": "মার্জিন", "Mon": "সোম", "Tue": "মঙ্গল", "Wed": "বুধ", "Thu": "বৃহস্পতি", "Fri": "শুক্র", "Sat": "শনি", "Sun": "রবি", "today": "আজ", "last 7 days": "শেষ ৭ দিন", "last 30 days": "শেষ ৩০ দিন", "last 12 months": "শেষ ১২ মাস", "vs yesterday": "গতকালের তুলনায়", "vs previous 7 days": "আগের ৭ দিনের তুলনায়", "vs previous 30 days": "আগের ৩০ দিনের তুলনায়", "vs previous 12 months": "আগের ১২ মাসের তুলনায়", "Dashboard, purchases, customer dues and profit analysis. Purchase prices and profit figures are Admin-only.": "ড্যাশবোর্ড, ক্রয়, ক্রেতাদের বাকি ও লাভের বিশ্লেষণ। ক্রয়মূল্য ও লাভের হিসাব শুধু অ্যাডমিন দেখতে পাবেন।", "Add": "যোগ করুন", "Optional:": "ঐচ্ছিক:", "Percentage": "শতাংশ", "7-Day Sales": "৭ দিনের বিক্রয়", "Action": "অ্যাকশন", "All": "সব", "All bills cleared": "সব বিল পরিশোধিত", "All categories": "সব ক্যাটাগরি", "All entries": "সব এন্ট্রি", "All products": "সব পণ্য", "Amount": "পরিমাণ", "Barcode": "বারকোড", "Cancel": "বাতিল", "Cancel Edit": "সম্পাদনা বাতিল", "Cart": "কার্ট", "Category": "ক্যাটাগরি", "Clear": "মুছুন", "Clear Cart": "কার্ট খালি করুন", "Cost": "খরচ", "Customer": "ক্রেতা", "Customer / SMS no": "ক্রেতা / SMS নম্বর", "Customer name": "ক্রেতার নাম", "Date": "তারিখ", "Date & Time": "তারিখ ও সময়", "Delivered": "হস্তান্তরিত", "Details": "বিস্তারিত", "Device": "ডিভাইস", "Discount": "ডিসকাউন্ট", "Discount:": "ডিসকাউন্ট:", "Due": "বাকি", "Due Paid": "বাকি পরিশোধ", "Due:": "বাকি:", "Due today": "আজই শেষ", "Due in 1–2 days": "১–২ দিনের মধ্যে", "Electricity Bill": "বিদ্যুৎ বিল", "Electricity Bill only": "শুধু বিদ্যুৎ বিল", "Estimated COGS": "আনুমানিক ক্রয়মূল্য", "Estimated Profit": "আনুমানিক লাভ", "COGS": "বিক্রীত পণ্যের ক্রয়মূল্য", "Gross Profit": "মোট লাভ", "Export / Backup": "এক্সপোর্ট / ব্যাকআপ", "Import / Restore": "ইমপোর্ট / রিস্টোর", "Forgot password?": "পাসওয়ার্ড ভুলে গেছেন?", "Go to Cart": "কার্টে যান", "Invoice": "ইনভয়েস", "Invoice preview": "ইনভয়েস প্রিভিউ", "Item": "আইটেম", "Items": "আইটেম", "Last 7 calendar days": "শেষ ৭ ক্যালেন্ডার দিন", "Last Date Alert": "শেষ তারিখ সতর্কতা", "Last active": "সর্বশেষ সক্রিয়", "Last date": "শেষ তারিখ", "Link will be sent to:": "লিংক পাঠানো হবে:", "Logged in": "লগইন করেছেন", "Login": "লগইন", "Login as": "যে ভূমিকায় লগইন", "Logout all other devices": "অন্য সব ডিভাইস লগআউট করুন", "MIN": "সর্বনিম্ন", "Normal": "সাধারণ", "Others": "অন্যান্য", "Outstanding Customer Dues": "ক্রেতাদের বকেয়া", "Outstanding Due": "বকেয়া", "Overdue": "মেয়াদোত্তীর্ণ", "Paid": "পরিশোধিত", "Paid:": "পরিশোধ:", "Password": "পাসওয়ার্ড", "Payment": "পেমেন্ট", "Payment: Due": "পেমেন্ট: বাকি", "Payment: Paid": "পেমেন্ট: পরিশোধিত", "Payment: Partial": "পেমেন্ট: আংশিক", "Pending bills": "অপরিশোধিত বিল", "No pending bills": "কোনো অপরিশোধিত বিল নেই", "Paid All": "সব পরিশোধ", "Price": "দাম", "Print Latest Invoice": "সর্বশেষ ইনভয়েস প্রিন্ট", "Problem": "সমস্যা", "Product": "পণ্য", "Profit by Product": "পণ্য অনুযায়ী লাভ", "Purchase": "ক্রয়", "Purchases": "ক্রয়", "Purpose": "উদ্দেশ্য", "Qty": "পরিমাণ", "Qty Sold": "বিক্রীত সংখ্যা", "Received": "গ্রহণের তারিখ", "Recent Purchases": "সাম্প্রতিক ক্রয়", "Required columns:": "প্রয়োজনীয় কলাম:", "Revenue": "আয়", "Sale (POS)": "বিক্রয় (POS)", "Sale Complete!": "বিক্রয় সম্পন্ন!", "Sales CSV Restore": "বিক্রয় CSV রিস্টোর", "Stock CSV Restore": "স্টক CSV রিস্টোর", "Sales Revenue": "বিক্রয় আয়", "Sales — Last 7 Days": "বিক্রয় — শেষ ৭ দিন", "Sample": "নমুনা", "Save Purchase": "ক্রয় সংরক্ষণ", "Save Stock": "স্টক সংরক্ষণ", "Scan Barcode": "বারকোড স্ক্যান", "Scan with Camera": "ক্যামেরায় স্ক্যান", "Search results": "অনুসন্ধানের ফলাফল", "Selling": "বিক্রয়মূল্য", "Status": "অবস্থা", "Subtotal:": "উপমোট:", "Supplier": "সরবরাহকারী", "Time": "সময়", "Today": "আজ", "Today's total:": "আজকের মোট:", "Today Sales": "আজকের বিক্রয়", "Today's Sale (POS)": "আজকের বিক্রয় (POS)", "Top Selling Products": "সর্বাধিক বিক্রীত পণ্য", "Total": "মোট", "User": "ব্যবহারকারী", "With Company": "কোম্পানির কাছে", "Back from Company": "কোম্পানি থেকে ফেরত", "first word": "প্রথম শব্দ", "Cash amount": "ক্যাশের পরিমাণ", "Reset layout": "লেআউট রিসেট", "Normal size": "স্বাভাবিক সাইজ", "Add line": "লাইন যোগ করুন", "New Warranty": "নতুন ওয়ারেন্টি", "Synced automatically": "স্বয়ংক্রিয়ভাবে সিঙ্ক হয়েছে", "Connecting…": "সংযুক্ত হচ্ছে…", "Quick Sale": "কুইক সেল", "Complete Sale": "বিক্রয় সম্পন্ন করুন", "Record Purchase / Stock Receive": "ক্রয় / স্টক গ্রহণ রেকর্ড করুন", "Complete JSON Backup": "সম্পূর্ণ JSON ব্যাকআপ", "Complete JSON Restore": "সম্পূর্ণ JSON রিস্টোর", "Sales CSV": "বিক্রয় CSV", "Stock CSV": "স্টক CSV", "Today's Sales CSV": "আজকের বিক্রয় CSV", "Choose JSON File": "JSON ফাইল বাছুন", "Choose Sales CSV": "বিক্রয় CSV বাছুন", "Choose Stock CSV": "স্টক CSV বাছুন", "Colors": "রঙ", "Customization": "কাস্টমাইজেশন", "Quick Sale Customization": "কুইক সেল কাস্টমাইজেশন", "Customers & Due": "ক্রেতা ও বাকি", "Profit & Loss": "লাভ-ক্ষতি", "Data Center — Backup & Restore": "ডেটা সেন্টার — ব্যাকআপ ও রিস্টোর", "Date format": "তারিখের ফরম্যাট", "Card Size": "কার্ডের সাইজ", "Card Layout": "কার্ড লেআউট", "Add / Update Stock": "স্টক যোগ / আপডেট", "Send password-change link": "পাসওয়ার্ড-পরিবর্তন লিংক পাঠান", "Print / Save as PDF": "প্রিন্ট / PDF সেভ", "Latest Invoice — A4 Landscape (receipt on right ¼)": "সর্বশেষ ইনভয়েস — A4 ল্যান্ডস্কেপ (ডানের ¼ অংশে রসিদ)", "Clear Today's Entries": "আজকের এন্ট্রি মুছুন", "New Sale": "নতুন বিক্রয়", "Generate Invoice": "ইনভয়েস তৈরি করুন", "Grand Total": "সর্বমোট", "Sign in to continue to your workspace": "আপনার ওয়ার্কস্পেসে যেতে সাইন-ইন করুন", "Starting camera…": "ক্যামেরা চালু হচ্ছে…", "add new entries only": "শুধু নতুন এন্ট্রি যোগ করা যাবে", "saved entries are locked": "সংরক্ষিত এন্ট্রি লক করা", "Sort: Name (A–Z)": "সাজান: নাম (A–Z)", "Sort: Name (Z–A)": "সাজান: নাম (Z–A)", "Sort: Price (High → Low)": "সাজান: দাম (বেশি → কম)", "Sort: Price (Low → High)": "সাজান: দাম (কম → বেশি)", "Sort: Stock (High → Low)": "সাজান: স্টক (বেশি → কম)", "Sort: Stock (Low → High)": "সাজান: স্টক (কম → বেশি)", "All products in stock — search, sort and add to cart.": "স্টকের সব পণ্য — খুঁজুন, সাজান ও কার্টে যোগ করুন।", "Automatically saved offline.": "অফলাইনে স্বয়ংক্রিয়ভাবে সংরক্ষিত।", "Based on recorded purchase prices": "রেকর্ডকৃত ক্রয়মূল্যের ভিত্তিতে", "Complete sales history — search by invoice, date, customer or item.": "সম্পূর্ণ বিক্রয়ের ইতিহাস — ইনভয়েস, তারিখ, ক্রেতা বা পণ্য দিয়ে খুঁজুন।", "Connecting to live data…": "লাইভ ডেটার সাথে সংযুক্ত হচ্ছে…", "Every invoice created today.": "আজ তৈরি হওয়া সব ইনভয়েস।", "Invoice history — tap an invoice to preview it, or press Print.": "ইনভয়েসের ইতিহাস — প্রিভিউ দেখতে ইনভয়েসে ট্যাপ করুন, অথবা প্রিন্ট চাপুন।", "Make the Quick Sale cards smaller or bigger. Saved on this device (phone and computer can have different sizes).": "কুইক সেল কার্ড ছোট বা বড় করুন। এই ডিভাইসে সংরক্ষিত থাকবে (ফোন ও কম্পিউটারে আলাদা সাইজ রাখা যাবে)।", "Mobile, charger or any product — tap an item to open its full details.": "মোবাইল, চার্জার বা যেকোনো পণ্য — পুরো বিবরণ দেখতে আইটেমে ট্যাপ করুন।", "No invoices found.": "কোনো ইনভয়েস পাওয়া যায়নি।", "No items in the report. Every item with stock below 10 has been removed, or none exist.": "রিপোর্টে কোনো আইটেম নেই। ১০-এর কম স্টকের সব আইটেম সরানো হয়েছে, অথবা এমন আইটেম নেই।", "No matching product in stock.": "স্টকে মিলে যাওয়া কোনো পণ্য নেই।", "No outstanding dues.": "কোনো বকেয়া নেই।", "No profit data yet.": "এখনো লাভের তথ্য নেই।", "No purchases recorded.": "কোনো ক্রয় রেকর্ড করা হয়নি।", "No sales data yet.": "এখনো বিক্রয়ের তথ্য নেই।", "No sales found.": "কোনো বিক্রয় পাওয়া যায়নি।", "No sales in this period yet": "এই সময়ে এখনো কোনো বিক্রয় নেই", "No sales today.": "আজ কোনো বিক্রয় নেই।", "No sessions yet.": "এখনো কোনো সেশন নেই।", "No stock found.": "কোনো স্টক পাওয়া যায়নি।", "No stock register activity in the last 7 days.": "গত ৭ দিনে স্টক রেজিস্টারে কোনো কার্যক্রম নেই।", "Point your phone camera at the product barcode. Camera access works on HTTPS or localhost.": "ফোনের ক্যামেরা পণ্যের বারকোডের দিকে ধরুন। ক্যামেরা HTTPS বা localhost-এ কাজ করে।", "Restores sales history from CSV exported by this app.": "এই অ্যাপ থেকে এক্সপোর্ট করা CSV থেকে বিক্রয়ের ইতিহাস ফিরিয়ে আনে।", "Restores stock, sales and latest invoice.": "স্টক, বিক্রয় ও সর্বশেষ ইনভয়েস ফিরিয়ে আনে।", "Sale completes instantly offline · invoice is generated only when you ask for it.": "অফলাইনেও বিক্রয় সাথে সাথে সম্পন্ন হয় · চাইলেই কেবল ইনভয়েস তৈরি হয়।", "Search products, build the cart, apply discounts and generate an invoice.": "পণ্য খুঁজুন, কার্ট বানান, ডিসকাউন্ট দিন ও ইনভয়েস তৈরি করুন।", "Select an invoice to preview it.": "প্রিভিউ দেখতে একটি ইনভয়েস বাছুন।", "Frequently sold item — show as a Quick Sale button (e.g. Pen, Khata, Kolom)": "ঘন ঘন বিক্রীত আইটেম — কুইক সেল বাটন হিসেবে দেখান (যেমন: কলম, খাতা)", "Service item — no stock limit (e.g. Photocopy, Print, Lamination, Binding)": "সার্ভিস আইটেম — স্টকের সীমা নেই (যেমন: ফটোকপি, প্রিন্ট, ল্যামিনেটিং, বাইন্ডিং)", "Drag a card (hold & move) to change its position or to move it to another line. Add as many lines as you like — 2, 3, 4 or more.": "কার্ডের অবস্থান বদলাতে বা অন্য লাইনে নিতে কার্ড চেপে ধরে টানুন। যত খুশি লাইন যোগ করতে পারবেন — ২, ৩, ৪ বা তার বেশি।", "Every day's Daily Cash entries are listed below. Tap a date to open and view it (past days are read-only).": "প্রতিদিনের দৈনিক ক্যাশ এন্ট্রি নিচে তালিকাভুক্ত। দেখতে তারিখে ট্যাপ করুন (আগের দিনগুলো শুধু দেখা যাবে)।", "Every device signed in to this app. Press Logout to sign a device out remotely — it logs out within a few seconds if it is online, or the next time it opens the app.": "এই অ্যাপে সাইন-ইন করা প্রতিটি ডিভাইস। কোনো ডিভাইস দূর থেকে সাইন-আউট করতে লগআউট চাপুন — অনলাইন থাকলে কয়েক সেকেন্ডের মধ্যে, নইলে পরের বার অ্যাপ খুললে লগআউট হবে।", "For security, a password-change link is sent to the shop's Gmail inbox. Open the email, tap the link and choose a new password there. Nothing is changed until you do that. Passwords are handled by Firebase Authentication and are never stored in this app.": "নিরাপত্তার জন্য দোকানের Gmail ইনবক্সে একটি পাসওয়ার্ড-পরিবর্তন লিংক পাঠানো হবে। ইমেইল খুলে লিংকে ট্যাপ করে সেখানে নতুন পাসওয়ার্ড দিন। তা না করা পর্যন্ত কিছুই বদলাবে না। পাসওয়ার্ড Firebase Authentication পরিচালনা করে এবং এই অ্যাপে কখনো সংরক্ষিত হয় না।", "Formal notice: All electricity bills must be paid on or before their last date. Unpaid bills may incur late-payment penalties and service disconnection. Daily bills are to be cleared on the same day.": "আনুষ্ঠানিক বিজ্ঞপ্তি: সব বিদ্যুৎ বিল অবশ্যই শেষ তারিখের মধ্যে বা তার আগে পরিশোধ করতে হবে। অপরিশোধিত বিলে বিলম্ব জরিমানা ও সংযোগ বিচ্ছিন্ন হতে পারে। দৈনিক বিল একই দিনে পরিশোধ করতে হবে।", "Items with stock below 10. Remove any item you don't want in the report using the ✕ button, then print or save as PDF.": "যেসব আইটেমের স্টক ১০-এর কম। রিপোর্টে যা রাখতে চান না তা ✕ বাটনে সরিয়ে দিন, তারপর প্রিন্ট করুন বা PDF হিসেবে সেভ করুন।", "Stock & sales now sync live to your Firebase cloud database, so every device signed into the same Firebase project sees the same data. For extra safety, still make regular backups below — CSV backup files can be opened in Excel and CSV files exported by this app can be restored here.": "স্টক ও বিক্রয় এখন লাইভ আপনার Firebase ক্লাউড ডেটাবেসে সিঙ্ক হয়, তাই একই Firebase প্রজেক্টে সাইন-ইন করা সব ডিভাইসে একই ডেটা দেখা যায়। বাড়তি নিরাপত্তার জন্য নিচে নিয়মিত ব্যাকআপ নিন — CSV ব্যাকআপ ফাইল Excel-এ খোলা যায় এবং এই অ্যাপ থেকে এক্সপোর্ট করা CSV এখানে রিস্টোর করা যায়।", "Stock added or edited during the last 7 days. This register is read-only and cannot be deleted or cleared.": "গত ৭ দিনে যোগ বা সম্পাদনা করা স্টক। এই রেজিস্টার শুধু দেখা যায়; মোছা বা খালি করা যায় না।", "Every Quick Sale item is grouped and colored automatically by the": "প্রতিটি কুইক সেল আইটেম স্বয়ংক্রিয়ভাবে গ্রুপ ও রঙিন হয় নামের", "of its name — items sharing the same first word always share the same color. Pick a custom color for a group below, or leave it on Auto.": "অনুযায়ী — একই প্রথম শব্দের আইটেম সবসময় একই রঙ পায়। নিচে কোনো গ্রুপের জন্য পছন্দের রঙ বাছুন, অথবা অটো রেখে দিন।", "Barcode (optional)": "বারকোড (ঐচ্ছিক)", "Category — pick or type a new one": "ক্যাটাগরি — বাছুন বা নতুন লিখুন", "Customer name (required for due/partial)": "ক্রেতার নাম (বাকি/আংশিকের জন্য আবশ্যক)", "Customer name or SMS no": "ক্রেতার নাম বা SMS নম্বর", "Discount value": "ডিসকাউন্টের মান", "Enter password": "পাসওয়ার্ড দিন", "Item name": "আইটেমের নাম", "Low stock alert at (e.g. 5)": "স্বল্প স্টক সতর্কতা (যেমন ৫)", "Model (optional) — e.g. Cello Butterflow": "মডেল (ঐচ্ছিক) — যেমন Cello Butterflow", "Note (optional)": "নোট (ঐচ্ছিক)", "Paid amount (৳)": "পরিশোধিত টাকা (৳)", "Product name": "পণ্যের নাম", "Purchase cost / unit (৳)": "ক্রয়মূল্য / ইউনিট (৳)", "Purchase price (৳) — hidden": "ক্রয়মূল্য (৳) — গোপন", "Quantity": "পরিমাণ", "Search all days — customer name or amount": "সব দিনে খুঁজুন — ক্রেতার নাম বা টাকার পরিমাণ", "Search customer, number, product, serial, problem…": "ক্রেতা, নম্বর, পণ্য, সিরিয়াল, সমস্যা খুঁজুন…", "Search invoice, date, customer or item...": "ইনভয়েস, তারিখ, ক্রেতা বা আইটেম খুঁজুন...", "Search stock...": "স্টক খুঁজুন...", "Selling price (৳)": "বিক্রয়মূল্য (৳)", "Selling price / unit (৳)": "বিক্রয়মূল্য / ইউনিট (৳)", "Supplier name": "সরবরাহকারীর নাম", "Search product name or barcode...": "পণ্যের নাম বা বারকোড খুঁজুন...", "Bigger": "বড়", "Smaller": "ছোট", "Bill payment alerts": "বিল পেমেন্ট সতর্কতা", "Clear search": "সার্চ মুছুন", "Go to cart": "কার্টে যান", "Open menu": "মেনু খুলুন", "Menu": "মেনু", "Change how the Last date is shown": "শেষ তারিখ কীভাবে দেখাবে তা বদলান", "Click a value to reveal for 3 seconds": "৩ সেকেন্ডের জন্য মান দেখতে ক্লিক করুন", "Tap to reveal for 3 seconds": "৩ সেকেন্ডের জন্য দেখতে ট্যাপ করুন", "Last date (optional)": "শেষ তারিখ (ঐচ্ছিক)", "Last date to pay": "পরিশোধের শেষ তারিখ", "Today's Total Cash (same as Daily Cash) — tap to open": "আজকের মোট ক্যাশ (দৈনিক ক্যাশের সমান) — খুলতে ট্যাপ করুন", "Search bills": "বিল খুঁজুন", "Quick Sale menu": "কুইক সেল মেনু", "Metric": "মেট্রিক", "Period": "সময়কাল", "You're all caught up": "সব বিল পরিশোধ করা হয়েছে", "There are no unpaid bills right now.": "এখন কোনো অপরিশোধিত বিল নেই।", "All bills are settled. No outstanding payments.": "সব বিল পরিশোধিত। কোনো বকেয়া নেই।", "Confirm?": "নিশ্চিত?", "Clearing…": "পরিষ্কার হচ্ছে…", "Overdue ": "মেয়াদোত্তীর্ণ ", "Due in 1 day": "১ দিন বাকি", "Cash in Hand": "হাতে থাকা ক্যাশ", "Extra": "অতিরিক্ত", "Today's Daily Cash total (same as Dashboard)": "আজকের দৈনিক ক্যাশের মোট (ড্যাশবোর্ডের সমান)", "Enter Cash in Hand to compare": "তুলনা করতে হাতে থাকা ক্যাশ লিখুন", "Extra cash — more than Total Cash": "অতিরিক্ত ক্যাশ — মোট ক্যাশের চেয়ে বেশি", "Short — less than Total Cash": "ঘাটতি — মোট ক্যাশের চেয়ে কম", "Perfectly matched": "হুবহু মিলে গেছে", "Count the cash in hand and type it below. Extra = Cash in Hand − Total Cash.": "হাতে থাকা ক্যাশ গুনে নিচে লিখুন। অতিরিক্ত = হাতে থাকা ক্যাশ − মোট ক্যাশ।", "Language": "ভাষা", "Theme": "থিম", "Light": "লাইট", "Dark": "ডার্ক", "System default": "সিস্টেম ডিফল্ট", "Language and theme for this device.": "এই ডিভাইসের ভাষা ও থিম।", "Choose the app language. Saved on this device.": "অ্যাপের ভাষা বাছুন। এই ডিভাইসে সংরক্ষিত থাকবে।", "Choose how the app looks. System default follows your phone or computer.": "অ্যাপ কেমন দেখাবে বাছুন। সিস্টেম ডিফল্ট আপনার ফোন বা কম্পিউটারের সেটিং অনুসরণ করে।", "No warranty items yet. Tap “＋ New Warranty” when a customer brings one.": "এখনো কোনো ওয়ারেন্টি আইটেম নেই। ক্রেতা কিছু নিয়ে এলে “＋ নতুন ওয়ারেন্টি” চাপুন।"};
   var MSG={"Add at least one product to the cart.": "কার্টে অন্তত একটি পণ্য যোগ করুন।", "Complete a sale first.": "আগে একটি বিক্রয় সম্পন্ন করুন।", "Enter a payment amount.": "পেমেন্টের পরিমাণ লিখুন।", "Enter product, quantity, purchase cost and selling price.": "পণ্য, পরিমাণ, ক্রয়মূল্য ও বিক্রয়মূল্য লিখুন।", "Enter valid stock details.": "সঠিক স্টকের তথ্য দিন।", "Customer name is required for partial/due sales.": "আংশিক/বাকি বিক্রয়ের জন্য ক্রেতার নাম আবশ্যক।", "For partial payment, enter a paid amount less than the grand total.": "আংশিক পেমেন্টের ক্ষেত্রে সর্বমোটের চেয়ে কম পরিশোধিত টাকা লিখুন।", "Select an invoice first.": "আগে একটি ইনভয়েস বাছুন।", "This barcode is already assigned to another product.": "এই বারকোড ইতিমধ্যে অন্য পণ্যে দেওয়া আছে।", "This invoice has already been returned.": "এই ইনভয়েস ইতিমধ্যে রিটার্ন করা হয়েছে।", "There is no other device signed in.": "অন্য কোনো ডিভাইস সাইন-ইন করা নেই।", "Still connecting to the cloud. Please wait a few seconds, then try again.": "এখনো ক্লাউডে সংযুক্ত হচ্ছে। কয়েক সেকেন্ড অপেক্ষা করে আবার চেষ্টা করুন।", "Could not save this change to the cloud. Check your internet connection and try again.": "এই পরিবর্তন ক্লাউডে সংরক্ষণ করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।", "Delete this stock item?": "এই স্টক আইটেম মুছবেন?", "Log out of the current session?": "বর্তমান সেশন থেকে লগআউট করবেন?", "Reset the Quick Sale card layout to default?": "কুইক সেল কার্ডের লেআউট ডিফল্টে ফিরিয়ে নেবেন?", "Stock CSV imported successfully.": "স্টক CSV সফলভাবে ইমপোর্ট হয়েছে।", "Complete JSON backup restored successfully.": "সম্পূর্ণ JSON ব্যাকআপ সফলভাবে রিস্টোর হয়েছে।"};
   var MSG_PREFIX=[["Delete this warranty record permanently?", "এই ওয়ারেন্টি রেকর্ড চিরতরে মুছবেন?"], ["Insufficient stock. Available: ", "স্টক যথেষ্ট নেই। আছে: "], ["Insufficient stock for ", "স্টক যথেষ্ট নেই: "], ["Log this device out?", "এই ডিভাইস লগআউট করবেন?"]];
   var lang='en';try{lang=(localStorage.getItem(LANG_KEY)==='bn')?'bn':'en'}catch(e){}
@@ -5704,6 +5813,141 @@ renderWarranty();
   startObs();
   if(lang==='bn')fullPass();
   renderSettings();
+})();
+</script>
+
+<script>
+/* ===== Shop logo: cloud-synced, drag / zoom editor ===== */
+(function(){
+  "use strict";
+  var CK='mh_shop_logo_cache',MAX=100*1024,DIM=300,painted=null,saved=null;
+  var draft={img:'',cfg:cfgOf()};
+  function $(i){return document.getElementById(i)}
+  function clamp(v,a,b){return Math.min(b,Math.max(a,v))}
+  function cfgOf(c){var o={fit:'cover',zoom:1,x:0,y:0};if(c&&typeof c==='object'){if(['cover','contain','fill'].indexOf(c.fit)>-1)o.fit=c.fit;if(isFinite(c.zoom))o.zoom=clamp(+c.zoom,.5,3);if(isFinite(c.x))o.x=clamp(+c.x,-100,100);if(isFinite(c.y))o.y=clamp(+c.y,-100,100)}return o}
+  function cache(){try{var r=JSON.parse(localStorage.getItem(CK)||'null');if(r&&typeof r.img==='string')return {img:r.img,cfg:cfgOf(r.cfg)}}catch(e){}return {img:'',cfg:cfgOf()}}
+  function cloud(){try{if(typeof db!=='undefined'&&db&&typeof db.shopLogo==='string')return {img:db.shopLogo,cfg:cfgOf(db.shopLogoCfg)}}catch(e){}return null}
+  function want(){var c=cloud();if(c){try{localStorage.setItem(CK,JSON.stringify(c))}catch(e){}return c}return cache()}
+  function key(o){return o.img+'|'+JSON.stringify(cfgOf(o.cfg))}
+  function css(c){return 'object-fit:'+c.fit+';transform:translate('+c.x+'%,'+c.y+'%) scale('+c.zoom+')'}
+  function imgHTML(o){return o.img?'<img alt="Shop logo" src="'+o.img+'" style="'+css(o.cfg)+'">':'📚'}
+  function admin(){try{return typeof currentRole!=='undefined'&&currentRole==='admin'}catch(e){return false}}
+  function st(t,bad){var s=$('lgStatus');if(s){s.textContent=t;s.style.color=bad?'var(--maroon)':'var(--forest)'}}
+
+  function paintLive(force){
+    var w=want(),k=key(w);if(!force&&k===painted)return;painted=k;saved=w;
+    var a=$('sbLogo');if(a)a.innerHTML=imgHTML(w);
+    var th=$('lgThumb');if(th)th.innerHTML=imgHTML(w);
+    dirty();
+  }
+  function dirty(){var b=$('lgSave');if(!b)return;b.disabled=!draft.img||(saved&&key(draft)===key(saved))}
+  function paintEditor(){
+    var stg=$('lgStage'),img=$('lgImg'),emp=$('lgEmpty'),c=draft.cfg;
+    if(!stg)return;
+    var has=!!draft.img;
+    stg.classList.toggle('empty',!has);
+    img.hidden=!has;emp.style.display=has?'none':'';
+    if(has){if(img.getAttribute('src')!==draft.img)img.src=draft.img;img.style.cssText=css(c)}
+    var mini=$('lgMini');if(mini)mini.innerHTML=imgHTML(draft);
+    document.querySelectorAll('#lgFit button').forEach(function(b){b.classList.toggle('on',b.dataset.fit===c.fit)});
+    var z=$('lgZoom');if(z)z.value=Math.round(c.zoom*100);
+    var zv=$('lgZv');if(zv)zv.textContent=Math.round(c.zoom*100)+'%';
+    var tip=$('lgTip');if(tip)tip.style.visibility=has?'visible':'hidden';
+    dirty();
+  }
+  function loadDraft(){var w=want();draft={img:w.img,cfg:cfgOf(w.cfg)};st('');paintEditor()}
+
+  window.lgToggle=function(){
+    var p=$('lgPanel'),b=$('lgToggle');if(!p)return;
+    var open=!p.classList.contains('open');
+    p.classList.toggle('open',open);b.textContent=open?'Done':'Change';
+    if(open)loadDraft();
+  };
+  window.lgSet=function(k,v){draft.cfg[k]=v;draft.cfg=cfgOf(draft.cfg);st('');paintEditor()};
+  window.lgCenter=function(){draft.cfg.x=0;draft.cfg.y=0;draft.cfg.zoom=1;paintEditor()};
+
+  /* ---- drag / pinch / wheel / keyboard on the stage ---- */
+  function wire(){
+    var stg=$('lgStage');if(!stg||stg._w)return;stg._w=1;
+    var ptrs={},ids=[],pinch=null;
+    function w(){return stg.getBoundingClientRect().width||264}
+    function dist(){var a=ptrs[ids[0]],b=ptrs[ids[1]];return Math.hypot(a.x-b.x,a.y-b.y)||1}
+    stg.addEventListener('pointerdown',function(e){
+      if(!draft.img)return;
+      try{stg.setPointerCapture(e.pointerId)}catch(_){}
+      ptrs[e.pointerId]={x:e.clientX,y:e.clientY};
+      if(ids.indexOf(e.pointerId)<0)ids.push(e.pointerId);
+      stg.classList.add('drag');stg.focus({preventScroll:true});
+      if(ids.length===2)pinch={d:dist(),z:draft.cfg.zoom};
+      e.preventDefault();
+    });
+    stg.addEventListener('pointermove',function(e){
+      var p=ptrs[e.pointerId];if(!p)return;
+      var dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
+      if(ids.length>=2&&pinch){draft.cfg.zoom=clamp(pinch.z*dist()/pinch.d,.5,3)}
+      else{draft.cfg.x=clamp(draft.cfg.x+dx/w()*100,-100,100);draft.cfg.y=clamp(draft.cfg.y+dy/w()*100,-100,100)}
+      paintEditor();
+    });
+    function up(e){
+      if(!ptrs[e.pointerId])return;
+      delete ptrs[e.pointerId];ids=ids.filter(function(i){return i!==e.pointerId});
+      if(ids.length<2)pinch=null;
+      if(!ids.length)stg.classList.remove('drag');
+    }
+    stg.addEventListener('pointerup',up);stg.addEventListener('pointercancel',up);stg.addEventListener('lostpointercapture',up);
+    stg.addEventListener('wheel',function(e){
+      if(!draft.img)return;e.preventDefault();
+      draft.cfg.zoom=clamp(draft.cfg.zoom*Math.exp(-e.deltaY*.0015),.5,3);paintEditor();
+    },{passive:false});
+    stg.addEventListener('keydown',function(e){
+      if(!draft.img)return;var s=e.shiftKey?5:1,k=e.key,used=true;
+      if(k==='ArrowLeft')draft.cfg.x-=s;else if(k==='ArrowRight')draft.cfg.x+=s;
+      else if(k==='ArrowUp')draft.cfg.y-=s;else if(k==='ArrowDown')draft.cfg.y+=s;
+      else if(k==='+'||k==='=')draft.cfg.zoom+=.05;else if(k==='-'||k==='_')draft.cfg.zoom-=.05;
+      else used=false;
+      if(used){e.preventDefault();draft.cfg=cfgOf(draft.cfg);paintEditor()}
+    });
+  }
+
+  async function push(img,cfg){
+    if(typeof CLOUD_DOC==='undefined')throw new Error('no cloud');
+    try{db.shopLogo=img;db.shopLogoCfg=cfg}catch(e){}
+    await CLOUD_DOC.set({shopLogo:img,shopLogoCfg:cfg},{merge:true});
+  }
+  window.shopLogoPick=function(inp){
+    var f=inp.files&&inp.files[0];inp.value='';if(!f)return;
+    if(!admin())return st('Admin only.',true);
+    if(['image/png','image/jpeg','image/webp'].indexOf(f.type)<0)return st('Only PNG, JPG or WebP images are supported.',true);
+    if(f.size>MAX)return st('File is '+Math.ceil(f.size/1024)+' KB — it must be under 100 KB.',true);
+    var r=new FileReader();
+    r.onload=function(){var im=new Image();im.onload=function(){
+      if(im.naturalWidth!==DIM||im.naturalHeight!==DIM)return st('Image is '+im.naturalWidth+' × '+im.naturalHeight+' px — it must be exactly 300 × 300 px.',true);
+      draft.img=r.result;draft.cfg=cfgOf();paintEditor();st('Photo loaded. Drag to adjust, then Save.');
+    };im.onerror=function(){st('Could not read that image.',true)};im.src=r.result};
+    r.onerror=function(){st('Could not read that file.',true)};
+    r.readAsDataURL(f);
+  };
+  window.shopLogoSave=function(){
+    if(!admin())return st('Admin only.',true);
+    if(!draft.img)return st('Upload a photo first.',true);
+    st('Saving…');var cfg=cfgOf(draft.cfg),img=draft.img;
+    push(img,cfg).then(function(){paintLive(true);st('Saved — updated on all devices')}).catch(function(e){console.error(e);st('Could not save to the cloud. Check internet and try again.',true)});
+  };
+  window.shopLogoReset=function(){
+    if(!admin())return st('Admin only.',true);
+    if(!confirm('Reset the shop logo to the default icon on all devices?'))return;
+    st('Saving…');
+    push('',cfgOf()).then(function(){draft={img:'',cfg:cfgOf()};paintLive(true);paintEditor();st('Reset to default on all devices.')}).catch(function(e){console.error(e);st('Could not save to the cloud.',true)});
+  };
+
+  var o=window.openSettings;
+  window.openSettings=function(){
+    if(o)o.apply(this,arguments);
+    var p=$('lgPanel'),b=$('lgToggle');if(p){p.classList.remove('open');if(b)b.textContent='Change'}
+    wire();loadDraft();
+  };
+  function init(){wire();paintLive(true);setInterval(function(){paintLive(false)},1500)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 </body></html>
