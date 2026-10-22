@@ -1918,6 +1918,87 @@ html[data-theme="dark"] .lg-stage{background:repeating-conic-gradient(#1b2433 0%
 #dueTbl .khata-link:hover,#paidHistoryModal .khata-link:hover{background:#1a73e8;color:#fff}
 #paidHistoryModal .phg-chips button.on{background:#1a73e8;border-color:#1a73e8;color:#fff}
 #paidHistoryModal .pg-head>h2,#businessModal .pg-head>h2{color:#1a73e8}
+/* ===== Customers & Due · refresh: soft fills, no left bars, view toggle, add customer ===== */
+:root{--cu-soft:#eef3fb;--cu-soft2:#e3ebf8;--cu-ring:#1a73e833}
+html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
+/* remove the coloured bar on the left of every row */
+#dueTbl tbody tr.due-row td:first-child,#paidHistoryModal tbody tr td:first-child,#customerHistoryModal tbody tr.ch-r-dr td:first-child,#customerHistoryModal tbody tr.ch-r-cr td:first-child{box-shadow:none}
+/* softer cards */
+#bizDueTab .dk-kpi,#paidHistoryModal .dk-kpi{background:rgba(26,115,232,.09);box-shadow:none}
+#bizDueTab .dk-kpi.red,#paidHistoryModal .dk-kpi.red{background:rgba(217,48,37,.10)}
+#bizDueTab .dk-kpi.green,#paidHistoryModal .dk-kpi.green{background:rgba(24,128,56,.10)}
+#bizDueTab .dk-kpi.amber,#paidHistoryModal .dk-kpi.amber{background:rgba(251,188,4,.16)}
+#bizDueTab .dk-kpi{border-radius:18px}
+#bizDueTab .dk-ico{box-shadow:none;background:var(--card)}
+/* soft-filled boxes (inputs, selects) */
+#bizDueTab .due-search input,#bizDueTab .cu-sort select,#dueTbl .paybox input,#dueTbl .due-ext-note{background:var(--cu-soft);border:1px solid transparent;color:var(--ink)}
+#bizDueTab .due-search input:focus,#bizDueTab .cu-sort select:focus,#dueTbl .paybox input:focus,#dueTbl .due-ext-note:focus{background:var(--card);border-color:#1a73e8;box-shadow:0 0 0 3px var(--cu-ring);outline:0}
+#dueTbl .due-full{background:var(--cu-soft);border-color:transparent}
+#dueTbl .due-full:hover{background:var(--cu-soft2)}
+#dueTbl .due-ext-chk{background:var(--cu-soft);padding:6px 10px;border-radius:10px}
+.phg-search input,#chSearchWrap input{background:var(--cu-soft);border-color:transparent}
+.phg-search input:focus{background:var(--card);border-color:#1a73e8}
+/* table */
+#bizDueTab .biz-table{border-radius:18px;background:var(--card)}
+#dueTbl thead th,#custTbl thead th,#paidHistoryModal thead th{background:rgba(26,115,232,.10)!important;color:#1a73e8}
+#dueTbl tbody tr.due-row td{background:rgba(217,48,37,.04)}
+#dueTbl tbody tr.due-row:hover td{background:rgba(26,115,232,.08)}
+#paidHistoryModal tbody tr td{background:rgba(24,128,56,.05)}
+#paidHistoryModal tbody tr:hover td{background:rgba(24,128,56,.10)}
+#customerHistoryModal tbody tr.ch-r-dr td{background:rgba(217,48,37,.05)}
+#customerHistoryModal tbody tr.ch-r-cr td{background:rgba(24,128,56,.06)}
+.due-pill{display:inline-block;padding:4px 11px;border-radius:10px;background:rgba(217,48,37,.11);color:#d93025;font-weight:800;white-space:nowrap}
+.cu-ph{margin-top:3px}
+/* view toggle */
+.cu-seg{flex:none;display:inline-flex;gap:4px;padding:4px;border-radius:26px;background:var(--cu-soft);align-self:flex-start}
+.cu-seg button{border:0;background:transparent;color:var(--muted);padding:8px 16px;border-radius:22px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:none;display:inline-flex;align-items:center;gap:7px}
+.cu-seg button span{font-size:11.5px;min-width:20px;text-align:center;padding:1px 7px;border-radius:10px;background:var(--cu-soft2);color:var(--muted)}
+.cu-seg button.on{background:var(--card);color:#1a73e8;box-shadow:0 1px 5px rgba(60,64,67,.18)}
+.cu-seg button.on span{background:#1a73e8;color:#fff}
+/* sort + add customer */
+.cu-sort{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.cu-sort select{padding:10px 32px 10px 14px;border-radius:22px;font-size:13.5px;font-weight:600;text-transform:none;letter-spacing:0;cursor:pointer;min-width:140px}
+.cu-add{display:inline-flex;align-items:center;gap:8px;border:0;background:#1a73e8;color:#fff;padding:10px 18px;border-radius:22px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(26,115,232,.35)}
+.cu-add:hover{background:#1558b0}
+.cu-add svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* customers table */
+#custTbl{min-width:760px}
+#custTbl thead th{position:sticky;top:0;z-index:2;border-bottom:1px solid var(--line);font-size:11.5px;padding:12px}
+#custTbl tbody td{border-top:1px solid var(--line);vertical-align:middle;padding:11px 12px}
+#custTbl tbody tr:first-child td{border-top:0}
+#custTbl tbody tr.cu-row{cursor:pointer}
+#custTbl tbody tr.cu-row td{background:rgba(26,115,232,.03)}
+#custTbl tbody tr.cu-row:hover td{background:rgba(26,115,232,.09)}
+.cu-who{display:flex;align-items:center;gap:12px}
+.cu-who b{font-weight:700;font-size:14px}
+.cu-who small{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;max-width:260px}
+.cu-ava{flex:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#1a73e8;background:rgba(26,115,232,.14)}
+.cu-contact{font-size:12.5px;color:var(--muted);line-height:1.5}
+.cu-dash{opacity:.5}
+.cu-clear{display:inline-block;padding:4px 11px;border-radius:10px;background:rgba(24,128,56,.12);color:#188038;font-weight:700;font-size:12.5px;white-space:nowrap}
+.cu-th-act{text-align:right}
+.cu-act{text-align:right;white-space:nowrap}
+.cu-btn{border:0;background:var(--cu-soft);color:#1a73e8;padding:7px 14px;border-radius:18px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:none;margin-left:6px}
+.cu-btn:hover{background:#1a73e8;color:#fff}
+.cu-btn.ghost{color:var(--muted)}
+.cu-btn.ghost:hover{background:var(--cu-soft2);color:var(--ink)}
+/* add / edit customer popup */
+#khOv .kh-box:has(.cu-form){width:min(460px,100%)}
+.cu-form{display:flex;flex-direction:column;gap:12px}
+.cu-form label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.cu-form label i{color:#d93025;font-style:normal}
+.cu-form input,.cu-form textarea{box-sizing:border-box;width:100%;padding:11px 14px;border-radius:12px;border:1px solid transparent;background:var(--cu-soft);color:var(--ink);font-size:14.5px;font-family:inherit;text-transform:none;letter-spacing:0;font-weight:500;resize:vertical}
+.cu-form input:focus,.cu-form textarea:focus{outline:0;background:var(--card);border-color:#1a73e8;box-shadow:0 0 0 3px var(--cu-ring)}
+.cu-form input[readonly]{opacity:.75;cursor:not-allowed}
+.cu-hint{font-size:12px;color:var(--muted);background:var(--cu-soft);padding:8px 12px;border-radius:10px;margin-top:-4px}
+.cu-btns{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:4px}
+.cu-btns>div{display:flex;gap:8px}
+.cu-btns button{border:0;padding:10px 18px;border-radius:22px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:none}
+.cu-save{background:#1a73e8;color:#fff}.cu-save:disabled{opacity:.6;cursor:wait}
+.cu-cancel{background:var(--cu-soft);color:var(--ink)}
+.cu-del{background:transparent;color:#d93025;padding-left:6px!important}
+.cu-del:hover{background:rgba(217,48,37,.10)}
+@media(max-width:700px){.cu-sort span{display:none}.cu-sort select{min-width:0}.cu-add span{display:none}.cu-add{padding:10px 12px}.cu-seg button{padding:8px 12px}}
 </style></head>
 <body class="booting">
 
@@ -2368,19 +2449,33 @@ html[data-theme="dark"] .lg-stage{background:repeating-conic-gradient(#1b2433 0%
 <div class="biz-tab" id="bizDueTab"><div class="biz-card">
 <div class="dk-kpis">
   <div class="dk-kpi red"><span class="dk-ico" aria-hidden="true">💰</span><div><small>Total due</small><b id="dueKpiTotal">৳0.00</b></div></div>
-  <div class="dk-kpi"><span class="dk-ico" aria-hidden="true">👥</span><div><small>Customers</small><b id="dueKpiCust">0</b></div></div>
+  <div class="dk-kpi"><span class="dk-ico" aria-hidden="true">👥</span><div><small>Customers with due</small><b id="dueKpiCust">0</b></div></div>
   <div class="dk-kpi green"><span class="dk-ico" aria-hidden="true">🧾</span><div><small>Due entries</small><b id="dueKpiEntries">0</b></div></div>
   <div class="dk-kpi amber"><span class="dk-ico" aria-hidden="true">⏳</span><div><small>Oldest due</small><b id="dueKpiOld">—</b></div></div>
 </div>
+<div class="cu-seg" id="cuSeg" role="tablist" aria-label="View">
+  <button type="button" class="on" data-v="due" role="tab" onclick="setDueView('due')">🧾 Dues <span id="cuCntDue">0</span></button>
+  <button type="button" data-v="cust" role="tab" onclick="setDueView('cust')">👥 Customers <span id="cuCntCust">0</span></button>
+</div>
 <div class="due-bar">
-  <div class="due-search"><span class="due-s-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><input id="dueSearch" type="search" placeholder="Search customer, invoice, note, amount…" oninput="onDueSearch(this.value)" autocomplete="off" aria-label="Search dues"></div>
+  <div class="due-search"><span class="due-s-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><input id="dueSearch" type="search" placeholder="Search customer, phone, invoice, note, amount…" oninput="onDueSearch(this.value)" autocomplete="off" aria-label="Search dues and customers"></div>
+  <label class="cu-sort" title="Sort list"><span>Sort</span><select id="dueSort" onchange="setDueSort(this.value)" aria-label="Sort by">
+    <option value="latest">Latest first</option>
+    <option value="oldest">Oldest first</option>
+    <option value="due_hi">Highest due</option>
+    <option value="due_lo">Lowest due</option>
+    <option value="name_az">Name A → Z</option>
+    <option value="name_za">Name Z → A</option>
+  </select></label>
+  <button type="button" class="cu-add" onclick="openCustomerForm()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M18 8v6M15 11h6"/></svg><span>Add Customer</span></button>
   <div class="due-sum" id="dueSummary"></div>
   <div class="due-menu-wrap">
     <button type="button" class="due-dots" id="dueDots" aria-label="More options" aria-haspopup="true" aria-expanded="false" onclick="toggleDueMenu(event)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
     <div class="due-menu" id="dueMenu" hidden onclick="event.stopPropagation()"><button type="button" class="dm-act" onclick="openPaidHistory()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>Paid History</button></div>
   </div>
 </div>
-<div class="biz-table"><table id="dueTbl"><thead><tr><th class="c-inv">Invoice</th><th>Customer</th><th class="c-date">Date</th><th class="num c-total">Total</th><th class="num c-paid">Paid</th><th class="num">Due</th><th>Payment</th><th class="c-ext">Paid external · Note</th></tr></thead><tbody id="dueTable"></tbody></table></div></div></div>
+<div class="biz-table" id="dueWrap"><table id="dueTbl"><thead><tr><th class="c-inv">Invoice</th><th>Customer</th><th class="c-date">Date</th><th class="num c-total">Total</th><th class="num c-paid">Paid</th><th class="num">Due</th><th>Payment</th><th class="c-ext">Paid external · Note</th></tr></thead><tbody id="dueTable"></tbody></table></div>
+<div class="biz-table" id="custWrap" hidden><table id="custTbl"><thead><tr><th>Customer</th><th>Contact</th><th class="num">Entries</th><th class="num">Due balance</th><th>Last activity</th><th class="cu-th-act">Actions</th></tr></thead><tbody id="custTable"></tbody></table></div></div></div>
 <div class="biz-tab" id="bizProfitTab"><div class="biz-grid"><div class="biz-kpi"><div class="k">Sales Revenue</div><div class="v" id="plRevenue">৳0.00</div></div><div class="biz-kpi"><div class="k">Estimated COGS</div><div class="v" id="plCogs">৳0.00</div></div><div class="biz-kpi"><div class="k">Gross Profit</div><div class="v positive" id="plGross">৳0.00</div></div><div class="biz-kpi"><div class="k">Margin</div><div class="v" id="plMargin">0.0%</div></div></div><div class="biz-card"><h3>Profit by Product</h3><div class="biz-table"><table><thead><tr><th>Product</th><th class="num">Qty Sold</th><th class="num">Revenue</th><th class="num">COGS</th><th class="num">Profit</th></tr></thead><tbody id="plTable"></tbody></table></div></div></div>
 </div></div>
 
@@ -2938,7 +3033,7 @@ function updateCloudReady(){
 let legacyEmbeddedSales=null, migrationAttempted=false;
 const $=id=>document.getElementById(id), money=n=>'৳'+Number(n||0).toFixed(2), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function setSyncPill(text,isWarning){const el=document.getElementById('cloudSyncPill');if(!el)return;el.textContent=text;el.style.background=isWarning?'#fbeaea':'';el.style.color=isWarning?'var(--maroon)':''}
-function ensureSchema(){if(!Array.isArray(db.warranty))db.warranty=[];if(!Array.isArray(db.billDuePayments))db.billDuePayments=[];if(!Array.isArray(db.stockRegister))db.stockRegister=[];if(!Array.isArray(db.purchases))db.purchases=[];if(!Array.isArray(db.dailyCashHistory))db.dailyCashHistory=[];if(!Array.isArray(db.stock))db.stock=[];db.stock.forEach(x=>{if(x.barcode===undefined||x.barcode===null)x.barcode='';if(x.service===undefined)x.service=false;if(x.quick===undefined)x.quick=false;if(x.lowStock===undefined||x.lowStock===null||x.lowStock==='')x.lowStock=5});if(!db.qsaleColors||typeof db.qsaleColors!=='object')db.qsaleColors={};ensureDailyCash()}
+function ensureSchema(){if(!Array.isArray(db.customers))db.customers=[];if(!Array.isArray(db.warranty))db.warranty=[];if(!Array.isArray(db.billDuePayments))db.billDuePayments=[];if(!Array.isArray(db.stockRegister))db.stockRegister=[];if(!Array.isArray(db.purchases))db.purchases=[];if(!Array.isArray(db.dailyCashHistory))db.dailyCashHistory=[];if(!Array.isArray(db.stock))db.stock=[];db.stock.forEach(x=>{if(x.barcode===undefined||x.barcode===null)x.barcode='';if(x.service===undefined)x.service=false;if(x.quick===undefined)x.quick=false;if(x.lowStock===undefined||x.lowStock===null||x.lowStock==='')x.lowStock=5});if(!db.qsaleColors||typeof db.qsaleColors!=='object')db.qsaleColors={};ensureDailyCash()}
 /* ---- Daily Cash / Others pad ----
    Manual cash-tracking sheet for sales that are NOT tied to stock items
    (e.g. photocopy, services, misc). Every calendar day gets its own
@@ -4246,7 +4341,7 @@ function startCloudSync(){
 }
 function seed(){/* no demo data — new shops start with an empty stock list */}
 function isToday(s){let d=new Date(s),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate()}
-function render(){renderFast();renderToday();renderSales();if(typeof renderInvoiceHistory==='function'&&$('invoiceHistoryModal')&&$('invoiceHistoryModal').classList.contains('show'))renderInvoiceHistory();}
+function render(){renderFast();renderToday();renderSales();if(typeof liveCustView==='function')liveCustView();if(typeof renderInvoiceHistory==='function'&&$('invoiceHistoryModal')&&$('invoiceHistoryModal').classList.contains('show'))renderInvoiceHistory();}
 // Bill alerts depend on "today's date", not just data changes — recheck
 // periodically so a bill quietly crosses into (or out of) the 2-day
 // warning window even if nothing else in the app changes meanwhile.
@@ -5135,6 +5230,11 @@ function khataNames(force){
   const dm=new Map();
   (db.sales||[]).forEach(x=>{if(x&&!x.returned&&x.customer){const d=dueAmount(x);if(d>0){const k=khKey(x.customer);dm.set(k,(dm.get(k)||0)+d)}}});
   billDueList().forEach(x=>{if(x.remaining>0){const k=khKey(x.name);dm.set(k,(dm.get(k)||0)+x.remaining)}});
+  (Array.isArray(db.customers)?db.customers:[]).forEach(c=>{
+    const nm=khClean(c&&c.name);if(!nm)return;const k=nm.toLowerCase();
+    const hit=out.find(x=>x.key===k);
+    if(hit){hit.name=nm}else out.push({key:k,name:nm,count:0,last:+(c.updatedAt||c.createdAt)||0});
+  });
   _khCache=out;_khDue=dm;_khAt=now;return out;
 }
 function khataCanon(n){const c=khClean(n);if(!c||/^#|^\d+$/.test(c))return c;const e=khataNames(true).find(x=>x.key===c.toLowerCase());return e?e.name:c}
@@ -5180,10 +5280,10 @@ document.addEventListener('keydown',e=>{
 function dueItems(){
   const st=businessStats(),out=[];
   st.valid.filter(x=>dueAmount(x)>0).forEach(x=>{
-    out.push({kind:'inv',key:'inv_'+x.invoiceNo,label:x.invoiceNo,customer:x.customer||'Walk-in',date:new Date(x.date),total:+x.total||0,paid:+(x.paid??(x.total-dueAmount(x)))||0,due:dueAmount(x),log:Array.isArray(x.payLog)?x.payLog:[],pid:'pay_'+x.invoiceNo,act:"collectDue('"+esc(x.invoiceNo)+"')"});
+    out.push({kind:'inv',key:'inv_'+x.invoiceNo,label:x.invoiceNo,customer:x.customer||'Walk-in',date:new Date(x.date),last:Math.max(+new Date(x.date)||0,+new Date(x.lastPaymentAt||0)||0,...(Array.isArray(x.payLog)?x.payLog:[]).map(p=>+(p&&p.at)||0)),total:+x.total||0,paid:+(x.paid??(x.total-dueAmount(x)))||0,due:dueAmount(x),log:Array.isArray(x.payLog)?x.payLog:[],pid:'pay_'+x.invoiceNo,act:"collectDue('"+esc(x.invoiceNo)+"')"});
   });
   billDueList().filter(x=>x.remaining>0).forEach(x=>{
-    out.push({kind:'bill',key:'bill_'+x.id,label:'⚡ Electricity Bill',customer:x.name||'—',date:new Date(x.date+'T00:00:00'),total:x.amount,paid:x.amount-x.remaining,due:x.remaining,log:(db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id),pid:'pay_bill_'+x.id,act:"collectBillDue('"+esc(x.id)+"')"});
+    out.push({kind:'bill',key:'bill_'+x.id,label:'⚡ Electricity Bill',customer:x.name||'—',date:new Date(x.date+'T00:00:00'),last:Math.max(+new Date(x.date+'T00:00:00')||0,...(db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id).map(p=>+p.at||0)),total:x.amount,paid:x.amount-x.remaining,due:x.remaining,log:(db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id),pid:'pay_bill_'+x.id,act:"collectBillDue('"+esc(x.id)+"')"});
   });
   return out;
 }
@@ -5191,27 +5291,152 @@ function dueRowHtml(it){
   const age=Math.max(0,Math.floor((Date.now()-it.date.getTime())/86400000));
   const nm=it.customer==='Walk-in'||it.customer==='—'?esc(it.customer):`<a href="#" class="khata-link" data-n="${esc(it.customer)}" title="Open khata (ledger)" onclick="openKhata(this.dataset.n);return false">${esc(it.customer)}</a>`;
   const hist=(it.customer==='Walk-in'||it.customer==='—')?'':` data-n="${esc(it.customer)}" onclick="dueRowClick(event,this)" title="Open customer history"`;
-  return `<tr class="${hist?'due-row':''}"${hist}><td class="c-inv">${esc(it.label)}</td><td>${nm}${dueExtLogHtml(it.log)}</td><td class="c-date">${esc(it.date.toLocaleDateString())}<div class="due-age${age>30?' old':''}" title="Days since this due was created">${age}d</div></td><td class="num c-total">${money(it.total)}</td><td class="num c-paid">${money(it.paid)}</td><td class="num due">${money(it.due)}</td><td><div class="paybox"><input id="${esc(it.pid)}" type="number" min="0" step=".01" placeholder="Amount"><button type="button" class="due-full" title="Fill the full remaining due" onclick="fillDueFull('${esc(it.pid)}',${it.due})">Full</button><button class="green" onclick="${it.act}">Receive</button></div></td>${dueExtCellHtml(it.key)}</tr>`;
+  return `<tr class="${hist?'due-row':''}"${hist}><td class="c-inv">${esc(it.label)}</td><td>${nm}${custPhoneHtml(it.customer)}${dueExtLogHtml(it.log)}</td><td class="c-date">${esc(it.date.toLocaleDateString())}<div class="due-age${age>30?' old':''}" title="Days since this due was created">${age}d</div></td><td class="num c-total">${money(it.total)}</td><td class="num c-paid">${money(it.paid)}</td><td class="num due"><span class="due-pill">${money(it.due)}</span></td><td><div class="paybox"><input id="${esc(it.pid)}" type="number" min="0" step=".01" placeholder="Amount"><button type="button" class="due-full" title="Fill the full remaining due" onclick="fillDueFull('${esc(it.pid)}',${it.due})">Full</button><button class="green" onclick="${it.act}">Receive</button></div></td>${dueExtCellHtml(it.key)}</tr>`;
 }
 function dueVisibleList(){
   let list=dueItems();
   const q=dueQuery.trim().toLowerCase();
-  if(q)list=list.filter(it=>[it.label,it.customer,it.date.toLocaleDateString(),String(it.due),String(it.total)].concat(it.log.map(p=>(p&&p.note)||'')).join(' ').toLowerCase().includes(q));
-  list.sort((a,b)=>a.date-b.date);
+  if(q)list=list.filter(it=>[it.label,it.customer,custPhoneOf(it.customer),it.date.toLocaleDateString(),String(it.due),String(it.total)].concat(it.log.map(p=>(p&&p.note)||'')).join(' ').toLowerCase().includes(q));
+  sortRows(list,it=>it.last,it=>it.due,it=>it.customer);
   return list;
 }
 function renderDueTable(){
   const tb=$('dueTable');if(!tb)return;
-  const total=dueItems().length,list=dueVisibleList();
-  const sum=list.reduce((a,x)=>a+x.due,0);
-  const custs=new Set(list.map(x=>khKey(x.customer))).size;
-  const sm=$('dueSummary');
-  if(sm)sm.innerHTML=(dueQuery.trim()&&total!==list.length?`<span class="due-of">Showing ${list.length} of ${total}</span>`:'');
+  _custReg=custRegMap();
+  const all=dueItems(),total=all.length,list=dueVisibleList();
+  const isDue=(dueView==='due');
+  const kl=isDue?list:all;
+  const sum=kl.reduce((a,x)=>a+x.due,0);
+  const custs=new Set(kl.map(x=>khKey(x.customer))).size;
   {const set=(id,v)=>{const e=$(id);if(e)e.textContent=v};
-   set('dueKpiTotal',money(sum));set('dueKpiCust',String(custs));set('dueKpiEntries',String(list.length));
-   const oldest=list.length?Math.max(0,Math.floor((Date.now()-Math.min.apply(null,list.map(x=>x.date.getTime())))/86400000)):-1;
+   set('dueKpiTotal',money(sum));set('dueKpiCust',String(custs));set('dueKpiEntries',String(kl.length));
+   const oldest=kl.length?Math.max(0,Math.floor((Date.now()-Math.min.apply(null,kl.map(x=>x.date.getTime())))/86400000)):-1;
    set('dueKpiOld',oldest<0?'—':oldest+(oldest===1?' day':' days'))}
-  tb.innerHTML=list.length?list.map(dueRowHtml).join(''):'<tr><td colspan="8" class="empty">'+(total?'No dues match your search.':'No outstanding dues.')+'</td></tr>';
+  const dw=$('dueWrap'),cw=$('custWrap');if(dw)dw.hidden=!isDue;if(cw)cw.hidden=isDue;
+  document.querySelectorAll('#cuSeg button').forEach(b=>{const on=b.dataset.v===dueView;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
+  const sel=$('dueSort');if(sel&&sel.value!==dueSort)sel.value=dueSort;
+  const sm=$('dueSummary');
+  const cl=custList(),cvis=custVisible(cl);
+  {const e=$('cuCntDue');if(e)e.textContent=String(total);const f=$('cuCntCust');if(f)f.textContent=String(cl.length)}
+  if(isDue){
+    if(sm)sm.innerHTML=(dueQuery.trim()&&total!==list.length?`<span class="due-of">Showing ${list.length} of ${total}</span>`:'');
+    tb.innerHTML=list.length?list.map(dueRowHtml).join(''):'<tr><td colspan="8" class="empty">'+(total?'No dues match your search.':'No outstanding dues.')+'</td></tr>';
+  }else{
+    if(sm)sm.innerHTML=(dueQuery.trim()&&cl.length!==cvis.length?`<span class="due-of">Showing ${cvis.length} of ${cl.length}</span>`:'');
+    renderCustomerList(cvis,cl.length);
+  }
+}
+
+/* ---- Customers & Due · view toggle, sort, saved customers (live in Firebase: main_db.customers) ---- */
+const DUE_UI_KEY='mohammadia_due_ui_v2';
+let dueView='due',dueSort='latest',_custReg=new Map();
+try{const u=JSON.parse(localStorage.getItem(DUE_UI_KEY)||'{}');if(u.view==='cust'||u.view==='due')dueView=u.view;if(['latest','oldest','due_hi','due_lo','name_az','name_za'].indexOf(u.sort)>-1)dueSort=u.sort}catch(e){}
+function saveDueUi(){try{localStorage.setItem(DUE_UI_KEY,JSON.stringify({view:dueView,sort:dueSort}))}catch(e){}}
+function setDueView(v){dueView=(v==='cust')?'cust':'due';saveDueUi();renderDueTable()}
+function setDueSort(v){dueSort=v||'latest';saveDueUi();renderDueTable()}
+function sortRows(list,getT,getD,getN){
+  const nm=(a,b)=>String(getN(a)||'').localeCompare(String(getN(b)||''),undefined,{sensitivity:'base'});
+  const cmp={
+    latest:(a,b)=>(getT(b)-getT(a))||nm(a,b),
+    oldest:(a,b)=>(getT(a)-getT(b))||nm(a,b),
+    due_hi:(a,b)=>(getD(b)-getD(a))||(getT(b)-getT(a)),
+    due_lo:(a,b)=>(getD(a)-getD(b))||(getT(b)-getT(a)),
+    name_az:(a,b)=>nm(a,b)||(getT(b)-getT(a)),
+    name_za:(a,b)=>nm(b,a)||(getT(b)-getT(a))
+  }[dueSort]||((a,b)=>getT(b)-getT(a));
+  return list.sort(cmp);
+}
+function custRegMap(){const m=new Map();(Array.isArray(db.customers)?db.customers:[]).forEach(c=>{if(c&&c.name)m.set(khKey(c.name),c)});return m}
+function custPhoneOf(name){const c=_custReg.get(khKey(name));return c&&c.phone?c.phone:''}
+function custPhoneHtml(name){const p=custPhoneOf(name);return p?`<div class="due-age cu-ph">📞 ${esc(p)}</div>`:''}
+function custList(){
+  const reg=custRegMap();
+  return khataNames(true).map(n=>{
+    const c=reg.get(n.key)||null,edit=c?(+c.updatedAt||+c.createdAt||0):0;
+    return{key:n.key,name:(c&&c.name)||n.name,phone:(c&&c.phone)||'',address:(c&&c.address)||'',note:(c&&c.note)||'',saved:!!c,entries:n.count,due:(_khDue&&_khDue.get(n.key))||0,last:Math.max(+n.last||0,edit)};
+  });
+}
+function custVisible(list){
+  const q=dueQuery.trim().toLowerCase();
+  let l=q?list.filter(c=>[c.name,c.phone,c.address,c.note,String(Math.round(c.due))].join(' ').toLowerCase().includes(q)):list.slice();
+  sortRows(l,c=>c.last,c=>c.due,c=>c.name);
+  return l;
+}
+function custRowHtml(c){
+  const av=(c.name.trim().charAt(0)||'?').toUpperCase();
+  const contact=[c.phone?'📞 '+esc(c.phone):'',c.address?esc(c.address):''].filter(Boolean).join('<br>');
+  const last=c.last?esc(new Date(c.last).toLocaleDateString()):'—';
+  return `<tr class="cu-row" data-n="${esc(c.name)}" onclick="custRowClick(event,this)"><td><div class="cu-who"><span class="cu-ava">${esc(av)}</span><div><b>${esc(c.name)}</b>${c.note?`<small>${esc(c.note)}</small>`:''}</div></div></td><td class="cu-contact">${contact||'<span class="cu-dash">—</span>'}</td><td class="num">${c.entries}</td><td class="num">${c.due>0.009?`<span class="due-pill">${money(c.due)}</span>`:'<span class="cu-clear">Clear ✓</span>'}</td><td>${last}</td><td class="cu-act"><button type="button" class="cu-btn" data-n="${esc(c.name)}" onclick="openCustomerForm(this.dataset.n)">✎ Edit</button><button type="button" class="cu-btn ghost" data-n="${esc(c.name)}" onclick="openKhata(this.dataset.n)">Khata</button></td></tr>`;
+}
+function renderCustomerList(list,totalAll){
+  const tb=$('custTable');if(!tb)return;
+  tb.innerHTML=list.length?list.map(custRowHtml).join(''):`<tr><td colspan="6"><div class="phg-empty"><b>${totalAll?'No customers match your search':'No customers yet'}</b>${totalAll?'Try a different search.':'Tap “Add Customer” to save your first customer.'}</div></td></tr>`;
+}
+function custRowClick(e,tr){if(e.target.closest('input,button,label,a,select,textarea'))return;openKhata(tr.dataset.n)}
+/* Other devices change customers in Firebase -> refresh the (input-free) customer list live. */
+function liveCustView(){
+  try{
+    if(dueView!=='cust')return;
+    const m=$('businessModal');if(!m||!m.classList.contains('show'))return;
+    if($('khOv'))return;
+    const tab=$('bizDueTab');if(!tab||!tab.classList.contains('active'))return;
+    renderDueTable();
+  }catch(e){}
+}
+
+/* ---- Add / Edit customer ---- */
+function openCustomerForm(name){
+  if(!requireAdmin('Add Customer'))return;
+  const key=khKey(name||''),reg=custRegMap(),c=key?reg.get(key):null;
+  const info=key?khataNames(true).find(n=>n.key===key):null;
+  const locked=!!(info&&info.count>0);           // name is tied to invoices / bills -> keep it
+  const editing=!!key;
+  const v=(c&&c.name)||(info&&info.name)||'';
+  const body=`<div class="cu-form">
+    <label>Customer name <i>*</i><input id="cuName" type="text" maxlength="80" autocomplete="off" value="${esc(v)}" ${locked?'readonly title="Name is linked to invoices and stays the same"':''} placeholder="e.g. Rahim Uddin"></label>
+    ${locked?'<div class="cu-hint">🔒 This name is linked to invoices / bills, so it stays the same. You can edit the details below.</div>':''}
+    <label>Phone / SMS no<input id="cuPhone" type="tel" maxlength="30" autocomplete="off" value="${esc((c&&c.phone)||'')}" placeholder="01XXXXXXXXX"></label>
+    <label>Address<input id="cuAddr" type="text" maxlength="140" autocomplete="off" value="${esc((c&&c.address)||'')}" placeholder="Village / area (optional)"></label>
+    <label>Note<textarea id="cuNote" rows="2" maxlength="200" placeholder="Anything to remember (optional)">${esc((c&&c.note)||'')}</textarea></label>
+    <div class="cu-btns">${c?`<button type="button" class="cu-del" onclick="deleteCustomer('${esc(c.id)}')">Remove</button>`:'<span></span>'}<div><button type="button" class="cu-cancel" onclick="khClose()">Cancel</button><button type="button" class="cu-save" id="cuSave" onclick="saveCustomer('${c?esc(c.id):''}')">${c?'Save changes':'Add Customer'}</button></div></div>
+  </div>`;
+  khOverlay(editing?'✎ Edit Customer':'➕ Add Customer',body);
+  const f=$('khOv');if(f)f.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName!=='TEXTAREA'){e.preventDefault();const b=$('cuSave');if(b)b.click()}});
+  setTimeout(()=>{const i=$(locked?'cuPhone':'cuName');if(i)i.focus()},60);
+}
+async function saveCustomer(id){
+  if(!requireAdmin('Save Customer'))return;
+  if(!requireSynced('Save Customer'))return;
+  const nameEl=$('cuName'),name=khClean(nameEl&&nameEl.value),phone=($('cuPhone').value||'').trim(),address=($('cuAddr').value||'').trim(),note=($('cuNote').value||'').trim();
+  if(!name){alert('Please enter the customer name.');if(nameEl)nameEl.focus();return}
+  const k=khKey(name);
+  if((db.customers||[]).some(c=>c&&c.id!==id&&khKey(c.name)===k)){alert('A customer named “'+name+'” is already saved.');return}
+  const btn=$('cuSave');if(btn){btn.disabled=true;btn.textContent='Saving…'}
+  const now=Date.now();let dup=false;
+  const ok=await mutateCloud(data=>{
+    data.customers=Array.isArray(data.customers)?data.customers:[];
+    if(id){
+      const c=data.customers.find(x=>x&&x.id===id);if(!c)return false;
+      if(!(nameEl&&nameEl.readOnly)){if(data.customers.some(x=>x&&x.id!==id&&khKey(x.name)===k)){dup=true;return false}c.name=name}
+      c.phone=phone;c.address=address;c.note=note;c.updatedAt=now;
+    }else{
+      if(data.customers.some(x=>x&&khKey(x.name)===k)){dup=true;return false}
+      data.customers.push({id:'cu'+now.toString(36)+Math.random().toString(36).slice(2,6),name,phone,address,note,createdAt:now,updatedAt:now,by:currentRole||''});
+    }
+  });
+  if(btn){btn.disabled=false;btn.textContent=id?'Save changes':'Add Customer'}
+  if(!ok){if(dup)alert('A customer named “'+name+'” is already saved.');return}
+  khataNames(true);khClose();
+  dueView='cust';dueSort='latest';saveDueUi();
+  renderDueTable();dueToast(id?'✓ Customer updated':'✓ Customer added');
+}
+async function deleteCustomer(id){
+  if(!requireAdmin('Remove Customer'))return;
+  if(!requireSynced('Remove Customer'))return;
+  if(!confirm('Remove the saved details of this customer?\n\n(Existing invoices and dues are not deleted.)'))return;
+  const ok=await mutateCloud(data=>{data.customers=(Array.isArray(data.customers)?data.customers:[]).filter(x=>x&&x.id!==id)});
+  if(!ok)return;
+  khataNames(true);khClose();renderDueTable();dueToast('Customer removed');
 }
 
 /* ---- shared popup ---- */
