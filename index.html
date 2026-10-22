@@ -254,6 +254,13 @@ body.modal-open.cash-open .bill-alert-fab.show svg{width:28px;height:28px}
 .ba-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid #e9edf3}
 .ba-toolbar b{font-size:15px;color:var(--ink)}.ba-toolbar span{margin-left:8px;font-size:12px;color:#6b7280}
 .ba-toolbar .bill-alert-paidall{width:auto;margin:0;padding:9px 18px;border-radius:10px;font-weight:700}
+.ba-toolbar .ba-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1 1 280px;justify-content:flex-end}
+.ba-search{position:relative;flex:1 1 220px;max-width:340px;min-width:170px}
+.ba-search .ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.6;pointer-events:none}
+.ba-search input{width:100%;box-sizing:border-box;padding:9px 32px 9px 32px;border:1.5px solid #d5dbe5;border-radius:10px;font-size:13.5px;background:#fff;color:var(--ink);outline:none;margin:0}
+.ba-search input:focus{border-color:#188038;box-shadow:0 0 0 3px rgba(24,128,56,.14)}
+.ba-search .x{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;border:0;background:#e6e9ee;color:#555;font-size:12px;line-height:22px;padding:0;cursor:pointer;display:none}
+.ba-search.has .x{display:block}
 .ba-scroll{overflow:auto}
 .ba-table{width:100%;border-collapse:collapse;min-width:680px}
 .ba-table th{position:sticky;top:0;background:#f7f9fc;text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#6b7280;padding:11px 16px;border-bottom:1px solid #e9edf3;white-space:nowrap}
@@ -273,6 +280,9 @@ body.modal-open.cash-open .bill-alert-fab.show svg{width:28px;height:28px}
 .ba-empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:52px 20px;color:#6b7280;text-align:center}
 .ba-empty .ck{width:56px;height:56px;border-radius:16px;background:#e6f4ea;color:#188038;font-size:28px;display:flex;align-items:center;justify-content:center;font-weight:900}
 .ba-empty b{color:var(--ink);font-size:16px}
+.ba-table .ba-pay:active{transform:scale(.94)}
+html[data-theme="dark"] .ba-search input{background-color:rgb(21,25,30)!important;color:rgb(232,234,237)!important;border-color:rgb(60,66,74)!important}
+html[data-theme="dark"] .ba-search .x{background-color:rgb(48,54,62)!important;color:rgb(200,204,210)!important}
 @media(max-width:960px){.ba-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.ba-kpi b{font-size:19px}.ba-kpi{padding:12px}}
 #billAlertModal{z-index:900}
@@ -1999,6 +2009,21 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
 .cu-del{background:transparent;color:#d93025;padding-left:6px!important}
 .cu-del:hover{background:rgba(217,48,37,.10)}
 @media(max-width:700px){.cu-sort span{display:none}.cu-sort select{min-width:0}.cu-add span{display:none}.cu-add{padding:10px 12px}.cu-seg button{padding:8px 12px}}
+/* ===== Customer profile · manual due / receive payment ===== */
+.ch-forms{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ch-fcard{border-radius:16px;padding:14px 16px;background:rgba(26,115,232,.07)}
+.ch-fcard.due{background:rgba(217,48,37,.08)}.ch-fcard.paid{background:rgba(24,128,56,.09)}
+.ch-fcard h4{margin:0 0 2px;font-size:14px}
+.ch-fcard p{margin:0 0 10px;font-size:11.5px;color:var(--muted)}
+.ch-frow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ch-frow input[type=number],.ch-frow input[type=text]{flex:1 1 120px;min-width:0;box-sizing:border-box;padding:10px 13px;border-radius:12px;border:1px solid transparent;background:var(--card);color:var(--ink);font-size:14px}
+.ch-frow input:focus{outline:0;border-color:#1a73e8;box-shadow:0 0 0 3px var(--cu-ring)}
+.ch-frow .due-ext-chk{background:var(--card);padding:8px 10px;border-radius:10px}
+.ch-frow .due-full{background:var(--card);border-color:transparent}
+.ch-fbtn{border:0;color:#fff;padding:10px 18px;border-radius:22px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:none}
+.ch-fbtn.red{background:#d93025}.ch-fbtn.red:hover{background:#b3261e}
+.ch-fbtn.green{background:#188038}.ch-fbtn.green:hover{background:#0f6a2c}
+@media(max-width:900px){.ch-forms{grid-template-columns:1fr}}
 </style></head>
 <body class="booting">
 
@@ -2502,6 +2527,12 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
   <div class="dk-kpi amber"><span class="dk-ico" aria-hidden="true">⚖️</span><div><small>Balance due</small><b id="chBal">৳0.00</b></div></div>
   <div class="dk-kpi"><span class="dk-ico" aria-hidden="true">🧾</span><div><small>Payments</small><b id="chPays">0</b></div></div>
 </div>
+<div class="ch-forms">
+  <div class="ch-fcard due"><h4>➕ Add due manually</h4><p>Only recorded in this customer’s profile — not added to Daily Cash.</p>
+    <div class="ch-frow"><input id="chDueAmt" type="number" min="0" step=".01" placeholder="Due amount ৳" onkeydown="if(event.key==='Enter'){event.preventDefault();khataAddDue()}"><input id="chDueNote" type="text" maxlength="120" placeholder="Note (optional)" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();khataAddDue()}"><button type="button" class="ch-fbtn red" onclick="khataAddDue()">Add due</button></div></div>
+  <div class="ch-fcard paid"><h4>💵 Receive payment</h4><p>Paid goes to Daily Cash → Due Paid like before (oldest due is cleared first).</p>
+    <div class="ch-frow"><input id="chPayAmt" type="number" min="0" step=".01" placeholder="Paid amount ৳" onkeydown="if(event.key==='Enter'){event.preventDefault();khataReceive()}"><button type="button" class="due-full" onclick="khataFull()">Full</button><input id="chPayNote" type="text" maxlength="120" placeholder="Note (optional)" autocomplete="off"><label class="due-ext-chk" title="Tick if received another way (bKash/bank). It will NOT be added to Daily Cash."><input type="checkbox" id="chPayExt"><span>Paid external</span></label><button type="button" class="ch-fbtn green" onclick="khataReceive()">Receive</button></div></div>
+</div>
 <div class="phg-tools">
   <div class="phg-search" id="chSearchWrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="chSearch" type="search" placeholder="Search invoice, note, amount, date…" oninput="renderCustomerHistory()" autocomplete="off" aria-label="Search history"><button type="button" class="phg-clear" onclick="var i=document.getElementById('chSearch');i.value='';i.focus();renderCustomerHistory()" aria-label="Clear search">✕</button></div>
   <div class="phg-chips" id="chChips"><button type="button" class="on" data-m="all" onclick="setCustomerHistoryMode('all')">All</button><button type="button" data-m="dr" onclick="setCustomerHistoryMode('dr')">Due given</button><button type="button" data-m="cr" onclick="setCustomerHistoryMode('cr')">Payments</button></div>
@@ -2541,7 +2572,7 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
 
 <div class="modal" id="dailyCashStatementModal" aria-hidden="true"><div class="modalbox wide-modal stock-register-modal"><button class="close" onclick="closeActionModal('dailyCashStatementModal')" aria-label="Close">✕ Close</button><h2>📄 Daily Cash Statement</h2><p class="hint">Every day's Daily Cash entries are listed below. Tap a date to open and view it (past days are read-only).</p><div class="tablewrap stock-history-wrap"><table><thead><tr><th>Date</th><th class="num">Electricity Bill</th><th class="num">Due Paid</th><th class="num">Others</th><th class="num">Cost</th><th class="num">Sale (POS)</th><th class="num">Total Cash</th></tr></thead><tbody id="dailyCashStatementTable"></tbody></table></div></div></div>
 
-<div class="modal" id="billAlertModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('billAlertModal')" aria-label="Close">✕ Close</button><h2>⚠️ Bill Alerts</h2><div id="billAlertStatus"></div><p id="billAlertHint"></p><div class="ba-card"><div class="ba-toolbar"><div><b id="baTitle">Pending bills</b><span id="baSub"></span></div><button type="button" id="billAlertPaidAllBtn" class="steel bill-alert-paidall" onclick="markAllBillsPaid(this)" style="display:none">✓✓ Paid All</button></div><div id="billAlertList"></div></div></div></div></div>
+<div class="modal" id="billAlertModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('billAlertModal')" aria-label="Close">✕ Close</button><h2>⚠️ Bill Alerts</h2><div id="billAlertStatus"></div><p id="billAlertHint"></p><div class="ba-card"><div class="ba-toolbar"><div><b id="baTitle">Pending bills</b><span id="baSub"></span></div><div class="ba-tools"><div class="ba-search" id="baSearchWrap"><span class="ico">🔍</span><input type="search" id="baSearch" placeholder="Search bills" autocomplete="off" spellcheck="false" oninput="billAlertSearch(this.value)" onkeydown="if(event.key==='Escape'){billAlertSearch('');this.value=''}"><button type="button" class="x" aria-label="Clear search" onclick="billAlertSearch('');document.getElementById('baSearch').value='';document.getElementById('baSearch').focus()">✕</button></div><button type="button" id="billAlertPaidAllBtn" class="steel bill-alert-paidall" onclick="markAllBillsPaid(this)" style="display:none">✓✓ Paid All</button></div></div><div id="billAlertList"></div></div></div></div></div>
 
 <div class="modal" id="reconModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('reconModal')" aria-label="Close">✕ Close</button><h2>🧮 Cash Reconciliation</h2><p class="hint">Count the cash in hand and type it below. Extra = Cash in Hand − Total Cash.</p>
   <div class="recon-layout">
@@ -2610,6 +2641,13 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
     </div>
   </div>
 </div></div>
+
+<div id="billPaidOverlay" class="sale-success-overlay no-print" aria-hidden="true">
+  <div class="sale-success-box">
+    <div class="sale-success-check">✓</div>
+    <div class="sale-success-text" id="billPaidOverlayText">Bill Paid!</div>
+  </div>
+</div>
 
 <div id="paidAllSuccessOverlay" class="paidall-success-overlay" aria-hidden="true">
   <div class="paidall-success-inner">
@@ -3029,11 +3067,12 @@ function updateCloudReady(){
   // which of the two listeners happened to settle first.
   if(cloudReady)migrateLegacySalesIfNeeded();
   if(cloudReady&&typeof cashPending!=='undefined'&&cashPending.length)flushCashPending();
+  if(cloudReady&&typeof billPaidPending!=='undefined'&&billPaidPending.length)flushBillPaid();
 }
 let legacyEmbeddedSales=null, migrationAttempted=false;
 const $=id=>document.getElementById(id), money=n=>'৳'+Number(n||0).toFixed(2), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function setSyncPill(text,isWarning){const el=document.getElementById('cloudSyncPill');if(!el)return;el.textContent=text;el.style.background=isWarning?'#fbeaea':'';el.style.color=isWarning?'var(--maroon)':''}
-function ensureSchema(){if(!Array.isArray(db.customers))db.customers=[];if(!Array.isArray(db.warranty))db.warranty=[];if(!Array.isArray(db.billDuePayments))db.billDuePayments=[];if(!Array.isArray(db.stockRegister))db.stockRegister=[];if(!Array.isArray(db.purchases))db.purchases=[];if(!Array.isArray(db.dailyCashHistory))db.dailyCashHistory=[];if(!Array.isArray(db.stock))db.stock=[];db.stock.forEach(x=>{if(x.barcode===undefined||x.barcode===null)x.barcode='';if(x.service===undefined)x.service=false;if(x.quick===undefined)x.quick=false;if(x.lowStock===undefined||x.lowStock===null||x.lowStock==='')x.lowStock=5});if(!db.qsaleColors||typeof db.qsaleColors!=='object')db.qsaleColors={};ensureDailyCash()}
+function ensureSchema(){if(!Array.isArray(db.customers))db.customers=[];if(!Array.isArray(db.manualDues))db.manualDues=[];if(!Array.isArray(db.manualPays))db.manualPays=[];if(!Array.isArray(db.warranty))db.warranty=[];if(!Array.isArray(db.billDuePayments))db.billDuePayments=[];if(!Array.isArray(db.stockRegister))db.stockRegister=[];if(!Array.isArray(db.purchases))db.purchases=[];if(!Array.isArray(db.dailyCashHistory))db.dailyCashHistory=[];if(!Array.isArray(db.stock))db.stock=[];db.stock.forEach(x=>{if(x.barcode===undefined||x.barcode===null)x.barcode='';if(x.service===undefined)x.service=false;if(x.quick===undefined)x.quick=false;if(x.lowStock===undefined||x.lowStock===null||x.lowStock==='')x.lowStock=5});if(!db.qsaleColors||typeof db.qsaleColors!=='object')db.qsaleColors={};ensureDailyCash()}
 /* ---- Daily Cash / Others pad ----
    Manual cash-tracking sheet for sales that are NOT tied to stock items
    (e.g. photocopy, services, misc). Every calendar day gets its own
@@ -3353,8 +3392,9 @@ function billAlertEntries(){
     let day=byDate[dateKey];
     (day&&Array.isArray(day.bill)?day.bill:[]).forEach((row,idx)=>{
       if(!row||!row.dueDate)return;
+      if(billIsPendingPaid(dateKey,idx,row))return;   // paid just now — hidden instantly while the cloud write finishes
       let info=computeBillAlert(dateKey,row.dueDate);
-      list.push({dateKey,idx,note:row.note||'',amount:+row.amount||0,dueDate:row.dueDate,daysLeft:info.daysLeft,at:row.at||0});
+      list.push({dateKey,idx,id:row.id||'',note:row.note||'',amount:+row.amount||0,dueDate:row.dueDate,daysLeft:info.daysLeft,at:row.at||0});
     });
   });
   list.sort((a,b)=>a.daysLeft-b.daysLeft);
@@ -3497,13 +3537,37 @@ function updateBillTicker(dueToday){
   track.style.animationDuration=Math.max(14,Math.round(msg.length*0.17))+'s';
   el.classList.add('show');
 }
+let billAlertQuery='';
+function billAlertHay(x){
+  let od=x.daysLeft<0?('overdue '+Math.abs(x.daysLeft)+' day'):(x.daysLeft===0?'due today':'due in '+x.daysLeft+' day');
+  return [x.note,String(x.amount),money(x.amount),fmtDMY(x.dateKey),x.dateKey,fmtDMY(x.dueDate),x.dueDate,od].join(' ').toLowerCase();
+}
+function billAlertFilter(list){
+  const q=billAlertQuery.trim().toLowerCase();
+  if(!q)return list;
+  const toks=q.split(/\s+/).filter(Boolean);
+  return list.filter(x=>{const h=billAlertHay(x);return toks.every(t=>h.indexOf(t)!==-1)});
+}
+function billAlertVisible(){return billAlertFilter(billAlertModalEntries())}
+function billAlertSearch(v){
+  billAlertQuery=String(v||'');
+  const w=$('baSearchWrap');if(w)w.classList.toggle('has',!!billAlertQuery);
+  renderBillAlertList(billAlertModalEntries());
+}
+function billPaidAllLabel(){
+  const n=billAlertQuery.trim()?billAlertVisible().length:0;
+  return n?('✓✓ Paid All ('+n+')'):'✓✓ Paid All';
+}
 function openBillAlertModal(){
+  billAlertQuery='';{const i=$('baSearch');if(i)i.value='';const w=$('baSearchWrap');if(w)w.classList.remove('has')}
   renderBillAlertList(billAlertModalEntries());
   openActionModal('billAlertModal');
 }
 function renderBillAlertList(entries){
   let host=$('billAlertList'),statusHost=$('billAlertStatus'),paidAllBtn=$('billAlertPaidAllBtn'),hintHost=$('billAlertHint');
   if(!host)return;
+  const allEntries=entries;                 // KPIs / banner always describe ALL pending bills
+  const shown=billAlertFilter(allEntries);  // the table and Paid All follow the search
   let overdue=entries.filter(x=>x.daysLeft<0),today=entries.filter(x=>x.daysLeft===0),soon=entries.filter(x=>x.daysLeft>0&&x.daysLeft<=2);
   let urgent=entries.filter(x=>x.daysLeft<=2);
   let sum=l=>l.reduce((t,x)=>t+(+x.amount||0),0);
@@ -3523,17 +3587,18 @@ function renderBillAlertList(entries){
   }
   let ttl=$('baTitle'),sub=$('baSub');
   if(ttl)ttl.textContent=entries.length?'Pending bills':'No pending bills';
-  if(sub)sub.textContent=entries.length?`${entries.length} unpaid · sorted by last date`:'';
+  if(sub)sub.textContent=entries.length?(billAlertQuery.trim()?`${shown.length} of ${entries.length} shown · sorted by last date`:`${entries.length} unpaid · sorted by last date`):'';
   if(paidAllBtn){
     clearTimeout(paidAllBtn._confirmTimer);
     paidAllBtn.disabled=false;
     paidAllBtn.dataset.confirm='0';
     paidAllBtn.classList.remove('confirm-pending');
-    paidAllBtn.textContent='✓✓ Paid All';
-    paidAllBtn.style.display=entries.length>0?'':'none';
+    paidAllBtn.textContent=billPaidAllLabel();
+    paidAllBtn.style.display=shown.length>0?'':'none';
   }
+  if(entries.length&&!shown.length){host.innerHTML='<div class="ba-empty"><div class="ck">🔍</div><b>No bills match your search</b><span>Try a different name, amount or date.</span></div>';return}
   if(!entries.length){host.innerHTML='<div class="ba-empty"><div class="ck">✓</div><b>You\'re all caught up</b><span>There are no unpaid bills right now.</span></div>';return}
-  let rows=entries.map((x,i)=>{
+  let rows=shown.map((x,i)=>{
     let od=x.daysLeft<0;
     let daysTxt=od?`Overdue · ${Math.abs(x.daysLeft)} day${Math.abs(x.daysLeft)>1?'s':''}`:(x.daysLeft===0?'Due today':`Due in ${x.daysLeft} day${x.daysLeft>1?'s':''}`);
     let cls=od?'overdue':(x.daysLeft===0?'today':(x.daysLeft<=2?'soon':'ok'));
@@ -3568,72 +3633,123 @@ async function clearBillDueDate(dateKey,idx){
   if(ok&&cashViewDate===dateKey)loadCashView(dateKey);
   return ok;
 }
-async function markBillPaid(btn,dateKey,idx){
-  if(btn.dataset.confirm!=='1'){
-    btn.dataset.confirm='1';
-    btn.classList.add('confirm-pending');
-    btn.textContent='Confirm?';
-    clearTimeout(btn._confirmTimer);
-    btn._confirmTimer=setTimeout(()=>{btn.dataset.confirm='0';btn.classList.remove('confirm-pending');btn.textContent='✓ Paid'},3000);
-    return;
-  }
-  clearTimeout(btn._confirmTimer);
-  btn.disabled=true;btn.textContent='Clearing…';
-  const ok=await clearBillDueDate(dateKey,idx);
-  if(ok){renderBillAlerts()}
-  else{btn.disabled=false;btn.dataset.confirm='0';btn.classList.remove('confirm-pending');btn.textContent='✓ Paid'}
+/* ---------- INSTANT "Paid" (local-first, same idea as Complete Sale) ----------
+   Tapping Paid hides the bill and plays the green check at once. The actual cloud write is
+   queued (saved on this device, survives refresh) and sent in the background, one batched
+   transaction at a time, retrying automatically if offline. */
+const BILL_PAID_KEY='mohammadia_billpaid_v1';
+let billPaidPending=[];try{billPaidPending=JSON.parse(localStorage.getItem(BILL_PAID_KEY)||'[]')||[]}catch(e){billPaidPending=[]}
+let billPaidFlushing=false,billPaidRetry=null;
+function persistBillPaid(){try{localStorage.setItem(BILL_PAID_KEY,JSON.stringify(billPaidPending))}catch(e){}}
+function billPendingMatch(p,dateKey,idx,row){
+  if(p.dateKey!==dateKey)return false;
+  if(p.id)return !!row&&row.id===p.id;
+  return p.idx===idx;
 }
-async function markAllBillsPaid(btn){
-  let urgent=billAlertModalEntries();
-  if(!urgent.length)return;
-  if(btn.dataset.confirm!=='1'){
-    btn.dataset.confirm='1';
-    btn.classList.add('confirm-pending');
-    btn.textContent=`Confirm — mark ${urgent.length} paid?`;
-    clearTimeout(btn._confirmTimer);
-    btn._confirmTimer=setTimeout(()=>{btn.dataset.confirm='0';btn.classList.remove('confirm-pending');btn.textContent='✓✓ Paid All'},3000);
-    return;
-  }
-  clearTimeout(btn._confirmTimer);
-  btn.disabled=true;btn.textContent='Clearing…';
-  const entries=urgent.slice();
-  const resetBtn=()=>{btn.disabled=false;btn.dataset.confirm='0';btn.classList.remove('confirm-pending');btn.textContent='✓✓ Paid All'};
-  if(!cloudReady){alert('Still connecting to the cloud. Please wait a few seconds, then try again.');resetBtn();return}
-  // Clear every entry's Last Date in ONE cloud transaction (instead of one
-  // transaction per bill). The old loop fired a separate transaction per
-  // bill and, if any single one failed or the sequence was interrupted
-  // (slow/dropped connection), only some bills ended up cleared — so
-  // "Paid All" would silently leave a few behind. A single atomic write
-  // either clears all of them or none, and always finishes in one round trip.
+function billIsPendingPaid(dateKey,idx,row){
+  for(let i=0;i<billPaidPending.length;i++)if(billPendingMatch(billPaidPending[i],dateKey,idx,row))return true;
+  return false;
+}
+function billPaidOverlayShow(text){
+  const ov=$('billPaidOverlay');if(!ov)return;
+  const t=$('billPaidOverlayText');if(t)t.textContent=text||'Bill Paid!';
+  ov.classList.remove('show');void ov.offsetWidth;ov.classList.add('show');
+  billPaidOverlayShow._at=Date.now();
+  clearTimeout(billPaidOverlayShow._t);
+  billPaidOverlayShow._t=setTimeout(()=>ov.classList.remove('show'),1000);
+}
+/* Local, instant part: queue it, patch today's open draft, repaint. */
+function billQueuePaid(list){
   const paidOn=todayKey();
-  const ok=await mutateCloud(data=>{
-    data.dailyCashByDate=data.dailyCashByDate||{};
-    entries.forEach(x=>{
-      let day=data.dailyCashByDate[x.dateKey];
-      if(day&&Array.isArray(day.bill)&&day.bill[x.idx]){day.bill[x.idx].dueDate='';day.bill[x.idx].paidAt=paidOn}
-    });
+  list.forEach(x=>{
+    if(billPaidPending.some(p=>p.dateKey===x.dateKey&&((x.id&&p.id===x.id)||(!x.id&&!p.id&&p.idx===x.idx))))return;
+    billPaidPending.push({dateKey:x.dateKey,idx:x.idx,id:x.id||'',paidOn});
+    if(cashDraft&&cashViewDate===x.dateKey&&cashDraft.bill&&cashDraft.bill[x.idx]&&(!x.id||cashDraft.bill[x.idx].id===x.id)){
+      cashDraft.bill[x.idx].dueDate='';cashDraft.bill[x.idx].paidAt=paidOn;
+    }
   });
+  persistBillPaid();
+  try{if(typeof renderCashColumn==='function'&&cashDraft&&$('cashGrid'))renderCashColumn('bill',CASH_COUNTS.bill)}catch(e){}
+  renderBillAlerts();
+}
+function scheduleBillPaidRetry(ms){clearTimeout(billPaidRetry);billPaidRetry=setTimeout(flushBillPaid,ms||5000)}
+async function flushBillPaid(){
+  if(billPaidFlushing||!billPaidPending.length)return;
+  if(!cloudReady){scheduleBillPaidRetry(3000);return}
+  billPaidFlushing=true;
+  const batch=billPaidPending.slice();
+  // Entries that are still waiting in the Daily Cash upload queue are finished there (no cloud copy yet).
+  const queued=[],cloud=[];
+  batch.forEach(p=>{
+    const pp=p.id?cashPending.find(q=>q.date===p.dateKey&&q.col==='bill'&&q.entry&&q.entry.id===p.id):null;
+    if(pp){pp.entry.dueDate='';pp.entry.paidAt=p.paidOn;queued.push(p)}else cloud.push(p);
+  });
+  if(queued.length){persistCashPending();flushCashPending()}
+  let ok=true;
+  if(cloud.length){
+    const res=await mutateCloud(data=>{
+      data.dailyCashByDate=data.dailyCashByDate||{};
+      cloud.forEach(p=>{
+        const day=data.dailyCashByDate[p.dateKey];
+        if(!day||!Array.isArray(day.bill))return;
+        let i=-1;
+        if(p.id)i=day.bill.findIndex(r=>r&&r.id===p.id);else if(day.bill[p.idx])i=p.idx;
+        if(i>=0){day.bill[i].dueDate='';day.bill[i].paidAt=p.paidOn}
+      });
+    },{silent:true});
+    ok=!!res;
+  }
+  billPaidFlushing=false;
   if(ok){
-    // Keep today's in-memory draft (if open) in sync so it doesn't get
-    // overwritten back to "unpaid" by the next autosave.
-    entries.forEach(x=>{
-      if(cashDraft&&cashViewDate===x.dateKey&&cashDraft.bill&&cashDraft.bill[x.idx]){cashDraft.bill[x.idx].dueDate='';cashDraft.bill[x.idx].paidAt=paidOn}
+    const done=new Set(batch);
+    billPaidPending=billPaidPending.filter(p=>!done.has(p));persistBillPaid();
+    batch.forEach(p=>{
+      if(cashDraft&&cashViewDate===p.dateKey&&cashDraft.bill){
+        const r=p.id?cashDraft.bill.find(r=>r&&r.id===p.id):cashDraft.bill[p.idx];
+        if(r){r.dueDate='';r.paidAt=p.paidOn}
+      }
     });
-    if(cashViewDate)loadCashView(cashViewDate);
+    setSyncPill('☁️ Synced',false);
     renderBillAlerts();
-    closeActionModal('billAlertModal');
-  } else {
-    resetBtn();
+    if(billPaidPending.length)flushBillPaid();
+  }else{
+    setSyncPill('⚠️ Offline — paid bills kept on this device, retrying',true);
+    scheduleBillPaidRetry(5000);
   }
 }
-/* Floating green check shown after "Paid All" clears every bill — fades in,
-   bobs slowly a couple of times, then fades back out on its own. */
+window.addEventListener('online',()=>{flushBillPaid()});
+/* One bill: instant. No waiting, no confirm step. */
+function markBillPaid(btn,dateKey,idx){
+  const e=billAlertEntries().find(x=>x.dateKey===dateKey&&x.idx===idx);
+  if(!e)return;
+  if(btn){btn.disabled=true;btn.textContent='✓ Paid';btn.classList.add('confirm-pending');btn.style.background='#188038';btn.style.borderColor='#188038';btn.style.color='#fff'}
+  billQueuePaid([e]);
+  billPaidOverlayShow('Bill Paid!');
+  flushBillPaid();
+}
+/* Paid All (follows the search filter): one confirm tap, then instant. */
+function markAllBillsPaid(btn){
+  let list=billAlertVisible();
+  if(!list.length)return;
+  if(btn.dataset.confirm!=='1'){
+    btn.dataset.confirm='1';
+    btn.classList.add('confirm-pending');
+    btn.textContent=`Confirm — mark ${list.length} paid?`;
+    clearTimeout(btn._confirmTimer);
+    btn._confirmTimer=setTimeout(()=>{btn.dataset.confirm='0';btn.classList.remove('confirm-pending');btn.textContent=billPaidAllLabel()},3000);
+    return;
+  }
+  clearTimeout(btn._confirmTimer);
+  btn.dataset.confirm='0';btn.classList.remove('confirm-pending');
+  billQueuePaid(list);
+  billPaidOverlayShow(list.length>1?'All Paid!':'Bill Paid!');
+  if(!billAlertModalEntries().length)closeActionModal('billAlertModal');
+  flushBillPaid();
+}
+/* Same green-check pop as Complete Sale — also fires when the last bill is cleared from another device. */
 function showPaidAllSuccess(){
-  let ov=$('paidAllSuccessOverlay');
-  if(!ov)return;
-  ov.classList.add('show');
-  clearTimeout(ov._hideTimer);
-  ov._hideTimer=setTimeout(()=>ov.classList.remove('show'),2800);
+  if(Date.now()-(billPaidOverlayShow._at||0)<1500)return; // already shown by the Paid button
+  billPaidOverlayShow('All bills cleared');
 }
 function updateDueName(i,val){return;if(!cashDraft||cashViewDate!==todayKey())return;if(!cashDraft.due[i])cashDraft.due[i]={name:'',amount:0};cashDraft.due[i].name=val;scheduleCashAutoSave()}
 function updateDueAmount(i,val){return;if(!cashDraft||cashViewDate!==todayKey())return;if(!cashDraft.due[i])cashDraft.due[i]={name:'',amount:0};cashDraft.due[i].amount=+val||0;recalcCashTotals();scheduleCashAutoSave()}
@@ -5223,6 +5339,7 @@ function khataNames(force){
   const m=new Map();
   const add=(name,ts)=>{name=khClean(name);if(!name||name==='Walk-in'||name==='—'||/^#|^\d+$/.test(name))return;const k=name.toLowerCase();let e=m.get(k);if(!e){e={forms:new Map(),count:0,last:0};m.set(k,e)}e.forms.set(name,(e.forms.get(name)||0)+1);e.count++;if(ts>e.last)e.last=ts};
   (db.sales||[]).forEach(x=>{if(x&&!x.returned&&x.customer)add(x.customer,+new Date(x.date)||0)});
+  (db.manualDues||[]).forEach(x=>{if(x&&x.customer)add(x.customer,+x.at||0)});
   const days=db.dailyCashByDate||{};
   Object.keys(days).forEach(k=>{const d=days[k]||{},ts=+new Date(k+'T00:00:00')||0;(d.bill||[]).forEach(r=>{if(r&&r.note)add(r.note,ts)});(d.due||[]).forEach(r=>{if(r&&r.name)add(r.name,ts)})});
   const out=[];
@@ -5230,6 +5347,7 @@ function khataNames(force){
   const dm=new Map();
   (db.sales||[]).forEach(x=>{if(x&&!x.returned&&x.customer){const d=dueAmount(x);if(d>0){const k=khKey(x.customer);dm.set(k,(dm.get(k)||0)+d)}}});
   billDueList().forEach(x=>{if(x.remaining>0){const k=khKey(x.name);dm.set(k,(dm.get(k)||0)+x.remaining)}});
+  manualDueList().forEach(x=>{if(x.remaining>0){const k=khKey(x.customer);dm.set(k,(dm.get(k)||0)+x.remaining)}});
   (Array.isArray(db.customers)?db.customers:[]).forEach(c=>{
     const nm=khClean(c&&c.name);if(!nm)return;const k=nm.toLowerCase();
     const hit=out.find(x=>x.key===k);
@@ -5280,10 +5398,13 @@ document.addEventListener('keydown',e=>{
 function dueItems(){
   const st=businessStats(),out=[];
   st.valid.filter(x=>dueAmount(x)>0).forEach(x=>{
-    out.push({kind:'inv',key:'inv_'+x.invoiceNo,label:x.invoiceNo,customer:x.customer||'Walk-in',date:new Date(x.date),last:Math.max(+new Date(x.date)||0,+new Date(x.lastPaymentAt||0)||0,...(Array.isArray(x.payLog)?x.payLog:[]).map(p=>+(p&&p.at)||0)),total:+x.total||0,paid:+(x.paid??(x.total-dueAmount(x)))||0,due:dueAmount(x),log:Array.isArray(x.payLog)?x.payLog:[],pid:'pay_'+x.invoiceNo,act:"collectDue('"+esc(x.invoiceNo)+"')"});
+    out.push({kind:'inv',ref:x.invoiceNo,key:'inv_'+x.invoiceNo,label:x.invoiceNo,customer:x.customer||'Walk-in',date:new Date(x.date),last:Math.max(+new Date(x.date)||0,+new Date(x.lastPaymentAt||0)||0,...(Array.isArray(x.payLog)?x.payLog:[]).map(p=>+(p&&p.at)||0)),total:+x.total||0,paid:+(x.paid??(x.total-dueAmount(x)))||0,due:dueAmount(x),log:Array.isArray(x.payLog)?x.payLog:[],pid:'pay_'+x.invoiceNo,act:"collectDue('"+esc(x.invoiceNo)+"')"});
   });
   billDueList().filter(x=>x.remaining>0).forEach(x=>{
-    out.push({kind:'bill',key:'bill_'+x.id,label:'⚡ Electricity Bill',customer:x.name||'—',date:new Date(x.date+'T00:00:00'),last:Math.max(+new Date(x.date+'T00:00:00')||0,...(db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id).map(p=>+p.at||0)),total:x.amount,paid:x.amount-x.remaining,due:x.remaining,log:(db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id),pid:'pay_bill_'+x.id,act:"collectBillDue('"+esc(x.id)+"')"});
+    out.push({kind:'bill',ref:x.id,key:'bill_'+x.id,label:'⚡ Electricity Bill',customer:x.name||'—',date:new Date(x.date+'T00:00:00'),last:Math.max(+new Date(x.date+'T00:00:00')||0,...(db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id).map(p=>+p.at||0)),total:x.amount,paid:x.amount-x.remaining,due:x.remaining,log:(db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id),pid:'pay_bill_'+x.id,act:"collectBillDue('"+esc(x.id)+"')"});
+  });
+  manualDueList().filter(x=>x.remaining>0).forEach(x=>{
+    out.push({kind:'man',ref:x.id,key:'man_'+x.id,label:'✍ Manual due'+(x.note?' · '+x.note:''),customer:x.customer||'—',date:new Date(x.at),last:Math.max(x.at,...x.pays.map(p=>+p.at||0)),total:x.amount,paid:x.amount-x.remaining,due:x.remaining,log:x.pays,pid:'pay_man_'+x.id,act:"collectManualDue('"+esc(x.id)+"')"});
   });
   return out;
 }
@@ -5439,6 +5560,130 @@ async function deleteCustomer(id){
   khataNames(true);khClose();renderDueTable();dueToast('Customer removed');
 }
 
+/* ---- Manual dues (profile): ledger-only due, never added to Daily Cash; payments go to Daily Cash → Due Paid ---- */
+function manualDueList(){
+  const pays=Array.isArray(db.manualPays)?db.manualPays:[];
+  return (Array.isArray(db.manualDues)?db.manualDues:[]).filter(x=>x&&x.id).map(x=>{
+    const ps=pays.filter(p=>p&&p.dueId===x.id),paid=ps.reduce((a,p)=>a+(+p.amount||0),0),amount=+x.amount||0;
+    return{id:x.id,customer:x.customer||'',amount,note:x.note||'',at:+x.at||0,pays:ps,paid,remaining:Math.max(0,Math.round((amount-paid)*100)/100)};
+  });
+}
+async function payManualCore(id,amount,X){
+  const cur=manualDueList().find(x=>x.id===id);
+  if(!cur||amount>cur.remaining+0.0001)return false;
+  const r=await mutateCloud(data=>{
+    const d=(Array.isArray(data.manualDues)?data.manualDues:[]).find(x=>x&&x.id===id);if(!d)return false;
+    data.manualPays=Array.isArray(data.manualPays)?data.manualPays:[];
+    const rec=data.manualPays.filter(p=>p&&p.dueId===id).reduce((a,p)=>a+(+p.amount||0),0);
+    if(amount>Math.max(0,(+d.amount||0)-rec)+0.0001)return false;
+    data.manualPays.push({id:'mp'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),dueId:id,customer:d.customer,amount:amount,at:Date.now(),by:currentRole||'',ext:!!X.ext,note:X.note||''});
+  },{silent:true});
+  return !!r;
+}
+async function payBillCore(id,amount,X){
+  const cur=billDueList().find(x=>x.id===id);
+  if(!cur||amount>cur.remaining+0.0001)return false;
+  const r=await mutateCloud(data=>{
+    const d=data.dailyCashByDate&&data.dailyCashByDate[cur.date];
+    const row=d&&Array.isArray(d.bill)?d.bill.find(q=>q&&q.id===id):null;if(!row)return false;
+    data.billDuePayments=Array.isArray(data.billDuePayments)?data.billDuePayments:[];
+    const rec=data.billDuePayments.filter(p=>p&&p.entryId===id).reduce((a,p)=>a+(+p.amount||0),0);
+    if(amount>Math.max(0,billDuePart(row)-rec)+0.0001)return false;
+    data.billDuePayments.push({id:'bp'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),entryId:id,date:cur.date,amount:amount,at:Date.now(),by:currentRole||'',ext:!!X.ext,note:X.note||''});
+  },{silent:true});
+  return !!r;
+}
+async function payInvoiceCore(invoice,amount,X){
+  const saleRef=SALES_COL.doc(invoice);let finalSale=null;
+  try{
+    await fsdb.runTransaction(async(tx)=>{
+      const snap=await tx.get(saleRef);if(!snap.exists)throw new Error('Not found');
+      let q=snap.data();
+      const due=Math.max(0,Number(q.due??(q.total-(q.paid??q.total))));
+      if(amount>due+0.0001)throw new Error('Too much');
+      q.paid=(q.paid||0)+amount;q.due=Math.max(0,q.total-q.paid);q.paymentStatus=q.due?'partial':'paid';q.lastPaymentAt=new Date().toISOString();
+      q.payLog=Array.isArray(q.payLog)?q.payLog:[];q.payLog.push({amount:amount,ext:!!X.ext,note:X.note||'',at:Date.now(),by:currentRole||''});
+      if(X.ext)q.extPaid=(+q.extPaid||0)+amount;
+      tx.set(saleRef,q);finalSale=q;
+    });
+  }catch(err){console.error('Invoice payment failed:',err);return false}
+  const i=db.sales.findIndex(x=>x.invoiceNo===invoice);if(i>=0)db.sales[i]=finalSale;
+  schedulePersistDb();return true;
+}
+/* "Receive" button on a manual-due row in the Dues table */
+async function collectManualDue(id){
+  if(!requireAdmin('Receive Due Payment'))return;
+  if(!requireSynced('Receive Due Payment'))return;
+  const input=$('pay_man_'+id);if(!input)return;
+  const amount=+input.value;if(!(amount>0))return alert('Enter a payment amount.');
+  const cur=manualDueList().find(x=>x.id===id);
+  if(!cur||amount>cur.remaining+0.0001)return alert('Payment could not be recorded. Check the remaining due.');
+  if(_dueBusy)return;_dueBusy=true;
+  const X=readDueExt('man_'+id);
+  const ok=await payManualCore(id,amount,X);
+  _dueBusy=false;
+  if(!ok)return alert('Could not save this payment. Check your internet connection and the remaining due, then try again.');
+  khataNames(true);render();renderBusinessCenter();
+  if(!X.ext)await postDuePaidToDailyCash(cur.customer||'Walk-in',amount,'manual:'+id,X.note);
+  else dueToast('✓ Recorded as paid external — not added to Total Cash');
+}
+/* Add a due by hand from the customer profile (ledger only) */
+async function khataAddDue(){
+  if(!requireAdmin('Add Due'))return;
+  if(!requireSynced('Add Due'))return;
+  const name=khClean(_chName);if(!name)return;
+  const amount=Math.round((+$('chDueAmt').value||0)*100)/100,note=($('chDueNote').value||'').trim();
+  if(!(amount>0)){alert('Enter the due amount.');$('chDueAmt').focus();return}
+  const now=Date.now();
+  const ok=await mutateCloud(data=>{
+    data.manualDues=Array.isArray(data.manualDues)?data.manualDues:[];
+    data.manualDues.push({id:'md'+now.toString(36)+Math.random().toString(36).slice(2,6),customer:name,amount,note,at:now,by:currentRole||''});
+  });
+  if(!ok)return;
+  $('chDueAmt').value='';$('chDueNote').value='';
+  khataNames(true);render();renderBusinessCenter();openKhata(name,true);
+  dueToast('✓ ৳'+amount.toLocaleString('en-US',{maximumFractionDigits:2})+' due added to '+name);
+}
+function khataFull(){
+  const it=dueItems().filter(x=>khKey(x.customer)===khKey(_chName)),t=it.reduce((a,x)=>a+x.due,0);
+  const i=$('chPayAmt');if(i){i.value=Math.round(t*100)/100;i.focus()}
+}
+/* Receive a payment from the profile: clears the oldest dues first, Due Paid in Daily Cash like before */
+async function khataReceive(){
+  if(!requireAdmin('Receive Due Payment'))return;
+  if(!requireSynced('Receive Due Payment'))return;
+  const key=khKey(_chName),name=khClean(_chName);
+  const amount=Math.round((+$('chPayAmt').value||0)*100)/100;
+  if(!(amount>0)){alert('Enter a payment amount.');$('chPayAmt').focus();return}
+  const items=dueItems().filter(it=>khKey(it.customer)===key).sort((a,b)=>a.date-b.date);
+  const total=items.reduce((a,x)=>a+x.due,0);
+  if(!items.length)return alert('This customer has no due to receive.');
+  if(amount>total+0.0001)return alert('Amount is more than the balance due ('+money(total)+').');
+  if(items.some(it=>it.kind==='inv'&&((db.sales.find(x=>x.invoiceNo===it.ref)||{}).pending)))return alert('A sale of this customer is still syncing to the cloud. Please try again in a moment.');
+  if(_dueBusy)return;_dueBusy=true;
+  const X={ext:!!$('chPayExt').checked,note:($('chPayNote').value||'').trim()};
+  let left=amount,applied=0,failed=false;
+  for(const it of items){
+    if(left<=0.0001)break;
+    const a=Math.round(Math.min(left,it.due)*100)/100;
+    let ok=false;
+    if(it.kind==='inv')ok=await payInvoiceCore(it.ref,a,X);
+    else if(it.kind==='bill')ok=await payBillCore(it.ref,a,X);
+    else ok=await payManualCore(it.ref,a,X);
+    if(!ok){failed=true;break}
+    left=Math.round((left-a)*100)/100;applied=Math.round((applied+a)*100)/100;
+  }
+  _dueBusy=false;
+  khataNames(true);render();renderBusinessCenter();
+  if(applied>0){
+    if(!X.ext)await postDuePaidToDailyCash(name,applied,'khata',X.note);
+    else dueToast('✓ Recorded as paid external — not added to Total Cash');
+  }
+  if(failed)alert('Only '+money(applied)+' of '+money(amount)+' could be saved. Please check your internet connection and try again.');
+  $('chPayAmt').value='';$('chPayNote').value='';$('chPayExt').checked=false;
+  openKhata(name,true);
+}
+
 /* ---- shared popup ---- */
 function khClose(){const ov=document.getElementById('khOv');if(!ov)return;document.removeEventListener('keydown',ov._k,true);ov.remove()}
 function khOverlay(titleHtml,bodyHtml){
@@ -5480,22 +5725,27 @@ function khataLedger(key){
     rows.push({ts,desc:'⚡ Electricity Bill',sub:'Bill '+money(x.amount)+(x.cash>0?' · paid now '+money(x.cash):''),dr:x.due,cr:0});
     (db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id).forEach(p=>rows.push({ts:+p.at||ts,desc:'Payment · ⚡ Bill',sub:(p.ext?'External':'Cash → Daily Cash')+(p.note?' · '+p.note:''),dr:0,cr:+p.amount||0}));
   });
+  manualDueList().forEach(x=>{
+    if(khKey(x.customer)!==key)return;
+    rows.push({ts:x.at,desc:'✍ Manual due',sub:x.note||'Added manually',dr:x.amount,cr:0});
+    x.pays.forEach(p=>rows.push({ts:+p.at||x.at,desc:'Payment · ✍ Manual due',sub:(p.ext?'External':'Cash → Daily Cash')+(p.note?' · '+p.note:''),dr:0,cr:+p.amount||0}));
+  });
   rows.sort((a,b)=>(a.ts-b.ts)||(b.dr-a.dr));
   let bal=0;rows.forEach(r=>{bal+=r.dr-r.cr;r.bal=bal});
   return rows;
 }
-let _chRows=[],_chMode='all',_chFrom='due';
+let _chRows=[],_chMode='all',_chFrom='due',_chName='';
 function dueRowClick(e,tr){if(e.target.closest('input,button,label,a,select,textarea'))return;openKhata(tr.dataset.n)}
-function openKhata(name){
+function openKhata(name,keep){
   if(!requireAdmin('Customer History'))return;
-  const ph=$('paidHistoryModal');_chFrom=(ph&&ph.classList.contains('show'))?'ph':'due';
+  if(!keep){const ph=$('paidHistoryModal');_chFrom=(ph&&ph.classList.contains('show'))?'ph':'due'}
   const key=khKey(name),rows=khataLedger(key);
   const hit=khataNames(true).find(n=>n.key===key),nm=hit?hit.name:khClean(name);
   const dr=rows.reduce((a,r)=>a+r.dr,0),cr=rows.reduce((a,r)=>a+r.cr,0);
   const liveDue=_khDue&&_khDue.get(key);const bal=(liveDue!==undefined)?liveDue:Math.max(0,dr-cr);
   _chRows=rows.slice().reverse();_chMode='all';
   const set=(id,v)=>{const e=$(id);if(e)e.textContent=v};
-  set('chAva',(nm.trim().charAt(0)||'?').toUpperCase());set('chName',nm);
+  set('chAva',(nm.trim().charAt(0)||'?').toUpperCase());set('chName',nm);_chName=nm;
   const last=rows.length?rows[rows.length-1].ts:0;
   set('chSub',rows.length+(rows.length===1?' entry':' entries')+(last?' · last activity '+new Date(last).toLocaleDateString():''));
   const chip=$('chChip');if(chip){chip.textContent=bal>0.009?'Due '+money(bal):'All clear ✓';chip.classList.toggle('owe',bal>0.009)}
@@ -5548,6 +5798,10 @@ function paidHistoryItems(){
     const b=bills.get(p.entryId),a=+p.amount||0;
     let remain=null;if(b){b.run-=a;remain=Math.max(0,b.run)}
     out.push({ts:+p.at||+new Date((p.date||'')+'T00:00:00')||0,customer:(b&&b.name)||bn.get(p.entryId)||'—',ref:'⚡ Electricity Bill',amount:a,mode:p.ext?'ext':'cash',note:p.note||'',by:p.by||'',remain});
+  });
+  manualDueList().forEach(x=>{
+    let run=x.amount;
+    x.pays.slice().sort((a,b)=>(+a.at||0)-(+b.at||0)).forEach(p=>{const a=+p.amount||0;run-=a;out.push({ts:+p.at||x.at,customer:x.customer||'—',ref:'✍ Manual due',amount:a,mode:p.ext?'ext':'cash',note:p.note||'',by:p.by||'',remain:Math.max(0,run)})});
   });
   out.sort((a,b)=>b.ts-a.ts);
   return out;
