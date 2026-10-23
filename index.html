@@ -3068,6 +3068,7 @@ function updateCloudReady(){
   if(cloudReady)migrateLegacySalesIfNeeded();
   if(cloudReady&&typeof cashPending!=='undefined'&&cashPending.length)flushCashPending();
   if(cloudReady&&typeof billPaidPending!=='undefined'&&billPaidPending.length)flushBillPaid();
+  if(cloudReady&&typeof dueOps!=='undefined'&&dueOps.length)kickDueOps();
 }
 let legacyEmbeddedSales=null, migrationAttempted=false;
 const $=id=>document.getElementById(id), money=n=>'৳'+Number(n||0).toFixed(2), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -4110,6 +4111,7 @@ async function mutateCloud(mutator,opts){
   // db.sales is a separately-maintained mirror of the sales subcollection and
   // must be preserved, not overwritten with an empty/missing value here.
   db={...result,sales:db.sales||[],warranty:db.warranty||[]};
+  if(typeof reapplyDueOps==='function')reapplyDueOps();
   schedulePersistDb();
   setSyncPill('☁️ Synced',false);
   return result;
@@ -4379,6 +4381,7 @@ function startCloudSync(){
       lastServerSeq=Math.max(incoming.seq||1000,lastServerSeq||1000);
       db={...db,...incoming};
       db.sales=mySales||[];
+      if(typeof reapplyDueOps==='function')reapplyDueOps();
       db.stock=computeDisplayStock(lastServerStock);
       db.seq=Math.max(db.seq||1000,lastServerSeq);
       ensureSchema();
@@ -4428,6 +4431,7 @@ function startCloudSync(){
       });
     }
     sortSalesByDate();
+    if(typeof reapplyDueOps==='function')reapplyDueOps();
     salesReady=true;updateCloudReady();
     schedulePersistDb(); // never let a full-quota localStorage error stop the screen from updating
     render();
@@ -5525,31 +5529,28 @@ function openCustomerForm(name){
   const f=$('khOv');if(f)f.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName!=='TEXTAREA'){e.preventDefault();const b=$('cuSave');if(b)b.click()}});
   setTimeout(()=>{const i=$(locked?'cuPhone':'cuName');if(i)i.focus()},60);
 }
-async function saveCustomer(id){
+function saveCustomer(id){
   if(!requireAdmin('Save Customer'))return;
-  if(!requireSynced('Save Customer'))return;
   const nameEl=$('cuName'),name=khClean(nameEl&&nameEl.value),phone=($('cuPhone').value||'').trim(),address=($('cuAddr').value||'').trim(),note=($('cuNote').value||'').trim();
   if(!name){alert('Please enter the customer name.');if(nameEl)nameEl.focus();return}
   const k=khKey(name);
   if((db.customers||[]).some(c=>c&&c.id!==id&&khKey(c.name)===k)){alert('A customer named “'+name+'” is already saved.');return}
-  const btn=$('cuSave');if(btn){btn.disabled=true;btn.textContent='Saving…'}
-  const now=Date.now();let dup=false;
-  const ok=await mutateCloud(data=>{
-    data.customers=Array.isArray(data.customers)?data.customers:[];
-    if(id){
-      const c=data.customers.find(x=>x&&x.id===id);if(!c)return false;
-      if(!(nameEl&&nameEl.readOnly)){if(data.customers.some(x=>x&&x.id!==id&&khKey(x.name)===k)){dup=true;return false}c.name=name}
-      c.phone=phone;c.address=address;c.note=note;c.updatedAt=now;
-    }else{
-      if(data.customers.some(x=>x&&khKey(x.name)===k)){dup=true;return false}
-      data.customers.push({id:'cu'+now.toString(36)+Math.random().toString(36).slice(2,6),name,phone,address,note,createdAt:now,updatedAt:now,by:currentRole||''});
-    }
-  });
-  if(btn){btn.disabled=false;btn.textContent=id?'Save changes':'Add Customer'}
-  if(!ok){if(dup)alert('A customer named “'+name+'” is already saved.');return}
+  const now=Date.now();let cust,mode,rename=false;
+  if(id){
+    const old=(db.customers||[]).find(x=>x&&x.id===id);
+    if(!old){alert('This customer could not be found. Please reopen the list.');return}
+    cust={...old,phone,address,note,updatedAt:now};
+    if(!(nameEl&&nameEl.readOnly)){cust.name=name;rename=true}
+    mode='edit';
+  }else{
+    cust={id:'cu'+now.toString(36)+Math.random().toString(36).slice(2,6),name,phone,address,note,createdAt:now,updatedAt:now,by:currentRole||''};
+    mode='new';
+  }
+  dueEnqueue({type:'saveCustomer',payload:{cust,mode,rename}});   // instant: saved on this device, cloud sync runs in the background
   khataNames(true);khClose();
   dueView='cust';dueSort='latest';saveDueUi();
-  renderDueTable();dueToast(id?'✓ Customer updated':'✓ Customer added');
+  renderDueTable();
+  dueSuccessShow(id?'Customer Updated!':'Customer Added!');
 }
 async function deleteCustomer(id){
   if(!requireAdmin('Remove Customer'))return;
@@ -5610,48 +5611,36 @@ async function payInvoiceCore(invoice,amount,X){
   const i=db.sales.findIndex(x=>x.invoiceNo===invoice);if(i>=0)db.sales[i]=finalSale;
   schedulePersistDb();return true;
 }
-/* "Receive" button on a manual-due row in the Dues table */
-async function collectManualDue(id){
+/* \"Receive\" button on a manual-due row in the Dues table — instant, syncs in the background */
+function collectManualDue(id){
   if(!requireAdmin('Receive Due Payment'))return;
-  if(!requireSynced('Receive Due Payment'))return;
   const input=$('pay_man_'+id);if(!input)return;
-  const amount=+input.value;if(!(amount>0))return alert('Enter a payment amount.');
+  const amount=Math.round((+input.value||0)*100)/100;if(!(amount>0))return alert('Enter a payment amount.');
   const cur=manualDueList().find(x=>x.id===id);
   if(!cur||amount>cur.remaining+0.0001)return alert('Payment could not be recorded. Check the remaining due.');
-  if(_dueBusy)return;_dueBusy=true;
-  const X=readDueExt('man_'+id);
-  const ok=await payManualCore(id,amount,X);
-  _dueBusy=false;
-  if(!ok)return alert('Could not save this payment. Check your internet connection and the remaining due, then try again.');
-  khataNames(true);render();renderBusinessCenter();
-  if(!X.ext)await postDuePaidToDailyCash(cur.customer||'Walk-in',amount,'manual:'+id,X.note);
-  else dueToast('✓ Recorded as paid external — not added to Total Cash');
+  dueReceiveNow(cur.customer||'Walk-in',[{kind:'man',ref:id,amount}],readDueExt('man_'+id),'manual:'+id);
 }
 /* Add a due by hand from the customer profile (ledger only) */
-async function khataAddDue(){
+function khataAddDue(){
   if(!requireAdmin('Add Due'))return;
-  if(!requireSynced('Add Due'))return;
   const name=khClean(_chName);if(!name)return;
   const amount=Math.round((+$('chDueAmt').value||0)*100)/100,note=($('chDueNote').value||'').trim();
   if(!(amount>0)){alert('Enter the due amount.');$('chDueAmt').focus();return}
   const now=Date.now();
-  const ok=await mutateCloud(data=>{
-    data.manualDues=Array.isArray(data.manualDues)?data.manualDues:[];
-    data.manualDues.push({id:'md'+now.toString(36)+Math.random().toString(36).slice(2,6),customer:name,amount,note,at:now,by:currentRole||''});
-  });
-  if(!ok)return;
+  const rec={id:'md'+now.toString(36)+Math.random().toString(36).slice(2,6),customer:name,amount,note,at:now,by:currentRole||''};
+  dueEnqueue({type:'addDue',payload:{rec}});     // instant: appears at once, cloud sync runs in the background
   $('chDueAmt').value='';$('chDueNote').value='';
   khataNames(true);render();renderBusinessCenter();openKhata(name,true);
-  dueToast('✓ ৳'+amount.toLocaleString('en-US',{maximumFractionDigits:2})+' due added to '+name);
+  dueSuccessShow('Due Added!');
 }
 function khataFull(){
   const it=dueItems().filter(x=>khKey(x.customer)===khKey(_chName)),t=it.reduce((a,x)=>a+x.due,0);
   const i=$('chPayAmt');if(i){i.value=Math.round(t*100)/100;i.focus()}
 }
-/* Receive a payment from the profile: clears the oldest dues first, Due Paid in Daily Cash like before */
-async function khataReceive(){
+/* Receive a payment from the profile: clears the oldest dues first, Due Paid in Daily Cash like before.
+   Instant: applied on this device at once, cloud sync runs in the background. */
+function khataReceive(){
   if(!requireAdmin('Receive Due Payment'))return;
-  if(!requireSynced('Receive Due Payment'))return;
   const key=khKey(_chName),name=khClean(_chName);
   const amount=Math.round((+$('chPayAmt').value||0)*100)/100;
   if(!(amount>0)){alert('Enter a payment amount.');$('chPayAmt').focus();return}
@@ -5660,28 +5649,198 @@ async function khataReceive(){
   if(!items.length)return alert('This customer has no due to receive.');
   if(amount>total+0.0001)return alert('Amount is more than the balance due ('+money(total)+').');
   if(items.some(it=>it.kind==='inv'&&((db.sales.find(x=>x.invoiceNo===it.ref)||{}).pending)))return alert('A sale of this customer is still syncing to the cloud. Please try again in a moment.');
-  if(_dueBusy)return;_dueBusy=true;
   const X={ext:!!$('chPayExt').checked,note:($('chPayNote').value||'').trim()};
-  let left=amount,applied=0,failed=false;
+  let left=amount;const allocs=[];
   for(const it of items){
     if(left<=0.0001)break;
     const a=Math.round(Math.min(left,it.due)*100)/100;
-    let ok=false;
-    if(it.kind==='inv')ok=await payInvoiceCore(it.ref,a,X);
-    else if(it.kind==='bill')ok=await payBillCore(it.ref,a,X);
-    else ok=await payManualCore(it.ref,a,X);
-    if(!ok){failed=true;break}
-    left=Math.round((left-a)*100)/100;applied=Math.round((applied+a)*100)/100;
+    allocs.push({kind:it.kind,ref:it.ref,amount:a,date:it.kind==='bill'?((billDueList().find(b=>b.id===it.ref)||{}).date||''):''});
+    left=Math.round((left-a)*100)/100;
   }
-  _dueBusy=false;
-  khataNames(true);render();renderBusinessCenter();
-  if(applied>0){
-    if(!X.ext)await postDuePaidToDailyCash(name,applied,'khata',X.note);
-    else dueToast('✓ Recorded as paid external — not added to Total Cash');
-  }
-  if(failed)alert('Only '+money(applied)+' of '+money(amount)+' could be saved. Please check your internet connection and try again.');
   $('chPayAmt').value='';$('chPayNote').value='';$('chPayExt').checked=false;
+  dueReceiveNow(name,allocs,X,'khata');
   openKhata(name,true);
+}
+
+/* ============================================================
+   INSTANT LOCAL-FIRST QUEUE for Customers & Due
+   Add Due, Add / Edit Customer and every Receive button work like Complete Sale:
+   - the change is applied to this device's data RIGHT AWAY and the screen updates at once,
+   - the cloud write is queued (saved on the device, survives refresh / offline) and sent in
+     the background one op at a time, in order, retrying automatically.
+   - every record has its own id and the cloud write skips anything already saved, so a retry
+     can never double-count a payment or a due.
+   - until an op is confirmed it is replayed on top of whatever the cloud sends back
+     (reapplyDueOps), so the screen never flickers back to the old numbers. */
+const DUEOPS_KEY='mohammadia_dueops_v1';
+let dueOps=[];try{dueOps=JSON.parse(localStorage.getItem(DUEOPS_KEY)||'[]')||[]}catch(e){dueOps=[]}
+let dueOpsRunning=false;
+function persistDueOps(){try{localStorage.setItem(DUEOPS_KEY,JSON.stringify(dueOps))}catch(e){}}
+const dueSuccessShow=(t)=>{try{billPaidOverlayShow(t)}catch(e){}};
+function dueOpSync(){
+  if(dueOps.length)setSyncPill('🔄 Saving '+dueOps.length+' change'+(dueOps.length===1?'':'s')+' to cloud…',false);
+  else if(cloudReady&&!(typeof opQueue!=='undefined'&&opQueue.length))setSyncPill('☁️ Synced',false);
+}
+function dueEnqueue(op){
+  op.id=genOpId();dueOps.push(op);persistDueOps();
+  dueOpApply(op);schedulePersistDb();
+  kickDueOps();
+  return op;
+}
+/* Local effect of one op. Idempotent: safe to run again and again. */
+function dueOpApply(op){
+  ensureSchema();
+  const p=op.payload;
+  if(op.type==='addDue'){
+    if(!db.manualDues.some(x=>x&&x.id===p.rec.id))db.manualDues.push({...p.rec});
+  }else if(op.type==='saveCustomer'){
+    const i=db.customers.findIndex(x=>x&&x.id===p.cust.id);
+    if(i>=0)db.customers[i]={...db.customers[i],...p.cust};
+    else if(!db.customers.some(x=>x&&khKey(x.name)===khKey(p.cust.name)))db.customers.push({...p.cust});
+  }else if(op.type==='receive'){
+    p.allocs.forEach(a=>{
+      if(a.kind==='man'){
+        if(db.manualPays.some(q=>q&&q.id===a.pid))return;
+        const d=db.manualDues.find(x=>x&&x.id===a.ref);
+        db.manualPays.push({id:a.pid,dueId:a.ref,customer:d?d.customer:p.name,amount:a.amount,at:p.at,by:p.by,ext:!!p.ext,note:p.note});
+      }else if(a.kind==='bill'){
+        if(db.billDuePayments.some(q=>q&&q.id===a.pid))return;
+        db.billDuePayments.push({id:a.pid,entryId:a.ref,date:a.date||'',amount:a.amount,at:p.at,by:p.by,ext:!!p.ext,note:p.note});
+      }else if(a.kind==='inv'){
+        const s=(db.sales||[]).find(x=>x&&x.invoiceNo===a.ref);if(!s)return;
+        s.payLog=Array.isArray(s.payLog)?s.payLog:[];
+        if(s.payLog.some(q=>q&&q.pid===a.pid))return;
+        s.paid=(+s.paid||0)+a.amount;s.due=Math.max(0,(+s.total||0)-s.paid);s.paymentStatus=s.due?'partial':'paid';
+        s.lastPaymentAt=new Date(p.at).toISOString();
+        s.payLog.push({pid:a.pid,amount:a.amount,ext:!!p.ext,note:p.note,at:p.at,by:p.by});
+        if(p.ext)s.extPaid=(+s.extPaid||0)+a.amount;
+      }
+    });
+  }
+}
+function reapplyDueOps(){try{dueOps.forEach(dueOpApply)}catch(e){console.error('reapplyDueOps',e)}}
+
+/* Local part of every Receive button: record it, update the screen, add the Daily Cash row, show the check. */
+function dueReceiveNow(name,allocs,X,cashRef){
+  const now=Date.now();
+  allocs.forEach((a,i)=>{a.pid='rp'+now.toString(36)+i+Math.random().toString(36).slice(2,6)});
+  const total=Math.round(allocs.reduce((t,a)=>t+a.amount,0)*100)/100;
+  dueEnqueue({type:'receive',payload:{name,allocs,ext:!!X.ext,note:X.note||'',by:currentRole||'',at:now}});
+  khataNames(true);render();renderBusinessCenter();
+  if(!X.ext)postDuePaidToDailyCash(name,total,cashRef,X.note);   // Daily Cash row is queued locally too (no waiting)
+  dueSuccessShow('Payment Received!');
+}
+
+/* Cloud part: one op at a time, in order. */
+async function kickDueOps(){
+  if(dueOpsRunning)return;
+  if(!dueOps.length)return;
+  if(!cloudReady){clearTimeout(kickDueOps._t);kickDueOps._t=setTimeout(kickDueOps,3000);return}
+  dueOpsRunning=true;dueOpSync();
+  while(dueOps.length){
+    const op=dueOps[0];let res;
+    try{res=await runDueOp(op)}catch(e){console.error('Due op error:',e);res={ok:false}}
+    if(res&&res.ok){
+      dueOps.shift();persistDueOps();
+      khataNames(true);renderBusinessCenterSafe();
+      dueOpSync();
+    }else{
+      op.attempts=(op.attempts||0)+1;persistDueOps();
+      setSyncPill('⏳ Offline — '+dueOps.length+' change'+(dueOps.length===1?'':'s')+' waiting to sync',true);
+      dueOpsRunning=false;
+      clearTimeout(kickDueOps._t);
+      kickDueOps._t=setTimeout(()=>{if(navigator.onLine!==false)kickDueOps()},Math.min(30000,1500*Math.pow(1.6,Math.min(op.attempts,8))));
+      return;
+    }
+  }
+  dueOpsRunning=false;dueOpSync();
+}
+function renderBusinessCenterSafe(){try{const m=$('businessModal');if(m&&m.classList.contains('show')&&!$('khOv')){renderDueTable()}}catch(e){}}
+window.addEventListener('online',()=>kickDueOps());
+async function dueCloudWrite(fn){
+  let noop=false;
+  const res=await mutateCloud(data=>{noop=false;const r=fn(data,()=>{noop=true});if(noop)return false;return r},{silent:true});
+  return !!res||noop;
+}
+async function runDueOp(op){
+  const p=op.payload;
+  if(op.type==='addDue'){
+    const ok=await dueCloudWrite((data,skip)=>{
+      data.manualDues=Array.isArray(data.manualDues)?data.manualDues:[];
+      if(data.manualDues.some(x=>x&&x.id===p.rec.id)){skip();return}
+      data.manualDues.push(p.rec);
+    });
+    return{ok};
+  }
+  if(op.type==='saveCustomer'){
+    const ok=await dueCloudWrite((data,skip)=>{
+      data.customers=Array.isArray(data.customers)?data.customers:[];
+      const c=p.cust,ex=data.customers.find(x=>x&&x.id===c.id);
+      if(ex){
+        if(p.mode==='new'){skip();return}
+        ex.phone=c.phone;ex.address=c.address;ex.note=c.note;ex.updatedAt=c.updatedAt;if(p.rename)ex.name=c.name;
+      }else{
+        if(p.mode==='edit'){skip();return}
+        if(data.customers.some(x=>x&&khKey(x.name)===khKey(c.name))){skip();return}
+        data.customers.push(c);
+      }
+    });
+    return{ok};
+  }
+  if(op.type==='receive'){
+    // 1) manual dues + electricity-bill dues: one atomic write
+    const sm=p.allocs.filter(a=>a.kind==='man'||a.kind==='bill');
+    if(sm.length){
+      const ok=await dueCloudWrite((data,skip)=>{
+        data.manualPays=Array.isArray(data.manualPays)?data.manualPays:[];
+        data.billDuePayments=Array.isArray(data.billDuePayments)?data.billDuePayments:[];
+        let wrote=false;
+        sm.forEach(a=>{
+          if(a.kind==='man'){
+            if(data.manualPays.some(q=>q&&q.id===a.pid))return;
+            const d=(Array.isArray(data.manualDues)?data.manualDues:[]).find(x=>x&&x.id===a.ref);if(!d)return;
+            const rec=data.manualPays.filter(q=>q&&q.dueId===a.ref).reduce((t,q)=>t+(+q.amount||0),0);
+            const amt=Math.min(a.amount,Math.max(0,Math.round(((+d.amount||0)-rec)*100)/100));if(amt<=0.0001)return;
+            data.manualPays.push({id:a.pid,dueId:a.ref,customer:d.customer,amount:amt,at:p.at,by:p.by,ext:!!p.ext,note:p.note});wrote=true;
+          }else{
+            if(data.billDuePayments.some(q=>q&&q.id===a.pid))return;
+            let row=null,dk=a.date||'';
+            const days=data.dailyCashByDate||{};
+            if(dk&&days[dk]&&Array.isArray(days[dk].bill))row=days[dk].bill.find(r=>r&&r.id===a.ref);
+            if(!row)Object.keys(days).some(k=>{const r=(days[k]&&Array.isArray(days[k].bill))?days[k].bill.find(r=>r&&r.id===a.ref):null;if(r){row=r;dk=k;return true}return false});
+            if(!row)return;
+            const rec=data.billDuePayments.filter(q=>q&&q.entryId===a.ref).reduce((t,q)=>t+(+q.amount||0),0);
+            const amt=Math.min(a.amount,Math.max(0,Math.round((billDuePart(row)-rec)*100)/100));if(amt<=0.0001)return;
+            data.billDuePayments.push({id:a.pid,entryId:a.ref,date:dk,amount:amt,at:p.at,by:p.by,ext:!!p.ext,note:p.note});wrote=true;
+          }
+        });
+        if(!wrote)skip();
+      });
+      if(!ok)return{ok:false};
+    }
+    // 2) invoices: each invoice is its own cloud document
+    for(const a of p.allocs.filter(a=>a.kind==='inv')){
+      const saleRef=SALES_COL.doc(a.ref);let finalSale=null,missing=false;
+      try{
+        await fsdb.runTransaction(async(tx)=>{
+          const snap=await tx.get(saleRef);
+          if(!snap.exists){missing=true;return}
+          const q=snap.data();
+          q.payLog=Array.isArray(q.payLog)?q.payLog:[];
+          if(q.payLog.some(x=>x&&x.pid===a.pid)){finalSale=null;return}      // already saved earlier
+          const due=Math.max(0,Number(q.due??(q.total-(q.paid??q.total))));
+          const amt=Math.min(a.amount,Math.round(due*100)/100);if(amt<=0.0001)return;
+          q.paid=(q.paid||0)+amt;q.due=Math.max(0,q.total-q.paid);q.paymentStatus=q.due?'partial':'paid';q.lastPaymentAt=new Date().toISOString();
+          q.payLog.push({pid:a.pid,amount:amt,ext:!!p.ext,note:p.note,at:p.at,by:p.by});
+          if(p.ext)q.extPaid=(+q.extPaid||0)+amt;
+          tx.set(saleRef,q);finalSale=q;
+        });
+      }catch(err){console.error('Invoice payment sync failed:',err);return{ok:false}}
+      if(finalSale){const i=db.sales.findIndex(x=>x.invoiceNo===a.ref);if(i>=0)db.sales[i]=finalSale;schedulePersistDb()}
+    }
+    return{ok:true};
+  }
+  return{ok:true};
 }
 
 /* ---- shared popup ---- */
@@ -5854,41 +6013,14 @@ document.addEventListener('keydown',e=>{
   if(i&&i.value&&document.activeElement===i){clearPaidHistorySearch();return}
   closePaidHistory();
 });
-async function collectDue(invoice){
+function collectDue(invoice){
   if(!requireAdmin('Receive Due Payment'))return;
-  if(!requireSynced('Receive Due Payment'))return;
   const input=$('pay_'+invoice);if(!input)return;
-  const _ls=db.sales.find(x=>x.invoiceNo===invoice);if(_ls&&_ls.pending)return alert('This sale is still syncing to the cloud. Please try again in a moment.');
-  const amount=+input.value;if(amount<=0)return alert('Enter a payment amount.');
-  if(_dueBusy)return;_dueBusy=true;
-  const X=readDueExt('inv_'+invoice);
-  const saleRef=SALES_COL.doc(invoice);
-  let finalSale=null;
-  try{
-    await fsdb.runTransaction(async(tx)=>{
-      const snap=await tx.get(saleRef);
-      if(!snap.exists)throw Object.assign(new Error('Not found'),{code:'NOTFOUND'});
-      let s=snap.data();
-      const due=Math.max(0,Number(s.due??(s.total-(s.paid??s.total))));
-      if(amount>due)throw Object.assign(new Error('Too much'),{code:'TOOMUCH'});
-      s.paid=(s.paid||0)+amount;s.due=Math.max(0,s.total-s.paid);s.paymentStatus=s.due?'partial':'paid';s.lastPaymentAt=new Date().toISOString();
-      s.payLog=Array.isArray(s.payLog)?s.payLog:[];s.payLog.push({amount:amount,ext:X.ext,note:X.note,at:Date.now(),by:currentRole||''});
-      if(X.ext)s.extPaid=(+s.extPaid||0)+amount;
-      tx.set(saleRef,s);
-      finalSale=s;
-    });
-  }catch(err){
-    _dueBusy=false;
-    if(err&&(err.code==='TOOMUCH'||err.code==='NOTFOUND'))return alert('Payment could not be recorded. Check the remaining due.');
-    console.error('Due payment failed:',err);
-    return alert('Could not save this payment. Check your internet connection and try again.');
-  }
-  let idx=db.sales.findIndex(x=>x.invoiceNo===invoice);if(idx>=0)db.sales[idx]=finalSale;
-  schedulePersistDb();
-  _dueBusy=false;
-  render();renderBusinessCenter();
-  if(!X.ext)await postDuePaidToDailyCash((finalSale&&finalSale.customer)||'Walk-in',amount,invoice,X.note);
-  else dueToast('✓ Recorded as paid external — not added to Total Cash');
+  const s=db.sales.find(x=>x.invoiceNo===invoice);
+  if(s&&s.pending)return alert('This sale is still syncing to the cloud. Please try again in a moment.');
+  const amount=Math.round((+input.value||0)*100)/100;if(!(amount>0))return alert('Enter a payment amount.');
+  if(!s||amount>dueAmount(s)+0.0001)return alert('Payment could not be recorded. Check the remaining due.');
+  dueReceiveNow(s.customer||'Walk-in',[{kind:'inv',ref:invoice,amount}],readDueExt('inv_'+invoice),invoice);
 }
 /* ---- Electricity Bill dues -> Customer Due list ----
    A bill entered as Due / Partial keeps its unpaid part as a customer due. Money received
@@ -5911,29 +6043,13 @@ function billDueList(){
   return out;
 }
 function billDueRowHtml(x){return `<tr><td>⚡ Electricity Bill</td><td>${esc(x.name||'—')}${dueExtLogHtml((db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id))}</td><td>${esc(new Date(x.date+'T00:00:00').toLocaleDateString())}</td><td class="num">${money(x.amount)}</td><td class="num">${money(x.amount-x.remaining)}</td><td class="num due">${money(x.remaining)}</td><td><div class="paybox"><input id="pay_bill_${esc(x.id)}" type="number" min="0" step=".01" placeholder="Amount"><button class="green" onclick="collectBillDue('${esc(x.id)}')">Receive</button></div></td>${dueExtCellHtml('bill_'+x.id)}</tr>`}
-async function collectBillDue(id){
+function collectBillDue(id){
   if(!requireAdmin('Receive Due Payment'))return;
-  if(!requireSynced('Receive Due Payment'))return;
   const input=$('pay_bill_'+id);if(!input)return;
-  const amount=+input.value;if(!(amount>0))return alert('Enter a payment amount.');
+  const amount=Math.round((+input.value||0)*100)/100;if(!(amount>0))return alert('Enter a payment amount.');
   const cur=billDueList().find(x=>x.id===id);
   if(!cur||amount>cur.remaining+0.0001)return alert('Payment could not be recorded. Check the remaining due.');
-  if(_dueBusy)return;_dueBusy=true;
-  const X=readDueExt('bill_'+id);
-  const res=await mutateCloud(data=>{
-    const d=data.dailyCashByDate&&data.dailyCashByDate[cur.date];
-    const row=d&&Array.isArray(d.bill)?d.bill.find(r=>r&&r.id===id):null;
-    if(!row)return false;
-    data.billDuePayments=Array.isArray(data.billDuePayments)?data.billDuePayments:[];
-    const rec=data.billDuePayments.filter(p=>p&&p.entryId===id).reduce((a,p)=>a+(+p.amount||0),0);
-    if(amount>Math.max(0,billDuePart(row)-rec)+0.0001)return false;
-    data.billDuePayments.push({id:'bp'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),entryId:id,date:cur.date,amount:amount,at:Date.now(),by:currentRole||'',ext:X.ext,note:X.note});
-  },{silent:true});
-  _dueBusy=false;
-  if(!res)return alert('Could not save this payment. Check your internet connection and the remaining due, then try again.');
-  render();renderBusinessCenter();
-  if(!X.ext)await postDuePaidToDailyCash(cur.name||'Electricity Bill',amount,'bill:'+id,X.note);
-  else dueToast('✓ Recorded as paid external — not added to Total Cash');
+  dueReceiveNow(cur.name||'Electricity Bill',[{kind:'bill',ref:id,amount,date:cur.date}],readDueExt('bill_'+id),'bill:'+id);
 }
 function openBizPage(which){
   const isDue=(which!=='purchase');
@@ -6400,6 +6516,7 @@ window.addEventListener('resize',()=>{if(window.innerWidth>960)closeSidebar()});
     startCloudSync();
     startSessionWatch(user);
     if(opQueue.length)kickQueue();
+    if(typeof dueOps!=='undefined'&&dueOps.length)kickDueOps();
   } else {
     document.body.classList.remove('booting');
     hideBootOverlay();
