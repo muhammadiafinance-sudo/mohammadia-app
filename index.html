@@ -2024,6 +2024,71 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
 .ch-fbtn.red{background:#d93025}.ch-fbtn.red:hover{background:#b3261e}
 .ch-fbtn.green{background:#188038}.ch-fbtn.green:hover{background:#0f6a2c}
 @media(max-width:900px){.ch-forms{grid-template-columns:1fr}}
+
+/* ===== Dashboard · Today's follow-ups + Quote of the day ===== */
+.main{overflow-y:auto;overflow-x:hidden}
+.profit-card{flex:none;min-height:340px}
+.fu-wrap{flex:none;display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:12px;margin:0 0 12px}
+.fu-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;min-width:0}
+.fu-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.fu-ttl{display:flex;align-items:center;gap:11px;min-width:0}
+.fu-ttl i{width:36px;height:36px;flex:none;border-radius:11px;display:grid;place-items:center;background:rgba(26,115,232,.12);color:#1a73e8}
+.fu-ttl i svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.fu-ttl b{display:block;font-size:15px;font-weight:700;color:var(--ink)}
+.fu-ttl small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.fu-ctrl{margin-left:auto;display:flex;gap:8px;align-items:center}
+.fu-wrap .fu-seg{display:inline-flex;background:rgba(26,115,232,.09);padding:3px;border-radius:999px}
+.fu-wrap .fu-seg button{border:0;background:transparent;color:var(--muted);padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700;box-shadow:none;cursor:pointer}
+.fu-wrap .fu-seg button.on{background:var(--card);color:#1a73e8;box-shadow:0 1px 3px rgba(0,0,0,.16)}
+.fu-wrap .fu-shuf{width:34px;height:34px;padding:0;border:0;border-radius:50%;background:rgba(26,115,232,.12);color:#1a73e8;display:grid;place-items:center;box-shadow:none;cursor:pointer}
+.fu-wrap .fu-shuf:hover{background:#1a73e8;color:#fff}
+.fu-shuf svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fu-shuf.spin svg{animation:fuSpin .6s ease}
+@keyframes fuSpin{to{transform:rotate(360deg)}}
+.fu-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin:0 0 6px;flex-wrap:wrap}
+.fu-meta b{color:var(--ink)}
+.fu-prog{height:6px;border-radius:99px;background:rgba(26,115,232,.12);overflow:hidden;margin:0 0 12px}
+.fu-prog i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#1a73e8,#188038);transition:width .5s ease}
+.fu-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 12px;margin-bottom:8px;border-radius:14px;background:rgba(26,115,232,.05);animation:fuIn .45s both;animation-delay:calc(var(--i)*70ms);transition:background .25s}
+.fu-row:last-child{margin-bottom:0}
+@keyframes fuIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fu-row.done{background:rgba(24,128,56,.11)}
+.fu-ava{width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.fu-info{flex:1 1 150px;min-width:0}
+.fu-name{font-weight:700;font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.fu-name:hover{color:#1a73e8}
+.fu-sub{display:flex;gap:4px 8px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:2px}
+.fu-age.hot{color:#d93025;font-weight:700}.fu-age.warm{color:#b26a00;font-weight:700}
+.fu-due{font-weight:800;font-size:14.5px;color:#d93025;background:rgba(217,48,37,.10);padding:5px 11px;border-radius:10px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fu-acts{display:flex;gap:6px;flex:none}
+.fu-wrap .fu-b{width:34px;height:34px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15);cursor:pointer;text-decoration:none;transition:transform .15s}
+.fu-wrap .fu-b:hover{transform:translateY(-2px);background:var(--card);box-shadow:0 4px 10px rgba(0,0,0,.2)}
+.fu-b svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fu-b.call{color:#188038}.fu-b.wa{color:#1fa855}.fu-b.sms{color:#1a73e8}.fu-b.cp{color:#7c3aed}.fu-b.kh{color:#e37400}.fu-b.dn{color:var(--muted)}
+.fu-wrap .fu-b.dn.on{background:#188038;color:#fff}
+.fu-empty{text-align:center;padding:26px 10px;color:var(--muted);font-size:13.5px}
+.fu-empty b{display:block;font-size:30px;margin-bottom:6px}
+.fu-quote{position:relative;overflow:hidden;display:flex;flex-direction:column;color:#fff;border:0;background:linear-gradient(150deg,#12213b 0%,#1b3a7a 58%,#1a73e8 125%)}
+.fu-quote::before{content:"\201C";position:absolute;right:12px;top:-30px;font:900 160px/1 Georgia,serif;color:rgba(255,255,255,.09);pointer-events:none}
+.fu-qtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fu-qchip{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;background:rgba(255,255,255,.14);padding:4px 11px;border-radius:99px}
+.fu-wrap .fu-qnext{border:0;background:rgba(255,255,255,.14);color:#fff;font-size:12px;font-weight:600;padding:5px 11px;border-radius:99px;box-shadow:none;cursor:pointer}
+.fu-wrap .fu-qnext:hover{background:rgba(255,255,255,.28)}
+.fu-qbody.sw{animation:fuIn .5s both}
+.fu-qt{font:600 clamp(16px,1.45vw,20px)/1.42 Georgia,'Times New Roman',serif;margin:14px 0 8px}
+.fu-qa{font-size:12.5px;color:#b9c8e6;font-weight:600}
+.fu-thx{margin-top:auto;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);font-size:13px;line-height:1.5}
+.fu-thx b{display:block;font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:#ffd666;margin-bottom:4px}
+.fu-qbody{margin-bottom:14px}
+@media(max-width:1100px){.fu-wrap{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){
+  .fu-wrap{order:3;margin:12px 0 0}
+  .profit-card{min-height:300px}
+  .fu-card{padding:14px 12px;border-radius:16px}
+  .fu-acts{width:100%;justify-content:flex-end}
+  .fu-ctrl{width:100%;margin-left:0;justify-content:flex-start}
+}
+@media(prefers-reduced-motion:reduce){.fu-row,.fu-qbody.sw{animation:none}}
 </style></head>
 <body class="booting">
 
@@ -2358,6 +2423,26 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
     <div class="stat t-return"><div class="stat-top"><span class="stat-label">Returns</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg></span></div><div class="value" id="returnsCount">0</div></div>
   </section>
 
+  <section class="fu-wrap admin-only" id="followupSection" aria-label="Today's follow-ups and daily inspiration">
+    <div class="fu-card" id="fuCard">
+      <div class="fu-head">
+        <div class="fu-ttl"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg></i><div><b>Today's follow-ups</b><small id="fuSub">5 customers to contact about their due</small></div></div>
+        <div class="fu-ctrl">
+          <div class="fu-seg" id="fuLang" role="tablist" aria-label="Message language"><button type="button" data-l="en" class="on">EN</button><button type="button" data-l="bn">বাংলা</button></div>
+          <button type="button" class="fu-shuf" id="fuShuf" title="Pick 5 different customers" aria-label="Shuffle customers"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
+        </div>
+      </div>
+      <div class="fu-meta" id="fuMeta"></div>
+      <div class="fu-prog" aria-hidden="true"><i id="fuBar"></i></div>
+      <div id="fuList"></div>
+    </div>
+    <div class="fu-card fu-quote" id="fuQuoteCard">
+      <div class="fu-qtop"><span class="fu-qchip">✨ Quote of the day</span><button type="button" class="fu-qnext" id="fuQNext" title="Show another quote">↻ Next</button></div>
+      <div class="fu-qbody" id="fuQBody"><div class="fu-qt" id="fuQt"></div><div class="fu-qa" id="fuQa"></div></div>
+      <div class="fu-thx"><b id="fuThxH">💛 For you, today</b><span id="fuThx"></span></div>
+    </div>
+  </section>
+
   <section class="profit-card" aria-label="Profit graph">
     <div class="pc-head">
       <div class="pc-main">
@@ -2496,7 +2581,7 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
   <div class="due-sum" id="dueSummary"></div>
   <div class="due-menu-wrap">
     <button type="button" class="due-dots" id="dueDots" aria-label="More options" aria-haspopup="true" aria-expanded="false" onclick="toggleDueMenu(event)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-    <div class="due-menu" id="dueMenu" hidden onclick="event.stopPropagation()"><button type="button" class="dm-act" onclick="openPaidHistory()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>Paid History</button></div>
+    <div class="due-menu" id="dueMenu" hidden onclick="event.stopPropagation()"><button type="button" class="dm-act" onclick="openPaidHistory()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>Paid History</button><button type="button" class="dm-act" onclick="toggleDueMenu(null,false);customerDuePDF()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg>Due Report PDF</button><button type="button" class="dm-act" onclick="toggleDueMenu(null,false);customerDueDetailsPDF()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 15h7M9 18h4"/></svg>Due Details PDF</button></div>
   </div>
 </div>
 <div class="biz-table" id="dueWrap"><table id="dueTbl"><thead><tr><th class="c-inv">Invoice</th><th>Customer</th><th class="c-date">Date</th><th class="num c-total">Total</th><th class="num c-paid">Paid</th><th class="num">Due</th><th>Payment</th><th class="c-ext">Paid external · Note</th></tr></thead><tbody id="dueTable"></tbody></table></div>
@@ -2685,7 +2770,20 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
 <div class="modal" id="sessionsModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('sessionsModal')" aria-label="Close">✕ Close</button><h2>🖥️ Active Sessions</h2><p class="hint">Every device signed in to this app. Press Logout to sign a device out remotely — it logs out within a few seconds if it is online, or the next time it opens the app.</p><div class="actions" style="margin:0 0 10px"><button class="red" onclick="revokeOtherSessions()">Logout all other devices</button></div><div class="tablewrap"><table><thead><tr><th>Device</th><th>User</th><th>Logged in</th><th>Last active</th><th>Status</th><th>Action</th></tr></thead><tbody id="sessionsTable"></tbody></table></div></div></div>
 
 <div class="modal" id="dataModal"><div class="modalbox"><button class="close" onclick="closeData()">Close</button><h2>💾 Data Center — Backup & Restore</h2><p class="hint">Stock &amp; sales now sync live to your Firebase cloud database, so every device signed into the same Firebase project sees the same data. For extra safety, still make regular backups below — CSV backup files can be opened in Excel and CSV files exported by this app can be restored here.</p>
-<h3>Export / Backup</h3><div class="actions"><button onclick="backupJSON()">⬇ Complete JSON Backup</button><button onclick="stockCSV()">⬇ Stock CSV</button><button onclick="salesCSV()">⬇ Sales CSV</button><button class="green" onclick="todayCSV()">⬇ Today's Sales CSV</button></div>
+<h3>Export / Backup</h3><div class="actions"><button onclick="backupJSON()">⬇ Complete JSON Backup</button><button onclick="stockCSV()">⬇ Stock CSV</button><button onclick="salesCSV()">⬇ Sales CSV</button><button class="green" onclick="todayCSV()">⬇ Today's Sales CSV</button><button class="gray" onclick="customerDuePDF()">📄 Customer Due PDF</button><button class="gray" onclick="customerDueDetailsPDF()">📄 Due Details PDF</button></div>
+
+<h3>Auto Daily Backup</h3>
+<div class="filebox" id="abBox">
+  <div class="actions" style="align-items:center;gap:10px;flex-wrap:wrap">
+    <label style="display:flex;gap:8px;align-items:center;font-weight:700;cursor:pointer;margin:0"><input type="checkbox" id="abOn" onchange="abSetOn(this.checked)" style="width:18px;height:18px"> Backup every day at</label>
+    <input type="time" id="abTime" value="20:00" onchange="abSetTime(this.value)" style="width:auto">
+    <button type="button" class="green" onclick="autoBackupRun(true)" title="Back up right now">⬇ Now</button>
+    <button type="button" class="gray" id="abFolderBtn" onclick="abChooseFolder()" title="Save backups into a folder (Chrome / Edge on PC)">📁 Folder</button>
+    <button type="button" class="gray" id="abFolderOff" onclick="abClearFolder()" title="Use the Downloads folder instead" style="display:none">✕</button>
+  </div>
+  <div class="hint" id="abStatus" style="margin-top:10px"></div>
+</div>
+
 <h3>Import / Restore</h3><div class="filebox"><b>Complete JSON Restore</b><p class="hint">Restores stock, sales and latest invoice.</p><button class="green" onclick="pick('json')">Choose JSON File</button></div>
 <div class="filebox"><b>Stock CSV Restore</b><p class="hint">Required columns: <code>name, qty, selling_price</code>. Optional: <code>id, purchase_price, barcode, category, model</code>.</p><button class="gray" onclick="pick('stock')">Choose Stock CSV</button></div>
 <div class="filebox"><b>Sales CSV Restore</b><p class="hint">Restores sales history from CSV exported by this app.</p><button class="gray" onclick="pick('sales')">Choose Sales CSV</button></div>
@@ -3069,6 +3167,7 @@ function updateCloudReady(){
   if(cloudReady&&typeof cashPending!=='undefined'&&cashPending.length)flushCashPending();
   if(cloudReady&&typeof billPaidPending!=='undefined'&&billPaidPending.length)flushBillPaid();
   if(cloudReady&&typeof dueOps!=='undefined'&&dueOps.length)kickDueOps();
+  if(cloudReady&&typeof autoBackupTick==='function')setTimeout(autoBackupTick,2500);
 }
 let legacyEmbeddedSales=null, migrationAttempted=false;
 const $=id=>document.getElementById(id), money=n=>'৳'+Number(n||0).toFixed(2), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -6062,12 +6161,509 @@ function openBizPage(which){
   renderBusinessCenter();openActionModal('businessModal');syncNavActive();
 }
 function openBusinessCenter(){openBizPage('due')}
-function openData(){if(!requireAdmin('Data Center'))return;closeOtherPages('dataModal');$('dataModal').classList.add('show')}function closeData(){$('dataModal').classList.remove('show')}
+/* ---------- AUTO DAILY BACKUP (Data Center) ----------
+   Switch it on, pick a time — the backup starts at that time (even 1 minute from now), every day.
+   - Setting a time still ahead today → runs today at that time. A time already passed → starts tomorrow.
+   - If the app was closed at the time, the backup is made the moment the app is opened again.
+   - "Now" is a separate manual backup and never cancels the scheduled one.
+   - Chrome / Edge on a PC with a chosen folder: saved silently into the folder (last 30 kept);
+     otherwise the file downloads to the Downloads folder.
+   Runs only while the app is open and synced with the cloud, so an old copy is never saved. */
+const AB_KEY='mohammadia_autobackup_v1',AB_KEEP=30;
+let ab={on:false,time:'20:00',done:undefined,last:'',lastAt:0,lastMode:'',folder:''};
+try{ab={...ab,...(JSON.parse(localStorage.getItem(AB_KEY)||'{}')||{})}}catch(e){}
+if(ab.done===undefined)ab.done=ab.last||'';   // date the scheduled run last completed
+let abBusy=false,abFailAt=0;
+function abSave(){try{localStorage.setItem(AB_KEY,JSON.stringify(ab))}catch(e){}}
+function abIdb(){return new Promise((res,rej)=>{const r=indexedDB.open('mohammadia_autobackup',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function abGet(k){const d=await abIdb();return new Promise((res,rej)=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function abPut(k,v){const d=await abIdb();return new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}
+async function abDelKey(k){const d=await abIdb();return new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').delete(k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}
+function abNowHM(){const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')}
+function abYesterdayKey(){const d=new Date();d.setDate(d.getDate()-1);return dateKeyOf(d)}
+function abTimeStr(){return /^\d{2}:\d{2}$/.test(ab.time||'')?ab.time:'20:00'}
+/* Decide whether the schedule starts today or tomorrow: a time still ahead today runs today. */
+function abArm(){ab.done=(abTimeStr()>abNowHM())?'':todayKey();abSave()}
+function abIsDue(){
+  if(!ab.on)return false;
+  const today=todayKey();if(ab.done===today)return false;
+  if(abNowHM()>=abTimeStr())return true;                       // the set time has come (or the app was closed at that time)
+  return !!ab.done&&ab.done<abYesterdayKey();                  // a whole day was missed → catch up on open
+}
+function autoBackupTick(){
+  try{
+    if(abBusy||!ab.on||currentRole!=='admin'||!cloudReady||!salesReady)return;
+    if(Date.now()-abFailAt<60*1000)return;
+    if(abIsDue())autoBackupRun(false);
+  }catch(e){}
+}
+async function abPrune(dir,rx){
+  rx=rx||/^mohammadia_auto_backup_\d{4}-\d{2}-\d{2}\.json$/;
+  try{
+    const names=[];
+    for await(const [n,h] of dir.entries()){if(h.kind==='file'&&rx.test(n))names.push(n)}
+    names.sort();
+    while(names.length>AB_KEEP){await dir.removeEntry(names.shift())}
+  }catch(e){console.error('Backup cleanup skipped:',e)}
+}
+async function autoBackupRun(manual){
+  if(abBusy)return;
+  if(currentRole!=='admin'){if(manual)alert('Access denied: Backup is available to Admin accounts only.');return}
+  if(manual&&!cloudReady)return alert('Please wait — still syncing with the cloud.');
+  abBusy=true;
+  try{
+    const name='mohammadia_auto_backup_'+todayKey()+'.json';
+    const json=JSON.stringify(db,null,2);
+    let mode='download',folder='';
+    let dir=null;try{dir=await abGet('dir')}catch(e){}
+    if(dir){
+      let perm='denied';
+      try{perm=await dir.queryPermission({mode:'readwrite'});if(perm==='prompt'&&manual)perm=await dir.requestPermission({mode:'readwrite'})}catch(e){}
+      if(perm==='granted'){
+        try{
+          const fh=await dir.getFileHandle(name,{create:true});
+          const w=await fh.createWritable();await w.write(new Blob(['\ufeff'+json],{type:'application/json'}));await w.close();
+          mode='folder';folder=dir.name;abPrune(dir);
+        }catch(e){console.error('Backup to folder failed, using download:',e)}
+      }
+    }
+    if(mode==='download')dl(name,json,'application/json');
+    await abSaveDuePdf(mode==='folder'?dir:null);        // Customer Due PDF goes with every backup
+    if(!manual)ab.done=todayKey();                      // only the scheduled run counts for today's schedule
+    ab.last=todayKey();ab.lastAt=Date.now();ab.lastMode=mode;ab.folder=folder||ab.folder;abSave();
+    abFailAt=0;
+    try{dueToast(mode==='folder'?'✓ Backup saved to folder “'+folder+'” (4 files)':'✓ Backup downloaded (4 files)')}catch(e){}
+  }catch(e){
+    console.error('Auto backup failed:',e);abFailAt=Date.now();
+    try{dueToast('⚠️ Backup failed — will retry',true)}catch(_){}
+  }
+  abBusy=false;abRenderStatus();
+}
+function abSetOn(v){
+  ab.on=!!v;
+  if(ab.on)abArm();else abSave();
+  abRenderStatus();
+  if(ab.on)try{dueToast('✓ Daily backup set for '+abTimeStr())}catch(e){}
+}
+function abSetTime(v){
+  if(!/^\d{2}:\d{2}$/.test(v||''))return;
+  ab.time=v;
+  if(ab.on){abArm();try{dueToast('✓ Daily backup set for '+v)}catch(e){}}else abSave();
+  abRenderStatus();
+}
+async function abChooseFolder(){
+  if(typeof window.showDirectoryPicker!=='function')return alert('This browser cannot save into a chosen folder (use Chrome or Edge on a PC).\n\nBackups will download to your Downloads folder instead.');
+  try{
+    const h=await window.showDirectoryPicker({id:'mohammadia-backup',mode:'readwrite'});
+    await abPut('dir',h);ab.folder=h.name;abSave();abRenderStatus();
+  }catch(e){if(e&&e.name!=='AbortError')alert('Could not use that folder. Please choose another one.')}
+}
+async function abClearFolder(){try{await abDelKey('dir')}catch(e){}ab.folder='';abSave();abRenderStatus()}
+function abNextText(){
+  const t=abTimeStr(),[h,m]=t.split(':').map(Number);
+  const tgt=new Date();tgt.setHours(h,m,0,0);
+  const today=todayKey();
+  if(ab.done===today)tgt.setDate(tgt.getDate()+1);
+  const mins=Math.round((tgt.getTime()-Date.now())/60000);
+  const day=(tgt.getDate()!==new Date().getDate())?'tomorrow':'today';
+  if(abIsDue())return 'starting now…';
+  return day+' at '+t+(mins>0&&mins<=90?' (in '+(mins<=1?'1 min':mins+' min')+')':'');
+}
+async function abRenderStatus(){
+  const on=$('abOn');if(!on)return;
+  on.checked=!!ab.on;const t=$('abTime');if(t&&t!==document.activeElement)t.value=abTimeStr();
+  const canPick=typeof window.showDirectoryPicker==='function';
+  const fb=$('abFolderBtn'),fo=$('abFolderOff');
+  let dir=null;try{dir=await abGet('dir')}catch(e){}
+  if(fb){fb.style.display=canPick?'':'none';fb.textContent=dir?('📁 '+dir.name):'📁 Folder'}
+  if(fo)fo.style.display=dir?'':'none';
+  let perm='';if(dir){try{perm=await dir.queryPermission({mode:'readwrite'})}catch(e){}}
+  const lines=[];
+  lines.push(ab.on?('⏱ Next backup: '+abNextText()+' · 4 files: backup · stock CSV · 2 due PDFs · the app must be open'):'Off — tick the box and set a time.');
+  if(ab.lastAt){const d=new Date(ab.lastAt);lines.push('✓ Last backup: '+d.toLocaleDateString()+' '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})+(ab.lastMode==='folder'?' · folder “'+esc(ab.folder)+'”':' · Downloads'))}
+  if(dir&&perm!=='granted')lines.push('⚠️ Folder needs one click to be allowed again — press “Now”. Until then backups download.');
+  const st=$('abStatus');if(st)st.innerHTML=lines.join('<br>');
+}
+setInterval(autoBackupTick,5000);                                   // checks every 5 s → starts within seconds of the set time
+setInterval(()=>{const m=$('dataModal');if(m&&m.classList.contains('show'))abRenderStatus()},15000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)autoBackupTick()});
+/* ---------- CUSTOMER DUE REPORT (PDF) ----------
+   Compact one-line-per-customer report of ONLY the customers who still owe money, biggest due first.
+   Built right here in the browser (no extra library), one A4 page, real selectable text, and saved together with every daily backup. */
+function dueReportRows(){
+  _custReg=custRegMap();
+  const m=new Map();
+  dueItems().forEach(it=>{
+    const key=khKey(it.customer);let g=m.get(key);
+    if(!g){g={name:khClean(it.customer)||'Walk-in',phone:custPhoneOf(it.customer)||'',entries:0,due:0,oldest:Infinity};m.set(key,g)}
+    g.entries++;g.due+=it.due;g.oldest=Math.min(g.oldest,it.date.getTime());
+  });
+  const rows=[...m.values()].filter(g=>g.due>0.009).map(g=>({...g,age:Math.max(0,Math.floor((Date.now()-g.oldest)/86400000))}));
+  rows.sort((a,b)=>(b.due-a.due)||a.name.localeCompare(b.name));
+  return rows;
+}
+/* Real-text PDF (crisp at any zoom, selectable/searchable), one A4 page.
+   Latin text uses the PDF's built-in Helvetica. A customer name or phone with Bengali (or other
+   non-Latin) letters is drawn as a small high-resolution picture of that text, because the
+   built-in fonts have no Bengali. Few customers -> one column; many -> 2 or 3 columns, so everything
+   still fits on one page. */
+function dueReportPdf(rows){
+  const W=595.28,H=841.89,M=28,GAP=12;
+  const FONT='"Segoe UI","Nirmala UI","Noto Sans Bengali","Noto Sans",Arial,sans-serif';
+  const LAT='Arial,Helvetica,"Liberation Sans",sans-serif';
+  const INK={p:'0.07 0.07 0.07',c:'#111'},MUT={p:'0.38 0.38 0.38',c:'#616161'},RED={p:'0.70 0.15 0.12',c:'#b3261e'},GRN={p:'0.09 0.50 0.22',c:'#188038'};
+  const fmt=n=>(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
+  const total=rows.reduce((a,r)=>a+r.due,0),n=rows.length;
+  const now=new Date();
+  const stamp=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+', '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const mc=document.createElement('canvas').getContext('2d');
+  const isLatin=t=>!/[^\x20-\x7E\xA0-\xFF]/.test(t);
+  const wid=(t,fs,b)=>{mc.font=isLatin(t)?((b?'bold ':'')+'100px '+LAT):((b?'700 ':'400 ')+'100px '+FONT);return mc.measureText(t).width*fs/100};
+  const fit=(t,w,fs,b)=>{t=String(t);if(wid(t,fs,b)<=w)return t;while(t.length>1&&wid(t+'...',fs,b)>w)t=t.slice(0,-1);return t+'...'};
+  const esc=t=>{let o='';for(const ch of t){const c=ch.charCodeAt(0);if(ch==='\\'||ch==='('||ch===')')o+='\\'+ch;else if(c>126)o+='\\'+c.toString(8).padStart(3,'0');else o+=ch}return o};
+  // ----- layout: pick 1, 2 or 3 columns so every customer fits on the page -----
+  const topFirst=M+72,hdrH=15,bottom=H-M-16,totalH=20;
+  const availH=bottom-(topFirst+hdrH+3)-totalH;
+  const modes=[{c:1,max:15,min:11},{c:2,max:15,min:10},{c:3,max:14,min:8.5}];
+  let mode=modes.find(m=>Math.ceil(n/m.c)*m.min<=availH),multi=false;
+  if(!mode){mode=modes[2];multi=true}
+  const perColMax=multi?Math.floor(availH/mode.min):Math.ceil(Math.max(n,1)/mode.c);
+  const rh=multi?mode.min:Math.min(mode.max,Math.floor(availH/Math.max(1,perColMax)*10)/10);
+  const fs=Math.min(9,rh*0.74),hfs=Math.min(8.5,rh*0.7);
+  const perPage=perColMax*mode.c,pageRows=[];
+  for(let i=0;i<Math.max(n,1);i+=perPage)pageRows.push(rows.slice(i,i+perPage));
+  const colW=(W-2*M-(mode.c-1)*GAP)/mode.c;
+  // column geometry (x offsets inside one column)
+  const geo=(x0)=>{
+    if(mode.c===1){const dueR=x0+colW-6,ageR=dueR-76,entR=ageR-52,phoneL=entR-132,nameL=x0+28;return{noR:x0+22,nameL,nameW:phoneL-nameL-8,phoneL,phoneW:128,entR,ageR,dueR}}
+    if(mode.c===2){const dueR=x0+colW-3,ageR=dueR-46,phoneL=ageR-92,nameL=x0+19;return{noR:x0+14,nameL,nameW:phoneL-nameL-4,phoneL,phoneW:62,ageR,dueR}}
+    const dueR=x0+colW-2,ageR=dueR-42,nameL=x0+16;return{noR:x0+12,nameL,nameW:ageR-24-nameL,ageR,dueR}
+  };
+  const SC=4;                                    // picture resolution for non-Latin text
+  const pages=pageRows.map((chunk,pi)=>{
+    const pg={imgs:[],imgOps:[],ops:[]};
+    const Y=y=>(H-y).toFixed(2);
+    const drawRun=(t,xx,yb,size,b,col)=>{
+      if(isLatin(t)){pg.ops.push(col.p+' rg BT /F'+(b?2:1)+' '+size.toFixed(2)+' Tf '+xx.toFixed(2)+' '+Y(yb)+' Td ('+esc(t)+') Tj ET');return}
+      const cv=document.createElement('canvas'),px=size*SC;
+      mc.font=(b?'700 ':'400 ')+px+'px '+FONT;
+      cv.width=Math.ceil(mc.measureText(t).width+SC*3);cv.height=Math.ceil(px*1.5);
+      const c=cv.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,cv.width,cv.height);
+      c.fillStyle=col.c;c.font=(b?'700 ':'400 ')+px+'px '+FONT;c.textBaseline='alphabetic';c.fillText(t,SC*1.2,px*1.08);
+      const b64=cv.toDataURL('image/jpeg',0.9).split(',')[1],bin=atob(b64),bytes=new Uint8Array(bin.length);
+      for(let k=0;k<bin.length;k++)bytes[k]=bin.charCodeAt(k);
+      const idx=pg.imgs.length+1;pg.imgs.push({w:cv.width,h:cv.height,bytes});
+      const iw=cv.width/SC,ih=cv.height/SC,top=yb-size*1.08;
+      pg.imgOps.push('q '+iw.toFixed(2)+' 0 0 '+ih.toFixed(2)+' '+(xx-1.2).toFixed(2)+' '+Y(top+ih)+' cm /Im'+idx+' Do Q');
+    };
+    // Latin letters/digits stay real text; only the Bengali words become pictures
+    const text=(t,x,yb,size,b,align,col)=>{
+      t=String(t);if(!t)return;
+      const runs=isLatin(t)?[t]:(t.match(/[\x20-\x7E\xA0-\xFF]+|[^\x20-\x7E\xA0-\xFF]+/g)||[]);
+      const ws=runs.map(r=>wid(r,size,b)),w=ws.reduce((a,v)=>a+v,0);
+      let xx=align==='r'?x-w:align==='c'?x-w/2:x;
+      runs.forEach((r,i)=>{if(r.trim())drawRun(r,xx,yb,size,b,col);xx+=ws[i]});
+    };
+    const rect=(x,y,w,h,g)=>pg.ops.push(g+' rg '+x.toFixed(2)+' '+Y(y+h)+' '+w.toFixed(2)+' '+h.toFixed(2)+' re f');
+    const line=(x1,y,x2,g,lw)=>pg.ops.push(g+' RG '+lw+' w '+x1.toFixed(2)+' '+Y(y)+' m '+x2.toFixed(2)+' '+Y(y)+' l S');
+    let top;
+    if(pi===0){
+      text('Customer Due Report',M,M+14,16,true,'l',INK);
+      text('Mohammadia Library & Computer',M,M+28,9.5,true,'l',MUT);
+      text(stamp,W-M,M+14,9,false,'r',MUT);
+      rect(M,M+38,W-2*M,26,'0.945 0.953 0.961');
+      text(n+(n===1?' customer':' customers')+' with due',M+10,M+55,11,true,'l',INK);
+      text('Total due: Tk '+fmt(total),W-M-10,M+56,13,true,'r',RED);
+      top=topFirst;
+    }else top=M+8;
+    const perCol=Math.ceil(chunk.length/mode.c)||1;
+    for(let ci=0;ci<mode.c;ci++){
+      const part=chunk.slice(ci*perCol,(ci+1)*perCol);
+      if(!part.length&&ci>0)continue;
+      const x0=M+ci*(colW+GAP),g=geo(x0);
+      rect(x0,top,colW,hdrH,'0.91 0.918 0.929');
+      const hy=top+hdrH/2+hfs*0.35;
+      text('#',g.noR,hy,hfs,true,'r',INK);text('Customer',g.nameL,hy,hfs,true,'l',INK);
+      if(g.phoneL!==undefined)text('Phone',g.phoneL,hy,hfs,true,'l',INK);
+      if(g.entR!==undefined)text('Entries',g.entR,hy,hfs,true,'r',INK);
+      text(mode.c===1?'Oldest':'Age',g.ageR,hy,hfs,true,'r',INK);text('Due (Tk)',g.dueR,hy,hfs,true,'r',INK);
+      let y=top+hdrH+3;
+      part.forEach((r,ri)=>{
+        const no=pi*perPage+ci*perCol+ri+1,yb=y+rh/2+fs*0.35;
+        text(String(no),g.noR,yb,fs*0.92,false,'r',MUT);
+        text(fit(r.name,g.nameW,fs,true),g.nameL,yb,fs,true,'l',INK);
+        if(g.phoneL!==undefined&&r.phone)text(fit(r.phone,g.phoneW,fs*0.95,false),g.phoneL,yb,fs*0.95,false,'l',MUT);
+        if(g.entR!==undefined)text(String(r.entries),g.entR,yb,fs*0.95,false,'r',MUT);
+        text(r.age+'d',g.ageR,yb,fs*0.95,false,'r',r.age>30?RED:MUT);
+        text(fmt(r.due),g.dueR,yb,fs,true,'r',INK);
+        y+=rh;line(x0,y,x0+colW,'0.88 0.88 0.88',0.3);
+      });
+    }
+    if(!n)text('No customer has any due - all clear.',W/2,topFirst+50,13,true,'c',GRN);
+    if(pi===pageRows.length-1&&n){
+      const ty=top+hdrH+3+perCol*rh+8;
+      line(M,ty-4,W-M,'0.2 0.2 0.2',0.8);
+      text('TOTAL DUE',M+28,ty+8,10,true,'l',INK);
+      text('Tk '+fmt(total),W-M-6,ty+8,10,true,'r',RED);
+    }
+    if(pageRows.length>1)text('Page '+(pi+1)+' of '+pageRows.length,W/2,H-M+4,7.5,false,'c',MUT);
+    return pg;
+  });
+  // ----- write the PDF file -----
+  const enc=new TextEncoder(),objs=[null,null];
+  const add=parts=>{objs.push(parts);return objs.length};
+  const f1=add(['<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>']);
+  const f2=add(['<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>']);
+  const pageIds=[];
+  pages.forEach(pg=>{
+    const imIds=pg.imgs.map(im=>add(['<< /Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Mask [232 255 232 255 232 255] /Length '+im.bytes.length+' >>\nstream\n',im.bytes,'\nendstream']));
+    const content=pg.imgOps.concat(pg.ops).join('\n');
+    const cid=add(['<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream']);
+    const xo=imIds.map((id,i)=>'/Im'+(i+1)+' '+id+' 0 R').join(' ');
+    pageIds.push(add(['<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 '+f1+' 0 R /F2 '+f2+' 0 R >>'+(xo?' /XObject << '+xo+' >>':'')+' >> /Contents '+cid+' 0 R >>']));
+  });
+  objs[0]=['<< /Type /Catalog /Pages 2 0 R >>'];
+  objs[1]=['<< /Type /Pages /Count '+pageIds.length+' /Kids ['+pageIds.map(i=>i+' 0 R').join(' ')+'] >>'];
+  const chunks=[],offs=[];let off=0;
+  const push=x=>{const b=typeof x==='string'?enc.encode(x):x;chunks.push(b);off+=b.length};
+  push('%PDF-1.4\n');
+  objs.forEach((parts,i)=>{offs[i+1]=off;push((i+1)+' 0 obj\n');parts.forEach(push);push('\nendobj\n')});
+  const xr=off;let x='xref\n0 '+(objs.length+1)+'\n0000000000 65535 f \n';
+  for(let id=1;id<=objs.length;id++)x+=String(offs[id]).padStart(10,'0')+' 00000 n \n';
+  push(x+'trailer\n<< /Size '+(objs.length+1)+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF');
+  return new Blob(chunks,{type:'application/pdf'});
+}
+async function customerDuePdfBlob(){
+  const rows=dueReportRows();
+  await new Promise(r=>setTimeout(r,0));        // let the screen paint first
+  return dueReportPdf(rows);
+}
+/* ---------- CUSTOMER DUE DETAILS (PDF) ----------
+   One block per customer who still owes money (biggest due first): contact line, then every due entry
+   (date, invoice / bill / manual due, items or note, total, paid, due) and the payments received on it.
+   Real selectable text, compact, flows over as many A4 pages as needed. */
+function dueDetailData(){
+  _custReg=custRegMap();
+  const fdate=ts=>new Date(ts).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'});
+  const money2=n=>(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
+  const m=new Map();
+  dueItems().forEach(it=>{
+    const key=khKey(it.customer);let g=m.get(key);
+    if(!g){const c=_custReg.get(key)||{};g={name:khClean(it.customer)||'Walk-in',phone:c.phone||'',address:c.address||'',entries:[],due:0};m.set(key,g)}
+    let ref=it.label,detail='';
+    if(it.kind==='inv'){
+      const s=(db.sales||[]).find(x=>x&&x.invoiceNo===it.ref);
+      ref=String(it.ref);
+      if(s&&Array.isArray(s.items))detail=s.items.map(i=>(i.name||'')+((+i.qty>1)?' x'+i.qty:'')).join(', ');
+    }else if(it.kind==='bill'){ref='Electricity bill';detail='Bill due'}
+    else{ref='Manual due';const d=(db.manualDues||[]).find(x=>x&&x.id===it.ref);detail=(d&&d.note)||''}
+    const pays=(Array.isArray(it.log)?it.log:[]).filter(p=>p&&+p.amount>0).sort((a,b)=>(+a.at||0)-(+b.at||0));
+    g.entries.push({ts:it.date.getTime(),date:fdate(it.date.getTime()),ref,detail,total:it.total,paid:it.paid,due:it.due,
+      pays:pays.map(p=>money2(+p.amount)+(p.ext?' (external)':'')+(p.at?' on '+fdate(+p.at):'')),lastPay:pays.length?{at:+pays[pays.length-1].at||0,amount:+pays[pays.length-1].amount}:null});
+    g.due+=it.due;
+  });
+  const out=[...m.values()].filter(g=>g.due>0.009);
+  out.forEach(g=>{
+    g.entries.sort((a,b)=>a.ts-b.ts);
+    g.age=Math.max(0,Math.floor((Date.now()-g.entries[0].ts)/86400000));
+    const lp=g.entries.filter(e=>e.lastPay&&e.lastPay.at).map(e=>e.lastPay).sort((a,b)=>b.at-a.at)[0];
+    g.lastPay=lp?('last payment '+fdate(lp.at)+' (Tk '+money2(lp.amount)+')'):'no payment yet';
+  });
+  out.sort((a,b)=>(b.due-a.due)||a.name.localeCompare(b.name));
+  return out;
+}
+function dueDetailPdf(list){
+  const W=595.28,H=841.89,M=28,SC=4;
+  const FONT='"Segoe UI","Nirmala UI","Noto Sans Bengali","Noto Sans",Arial,sans-serif';
+  const LAT='Arial,Helvetica,"Liberation Sans",sans-serif';
+  const INK={p:'0.07 0.07 0.07',c:'#111'},MUT={p:'0.38 0.38 0.38',c:'#616161'},RED={p:'0.70 0.15 0.12',c:'#b3261e'},GRN={p:'0.09 0.50 0.22',c:'#188038'};
+  const fmt=n=>(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
+  const total=list.reduce((a,g)=>a+g.due,0),n=list.length;
+  const now=new Date();
+  const stamp=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+', '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const mc=document.createElement('canvas').getContext('2d');
+  const isLatin=t=>!/[^\x20-\x7E\xA0-\xFF]/.test(t);
+  const wid=(t,fs,b)=>{mc.font=isLatin(t)?((b?'bold ':'')+'100px '+LAT):((b?'700 ':'400 ')+'100px '+FONT);return mc.measureText(t).width*fs/100};
+  const fit=(t,w,fs,b)=>{t=String(t);if(wid(t,fs,b)<=w)return t;while(t.length>1&&wid(t+'...',fs,b)>w)t=t.slice(0,-1);return t+'...'};
+  const wrap=(t,w,fs,b,maxLines)=>{
+    t=String(t||'').trim();if(!t)return[''];
+    const lines=[];let cur='';
+    t.split(/\s+/).forEach(wd=>{const tr=cur?cur+' '+wd:wd;if(!cur||wid(tr,fs,b)<=w)cur=tr;else{lines.push(cur);cur=wd}});
+    lines.push(cur);
+    if(lines.length>maxLines){const keep=lines.slice(0,maxLines);keep[maxLines-1]=fit(keep[maxLines-1]+' '+lines.slice(maxLines).join(' '),w,fs,b);return keep}
+    return lines.map(l=>wid(l,fs,b)>w?fit(l,w,fs,b):l);
+  };
+  const esc=t=>{let o='';for(const ch of t){const c=ch.charCodeAt(0);if(ch==='\\'||ch==='('||ch===')')o+='\\'+ch;else if(c>126)o+='\\'+c.toString(8).padStart(3,'0');else o+=ch}return o};
+  const pages=[];let pg=null;
+  const Y=y=>(H-y).toFixed(2);
+  const drawRun=(t,xx,yb,size,b,col)=>{
+    if(isLatin(t)){pg.ops.push(col.p+' rg BT /F'+(b?2:1)+' '+size.toFixed(2)+' Tf '+xx.toFixed(2)+' '+Y(yb)+' Td ('+esc(t)+') Tj ET');return}
+    const cv=document.createElement('canvas'),px=size*SC;
+    mc.font=(b?'700 ':'400 ')+px+'px '+FONT;
+    cv.width=Math.ceil(mc.measureText(t).width+SC*3);cv.height=Math.ceil(px*1.5);
+    const c=cv.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,cv.width,cv.height);
+    c.fillStyle=col.c;c.font=(b?'700 ':'400 ')+px+'px '+FONT;c.textBaseline='alphabetic';c.fillText(t,SC*1.2,px*1.08);
+    const b64=cv.toDataURL('image/jpeg',0.9).split(',')[1],bin=atob(b64),bytes=new Uint8Array(bin.length);
+    for(let k=0;k<bin.length;k++)bytes[k]=bin.charCodeAt(k);
+    const idx=pg.imgs.length+1;pg.imgs.push({w:cv.width,h:cv.height,bytes});
+    const iw=cv.width/SC,ih=cv.height/SC,top=yb-size*1.08;
+    pg.imgOps.push('q '+iw.toFixed(2)+' 0 0 '+ih.toFixed(2)+' '+(xx-1.2).toFixed(2)+' '+Y(top+ih)+' cm /Im'+idx+' Do Q');
+  };
+  const text=(t,x,yb,size,b,align,col)=>{
+    t=String(t);if(!t)return;
+    const runs=isLatin(t)?[t]:(t.match(/[\x20-\x7E\xA0-\xFF]+|[^\x20-\x7E\xA0-\xFF]+/g)||[]);
+    const ws=runs.map(r=>wid(r,size,b)),w=ws.reduce((a,v)=>a+v,0);
+    let xx=align==='r'?x-w:align==='c'?x-w/2:x;
+    runs.forEach((r,i)=>{if(r.trim())drawRun(r,xx,yb,size,b,col);xx+=ws[i]});
+  };
+  const rect=(x,y,w,h,g)=>pg.ops.push(g+' rg '+x.toFixed(2)+' '+Y(y+h)+' '+w.toFixed(2)+' '+h.toFixed(2)+' re f');
+  const line=(x1,y,x2,g,lw)=>pg.ops.push(g+' RG '+lw+' w '+x1.toFixed(2)+' '+Y(y)+' m '+x2.toFixed(2)+' '+Y(y)+' l S');
+  // ---- page + layout constants ----
+  const bottom=H-M-12,FS=7.8,LH=FS*1.18,PFS=6.8,PLH=PFS*1.2;
+  const x0=M,tw=W-2*M,dueR=x0+tw-4,paidR=dueR-58,totR=paidR-58;
+  const refL=x0+54,detL=x0+118,detW=totR-40-detL-6,payW=dueR-refL;
+  let y=0;
+  const newPage=first=>{
+    pg={imgs:[],imgOps:[],ops:[]};pages.push(pg);
+    if(first){
+      text('Customer Due Details',M,M+14,16,true,'l',INK);
+      text('Mohammadia Library & Computer',M,M+28,9.5,true,'l',MUT);
+      text(stamp,W-M,M+14,9,false,'r',MUT);
+      rect(M,M+38,W-2*M,26,'0.945 0.953 0.961');
+      text(n+(n===1?' customer':' customers')+' with due',M+10,M+55,11,true,'l',INK);
+      text('Total due: Tk '+fmt(total),W-M-10,M+56,13,true,'r',RED);
+      y=M+74;
+    }else{
+      text('Customer Due Details',M,M+8,8,true,'l',MUT);
+      y=M+16;
+    }
+  };
+  const band=(g,cont)=>{
+    rect(x0,y,tw,16,'0.918 0.925 0.937');
+    const nm=g.name+(cont?' (cont.)':'');
+    text(nm,x0+6,y+11.2,9.5,true,'l',INK);
+    if(g.phone&&!cont)text(g.phone,x0+6+wid(nm,9.5,true)+12,y+11,8,false,'l',MUT);
+    text('Due Tk '+fmt(g.due),dueR,y+11.5,10,true,'r',RED);
+    y+=16;
+    if(!cont){
+      const info=g.entries.length+(g.entries.length===1?' entry':' entries')+' · oldest '+g.age+'d · '+g.lastPay+(g.address?' · '+g.address:'');
+      text(fit(info,tw-8,7,false),x0+6,y+8,7,false,'l',MUT);y+=11;
+    }
+    text('Date',x0+2,y+6,6.6,true,'l',MUT);text('Invoice / type',refL,y+6,6.6,true,'l',MUT);text('Details',detL,y+6,6.6,true,'l',MUT);
+    text('Total',totR,y+6,6.6,true,'r',MUT);text('Paid',paidR,y+6,6.6,true,'r',MUT);text('Due',dueR,y+6,6.6,true,'r',MUT);
+    y+=9;line(x0,y,x0+tw,'0.75 0.75 0.75',0.4);
+  };
+  if(!n){newPage(true);text('No customer has any due - all clear.',W/2,y+50,13,true,'c',GRN)}
+  list.forEach((g,gi)=>{
+    const first=g.entries[0];
+    const dl=wrap(first.detail,detW,FS,false,2),need=16+11+9+dl.length*LH+4+(first.pays.length?PLH+2:0);
+    if(!pg||y+need>bottom){newPage(!pg);}
+    band(g,false);
+    g.entries.forEach(e=>{
+      const dls=wrap(e.detail,detW,FS,false,2);
+      const pl=e.pays.length?wrap('Payments: '+e.pays.join('  |  '),payW,PFS,false,2):[];
+      const rh=dls.length*LH+3.2+(pl.length?pl.length*PLH+1:0);
+      if(y+rh>bottom){newPage(false);band(g,true)}
+      const yb=y+FS+1.4;
+      text(e.date,x0+2,yb,FS,false,'l',INK);
+      text(fit(e.ref,detL-refL-6,FS,true),refL,yb,FS,true,'l',INK);
+      dls.forEach((l,li)=>text(l,detL,yb+li*LH,FS,false,'l',MUT));
+      text(fmt(e.total),totR,yb,FS,false,'r',INK);
+      text(fmt(e.paid),paidR,yb,FS,false,'r',MUT);
+      text(fmt(e.due),dueR,yb,FS,true,'r',RED);
+      let yy=y+dls.length*LH+1.8;
+      pl.forEach((l,li)=>text(l,refL,yy+PFS+li*PLH,PFS,false,'l',MUT));
+      y+=rh;line(x0,y,x0+tw,'0.88 0.88 0.88',0.3);
+    });
+    y+=7;
+  });
+  if(n){
+    if(y+22>bottom)newPage(false);
+    line(M,y,W-M,'0.2 0.2 0.2',0.8);
+    text('TOTAL DUE · '+n+(n===1?' customer':' customers'),x0+2,y+13,10,true,'l',INK);
+    text('Tk '+fmt(total),dueR,y+13,10,true,'r',RED);
+  }
+  pages.forEach((p,i)=>{pg=p;text('Page '+(i+1)+' of '+pages.length,W/2,H-M+4,7.5,false,'c',MUT)});
+  return pdfWrite(pages);
+}
+/* writes pages made of {ops,imgOps,imgs} into one PDF file */
+function pdfWrite(pages){
+  const enc=new TextEncoder(),objs=[null,null];
+  const add=parts=>{objs.push(parts);return objs.length};
+  const f1=add(['<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>']);
+  const f2=add(['<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>']);
+  const pageIds=[];
+  pages.forEach(pg=>{
+    const imIds=pg.imgs.map(im=>add(['<< /Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Mask [232 255 232 255 232 255] /Length '+im.bytes.length+' >>\nstream\n',im.bytes,'\nendstream']));
+    const content=pg.imgOps.concat(pg.ops).join('\n');
+    const cid=add(['<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream']);
+    const xo=imIds.map((id,i)=>'/Im'+(i+1)+' '+id+' 0 R').join(' ');
+    pageIds.push(add(['<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 '+f1+' 0 R /F2 '+f2+' 0 R >>'+(xo?' /XObject << '+xo+' >>':'')+' >> /Contents '+cid+' 0 R >>']));
+  });
+  objs[0]=['<< /Type /Catalog /Pages 2 0 R >>'];
+  objs[1]=['<< /Type /Pages /Count '+pageIds.length+' /Kids ['+pageIds.map(i=>i+' 0 R').join(' ')+'] >>'];
+  const chunks=[],offs=[];let off=0;
+  const push=x=>{const b=typeof x==='string'?enc.encode(x):x;chunks.push(b);off+=b.length};
+  push('%PDF-1.4\n');
+  objs.forEach((parts,i)=>{offs[i+1]=off;push((i+1)+' 0 obj\n');parts.forEach(push);push('\nendobj\n')});
+  const xr=off;let x='xref\n0 '+(objs.length+1)+'\n0000000000 65535 f \n';
+  for(let id=1;id<=objs.length;id++)x+=String(offs[id]).padStart(10,'0')+' 00000 n \n';
+  push(x+'trailer\n<< /Size '+(objs.length+1)+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF');
+  return new Blob(chunks,{type:'application/pdf'});
+}
+async function customerDueDetailsPdfBlob(){
+  const list=dueDetailData();
+  await new Promise(r=>setTimeout(r,0));
+  return dueDetailPdf(list);
+}
+async function customerDueDetailsPDF(){
+  if(!requireAdmin('Due Details'))return;
+  try{
+    const blob=await customerDueDetailsPdfBlob();
+    dlBlob('mohammadia_customer_due_details_'+todayKey()+'.pdf',blob);
+    try{dueToast('✓ Due Details PDF downloaded')}catch(e){}
+  }catch(e){console.error('Due Details PDF failed:',e);alert('Could not create the Due Details PDF.')}
+}
+function dlBlob(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
+async function customerDuePDF(){
+  if(!requireAdmin('Due Report'))return;
+  try{
+    const blob=await customerDuePdfBlob();
+    dlBlob('mohammadia_customer_due_'+todayKey()+'.pdf',blob);
+    try{dueToast('✓ Customer Due PDF downloaded')}catch(e){}
+  }catch(e){console.error('Due PDF failed:',e);alert('Could not create the Due PDF.')}
+}
+/* saved next to every daily backup: into the chosen folder, otherwise as a second download */
+/* The other 3 files saved with every daily backup: Stock CSV + the two Customer Due PDFs
+   (folder mode: written into the folder; otherwise downloaded one after another). */
+async function abSaveDuePdf(dir){
+  const jobs=[
+    {pre:'mohammadia_stock_',ext:'csv',make:async()=>new Blob(['\ufeff'+stockCsvText()],{type:'text/csv;charset=utf-8'})},
+    {pre:'mohammadia_customer_due_',ext:'pdf',make:customerDuePdfBlob},
+    {pre:'mohammadia_customer_due_details_',ext:'pdf',make:customerDueDetailsPdfBlob}
+  ];
+  for(const j of jobs){
+    try{
+      const blob=await j.make(),fname=j.pre+todayKey()+'.'+j.ext;
+      let saved=false;
+      if(dir){
+        try{
+          const fh=await dir.getFileHandle(fname,{create:true});
+          const w=await fh.createWritable();await w.write(blob);await w.close();
+          abPrune(dir,new RegExp('^'+j.pre+'\\d{4}-\\d{2}-\\d{2}\\.'+j.ext+'$'));saved=true;
+        }catch(e){console.error('Backup file to folder failed, using download:',e)}
+      }
+      if(!saved){await new Promise(r=>setTimeout(r,600));dlBlob(fname,blob)}
+    }catch(e){console.error('Backup file skipped:',e)}
+  }
+}
+function openData(){if(!requireAdmin('Data Center'))return;closeOtherPages('dataModal');$('dataModal').classList.add('show');abRenderStatus()}function closeData(){$('dataModal').classList.remove('show')}
 function csvEsc(v){let s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
 function dl(name,text,type='text/csv;charset=utf-8'){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function stamp(){return new Date().toISOString().slice(0,10)}
 function backupJSON(){if(!requireAdmin('Export Backup'))return;dl('mohammadia_complete_backup_'+stamp()+'.json',JSON.stringify(db,null,2),'application/json')}
-function stockCSV(){if(!requireAdmin('Export Stock CSV'))return;let r=[['id','name','qty','selling_price','purchase_price','barcode','service','quick','category','model'],...db.stock.map(x=>[x.id,x.name,x.qty,x.price,x.cost,x.barcode||'',x.service?'yes':'no',x.quick?'yes':'no',x.category||'',x.model||''])];dl('mohammadia_stock_'+stamp()+'.csv',r.map(x=>x.map(csvEsc).join(',')).join('\n'))}
+function stockCsvText(){let r=[['id','name','qty','selling_price','purchase_price','barcode','service','quick','category','model'],...(db.stock||[]).map(x=>[x.id,x.name,x.qty,x.price,x.cost,x.barcode||'',x.service?'yes':'no',x.quick?'yes':'no',x.category||'',x.model||''])];return r.map(x=>x.map(csvEsc).join(',')).join('\n')}
+function stockCSV(){if(!requireAdmin('Export Stock CSV'))return;dl('mohammadia_stock_'+stamp()+'.csv',stockCsvText())}
 function salesCSV(){if(!requireAdmin('Export Sales CSV'))return;let r=[['invoice_no','date','customer','item','qty','unit_price','subtotal','discount','total','returned'],...db.sales.flatMap(s=>s.items.map(i=>[s.invoiceNo,s.date,s.customer||'',i.name,i.qty,i.price,s.subtotal,s.discount,s.total,s.returned?'yes':'no']))];dl('mohammadia_sales_'+stamp()+'.csv',r.map(x=>x.map(csvEsc).join(',')).join('\n'))}
 function todayCSV(){if(!requireAdmin("Export Today's Sales CSV"))return;let r=db.sales.filter(s=>isToday(s.date));let rows=[['invoice_no','date','customer','item','qty','unit_price','subtotal','discount','total','returned'],...r.flatMap(s=>s.items.map(i=>[s.invoiceNo,s.date,s.customer||'',i.name,i.qty,i.price,s.subtotal,s.discount,s.total,s.returned?'yes':'no']))];dl('mohammadia_today_sales_'+stamp()+'.csv',rows.map(x=>x.map(csvEsc).join(',')).join('\n'))}
 function pick(type){if(!requireAdmin('Import / Restore'))return;let f=$('fileInput');f.value='';f.accept=type==='json'?'.json':'.csv';f.onchange=()=>restore(f.files[0],type);f.click()}
@@ -7102,6 +7698,181 @@ renderWarranty();
     wire();loadDraft();
   };
   function init(){wire();paintLive(true);setInterval(function(){paintLive(false)},1500)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+<script>
+/* ============================================================
+   Dashboard · Today's 5 follow-ups (random customers with due)
+   + Quote of the day + appreciation text for collecting dues
+   ============================================================ */
+(function(){
+  "use strict";
+  var LS='mhn_followups_v1', LL='mhn_followups_lang', COUNT=5, qOff=0;
+  var QUOTES=[
+    ["Success is the sum of small efforts, repeated day in and day out.","Robert Collier"],
+    ["Well done is better than well said.","Benjamin Franklin"],
+    ["No act of kindness, no matter how small, is ever wasted.","Aesop"],
+    ["Trust is the glue of life.","Stephen Covey"],
+    ["The only way to do great work is to love what you do.","Steve Jobs"],
+    ["Perseverance is not a long race; it is many short races one after the other.","Walter Elliot"],
+    ["A smile is the universal welcome.","Max Eastman"],
+    ["Courtesy costs nothing but buys everything.","Mary Wortley Montagu"],
+    ["Little by little, one travels far.","J.R.R. Tolkien"],
+    ["Great things are done by a series of small things brought together.","Vincent van Gogh"],
+    ["Do what you can, with what you have, where you are.","Theodore Roosevelt"],
+    ["Kind words can be short and easy to speak, but their echoes are truly endless.","Mother Teresa"],
+    ["What you do makes a difference, and you have to decide what kind of difference you want to make.","Jane Goodall"],
+    ["Honesty is the first chapter in the book of wisdom.","Thomas Jefferson"],
+    ["Every great business is built on friendship.","J. C. Penney"],
+    ["Your most unhappy customers are your greatest source of learning.","Bill Gates"],
+    ["The best advertising is done by satisfied customers.","Philip Kotler"],
+    ["Persistence guarantees that results are inevitable.","Paramahansa Yogananda"],
+    ["Gratitude turns what we have into enough.","Proverb"],
+    ["It always seems impossible until it's done.","Nelson Mandela"]
+  ];
+  var THANKS=[
+    "Every due you collect is a promise kept. Thank you for keeping the shop strong.",
+    "You're not chasing money, you're closing the loop on trust. Proud of your effort!",
+    "A polite reminder today protects a good relationship tomorrow. Keep going!",
+    "Small collections add up to big stability. Every call you make matters.",
+    "Thank the customers who pay, kindly remind those who haven't. You're doing great.",
+    "Respect + patience + a warm \u201Cthank you\u201D = faster payments. You've got this!",
+    "Your consistency keeps the shelves full and the lights on. Well done!",
+    "Today's effort pays for the shop's tomorrow. Smile, call, collect, repeat.",
+    "Behind every due is a customer who trusts us. Honour that trust with kindness.",
+    "Great shops are built by people who follow up. Thank you for being one of them."
+  ];
+  var GRAD=["linear-gradient(135deg,#1a73e8,#4f9cf9)","linear-gradient(135deg,#188038,#4cc27a)","linear-gradient(135deg,#e37400,#ffb04d)","linear-gradient(135deg,#7c3aed,#a77bf5)","linear-gradient(135deg,#d93025,#f2766d)","linear-gradient(135deg,#0b8043,#2bb7a0)"];
+  var SVG={
+    call:'<svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>',
+    wa:'<svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 01-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1121 11.5z"/><path d="M9 9.5c.3 2 2.5 4.2 4.6 4.6l1.3-1.2-1.8-1-.8.6a3.5 3.5 0 01-1.7-1.7l.6-.8-1-1.8z"/></svg>',
+    sms:'<svg viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1H9l-5 4V6a1 1 0 011-1z"/><path d="M8 10h8M8 13h5"/></svg>',
+    cp:'<svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>',
+    kh:'<svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 014 4v12H8a4 4 0 01-4-4z"/><path d="M8 9h8M8 13h8"/></svg>',
+    ok:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+  };
+  function $$(id){return document.getElementById(id)}
+  function load(){try{return JSON.parse(localStorage.getItem(LS)||'null')||{}}catch(e){return{}}}
+  function save(o){try{localStorage.setItem(LS,JSON.stringify(o))}catch(e){}}
+  function lang(){try{return localStorage.getItem(LL)==='bn'?'bn':'en'}catch(e){return'en'}}
+  function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+  function fmt(n){return '\u09F3'+(Math.round((+n||0)*100)/100).toLocaleString('en-US',{maximumFractionDigits:2})}
+  function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return Math.abs(h)}
+
+  /* one row per customer: all invoices + electricity bills + manual dues added together */
+  function groups(){
+    var m=new Map(),items=[],reg;
+    try{items=dueItems();reg=custRegMap()}catch(e){return m}
+    items.forEach(function(it){
+      var n=khClean(it.customer);
+      if(!n||n==='Walk-in'||n==='\u2014'||/^#|^\d+$/.test(n))return;
+      var k=khKey(n),g=m.get(k);
+      if(!g){var c=reg.get(k);g={key:k,name:n,due:0,count:0,oldest:Infinity,phone:(c&&c.phone)?String(c.phone):''};m.set(k,g)}
+      g.due+=(+it.due||0);g.count++;
+      var t=+it.date;if(t&&t<g.oldest)g.oldest=t;
+    });
+    return m;
+  }
+  function phoneIntl(p){var d=String(p||'').replace(/\D/g,'');if(/^01\d{9}$/.test(d))return '88'+d;return d}
+  function message(g,l){
+    var a=fmt(g.due);
+    if(l==='bn')return 'আসসালামু আলাইকুম '+g.name+', মোহাম্মদীয়া লাইব্রেরি অ্যান্ড কম্পিউটার-এর পাশে থাকার জন্য আপনাকে আন্তরিক ধন্যবাদ। বিনীত অনুরোধ, আপনার বকেয়া '+a+' সুবিধামতো সময়ে পরিশোধ করলে কৃতজ্ঞ থাকব। আপনার বিশ্বাস ও সহযোগিতার জন্য ধন্যবাদ। \uD83D\uDE4F';
+    return 'Assalamu Alaikum '+g.name+', thank you for being a valued customer of Mohammadia Library & Computer. A friendly reminder: your outstanding balance is '+a+'. Whenever convenient, please settle it \u2014 we truly appreciate your trust and support. \uD83D\uDE4F';
+  }
+  /* today's 5: saved for the day so the list stays stable; paid-off customers drop out and are replaced */
+  function todays(m){
+    var tk=todayKey(),st=load();
+    if(st.date!==tk)st={date:tk,keys:[],done:{}};
+    st.keys=Array.isArray(st.keys)?st.keys:[];st.done=st.done||{};
+    if(!m.size)return {st:st,keys:[]};
+    var keys=st.keys.filter(function(k){return m.has(k)});
+    var pool=shuffle(Array.from(m.keys()).filter(function(k){return keys.indexOf(k)<0}));
+    while(keys.length<COUNT&&pool.length)keys.push(pool.shift());
+    st.keys=keys;save(st);
+    return {st:st,keys:keys};
+  }
+  function reshuffle(){
+    var m=groups();if(!m.size)return;
+    var st=load(),tk=todayKey();if(st.date!==tk)st={date:tk,keys:[],done:{}};
+    var old=Array.isArray(st.keys)?st.keys:[];
+    var fresh=shuffle(Array.from(m.keys()).filter(function(k){return old.indexOf(k)<0}));
+    var keys=fresh.slice(0,COUNT);
+    if(keys.length<COUNT)keys=keys.concat(shuffle(old.filter(function(k){return m.has(k)})).slice(0,COUNT-keys.length));
+    st.keys=keys;st.done=st.done||{};save(st);
+    var b=$$('fuShuf');if(b){b.classList.remove('spin');void b.offsetWidth;b.classList.add('spin')}
+    renderFollowups();
+  }
+  function ageCls(d){return d>30?'hot':(d>14?'warm':'')}
+  function renderQuote(allDone,none){
+    var dn=Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5);
+    var q=QUOTES[(dn+qOff)%QUOTES.length],t=THANKS[(dn*3+qOff)%THANKS.length],h='\uD83D\uDC9B For you, today';
+    if(none){t='No dues outstanding \u2014 your customers are paying on time. Beautiful work! \uD83C\uDF89';h='\uD83C\uDF89 Well done'}
+    else if(allDone){t='All '+COUNT+' contacted \u2014 fantastic work today! Every kind reminder builds trust and keeps cash flowing. \uD83C\uDF89';h='\uD83C\uDF1F Mission complete'}
+    $$('fuQt').textContent='\u201C'+q[0]+'\u201D';$$('fuQa').textContent='\u2014 '+q[1];
+    $$('fuThx').textContent=t;$$('fuThxH').textContent=h;
+  }
+  function renderFollowups(){
+    var host=$$('fuList');if(!host)return;
+    var m,res;
+    try{m=groups();res=todays(m)}catch(e){console.error('follow-ups:',e);return}
+    var keys=res.keys,st=res.st,l=lang(),h='';
+    var doneN=keys.filter(function(k){return st.done[k]}).length,tot=0;
+    document.querySelectorAll('#fuLang button').forEach(function(b){b.classList.toggle('on',b.dataset.l===l)});
+    if(!keys.length){
+      host.innerHTML='<div class="fu-empty"><b>\uD83C\uDF89</b>No customer dues to follow up right now.</div>';
+      $$('fuSub').textContent='Nobody owes anything';$$('fuMeta').innerHTML='';$$('fuBar').style.width='100%';
+      renderQuote(false,true);return;
+    }
+    keys.forEach(function(k,i){
+      var g=m.get(k),d=g.oldest===Infinity?0:Math.max(0,Math.floor((Date.now()-g.oldest)/864e5)),done=!!st.done[k];
+      tot+=g.due;
+      var msg=message(g,l),ph=g.phone?phoneIntl(g.phone):'',acts='';
+      if(g.phone){
+        acts+='<a class="fu-b call" href="tel:'+esc(g.phone.replace(/[^\d+]/g,''))+'" title="Call '+esc(g.phone)+'" aria-label="Call">'+SVG.call+'</a>';
+        acts+='<a class="fu-b wa" href="https://wa.me/'+ph+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener" title="WhatsApp reminder" aria-label="WhatsApp">'+SVG.wa+'</a>';
+        acts+='<a class="fu-b sms" href="sms:'+esc(g.phone.replace(/[^\d+]/g,''))+'?body='+encodeURIComponent(msg)+'" title="SMS reminder" aria-label="SMS">'+SVG.sms+'</a>';
+      }
+      acts+='<button type="button" class="fu-b cp" data-a="copy" data-k="'+esc(k)+'" title="Copy polite message" aria-label="Copy message">'+SVG.cp+'</button>';
+      acts+='<button type="button" class="fu-b kh" data-a="khata" data-k="'+esc(k)+'" title="Open khata" aria-label="Open khata">'+SVG.kh+'</button>';
+      acts+='<button type="button" class="fu-b dn'+(done?' on':'')+'" data-a="done" data-k="'+esc(k)+'" title="'+(done?'Contacted \u2014 tap to undo':'Mark as contacted')+'" aria-label="Mark contacted">'+SVG.ok+'</button>';
+      h+='<div class="fu-row'+(done?' done':'')+'" style="--i:'+i+'">'
+        +'<div class="fu-ava" style="background:'+GRAD[hash(k)%GRAD.length]+'">'+esc((g.name.charAt(0)||'?').toUpperCase())+'</div>'
+        +'<div class="fu-info"><div class="fu-name" data-a="khata" data-k="'+esc(k)+'" title="Open khata">'+esc(g.name)+'</div>'
+        +'<div class="fu-sub"><span class="fu-age '+ageCls(d)+'">\u23F3 oldest '+d+'d</span><span>\u00B7 '+g.count+(g.count===1?' entry':' entries')+'</span>'+(g.phone?'<span>\u00B7 \uD83D\uDCDE '+esc(g.phone)+'</span>':'<span>\u00B7 no phone saved</span>')+'</div></div>'
+        +'<div class="fu-due">'+fmt(g.due)+'</div><div class="fu-acts">'+acts+'</div></div>';
+    });
+    host.innerHTML=h;
+    $$('fuSub').textContent=keys.length+' random customer'+(keys.length===1?'':'s')+' with due \u00B7 new picks every day';
+    $$('fuMeta').innerHTML='<span><b>'+doneN+'/'+keys.length+'</b> contacted</span><span>\u00B7</span><span>Due in this list: <b>'+fmt(tot)+'</b></span>';
+    $$('fuBar').style.width=Math.round(doneN/keys.length*100)+'%';
+    renderQuote(doneN===keys.length,false);
+  }
+  function copyText(t){
+    function ok(){if(typeof dueToast==='function')dueToast('\u2713 Message copied \u2014 paste it in WhatsApp / SMS')}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb();
+    function fb(){var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){}a.remove()}
+  }
+  function wire(){
+    var host=$$('followupSection');if(!host||host._w)return;host._w=1;
+    host.addEventListener('click',function(e){
+      var t=e.target.closest('[data-a],[data-l],#fuShuf,#fuQNext');if(!t)return;
+      if(t.id==='fuShuf'){reshuffle();return}
+      if(t.id==='fuQNext'){qOff++;var b=$$('fuQBody');b.classList.remove('sw');void b.offsetWidth;b.classList.add('sw');renderQuote(false,false);
+        var m=groups(),r=todays(m);if(r.keys.length&&r.keys.every(function(k){return r.st.done[k]}))renderQuote(true,false);else if(!r.keys.length)renderQuote(false,true);return}
+      if(t.dataset.l){try{localStorage.setItem(LL,t.dataset.l)}catch(x){}renderFollowups();return}
+      var k=t.dataset.k,a=t.dataset.a,m2=groups(),g=m2.get(k);
+      if(a==='khata'&&g){openKhata(g.name)}
+      else if(a==='copy'&&g){copyText(message(g,lang()))}
+      else if(a==='done'){var st=load();st.done=st.done||{};if(st.done[k])delete st.done[k];else st.done[k]=Date.now();save(st);renderFollowups()}
+    });
+  }
+  /* hook into the existing dashboard render so it refreshes with sales / dues / cloud sync */
+  var _rd=window.renderDashboard;
+  if(typeof _rd==='function'){
+    window.renderDashboard=function(){var r=_rd.apply(this,arguments);try{wire();renderFollowups()}catch(e){console.error(e)}return r};
+  }
+  function init(){wire();renderFollowups()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
