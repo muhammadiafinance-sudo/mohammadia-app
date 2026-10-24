@@ -2027,68 +2027,184 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
 
 /* ===== Dashboard · Today's follow-ups + Quote of the day ===== */
 .main{overflow-y:auto;overflow-x:hidden}
-.profit-card{flex:none;min-height:340px}
+.profit-card{flex:1 1 auto;min-height:214px}
 .fu-wrap{flex:none;display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:12px;margin:0 0 12px}
-.fu-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;min-width:0}
-.fu-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.fu-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;min-width:0;display:flex;flex-direction:column}
+.fu-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
 .fu-ttl{display:flex;align-items:center;gap:11px;min-width:0}
-.fu-ttl i{width:36px;height:36px;flex:none;border-radius:11px;display:grid;place-items:center;background:rgba(26,115,232,.12);color:#1a73e8}
-.fu-ttl i svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.fu-ttl b{display:block;font-size:15px;font-weight:700;color:var(--ink)}
-.fu-ttl small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.fu-ttl i{width:32px;height:32px;flex:none;border-radius:10px;display:grid;place-items:center;background:rgba(26,115,232,.10);color:#1a73e8}
+.fu-ttl i svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.fu-ttl b{display:block;font-size:14.5px;font-weight:700;color:var(--ink);letter-spacing:-.1px}
+.fu-ttl small{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:1px}
+.fu-ttl small b{display:inline;font-size:12px;color:var(--ink);font-variant-numeric:tabular-nums}
 .fu-ctrl{margin-left:auto;display:flex;gap:8px;align-items:center}
-.fu-wrap .fu-seg{display:inline-flex;background:rgba(26,115,232,.09);padding:3px;border-radius:999px}
-.fu-wrap .fu-seg button{border:0;background:transparent;color:var(--muted);padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700;box-shadow:none;cursor:pointer}
-.fu-wrap .fu-seg button.on{background:var(--card);color:#1a73e8;box-shadow:0 1px 3px rgba(0,0,0,.16)}
-.fu-wrap .fu-shuf{width:34px;height:34px;padding:0;border:0;border-radius:50%;background:rgba(26,115,232,.12);color:#1a73e8;display:grid;place-items:center;box-shadow:none;cursor:pointer}
+.fu-wrap .fu-seg{display:inline-flex;background:rgba(26,115,232,.08);padding:3px;border-radius:999px}
+.fu-wrap .fu-seg button{border:0;background:transparent;color:var(--muted);padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;box-shadow:none;cursor:pointer;transition:color .2s,background .25s,box-shadow .25s}
+.fu-wrap .fu-seg button.on{background:var(--card);color:#1a73e8;box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.fu-wrap .fu-shuf{width:30px;height:30px;padding:0;border:0;border-radius:50%;background:rgba(26,115,232,.10);color:#1a73e8;display:grid;place-items:center;box-shadow:none;cursor:pointer;transition:background .2s,color .2s}
 .fu-wrap .fu-shuf:hover{background:#1a73e8;color:#fff}
-.fu-shuf svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fu-shuf svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .fu-shuf.spin svg{animation:fuSpin .6s ease}
 @keyframes fuSpin{to{transform:rotate(360deg)}}
-.fu-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin:0 0 6px;flex-wrap:wrap}
-.fu-meta b{color:var(--ink)}
-.fu-prog{height:6px;border-radius:99px;background:rgba(26,115,232,.12);overflow:hidden;margin:0 0 12px}
-.fu-prog i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#1a73e8,#188038);transition:width .5s ease}
-.fu-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 12px;margin-bottom:8px;border-radius:14px;background:rgba(26,115,232,.05);animation:fuIn .45s both;animation-delay:calc(var(--i)*70ms);transition:background .25s}
-.fu-row:last-child{margin-bottom:0}
+.fu-prog{height:2px;border-radius:99px;background:var(--line);overflow:hidden;margin:0 0 8px;flex:none}
+.fu-prog i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#1a73e8,#188038);transition:width .7s cubic-bezier(.2,.7,.2,1)}
+#fuList{display:flex;flex-direction:column;gap:5px;flex:1 1 auto;min-height:0}
+/* customer rows: the whole row is one click target → opens the customer's details */
+.fu-row{--tc:26,115,232;position:relative;isolation:isolate;overflow:hidden;cursor:pointer;display:flex;align-items:center;gap:12px;padding:0 12px;flex:1 1 0;min-height:30px;max-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--card);transition:border-color .3s,box-shadow .3s,transform .3s;outline:0}
+.fu-row.in{animation:fuIn .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i)*60ms)}
 @keyframes fuIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.fu-row.done{background:rgba(24,128,56,.11)}
-.fu-ava{width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,.18)}
-.fu-info{flex:1 1 150px;min-width:0}
-.fu-name{font-weight:700;font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.fu-name:hover{color:#1a73e8}
-.fu-sub{display:flex;gap:4px 8px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:2px}
-.fu-age.hot{color:#d93025;font-weight:700}.fu-age.warm{color:#b26a00;font-weight:700}
-.fu-due{font-weight:800;font-size:14.5px;color:#d93025;background:rgba(217,48,37,.10);padding:5px 11px;border-radius:10px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.fu-acts{display:flex;gap:6px;flex:none}
-.fu-wrap .fu-b{width:34px;height:34px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15);cursor:pointer;text-decoration:none;transition:transform .15s}
-.fu-wrap .fu-b:hover{transform:translateY(-2px);background:var(--card);box-shadow:0 4px 10px rgba(0,0,0,.2)}
-.fu-b svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.fu-b.call{color:#188038}.fu-b.wa{color:#1fa855}.fu-b.sms{color:#1a73e8}.fu-b.cp{color:#7c3aed}.fu-b.kh{color:#e37400}.fu-b.dn{color:var(--muted)}
-.fu-wrap .fu-b.dn.on{background:#188038;color:#fff}
-.fu-empty{text-align:center;padding:26px 10px;color:var(--muted);font-size:13.5px}
-.fu-empty b{display:block;font-size:30px;margin-bottom:6px}
-.fu-quote{position:relative;overflow:hidden;display:flex;flex-direction:column;color:#fff;border:0;background:linear-gradient(150deg,#12213b 0%,#1b3a7a 58%,#1a73e8 125%)}
-.fu-quote::before{content:"\201C";position:absolute;right:12px;top:-30px;font:900 160px/1 Georgia,serif;color:rgba(255,255,255,.09);pointer-events:none}
-.fu-qtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.fu-qchip{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;background:rgba(255,255,255,.14);padding:4px 11px;border-radius:99px}
-.fu-wrap .fu-qnext{border:0;background:rgba(255,255,255,.14);color:#fff;font-size:12px;font-weight:600;padding:5px 11px;border-radius:99px;box-shadow:none;cursor:pointer}
-.fu-wrap .fu-qnext:hover{background:rgba(255,255,255,.28)}
-.fu-qbody.sw{animation:fuIn .5s both}
-.fu-qt{font:600 clamp(16px,1.45vw,20px)/1.42 Georgia,'Times New Roman',serif;margin:14px 0 8px}
-.fu-qa{font-size:12.5px;color:#b9c8e6;font-weight:600}
-.fu-thx{margin-top:auto;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);font-size:13px;line-height:1.5}
-.fu-thx b{display:block;font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:#ffd666;margin-bottom:4px}
-.fu-qbody{margin-bottom:14px}
-@media(max-width:1100px){.fu-wrap{grid-template-columns:minmax(0,1fr)}}
+/* soft colour that grows out of the exact point the mouse enters (and shrinks back to where it leaves) */
+.fu-row::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(var(--tc),.10);clip-path:circle(0px at var(--mx,50%) var(--my,50%));transition:clip-path .65s cubic-bezier(.2,.7,.2,1)}
+.fu-row::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(var(--tc),.16),transparent 65%);opacity:0;transition:opacity .4s}
+.fu-row:hover::before,.fu-row:focus-visible::before{clip-path:circle(200% at var(--mx,50%) var(--my,50%))}
+.fu-row:hover::after{opacity:1}
+.fu-row:hover,.fu-row:focus-visible{border-color:rgba(var(--tc),.40);box-shadow:0 3px 12px rgba(var(--tc),.12)}
+.fu-row:active{transform:scale(.995)}
+.fu-row.done{--tc:24,128,56}
+.fu-row.done .fu-name{opacity:.7}
+.fu-ava{width:26px;height:26px;flex:none;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;background:rgba(var(--tc),.14);color:rgb(var(--tc));transition:transform .3s,background .3s,color .3s}
+.fu-row:hover .fu-ava{transform:scale(1.07);background:rgb(var(--tc));color:#fff}
+.fu-info{flex:1 1 auto;min-width:0;display:flex;align-items:baseline;gap:10px}
+.fu-name{font-weight:700;font-size:13.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.fu-sub{display:flex;gap:2px 8px;flex:none;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.fu-sub .fu-age{display:inline-flex;align-items:center;gap:5px}
+.fu-sub .fu-age::before{content:"";width:6px;height:6px;border-radius:50%;background:#1a73e8}
+.fu-age.warm{color:#b26a00;font-weight:700}.fu-age.warm::before{background:#e37400!important}
+.fu-age.hot{color:#d93025;font-weight:700}.fu-age.hot::before{background:#d93025!important}
+.fu-due{flex:none;font-weight:800;font-size:13.5px;color:#d93025;background:rgba(217,48,37,.08);padding:3px 10px;border-radius:8px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fu-acts{display:flex;gap:5px;flex:none;justify-content:flex-end;min-width:150px}
+.fu-wrap .fu-b{width:26px;height:26px;padding:0;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;background:var(--card);color:var(--muted);box-shadow:none;cursor:pointer;text-decoration:none;transition:transform .2s,background .2s,color .2s,border-color .2s}
+.fu-wrap .fu-b:hover{transform:translateY(-1px) scale(1.07)}
+.fu-b svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fu-wrap .fu-b.call:hover{background:#188038;color:#fff;border-color:#188038}
+.fu-wrap .fu-b.wa:hover{background:#1fa855;color:#fff;border-color:#1fa855}
+.fu-wrap .fu-b.sms:hover{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.fu-wrap .fu-b.cp:hover{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.fu-wrap .fu-b.dn:hover{background:#188038;color:#fff;border-color:#188038}
+.fu-wrap .fu-b.dn.on{background:#188038;color:#fff;border-color:#188038}
+.fu-b.dn.on svg{animation:fuPop .4s cubic-bezier(.3,1.6,.5,1)}
+@keyframes fuPop{from{transform:scale(.3)}to{transform:scale(1)}}
+/* details chevron: slides in on hover, so the row clearly reads as clickable */
+.fu-go{flex:none;width:14px;height:14px;margin-left:-4px;color:rgb(var(--tc));opacity:0;transform:translateX(-6px);transition:opacity .3s,transform .3s}
+.fu-go svg{width:14px;height:14px;display:block;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.fu-row:hover .fu-go,.fu-row:focus-visible .fu-go{opacity:1;transform:none}
+.fu-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px 10px;color:var(--muted);font-size:13.5px}
+.fu-empty svg{width:32px;height:32px;display:block;margin:0 auto 8px;fill:none;stroke:#188038;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* quote card = a little "screen": looping animated scenes (call → text → paid) with the quote as a subtitle */
+.fu-card.fu-quote{position:relative;overflow:hidden;color:#fff;padding:0;border:1px solid var(--navy2);background:linear-gradient(165deg,var(--navy) 0%,var(--navy2) 100%)}
+.fu-orb{position:absolute;right:-60px;bottom:-70px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(79,156,249,.24),transparent 68%);pointer-events:none;animation:fuDrift 12s ease-in-out infinite}
+@keyframes fuDrift{0%,100%{transform:translate(0,0)}50%{transform:translate(-26px,-18px)}}
+.fu-stories{position:absolute;top:9px;left:14px;right:14px;display:flex;gap:4px;z-index:3}
+.fu-stories i{flex:1;height:2px;border-radius:2px;background:rgba(255,255,255,.18);overflow:hidden;position:relative}
+.fu-stories i::after{content:"";position:absolute;inset:0;width:0;border-radius:2px;background:rgba(255,255,255,.78)}
+.fu-stories i.done::after{width:100%}
+.fu-stories i.on::after{animation:fuSeg 4.6s linear forwards}
+@keyframes fuSeg{to{width:100%}}
+.fu-qtop{display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative;z-index:2;flex:none;padding:19px 14px 0}
+.fu-qchip{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#a9b8d3}
+.fu-qchip::before{content:"";width:18px;height:2px;border-radius:2px;background:#4f9cf9;animation:fuLine 2.4s ease-in-out infinite alternate}
+@keyframes fuLine{from{width:10px}to{width:26px}}
+.fu-wrap .fu-qnext{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#e6ecf8;font-size:12px;font-weight:600;padding:4px 11px;border-radius:99px;box-shadow:none;cursor:pointer;transition:background .2s}
+.fu-wrap .fu-qnext:hover{background:rgba(255,255,255,.17)}
+.fu-qnext svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .5s}
+.fu-qnext.rot svg{transform:rotate(180deg)}
+/* the "video": 3D-cartoon scenes (a shopkeeper calls, texts and talks to a customer) */
+.fu-screen{position:relative;z-index:1;flex:1 1 auto;min-height:64px;margin:0 10px}
+.fu-screen::after{content:"";position:absolute;left:-10px;right:-10px;bottom:0;height:14px;background:linear-gradient(to top,rgba(8,14,28,.6),transparent);pointer-events:none;z-index:2}
+.fu-sc{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;pointer-events:none}
+.fu-sc.on{opacity:1}
+.fu-sc svg{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+.fu-sc .tb{transform-box:fill-box;transform-origin:center}
+.fu-sc .hd{transform-origin:0 30px}
+.fu-sc .lid{transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0)}
+.fu-sc .mo{transform-box:fill-box;transform-origin:50% 15%;transform:scaleY(0)}
+.fu-sc .th{transform-box:fill-box;transform-origin:center}
+@keyframes scRing{0%{transform:scale(1);opacity:.55}100%{transform:scale(2.2);opacity:0}}
+@keyframes scBob{0%,100%{transform:rotate(-1.4deg) translateY(0)}50%{transform:rotate(1.4deg) translateY(-1.6px)}}
+@keyframes scBlink{0%,90%,100%{transform:scaleY(0)}94%{transform:scaleY(1)}}
+@keyframes scTalk{from{transform:scaleY(.1)}to{transform:scaleY(1)}}
+@keyframes scWave{0%{opacity:0;transform:translateX(-5px)}35%{opacity:.85}100%{opacity:0;transform:translateX(7px)}}
+@keyframes scDash{to{stroke-dashoffset:-18}}
+@keyframes scTap{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes scIn{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes scDots{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-4px);opacity:1}}
+@keyframes scTyping{0%{opacity:0}10%{opacity:1}85%{opacity:1}100%{opacity:0}}
+@keyframes scNote{0%{transform:translateX(78px);opacity:0}18%{opacity:1}100%{transform:translateX(-26px);opacity:1}}
+@keyframes scSpark{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+@keyframes scPop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes scHs{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(0)}}
+.fu-sc.on .hd{animation:scBob 2.8s ease-in-out var(--bd,0s) infinite}
+.fu-sc.on .lid{animation:scBlink 4.2s var(--bl,0s) infinite}
+.fu-sc.on .mo{animation:scTalk .3s ease-in-out var(--md,0s) var(--mn,8) alternate both}
+.fu-sc.on .rg{animation:scRing 2.2s ease-out infinite}.fu-sc.on .rg2{animation-delay:1.1s}
+.fu-sc.on .hs{animation:scHs 1.6s ease-in-out .3s 2}
+.fu-sc.on .dash{animation:scDash .9s linear infinite}
+.fu-sc.on .wv{animation:scWave 1.3s ease-out var(--wd,0s) infinite both}
+.fu-sc.on .th{animation:scTap .5s ease-in-out var(--td,0s) infinite}
+.fu-sc.on .b1{animation:scIn .5s .3s both}
+.fu-sc.on .tp{animation:scTyping 1.4s 1.1s both}
+.fu-sc.on .dt{animation:scDots 1s ease-in-out infinite both}
+.fu-sc.on .dt:nth-child(3){animation-delay:.15s}.fu-sc.on .dt:nth-child(4){animation-delay:.3s}
+.fu-sc.on .b2{animation:scIn .5s 2.4s both}
+.fu-sc.on .b3{animation:scIn .5s 3.4s both}
+.fu-sc.on .bm{animation:scIn .5s .3s both}
+.fu-sc.on .bc{animation:scIn .5s 1.6s both}
+.fu-sc.on .note{animation:scNote .9s 2.8s ease-out both}
+.fu-sc.on .ok{animation:scPop .5s 3.7s both}
+.fu-sc.on .sp{animation:scSpark 1s ease-out both}
+/* subtitle */
+.fu-sub-bar{position:relative;z-index:2;flex:none;padding:6px 14px 13px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}
+.fu-qt{display:block;width:fit-content;max-width:100%;padding:6px 13px;border-radius:10px;background:rgba(6,12,24,.58);border:1px solid rgba(255,255,255,.07);font:600 clamp(14px,1.15vw,17px)/1.45 Georgia,'Times New Roman',serif;letter-spacing:.1px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.fu-qt.bn,.fu-qa.bn,.fu-thx.bn,.fu-bn,.fu-qtag.bn{font-family:'Noto Sans Bengali','Hind Siliguri','Nirmala UI','Siyam Rupali',system-ui,sans-serif}
+.fu-qt.bn{font-size:clamp(13.5px,1.1vw,16.5px);line-height:1.6}
+.fu-qt span{display:inline-block;opacity:0;transform:translateY(6px);animation:fuWord .55s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(var(--w)*24ms)}
+@keyframes fuWord{to{opacity:1;transform:none}}
+.fu-meta{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.fu-qtag{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#cfe0ff;background:rgba(79,156,249,.16);border:1px solid rgba(79,156,249,.28);padding:1px 8px;border-radius:99px;opacity:0;animation:fuWord .5s .05s forwards}
+.fu-qa{font-size:12px;color:#a9b8d3;font-weight:600;opacity:0;animation:fuWord .6s .45s forwards}
+/* when every follow-up is done (or none is due) the subtitle becomes a thank-you and the screen holds on "paid" */
+.fu-thx{display:none;align-items:center;gap:10px;text-align:left;padding:8px 12px;border-radius:10px;background:rgba(6,12,24,.58);border:1px solid rgba(255,255,255,.07);font-size:12.8px;line-height:1.5;color:#e6ecf8;max-width:100%}
+.fu-quote.cele .fu-thx{display:flex}
+.fu-quote.cele .fu-qt,.fu-quote.cele .fu-meta{display:none}
+.fu-thx>i{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:rgba(255,214,102,.16);color:#ffd666}
+.fu-thx>i svg{width:14px;height:14px;fill:currentColor;animation:fuBeat 2.4s ease-in-out infinite}
+@keyframes fuBeat{0%,100%{transform:scale(1)}8%{transform:scale(1.2)}16%{transform:scale(1)}24%{transform:scale(1.12)}34%{transform:scale(1)}}
+.fu-thx b{display:block;font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:#ffd666;margin-bottom:1px}
+.fu-thx .fu-tx{animation:fuWord .5s both}
+@media(max-width:1100px){
+  .fu-wrap{grid-template-columns:minmax(0,1fr)}
+  .fu-quote{min-height:290px}
+  .fu-row{flex:none;min-height:44px;padding:6px 12px}
+  .fu-info{flex-wrap:wrap;gap:0 10px}
+}
+/* desktop: keep the profit graph fully on screen — the follow-up band scales with the window height */
+@media(min-width:1101px){
+  .fu-wrap{height:clamp(232px,34vh,330px)}
+  .fu-card{min-height:0;padding:12px 16px}
+}
+@media(min-width:1101px) and (max-height:800px){
+  .fu-card{padding:10px 14px}.fu-head{margin-bottom:6px}.fu-prog{margin-bottom:6px}
+  #fuList{gap:4px}.fu-ava{width:24px;height:24px;font-size:11px}.fu-wrap .fu-b{width:24px;height:24px}.fu-acts{min-width:136px}
+  .fu-sub .opt{display:none}.fu-thx{padding:6px 10px;font-size:12px}
+  .fu-qtop{padding-top:17px}.fu-sub-bar{padding:4px 12px 9px;gap:4px}.fu-qt{padding:4px 11px;font-size:clamp(13px,1.1vw,15.5px)}.fu-qt.bn{font-size:clamp(13px,1.05vw,15px);line-height:1.5}.fu-qa{font-size:11.5px}
+}
+@media(min-width:1101px) and (max-height:900px){
+  .dash-cards .stat{padding:8px 14px;gap:4px}.dash-cards .stat .value{font-size:clamp(17px,1.5vw,22px)}.dash-cards .stat-ico{width:28px;height:28px}
+  .dash-cards{margin-bottom:10px}.fu-wrap{margin-bottom:10px}
+  .profit-card{padding:12px 18px 10px}.pc-total{font-size:clamp(20px,2.4vw,28px)}
+  .pc-head{flex-wrap:nowrap;margin-bottom:2px}.pc-main{flex:1;min-width:0}.pc-controls{flex:none;flex-wrap:nowrap;width:auto}.pc-chart{min-height:130px}
+}
 @media(max-width:560px){
   .fu-wrap{order:3;margin:12px 0 0}
-  .profit-card{min-height:300px}
+  .profit-card{flex:none;min-height:300px}
   .fu-card{padding:14px 12px;border-radius:16px}
-  .fu-acts{width:100%;justify-content:flex-end}
+  .fu-row{flex-wrap:wrap}
+  .fu-acts{width:100%;min-width:0;justify-content:flex-end}
+  .fu-go{display:none}
   .fu-ctrl{width:100%;margin-left:0;justify-content:flex-start}
 }
-@media(prefers-reduced-motion:reduce){.fu-row,.fu-qbody.sw{animation:none}}
+@media(prefers-reduced-motion:reduce){.fu-row.in,.fu-qt span,.fu-qa,.fu-qtag,.fu-thx .fu-tx,.fu-orb,.fu-qchip::before,.fu-thx>i svg{animation:none!important;opacity:1!important;transform:none!important}.fu-row::before{transition:none}}
+@media(prefers-reduced-motion:reduce){.fu-sc *,.fu-stories i::after{animation:none!important}.fu-sc .rg,.fu-sc .sp,.fu-sc .wv,.fu-sc .tp{display:none}.fu-stories i.on::after{width:100%}.fu-sc{transition:none}}
 </style></head>
 <body class="booting">
 
@@ -2426,20 +2542,72 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
   <section class="fu-wrap admin-only" id="followupSection" aria-label="Today's follow-ups and daily inspiration">
     <div class="fu-card" id="fuCard">
       <div class="fu-head">
-        <div class="fu-ttl"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg></i><div><b>Today's follow-ups</b><small id="fuSub">5 customers to contact about their due</small></div></div>
+        <div class="fu-ttl"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg></i><div><b id="fuTitle">Today's follow-ups</b><small id="fuSub"></small></div></div>
         <div class="fu-ctrl">
-          <div class="fu-seg" id="fuLang" role="tablist" aria-label="Message language"><button type="button" data-l="en" class="on">EN</button><button type="button" data-l="bn">বাংলা</button></div>
-          <button type="button" class="fu-shuf" id="fuShuf" title="Pick 5 different customers" aria-label="Shuffle customers"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
+          <div class="fu-seg" id="fuLang" role="tablist" aria-label="Language"><button type="button" data-l="en" class="on">EN</button><button type="button" data-l="bn" class="fu-bn">বাংলা</button></div>
+          <button type="button" class="fu-shuf" id="fuShuf" title="Shuffle" aria-label="Shuffle customers"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
         </div>
       </div>
-      <div class="fu-meta" id="fuMeta"></div>
       <div class="fu-prog" aria-hidden="true"><i id="fuBar"></i></div>
       <div id="fuList"></div>
     </div>
     <div class="fu-card fu-quote" id="fuQuoteCard">
-      <div class="fu-qtop"><span class="fu-qchip">✨ Quote of the day</span><button type="button" class="fu-qnext" id="fuQNext" title="Show another quote">↻ Next</button></div>
-      <div class="fu-qbody" id="fuQBody"><div class="fu-qt" id="fuQt"></div><div class="fu-qa" id="fuQa"></div></div>
-      <div class="fu-thx"><b id="fuThxH">💛 For you, today</b><span id="fuThx"></span></div>
+      <div class="fu-orb" aria-hidden="true"></div>
+      <div class="fu-stories" id="fuStories" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="fu-qtop"><span class="fu-qchip" id="fuChip">Quote of the day</span><button type="button" class="fu-qnext" id="fuQNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5"/></svg><span id="fuNextTx">Next</span></button></div>
+      <div class="fu-screen" id="fuScreen" aria-hidden="true">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<radialGradient id="fuSkin" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="#ffe3c8"/><stop offset=".55" stop-color="#f3b98d"/><stop offset="1" stop-color="#cf8a5d"/></radialGradient>
+<radialGradient id="fuSkin2" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="#f9d6b2"/><stop offset=".55" stop-color="#e5ab7d"/><stop offset="1" stop-color="#b9774a"/></radialGradient>
+<linearGradient id="fuNeck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3714a"/><stop offset="1" stop-color="#e6a87b"/></linearGradient>
+<linearGradient id="fuShirt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a98fa"/><stop offset="1" stop-color="#1e4db8"/></linearGradient>
+<linearGradient id="fuShirtG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3fd1b0"/><stop offset="1" stop-color="#15786a"/></linearGradient>
+<linearGradient id="fuSide" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
+<linearGradient id="fuHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b463e"/><stop offset="1" stop-color="#1a1311"/></linearGradient>
+<linearGradient id="fuBeard" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a8a8a"/><stop offset="1" stop-color="#2d2d2d"/></linearGradient>
+<linearGradient id="fuPhone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#47506a"/><stop offset="1" stop-color="#0e121b"/></linearGradient>
+<linearGradient id="fuScr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dbaff"/><stop offset="1" stop-color="#2b6be0"/></linearGradient>
+<linearGradient id="fuWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c8905a"/><stop offset="1" stop-color="#7a4a24"/></linearGradient>
+<linearGradient id="fuNote" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9be8b3"/><stop offset="1" stop-color="#3fae6b"/></linearGradient>
+<radialGradient id="fuGlow"><stop offset="0" stop-color="#4f9cf9" stop-opacity=".38"/><stop offset="1" stop-color="#4f9cf9" stop-opacity="0"/></radialGradient>
+</defs></svg>
+<div class="fu-sc"><svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMax meet">
+<circle cx="150" cy="78" r="90" fill="url(#fuGlow)"/>
+<path class="dash" d="M180 34C214 6 256 12 276 44" fill="none" stroke="#4f9cf9" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 6"/>
+<path class="wv" style="--wd:0s" d="M196 40Q203 50 196 60" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path class="wv" style="--wd:.25s" d="M205 34Q216 50 205 66" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path class="wv" style="--wd:.5s" d="M214 28Q229 50 214 72" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+<g transform="translate(140 52)"><ellipse cx="0" cy="96" rx="70" ry="6" fill="#000" opacity=".2"/><path d="M-64 98V68Q-64 44 -34 40H34Q64 44 64 68V98Z" fill="url(#fuShirt)"/><path d="M-64 98V68Q-64 44 -34 40H34Q64 44 64 68V98Z" fill="url(#fuSide)"/><ellipse cx="-40" cy="56" rx="16" ry="8" fill="#fff" opacity=".14" transform="rotate(-25 -40 56)"/><path d="M-10 20V40Q0 48 10 40V20Z" fill="url(#fuNeck)"/><path d="M-15 37L0 58L15 37L9 34L0 46L-9 34Z" fill="#f4f7ff"/><path d="M-15 37L0 58L15 37" fill="none" stroke="#c5d2ee" stroke-width="1"/><ellipse cx="0" cy="33" rx="17" ry="5.5" fill="#000" opacity=".18"/><g transform="rotate(0 0 30)"><g class="hd" style="--bd:0s"><ellipse cx="-27.5" cy="4" rx="5" ry="7" fill="#dd9c6f"/><ellipse cx="27.5" cy="4" rx="5" ry="7" fill="#dd9c6f"/><ellipse cx="-27.5" cy="4.5" rx="2.4" ry="4" fill="#f0bd96" opacity=".8"/><ellipse cx="27.5" cy="4.5" rx="2.4" ry="4" fill="#f0bd96" opacity=".8"/><ellipse rx="27" ry="30" fill="url(#fuSkin)"/><path d="M-28 -2Q-33 -38 0 -36Q33 -38 28 -2Q25 -19 9 -21Q-3 -13 -18 -14Q-26 -12 -28 -2Z" fill="url(#fuHair)"/><ellipse cx="-9" cy="-29" rx="11" ry="3.4" fill="#fff" opacity=".2" transform="rotate(-14 -9 -29)"/><ellipse cx="-10" cy="-18" rx="9" ry="5" fill="#fff" opacity=".12"/><path d="M-17 -10Q-10 -15 -4 -11M4 -11Q10 -15 17 -10" stroke="#1d1411" stroke-width="3" stroke-linecap="round" fill="none"/><ellipse cx="-10" cy="-1" rx="6.3" ry="6.9" fill="#fff"/><g transform="translate(0 0)"><ellipse cx="-10" cy="0" rx="3.8" ry="4.3" fill="#3a2314"/><ellipse cx="-10" cy=".4" rx="2" ry="2.4" fill="#0c0705"/><circle cx="-11.4" cy="-1.8" r="1.25" fill="#fff"/></g><ellipse class="lid" style="--bl:1.1s" cx="-10" cy="-1" rx="6.7" ry="7.3" fill="#efb287"/><ellipse cx="10" cy="-1" rx="6.3" ry="6.9" fill="#fff"/><g transform="translate(0 0)"><ellipse cx="10" cy="0" rx="3.8" ry="4.3" fill="#3a2314"/><ellipse cx="10" cy=".4" rx="2" ry="2.4" fill="#0c0705"/><circle cx="8.6" cy="-1.8" r="1.25" fill="#fff"/></g><ellipse class="lid" style="--bl:1.1s" cx="10" cy="-1" rx="6.7" ry="7.3" fill="#efb287"/><ellipse cx="0" cy="9" rx="3.8" ry="2.7" fill="#c47a50" opacity=".55"/><ellipse cx="-1.2" cy="7.6" rx="1.4" ry=".9" fill="#fff" opacity=".5"/><circle cx="-17" cy="11" r="5" fill="#ff8a7a" opacity=".22"/><circle cx="17" cy="11" r="5" fill="#ff8a7a" opacity=".22"/><path d="M-12 17Q-6 11 0 14Q6 11 12 17Q6 20 0 17.5Q-6 20 -12 17Z" fill="#25160f"/><path d="M-7 21Q0 27 7 21" fill="none" stroke="#7b2f24" stroke-width="2.2" stroke-linecap="round"/><g class="mo" style="--md:.4s;--mn:14"><ellipse cx="0" cy="23.5" rx="5.6" ry="4.6" fill="#5a1b19"/><ellipse cx="0" cy="26.0" rx="3.4" ry="1.9" fill="#d96a6a"/></g></g></g><path d="M54 98Q68 62 48 22" stroke="#2c66d8" stroke-width="16" stroke-linecap="round" fill="none"/><path d="M54 98Q68 62 48 22" stroke="#fff" stroke-opacity=".12" stroke-width="5" stroke-linecap="round" fill="none" transform="translate(-3 0)"/><g transform="translate(37 -4) rotate(10)"><rect x="-9" y="-20" width="18" height="40" rx="5.5" fill="url(#fuPhone)"/><rect x="-7" y="-18" width="3" height="32" rx="1.5" fill="#fff" opacity=".14"/><circle cx="-3" cy="-14" r="2.6" fill="#0a0d13" stroke="#5d6680" stroke-width=".8"/></g><ellipse cx="44" cy="14" rx="8.5" ry="11" fill="url(#fuSkin)"/><ellipse cx="36.5" cy="3" rx="5" ry="3" fill="url(#fuSkin)" stroke="#c98458" stroke-width=".6"/><ellipse cx="36.1" cy="9" rx="5" ry="3" fill="url(#fuSkin)" stroke="#c98458" stroke-width=".6"/><ellipse cx="35.7" cy="15" rx="5" ry="3" fill="url(#fuSkin)" stroke="#c98458" stroke-width=".6"/><ellipse cx="35.3" cy="21" rx="5" ry="3" fill="url(#fuSkin)" stroke="#c98458" stroke-width=".6"/><ellipse cx="49" cy="0" rx="3.3" ry="6.5" fill="url(#fuSkin)" transform="rotate(14 49 0)"/></g>
+<circle class="rg rg1 tb" cx="304" cy="62" r="26" fill="none" stroke="#4f9cf9" stroke-width="1.5"/><circle class="rg rg2 tb" cx="304" cy="62" r="26" fill="none" stroke="#4f9cf9" stroke-width="1.5"/>
+<circle cx="304" cy="62" r="26" fill="#17325c" stroke="#4f9cf9" stroke-width="2"/>
+<clipPath id="fuClipA"><circle cx="304" cy="62" r="25"/></clipPath>
+<g clip-path="url(#fuClipA)"><g transform="translate(304 60) scale(.44)"><g transform="translate(0 0)"><ellipse cx="0" cy="96" rx="70" ry="6" fill="#000" opacity=".2"/><path d="M-64 98V68Q-64 44 -34 40H34Q64 44 64 68V98Z" fill="url(#fuShirtG)"/><path d="M-64 98V68Q-64 44 -34 40H34Q64 44 64 68V98Z" fill="url(#fuSide)"/><ellipse cx="-40" cy="56" rx="16" ry="8" fill="#fff" opacity=".14" transform="rotate(-25 -40 56)"/><path d="M-10 20V40Q0 48 10 40V20Z" fill="url(#fuNeck)"/><path d="M-3 44V98H3V44Z" fill="#fff" opacity=".2"/><circle cx="0" cy="58" r="1.7" fill="#e9fff7"/><circle cx="0" cy="72" r="1.7" fill="#e9fff7"/><circle cx="0" cy="86" r="1.7" fill="#e9fff7"/><path d="M-13 38Q0 48 13 38L10 33Q0 41 -10 33Z" fill="#0f6a5c"/><ellipse cx="0" cy="33" rx="17" ry="5.5" fill="#000" opacity=".18"/><g class="hd" style="--bd:.3s"><ellipse cx="-27.5" cy="4" rx="5" ry="7" fill="#dd9c6f"/><ellipse cx="27.5" cy="4" rx="5" ry="7" fill="#dd9c6f"/><ellipse cx="-27.5" cy="4.5" rx="2.4" ry="4" fill="#f0bd96" opacity=".8"/><ellipse cx="27.5" cy="4.5" rx="2.4" ry="4" fill="#f0bd96" opacity=".8"/><ellipse rx="27" ry="30" fill="url(#fuSkin2)"/><path d="M-17 -10Q-10 -15 -4 -11M4 -11Q10 -15 17 -10" stroke="#1d1411" stroke-width="3" stroke-linecap="round" fill="none"/><ellipse cx="-10" cy="-1" rx="6.3" ry="6.9" fill="#fff"/><g transform="translate(-2 0)"><ellipse cx="-10" cy="0" rx="3.8" ry="4.3" fill="#3a2314"/><ellipse cx="-10" cy=".4" rx="2" ry="2.4" fill="#0c0705"/><circle cx="-11.4" cy="-1.8" r="1.25" fill="#fff"/></g><ellipse class="lid" style="--bl:2s" cx="-10" cy="-1" rx="6.7" ry="7.3" fill="#efb287"/><ellipse cx="10" cy="-1" rx="6.3" ry="6.9" fill="#fff"/><g transform="translate(-2 0)"><ellipse cx="10" cy="0" rx="3.8" ry="4.3" fill="#3a2314"/><ellipse cx="10" cy=".4" rx="2" ry="2.4" fill="#0c0705"/><circle cx="8.6" cy="-1.8" r="1.25" fill="#fff"/></g><ellipse class="lid" style="--bl:2s" cx="10" cy="-1" rx="6.7" ry="7.3" fill="#efb287"/><ellipse cx="0" cy="9" rx="3.8" ry="2.7" fill="#c47a50" opacity=".55"/><ellipse cx="-1.2" cy="7.6" rx="1.4" ry=".9" fill="#fff" opacity=".5"/><circle cx="-17" cy="11" r="5" fill="#ff8a7a" opacity=".22"/><circle cx="17" cy="11" r="5" fill="#ff8a7a" opacity=".22"/><path d="M-12 17Q-6 11 0 14Q6 11 12 17Q6 20 0 17.5Q-6 20 -12 17Z" fill="#25160f"/><path d="M-7 21Q0 27 7 21" fill="none" stroke="#7b2f24" stroke-width="2.2" stroke-linecap="round"/><g class="mo" style="--md:1.9s;--mn:10"><ellipse cx="0" cy="22.5" rx="5.6" ry="4.6" fill="#5a1b19"/><ellipse cx="0" cy="25.0" rx="3.4" ry="1.9" fill="#d96a6a"/></g><path d="M-25 6Q-24 33 0 35Q24 33 25 6Q21 25 0 25Q-21 25 -25 6Z" fill="url(#fuBeard)"/><path d="M-12 17Q-6 11 0 14Q6 11 12 17Q6 20 0 17.5Q-6 20 -12 17Z" fill="#33261f"/><path d="M-25 -14Q-27 -38 0 -38Q27 -38 25 -14Q12 -21 0 -21Q-12 -21 -25 -14Z" fill="#f6f3ea" stroke="#d8d1bf" stroke-width="1"/><path d="M-17 -27Q0 -33 17 -27M-20 -21Q0 -27 20 -21" stroke="#d8d1bf" stroke-width="1" fill="none"/><ellipse cx="-9" cy="-31" rx="10" ry="3" fill="#fff" opacity=".6" transform="rotate(-12 -9 -31)"/></g></g></g></g>
+<g class="hs tb"><circle cx="324" cy="84" r="11" fill="#188038" stroke="#0f1d33" stroke-width="2"/><g transform="translate(317.6 77.6) scale(.53)"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+</svg></div>
+<div class="fu-sc"><svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMax meet">
+<circle cx="140" cy="78" r="90" fill="url(#fuGlow)"/>
+<g transform="translate(128 52)"><ellipse cx="0" cy="96" rx="70" ry="6" fill="#000" opacity=".2"/><path d="M-64 98V68Q-64 44 -34 40H34Q64 44 64 68V98Z" fill="url(#fuShirt)"/><path d="M-64 98V68Q-64 44 -34 40H34Q64 44 64 68V98Z" fill="url(#fuSide)"/><ellipse cx="-40" cy="56" rx="16" ry="8" fill="#fff" opacity=".14" transform="rotate(-25 -40 56)"/><path d="M-10 20V40Q0 48 10 40V20Z" fill="url(#fuNeck)"/><path d="M-15 37L0 58L15 37L9 34L0 46L-9 34Z" fill="#f4f7ff"/><path d="M-15 37L0 58L15 37" fill="none" stroke="#c5d2ee" stroke-width="1"/><ellipse cx="0" cy="33" rx="17" ry="5.5" fill="#000" opacity=".18"/><g transform="rotate(5 0 30)"><g class="hd" style="--bd:.4s"><ellipse cx="-27.5" cy="4" rx="5" ry="7" fill="#dd9c6f"/><ellipse cx="27.5" cy="4" rx="5" ry="7" fill="#dd9c6f"/><ellipse cx="-27.5" cy="4.5" rx="2.4" ry="4" fill="#f0bd96" opacity=".8"/><ellipse cx="27.5" cy="4.5" rx="2.4" ry="4" fill="#f0bd96" opacity=".8"/><ellipse rx="27" ry="30" fill="url(#fuSkin)"/><path d="M-28 -2Q-33 -38 0 -36Q33 -38 28 -2Q25 -19 9 -21Q-3 -13 -18 -14Q-26 -12 -28 -2Z" fill="url(#fuHair)"/><ellipse cx="-9" cy="-29" rx="11" ry="3.4" fill="#fff" opacity=".2" transform="rotate(-14 -9 -29)"/><ellipse cx="-10" cy="-18" rx="9" ry="5" fill="#fff" opacity=".12"/><path d="M-17 -10Q-10 -15 -4 -11M4 -11Q10 -15 17 -10" stroke="#1d1411" stroke-width="3" stroke-linecap="round" fill="none"/><ellipse cx="-10" cy="-1" rx="6.3" ry="6.9" fill="#fff"/><g transform="translate(0 2.4)"><ellipse cx="-10" cy="0" rx="3.8" ry="4.3" fill="#3a2314"/><ellipse cx="-10" cy=".4" rx="2" ry="2.4" fill="#0c0705"/><circle cx="-11.4" cy="-1.8" r="1.25" fill="#fff"/></g><ellipse class="lid" style="--bl:.8s" cx="-10" cy="-1" rx="6.7" ry="7.3" fill="#efb287"/><ellipse cx="10" cy="-1" rx="6.3" ry="6.9" fill="#fff"/><g transform="translate(0 2.4)"><ellipse cx="10" cy="0" rx="3.8" ry="4.3" fill="#3a2314"/><ellipse cx="10" cy=".4" rx="2" ry="2.4" fill="#0c0705"/><circle cx="8.6" cy="-1.8" r="1.25" fill="#fff"/></g><ellipse class="lid" style="--bl:.8s" cx="10" cy="-1" rx="6.7" ry="7.3" fill="#efb287"/><ellipse cx="0" cy="9" rx="3.8" ry="2.7" fill="#c47a50" opacity=".55"/><ellipse cx="-1.2" cy="7.6" rx="1.4" ry=".9" fill="#fff" opacity=".5"/><circle cx="-17" cy="11" r="5" fill="#ff8a7a" opacity=".22"/><circle cx="17" cy="11" r="5" fill="#ff8a7a" opacity=".22"/><path d="M-12 17Q-6 11 0 14Q6 11 12 17Q6 20 0 17.5Q-6 20 -12 17Z" fill="#25160f"/><path d="M-7 21Q0 27 7 21" fill="none" stroke="#7b2f24" stroke-width="2.2" stroke-linecap="round"/><g class="mo" style="--md:9s;--mn:2"><ellipse cx="0" cy="23.5" rx="5.6" ry="4.6" fill="#5a1b19"/><ellipse cx="0" cy="26.0" rx="3.4" ry="1.9" fill="#d96a6a"/></g></g></g><path d="M-54 98Q-58 74 -17 72" stroke="#2c66d8" stroke-width="16" stroke-linecap="round" fill="none"/><path d="M54 98Q58 74 17 72" stroke="#2c66d8" stroke-width="16" stroke-linecap="round" fill="none"/><g transform="translate(0 72)"><rect x="-13" y="-22" width="26" height="48" rx="5.5" fill="url(#fuPhone)"/><rect x="-11" y="-20" width="22" height="44" rx="4" fill="url(#fuScr)"/><rect x="-8" y="-15" width="14" height="5" rx="2.5" fill="#fff" opacity=".85"/><rect x="-2" y="-7" width="11" height="5" rx="2.5" fill="#fff" opacity=".6"/><rect x="-8" y="1" width="9" height="5" rx="2.5" fill="#fff" opacity=".85"/></g><ellipse cx="-15" cy="76" rx="6.5" ry="8.5" fill="url(#fuSkin)"/><ellipse class="th" style="--td:0s" cx="-8.5" cy="67" rx="3.6" ry="5.6" fill="url(#fuSkin)" transform="rotate(18 -8.5 67)"/><ellipse cx="15" cy="76" rx="6.5" ry="8.5" fill="url(#fuSkin)"/><ellipse class="th" style="--td:0.22s" cx="8.5" cy="67" rx="3.6" ry="5.6" fill="url(#fuSkin)" transform="rotate(-18 8.5 67)"/></g>
+<g class="b1 tb"><rect x="206" y="12" width="124" height="30" rx="14" fill="#1a73e8"/><path d="M322 38l12 9-17-4z" fill="#1a73e8"/><rect x="218" y="20" width="88" height="5" rx="2.5" fill="#fff" opacity="0.85"/><rect x="218" y="29" width="56" height="5" rx="2.5" fill="#fff" opacity="0.55"/><path d="M312 36l3 3 6-7M318 36l3 3 6-7" fill="none" stroke="#a9ceff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g class="tp tb"><rect x="196" y="52" width="56" height="26" rx="13" fill="rgba(255,255,255,.2)"/><circle class="dt" cx="212" cy="65" r="3" fill="#dbe8ff"/><circle class="dt" cx="224" cy="65" r="3" fill="#dbe8ff"/><circle class="dt" cx="236" cy="65" r="3" fill="#dbe8ff"/></g>
+<g class="b2 tb"><rect x="196" y="50" width="136" height="30" rx="14" fill="rgba(255,255,255,.2)"/><path d="M204 76l-11 8 16-3z" fill="rgba(255,255,255,.2)"/><rect x="208" y="58" width="84" height="5" rx="2.5" fill="#fff" opacity="0.7"/><rect x="208" y="67" width="52" height="5" rx="2.5" fill="#fff" opacity="0.45"/><circle cx="312" cy="65" r="9" fill="#ffd666"/><circle cx="312" cy="65" r="6" fill="none" stroke="#c9961a" stroke-width="1.2"/><circle cx="309.3" cy="61.85" r="1.98" fill="#fff" opacity=".7"/></g>
+<g class="b3 tb"><rect x="236" y="88" width="94" height="28" rx="13" fill="#1a73e8"/><path d="M322 112l12 9-17-4z" fill="#1a73e8"/><rect x="248" y="95" width="56" height="5" rx="2.5" fill="#fff" opacity="0.85"/><rect x="248" y="104" width="34" height="5" rx="2.5" fill="#fff" opacity="0.55"/><path d="M312 109l3 3 6-7M318 109l3 3 6-7" fill="none" stroke="#a9ceff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg></div>
+<div class="fu-sc"><svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMax meet">
+<circle cx="200" cy="80" r="110" fill="url(#fuGlow)"/>
+<g transform="translate(128 52)"><ellipse cx="0" cy="96" rx="70" ry="6" fill="#000" opacity=".2"/><path d="M-64 98V68Q-64 44 -34 40H34Q64 44 64 68V98Z" fill="url(#fuShirt)"/><path d="M-64 98V68Q-64 44 -34 40H34Q64 44 64 68V98Z" fill="url(#fuSide)"/><ellipse cx="-40" cy="56" rx="16" ry="8" fill="#fff" opacity=".14" transform="rotate(-25 -40 56)"/><path d="M-10 20V40Q0 48 10 40V20Z" fill="url(#fuNeck)"/><path d="M-15 37L0 58L15 37L9 34L0 46L-9 34Z" fill="#f4f7ff"/><path d="M-15 37L0 58L15 37" fill="none" stroke="#c5d2ee" stroke-width="1"/><ellipse cx="0" cy="33" rx="17" ry="5.5" fill="#000" opacity=".18"/><g transform="rotate(0 0 30)"><g class="hd" style="--bd:0s"><ellipse cx="-27.5" cy="4" rx="5" ry="7" fill="#dd9c6f"/><ellipse cx="27.5" cy="4" rx="5" ry="7" fill="#dd9c6f"/><ellipse cx="-27.5" cy="4.5" rx="2.4" ry="4" fill="#f0bd96" opacity=".8"/><ellipse cx="27.5" cy="4.5" rx="2.4" ry="4" fill="#f0bd96" opacity=".8"/><ellipse rx="27" ry="30" fill="url(#fuSkin)"/><path d="M-28 -2Q-33 -38 0 -36Q33 -38 28 -2Q25 -19 9 -21Q-3 -13 -18 -14Q-26 -12 -28 -2Z" fill="url(#fuHair)"/><ellipse cx="-9" cy="-29" rx="11" ry="3.4" fill="#fff" opacity=".2" transform="rotate(-14 -9 -29)"/><ellipse cx="-10" cy="-18" rx="9" ry="5" fill="#fff" opacity=".12"/><path d="M-17 -10Q-10 -15 -4 -11M4 -11Q10 -15 17 -10" stroke="#1d1411" stroke-width="3" stroke-linecap="round" fill="none"/><ellipse cx="-10" cy="-1" rx="6.3" ry="6.9" fill="#fff"/><g transform="translate(2.4 0.6)"><ellipse cx="-10" cy="0" rx="3.8" ry="4.3" fill="#3a2314"/><ellipse cx="-10" cy=".4" rx="2" ry="2.4" fill="#0c0705"/><circle cx="-11.4" cy="-1.8" r="1.25" fill="#fff"/></g><ellipse class="lid" style="--bl:1s" cx="-10" cy="-1" rx="6.7" ry="7.3" fill="#efb287"/><ellipse cx="10" cy="-1" rx="6.3" ry="6.9" fill="#fff"/><g transform="translate(2.4 0.6)"><ellipse cx="10" cy="0" rx="3.8" ry="4.3" fill="#3a2314"/><ellipse cx="10" cy=".4" rx="2" ry="2.4" fill="#0c0705"/><circle cx="8.6" cy="-1.8" r="1.25" fill="#fff"/></g><ellipse class="lid" style="--bl:1s" cx="10" cy="-1" rx="6.7" ry="7.3" fill="#efb287"/><ellipse cx="0" cy="9" rx="3.8" ry="2.7" fill="#c47a50" opacity=".55"/><ellipse cx="-1.2" cy="7.6" rx="1.4" ry=".9" fill="#fff" opacity=".5"/><circle cx="-17" cy="11" r="5" fill="#ff8a7a" opacity=".22"/><circle cx="17" cy="11" r="5" fill="#ff8a7a" opacity=".22"/><path d="M-12 17Q-6 11 0 14Q6 11 12 17Q6 20 0 17.5Q-6 20 -12 17Z" fill="#25160f"/><path d="M-7 21Q0 27 7 21" fill="none" stroke="#7b2f24" stroke-width="2.2" stroke-linecap="round"/><g class="mo" style="--md:.3s;--mn:8"><ellipse cx="0" cy="23.5" rx="5.6" ry="4.6" fill="#5a1b19"/><ellipse cx="0" cy="26.0" rx="3.4" ry="1.9" fill="#d96a6a"/></g></g></g></g>
+<g transform="translate(272 52)"><ellipse cx="0" cy="96" rx="70" ry="6" fill="#000" opacity=".2"/><path d="M-64 98V68Q-64 44 -34 40H34Q64 44 64 68V98Z" fill="url(#fuShirtG)"/><path d="M-64 98V68Q-64 44 -34 40H34Q64 44 64 68V98Z" fill="url(#fuSide)"/><ellipse cx="-40" cy="56" rx="16" ry="8" fill="#fff" opacity=".14" transform="rotate(-25 -40 56)"/><path d="M-10 20V40Q0 48 10 40V20Z" fill="url(#fuNeck)"/><path d="M-3 44V98H3V44Z" fill="#fff" opacity=".2"/><circle cx="0" cy="58" r="1.7" fill="#e9fff7"/><circle cx="0" cy="72" r="1.7" fill="#e9fff7"/><circle cx="0" cy="86" r="1.7" fill="#e9fff7"/><path d="M-13 38Q0 48 13 38L10 33Q0 41 -10 33Z" fill="#0f6a5c"/><ellipse cx="0" cy="33" rx="17" ry="5.5" fill="#000" opacity=".18"/><g class="hd" style="--bd:.5s"><ellipse cx="-27.5" cy="4" rx="5" ry="7" fill="#dd9c6f"/><ellipse cx="27.5" cy="4" rx="5" ry="7" fill="#dd9c6f"/><ellipse cx="-27.5" cy="4.5" rx="2.4" ry="4" fill="#f0bd96" opacity=".8"/><ellipse cx="27.5" cy="4.5" rx="2.4" ry="4" fill="#f0bd96" opacity=".8"/><ellipse rx="27" ry="30" fill="url(#fuSkin2)"/><path d="M-17 -10Q-10 -15 -4 -11M4 -11Q10 -15 17 -10" stroke="#1d1411" stroke-width="3" stroke-linecap="round" fill="none"/><ellipse cx="-10" cy="-1" rx="6.3" ry="6.9" fill="#fff"/><g transform="translate(-2.4 0.6)"><ellipse cx="-10" cy="0" rx="3.8" ry="4.3" fill="#3a2314"/><ellipse cx="-10" cy=".4" rx="2" ry="2.4" fill="#0c0705"/><circle cx="-11.4" cy="-1.8" r="1.25" fill="#fff"/></g><ellipse class="lid" style="--bl:2.2s" cx="-10" cy="-1" rx="6.7" ry="7.3" fill="#efb287"/><ellipse cx="10" cy="-1" rx="6.3" ry="6.9" fill="#fff"/><g transform="translate(-2.4 0.6)"><ellipse cx="10" cy="0" rx="3.8" ry="4.3" fill="#3a2314"/><ellipse cx="10" cy=".4" rx="2" ry="2.4" fill="#0c0705"/><circle cx="8.6" cy="-1.8" r="1.25" fill="#fff"/></g><ellipse class="lid" style="--bl:2.2s" cx="10" cy="-1" rx="6.7" ry="7.3" fill="#efb287"/><ellipse cx="0" cy="9" rx="3.8" ry="2.7" fill="#c47a50" opacity=".55"/><ellipse cx="-1.2" cy="7.6" rx="1.4" ry=".9" fill="#fff" opacity=".5"/><circle cx="-17" cy="11" r="5" fill="#ff8a7a" opacity=".22"/><circle cx="17" cy="11" r="5" fill="#ff8a7a" opacity=".22"/><path d="M-12 17Q-6 11 0 14Q6 11 12 17Q6 20 0 17.5Q-6 20 -12 17Z" fill="#25160f"/><path d="M-7 21Q0 27 7 21" fill="none" stroke="#7b2f24" stroke-width="2.2" stroke-linecap="round"/><g class="mo" style="--md:1.7s;--mn:8"><ellipse cx="0" cy="22.5" rx="5.6" ry="4.6" fill="#5a1b19"/><ellipse cx="0" cy="25.0" rx="3.4" ry="1.9" fill="#d96a6a"/></g><path d="M-25 6Q-24 33 0 35Q24 33 25 6Q21 25 0 25Q-21 25 -25 6Z" fill="url(#fuBeard)"/><path d="M-12 17Q-6 11 0 14Q6 11 12 17Q6 20 0 17.5Q-6 20 -12 17Z" fill="#33261f"/><path d="M-25 -14Q-27 -38 0 -38Q27 -38 25 -14Q12 -21 0 -21Q-12 -21 -25 -14Z" fill="#f6f3ea" stroke="#d8d1bf" stroke-width="1"/><path d="M-17 -27Q0 -33 17 -27M-20 -21Q0 -27 20 -21" stroke="#d8d1bf" stroke-width="1" fill="none"/><ellipse cx="-9" cy="-31" rx="10" ry="3" fill="#fff" opacity=".6" transform="rotate(-12 -9 -31)"/></g></g>
+<path d="M0 0" fill="none"/>
+<g class="bm tb"><rect x="158" y="10" width="66" height="28" rx="13" fill="#1a73e8"/><path d="M168 34l-12 12 20-8z" fill="#1a73e8"/><rect x="169" y="17" width="44" height="5" rx="2.5" fill="#fff" opacity="0.85"/><rect x="169" y="26" width="28" height="5" rx="2.5" fill="#fff" opacity="0.55"/></g>
+<g class="bc tb"><rect x="176" y="44" width="66" height="28" rx="13" fill="#eef3fb"/><path d="M232 68l12 12-20-8z" fill="#eef3fb"/><circle cx="190" cy="58" r="8" fill="#ffd666"/><circle cx="190" cy="58" r="5" fill="none" stroke="#c9961a" stroke-width="1.2"/><circle cx="187.6" cy="55.2" r="1.76" fill="#fff" opacity=".7"/><rect x="204" y="51" width="28" height="5" rx="2.5" fill="#8aa0c4" opacity="0.9"/><rect x="204" y="60" width="18" height="5" rx="2.5" fill="#8aa0c4" opacity="0.7"/></g>
+<g class="cnt"><rect x="30" y="118" width="340" height="40" rx="8" fill="url(#fuWood)"/><rect x="30" y="118" width="340" height="3.5" rx="1.7" fill="#fff" opacity=".35"/><rect x="30" y="121.5" width="340" height="2" fill="#000" opacity=".12"/></g>
+<g class="note"><g transform="translate(200 127) rotate(-4)"><rect x="-16" y="-8" width="32" height="16" rx="2.5" fill="url(#fuNote)" stroke="#2e8b57" stroke-width="1"/><circle r="4" fill="#fff" opacity=".55"/><rect x="-13" y="-5" width="6" height="2.4" rx="1.2" fill="#fff" opacity=".6"/><rect x="7" y="2.6" width="6" height="2.4" rx="1.2" fill="#fff" opacity=".6"/></g></g>
+<g class="ok tb"><circle cx="200" cy="100" r="12" fill="#188038" stroke="#0e2a1b" stroke-width="2"/><path d="M194 100l4.5 4.5 8-9" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+<circle class="sp tb" style="--dx:-26px;--dy:-14px;animation-delay:3.75s" cx="200" cy="100" r="2.6" fill="#ffd666"/><circle class="sp tb" style="--dx:26px;--dy:-16px;animation-delay:3.78s" cx="200" cy="100" r="2.6" fill="#3ddc97"/><circle class="sp tb" style="--dx:0px;--dy:-26px;animation-delay:3.81s" cx="200" cy="100" r="2.6" fill="#ffd666"/><circle class="sp tb" style="--dx:-34px;--dy:6px;animation-delay:3.84s" cx="200" cy="100" r="2.2" fill="#3ddc97"/><circle class="sp tb" style="--dx:34px;--dy:6px;animation-delay:3.87s" cx="200" cy="100" r="2.2" fill="#ffd666"/>
+</svg></div>
+      </div>
+      <div class="fu-sub-bar">
+        <div class="fu-qt" id="fuQt" role="status"></div>
+        <div class="fu-meta"><span class="fu-qtag" id="fuQTag"></span><span class="fu-qa" id="fuQa"></span></div>
+        <div class="fu-thx" id="fuThxBox"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 5 6.3 5c2 0 3.6 1.1 4.4 2.6h2.6C14.1 6.1 15.7 5 17.7 5 21 5 23.1 8.3 21.6 11.8 19.5 16.4 12 21 12 21z"/></svg></i><div><b id="fuThxH">Appreciation</b><span class="fu-tx" id="fuThx"></span></div></div>
+      </div>
     </div>
   </section>
 
@@ -7704,63 +7872,79 @@ renderWarranty();
 <script>
 /* ============================================================
    Dashboard · Today's 5 follow-ups (random customers with due)
-   + Quote of the day + appreciation text for collecting dues
+   + Quote of the day (English / বাংলা) for due collection
    ============================================================ */
 (function(){
   "use strict";
-  var LS='mhn_followups_v1', LL='mhn_followups_lang', COUNT=5, qOff=0;
+  var LS='mhn_followups_v1', LL='mhn_followups_lang', COUNT=5, qOff=0, last={sig:'',html:'',q:''};
+  /* [English, বাংলা, author EN, author BN, topic EN, topic BN] — all about credit, trust, patience and collecting dues kindly */
+  var TIP=["Collection tip","আদায়ের টিপস"];
   var QUOTES=[
-    ["Success is the sum of small efforts, repeated day in and day out.","Robert Collier"],
-    ["Well done is better than well said.","Benjamin Franklin"],
-    ["No act of kindness, no matter how small, is ever wasted.","Aesop"],
-    ["Trust is the glue of life.","Stephen Covey"],
-    ["The only way to do great work is to love what you do.","Steve Jobs"],
-    ["Perseverance is not a long race; it is many short races one after the other.","Walter Elliot"],
-    ["A smile is the universal welcome.","Max Eastman"],
-    ["Courtesy costs nothing but buys everything.","Mary Wortley Montagu"],
-    ["Little by little, one travels far.","J.R.R. Tolkien"],
-    ["Great things are done by a series of small things brought together.","Vincent van Gogh"],
-    ["Do what you can, with what you have, where you are.","Theodore Roosevelt"],
-    ["Kind words can be short and easy to speak, but their echoes are truly endless.","Mother Teresa"],
-    ["What you do makes a difference, and you have to decide what kind of difference you want to make.","Jane Goodall"],
-    ["Honesty is the first chapter in the book of wisdom.","Thomas Jefferson"],
-    ["Every great business is built on friendship.","J. C. Penney"],
-    ["Your most unhappy customers are your greatest source of learning.","Bill Gates"],
-    ["The best advertising is done by satisfied customers.","Philip Kotler"],
-    ["Persistence guarantees that results are inevitable.","Paramahansa Yogananda"],
-    ["Gratitude turns what we have into enough.","Proverb"],
-    ["It always seems impossible until it's done.","Nelson Mandela"]
+    ["Remember that credit is money.","মনে রাখুন, আস্থাই (ক্রেডিট) অর্থ।","Benjamin Franklin","বেঞ্জামিন ফ্র্যাঙ্কলিন","Credit","আস্থা"],
+    ["Creditors have better memories than debtors.","পাওনাদারের স্মৃতিশক্তি দেনাদারের চেয়ে ভালো।","Benjamin Franklin","বেঞ্জামিন ফ্র্যাঙ্কলিন","Collection","আদায়"],
+    ["Short reckonings make long friends.","হিসাব নিয়মিত মেটালে বন্ধুত্ব দীর্ঘ হয়।","English proverb","ইংরেজি প্রবাদ","Relationship","সম্পর্ক"],
+    ["If someone is in hardship, let there be postponement until a time of ease.","কেউ অসচ্ছল হলে সচ্ছলতা আসা পর্যন্ত তাকে অবকাশ দাও।","Qur\u2019an 2:280","কুরআন ২:২৮০","Patience","ধৈর্য"],
+    ["The best of you are those who are best in repaying their debts.","তোমাদের মধ্যে সেই উত্তম, যে ঋণ পরিশোধে উত্তম।","Hadith \u00B7 Sahih al-Bukhari","হাদিস \u00B7 সহিহ বুখারি","Trust","আস্থা"],
+    ["A good name is more desirable than great riches.","বিপুল সম্পদের চেয়ে সুনামই বেশি কাম্য।","Proverbs 22:1","হিতোপদেশ ২২:১","Reputation","সুনাম"],
+    ["Trust is the glue of life.","বিশ্বাস হলো জীবনের আঠা।","Stephen Covey","স্টিফেন কভি","Trust","আস্থা"],
+    ["It takes 20 years to build a reputation and five minutes to ruin it.","সুনাম গড়তে লাগে বিশ বছর, নষ্ট হতে লাগে মাত্র পাঁচ মিনিট।","Warren Buffett","ওয়ারেন বাফেট","Reputation","সুনাম"],
+    ["Civility costs nothing and buys everything.","ভদ্রতায় কিছুই খরচ হয় না, অথচ সবকিছু পাওয়া যায়।","Mary Wortley Montagu","মেরি ওর্টলি মন্টেগু","Courtesy","ভদ্রতা"],
+    ["No act of kindness, no matter how small, is ever wasted.","ছোট্ট দয়ার কাজও কখনো বৃথা যায় না।","Aesop","ঈসপ","Kindness","দয়া"],
+    ["A promise made is a debt unpaid.","প্রতিশ্রুতি দেওয়া মানে এমন এক ঋণ, যা শোধ করা বাকি।","Robert W. Service","রবার্ট ডব্লিউ. সার্ভিস","Promise","প্রতিশ্রুতি"],
+    ["Little by little, one travels far.","একটু একটু করে মানুষ বহু দূর যায়।","J.R.R. Tolkien","জে.আর.আর. টলকিন","Persistence","অধ্যবসায়"],
+    ["Success is the sum of small efforts, repeated day in and day out.","সাফল্য হলো প্রতিদিন বারবার করা ছোট ছোট প্রচেষ্টার সমষ্টি।","Robert Collier","রবার্ট কলিয়ার","Persistence","অধ্যবসায়"],
+    ["Perseverance is not a long race; it is many short races one after the other.","অধ্যবসায় কোনো একটি দীর্ঘ দৌড় নয়; এটি একের পর এক অনেকগুলো ছোট দৌড়।","Walter Elliot","ওয়াল্টার এলিয়ট","Persistence","অধ্যবসায়"],
+    ["A polite reminder protects both the relationship and the cash flow.","একটি মধুর তাগাদা সম্পর্ক ও ক্যাশ-ফ্লো দুটোই ঠিক রাখে।",TIP[0],TIP[1],"Tip","টিপস"],
+    ["Call early and call kindly \u2014 a small due is far easier to settle than a big one.","আগে ফোন করুন, বিনয়ের সাথে করুন \u2014 ছোট বকেয়া মেটানো বড় বকেয়ার চেয়ে অনেক সহজ।",TIP[0],TIP[1],"Tip","টিপস"],
+    ["Ask for a date, not just the money: \u2018Can you settle this by Thursday?\u2019","শুধু টাকা নয়, তারিখও জিজ্ঞাসা করুন: \u2018বৃহস্পতিবারের মধ্যে মেটাতে পারবেন?\u2019",TIP[0],TIP[1],"Tip","টিপস"],
+    ["Welcome a partial payment warmly \u2014 it is a promise renewed.","আংশিক পরিশোধকেও আন্তরিকভাবে গ্রহণ করুন \u2014 এটি নবায়িত এক প্রতিশ্রুতি।",TIP[0],TIP[1],"Tip","টিপস"],
+    ["Thank every customer who pays on time; gratitude builds the habit.","যিনি সময়মতো পরিশোধ করেন তাঁকে ধন্যবাদ দিন; কৃতজ্ঞতা অভ্যাস গড়ে তোলে।",TIP[0],TIP[1],"Tip","টিপস"],
+    ["Every payment collected is trust honoured.","প্রতিটি আদায় মানেই আস্থার মর্যাদা রক্ষা।",TIP[0],TIP[1],"Tip","টিপস"],
+    ["Cash flow is the lifeblood of a business, and every follow-up keeps it flowing.","নগদ প্রবাহই ব্যবসার প্রাণ, আর প্রতিটি ফলো-আপ সেই প্রাণ সচল রাখে।",TIP[0],TIP[1],"Tip","টিপস"]
   ];
   var THANKS=[
-    "Every due you collect is a promise kept. Thank you for keeping the shop strong.",
-    "You're not chasing money, you're closing the loop on trust. Proud of your effort!",
-    "A polite reminder today protects a good relationship tomorrow. Keep going!",
-    "Small collections add up to big stability. Every call you make matters.",
-    "Thank the customers who pay, kindly remind those who haven't. You're doing great.",
-    "Respect + patience + a warm \u201Cthank you\u201D = faster payments. You've got this!",
-    "Your consistency keeps the shelves full and the lights on. Well done!",
-    "Today's effort pays for the shop's tomorrow. Smile, call, collect, repeat.",
-    "Behind every due is a customer who trusts us. Honour that trust with kindness.",
-    "Great shops are built by people who follow up. Thank you for being one of them."
+    ["Every due you collect is a promise kept. Thank you for keeping the shop strong.","আপনার আদায় করা প্রতিটি বকেয়া একটি রক্ষিত প্রতিশ্রুতি। দোকানকে শক্ত রাখার জন্য ধন্যবাদ।"],
+    ["You're not chasing money, you're closing the loop on trust. Proud of your effort!","আপনি শুধু টাকার পেছনে ছুটছেন না, আস্থার বন্ধন পূর্ণ করছেন। আপনার চেষ্টায় আমরা গর্বিত!"],
+    ["A polite reminder today protects a good relationship tomorrow. Keep going!","আজকের একটি ভদ্র তাগাদা আগামীর ভালো সম্পর্ক বাঁচিয়ে রাখে। চালিয়ে যান!"],
+    ["Small collections add up to big stability. Every call you make matters.","ছোট ছোট আদায়ই বড় স্থিতিশীলতা গড়ে। আপনার প্রতিটি ফোন গুরুত্বপূর্ণ।"],
+    ["Thank the customers who pay, kindly remind those who haven't. You're doing great.","যাঁরা পরিশোধ করেছেন তাঁদের ধন্যবাদ দিন, যাঁরা বাকি রেখেছেন তাঁদের বিনয়ের সাথে মনে করিয়ে দিন। আপনি দারুণ করছেন।"],
+    ["Respect + patience + a warm thank-you = faster payments. You've got this!","সম্মান + ধৈর্য + আন্তরিক ধন্যবাদ = দ্রুত পরিশোধ। আপনি পারবেন!"],
+    ["Your consistency keeps the shelves full and the lights on. Well done!","আপনার নিয়মিততাই তাক ভরা রাখে, দোকানের বাতি জ্বালিয়ে রাখে। সাবাশ!"],
+    ["Today's effort pays for the shop's tomorrow. Smile, call, collect, repeat.","আজকের পরিশ্রম দোকানের আগামীকাল নিশ্চিত করে। হাসুন, ফোন করুন, আদায় করুন।"],
+    ["Behind every due is a customer who trusts us. Honour that trust with kindness.","প্রতিটি বকেয়ার পেছনে আছেন একজন আস্থাশীল গ্রাহক। সেই আস্থার মর্যাদা দিন সদয় আচরণে।"],
+    ["Great shops are built by people who follow up. Thank you for being one of them.","ভালো দোকান গড়ে ওঠে যাঁরা নিয়মিত ফলো-আপ করেন তাঁদের হাতে। আপনি তাঁদেরই একজন।"]
   ];
-  var GRAD=["linear-gradient(135deg,#1a73e8,#4f9cf9)","linear-gradient(135deg,#188038,#4cc27a)","linear-gradient(135deg,#e37400,#ffb04d)","linear-gradient(135deg,#7c3aed,#a77bf5)","linear-gradient(135deg,#d93025,#f2766d)","linear-gradient(135deg,#0b8043,#2bb7a0)"];
+  var TX={
+    en:{title:"Today's follow-ups",chip:'Quote of the day',next:'Next',thx:'Appreciation',thxDone:'Well done',thxNone:'Excellent',contacted:'contacted',inList:'due in this list',oldest:function(d){return 'Oldest '+d+'d'},entries:function(n){return n+(n===1?' entry':' entries')},noPhone:'No phone saved',empty:'No customer dues to follow up right now.',call:'Call',wa:'WhatsApp reminder',sms:'SMS reminder',copy:'Copy polite message',done:'Mark as contacted',undo:'Contacted \u2014 tap to undo',shuf:'Pick 5 different customers',
+      allDone:'All '+5+' contacted \u2014 fantastic work today! Every kind reminder builds trust and keeps cash flowing.',none:'No dues outstanding \u2014 your customers are paying on time. Beautiful work!',copied:'\u2713 Message copied \u2014 paste it in WhatsApp / SMS'},
+    bn:{title:'আজকের ফলো-আপ',chip:'আজকের অনুপ্রেরণা',next:'পরবর্তী',thx:'কৃতজ্ঞতা',thxDone:'সাবাশ',thxNone:'অসাধারণ',contacted:'যোগাযোগ হয়েছে',inList:'এই তালিকায় বকেয়া',oldest:function(d){return 'সবচেয়ে পুরনো '+d+' দিন'},entries:function(n){return n+' টি এন্ট্রি'},noPhone:'ফোন নম্বর নেই',empty:'এখন ফলো-আপ করার মতো কোনো বকেয়া নেই।',call:'কল করুন',wa:'হোয়াটসঅ্যাপ বার্তা',sms:'এসএমএস বার্তা',copy:'সৌজন্যমূলক বার্তা কপি করুন',done:'যোগাযোগ হয়েছে চিহ্নিত করুন',undo:'যোগাযোগ হয়েছে — বাতিল করতে চাপুন',shuf:'আলাদা ৫ জন গ্রাহক বেছে নিন',
+      allDone:'সবার সাথে যোগাযোগ হয়েছে — চমৎকার কাজ! প্রতিটি সদয় তাগাদা আস্থা বাড়ায় ও ক্যাশ-ফ্লো সচল রাখে।',none:'কোনো বকেয়া নেই — আপনার গ্রাহকরা সময়মতো পরিশোধ করছেন। অসাধারণ!',copied:'\u2713 বার্তা কপি হয়েছে — হোয়াটসঅ্যাপ / এসএমএস-এ পেস্ট করুন'}
+  };
+  var PAL=[
+    {g:'linear-gradient(135deg,#1a73e8,#4f9cf9)',t:'26,115,232'},{g:'linear-gradient(135deg,#188038,#4cc27a)',t:'24,128,56'},
+    {g:'linear-gradient(135deg,#e37400,#ffb04d)',t:'227,116,0'},{g:'linear-gradient(135deg,#7c3aed,#a77bf5)',t:'124,58,237'},
+    {g:'linear-gradient(135deg,#d93025,#f2766d)',t:'217,48,37'},{g:'linear-gradient(135deg,#0b8043,#2bb7a0)',t:'11,128,67'}
+  ];
   var SVG={
     call:'<svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>',
     wa:'<svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 01-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1121 11.5z"/><path d="M9 9.5c.3 2 2.5 4.2 4.6 4.6l1.3-1.2-1.8-1-.8.6a3.5 3.5 0 01-1.7-1.7l.6-.8-1-1.8z"/></svg>',
     sms:'<svg viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1H9l-5 4V6a1 1 0 011-1z"/><path d="M8 10h8M8 13h5"/></svg>',
     cp:'<svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>',
-    kh:'<svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 014 4v12H8a4 4 0 01-4-4z"/><path d="M8 9h8M8 13h8"/></svg>',
-    ok:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+    ok:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+    go:'<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
+    party:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/><circle cx="12" cy="12" r="10"/></svg>'
   };
   function $$(id){return document.getElementById(id)}
   function load(){try{return JSON.parse(localStorage.getItem(LS)||'null')||{}}catch(e){return{}}}
   function save(o){try{localStorage.setItem(LS,JSON.stringify(o))}catch(e){}}
-  function lang(){try{return localStorage.getItem(LL)==='bn'?'bn':'en'}catch(e){return'en'}}
+  function lang(){try{var v=localStorage.getItem(LL);if(v==='bn'||v==='en')return v;return localStorage.getItem('mh_lang')==='bn'?'bn':'en'}catch(e){return'en'}}
+  function bnD(s){return String(s).replace(/\d/g,function(d){return '\u09E6\u09E7\u09E8\u09E9\u09EA\u09EB\u09EC\u09ED\u09EE\u09EF'.charAt(+d)})}
+  function N(s,l){return l==='bn'?bnD(s):String(s)}
   function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
   function fmt(n){return '\u09F3'+(Math.round((+n||0)*100)/100).toLocaleString('en-US',{maximumFractionDigits:2})}
   function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return Math.abs(h)}
 
-  /* one row per customer: all invoices + electricity bills + manual dues added together */
+  /* one row per customer: invoices + electricity bills + manual dues added together */
   function groups(){
     var m=new Map(),items=[],reg;
     try{items=dueItems();reg=custRegMap()}catch(e){return m}
@@ -7776,11 +7960,11 @@ renderWarranty();
   }
   function phoneIntl(p){var d=String(p||'').replace(/\D/g,'');if(/^01\d{9}$/.test(d))return '88'+d;return d}
   function message(g,l){
-    var a=fmt(g.due);
+    var a=N(fmt(g.due),l);
     if(l==='bn')return 'আসসালামু আলাইকুম '+g.name+', মোহাম্মদীয়া লাইব্রেরি অ্যান্ড কম্পিউটার-এর পাশে থাকার জন্য আপনাকে আন্তরিক ধন্যবাদ। বিনীত অনুরোধ, আপনার বকেয়া '+a+' সুবিধামতো সময়ে পরিশোধ করলে কৃতজ্ঞ থাকব। আপনার বিশ্বাস ও সহযোগিতার জন্য ধন্যবাদ। \uD83D\uDE4F';
     return 'Assalamu Alaikum '+g.name+', thank you for being a valued customer of Mohammadia Library & Computer. A friendly reminder: your outstanding balance is '+a+'. Whenever convenient, please settle it \u2014 we truly appreciate your trust and support. \uD83D\uDE4F';
   }
-  /* today's 5: saved for the day so the list stays stable; paid-off customers drop out and are replaced */
+  /* the day's 5 are saved so the list stays stable; paid-off customers drop out and are replaced */
   function todays(m){
     var tk=todayKey(),st=load();
     if(st.date!==tk)st={date:tk,keys:[],done:{}};
@@ -7796,83 +7980,125 @@ renderWarranty();
     var m=groups();if(!m.size)return;
     var st=load(),tk=todayKey();if(st.date!==tk)st={date:tk,keys:[],done:{}};
     var old=Array.isArray(st.keys)?st.keys:[];
-    var fresh=shuffle(Array.from(m.keys()).filter(function(k){return old.indexOf(k)<0}));
-    var keys=fresh.slice(0,COUNT);
+    var keys=shuffle(Array.from(m.keys()).filter(function(k){return old.indexOf(k)<0})).slice(0,COUNT);
     if(keys.length<COUNT)keys=keys.concat(shuffle(old.filter(function(k){return m.has(k)})).slice(0,COUNT-keys.length));
     st.keys=keys;st.done=st.done||{};save(st);
     var b=$$('fuShuf');if(b){b.classList.remove('spin');void b.offsetWidth;b.classList.add('spin')}
     renderFollowups();
   }
   function ageCls(d){return d>30?'hot':(d>14?'warm':'')}
-  function renderQuote(allDone,none){
-    var dn=Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5);
-    var q=QUOTES[(dn+qOff)%QUOTES.length],t=THANKS[(dn*3+qOff)%THANKS.length],h='\uD83D\uDC9B For you, today';
-    if(none){t='No dues outstanding \u2014 your customers are paying on time. Beautiful work! \uD83C\uDF89';h='\uD83C\uDF89 Well done'}
-    else if(allDone){t='All '+COUNT+' contacted \u2014 fantastic work today! Every kind reminder builds trust and keeps cash flowing. \uD83C\uDF89';h='\uD83C\uDF1F Mission complete'}
-    $$('fuQt').textContent='\u201C'+q[0]+'\u201D';$$('fuQa').textContent='\u2014 '+q[1];
-    $$('fuThx').textContent=t;$$('fuThxH').textContent=h;
+  function setText(id,v){var e=$$(id);if(e&&e.textContent!==v)e.textContent=v}
+  function renderQuote(state,l){ /* state: '' | 'done' | 'none' */
+    var dn=Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5),li=l==='bn'?1:0,T=TX[l];
+    var q=QUOTES[(dn+qOff)%QUOTES.length],th=THANKS[(dn*3+qOff)%THANKS.length];
+    var thx=state==='none'?T.none:state==='done'?T.allDone:th[li],hd=state==='none'?T.thxNone:state==='done'?T.thxDone:T.thx;
+    var key=((dn+qOff)%QUOTES.length)+'|'+l+'|'+state;
+    setText('fuChip',T.chip);setText('fuNextTx',T.next);setText('fuThxH',hd);
+    var card=$$('fuQuoteCard');if(card){var was=card.classList.contains('cele');card.classList.toggle('cele',!!state);if(!!state!==was)sceneTick(true)}
+    if(key===last.q)return;last.q=key;
+    var qt=$$('fuQt'),qa=$$('fuQa'),tx=$$('fuThx'),w=('\u201C'+q[li]+'\u201D').split(' ');
+    var tg=$$('fuQTag');if(tg){tg.textContent=q[4+li];tg.className='fu-qtag'+(l==='bn'?' bn':'');tg.style.animation='none';void tg.offsetWidth;tg.style.animation=''}
+    qt.className='fu-qt'+(l==='bn'?' bn':'');qa.className='fu-qa'+(l==='bn'?' bn':'');
+    qt.innerHTML=w.map(function(x,i){return '<span style="--w:'+i+'">'+esc(x)+'</span>'}).join(' ');
+    qa.textContent='\u2014 '+q[2+li];qa.style.animation='none';void qa.offsetWidth;qa.style.animation='';
+    tx.textContent=thx;tx.className='fu-tx'+(l==='bn'?' fu-bn':'');tx.style.animation='none';void tx.offsetWidth;tx.style.animation='';
   }
   function renderFollowups(){
     var host=$$('fuList');if(!host)return;
     var m,res;
     try{m=groups();res=todays(m)}catch(e){console.error('follow-ups:',e);return}
-    var keys=res.keys,st=res.st,l=lang(),h='';
-    var doneN=keys.filter(function(k){return st.done[k]}).length,tot=0;
+    var keys=res.keys,st=res.st,l=lang(),T=TX[l],h='',tot=0;
     document.querySelectorAll('#fuLang button').forEach(function(b){b.classList.toggle('on',b.dataset.l===l)});
+    document.getElementById('followupSection').classList.toggle('lang-bn',l==='bn');
+    setText('fuTitle',T.title);$$('fuShuf').title=T.shuf;
     if(!keys.length){
-      host.innerHTML='<div class="fu-empty"><b>\uD83C\uDF89</b>No customer dues to follow up right now.</div>';
-      $$('fuSub').textContent='Nobody owes anything';$$('fuMeta').innerHTML='';$$('fuBar').style.width='100%';
-      renderQuote(false,true);return;
+      var eh='<div class="fu-empty'+(l==='bn'?' fu-bn':'')+'">'+SVG.party+T.empty+'</div>';
+      if(last.html!==eh){host.innerHTML=eh;last.html=eh}last.sig='';
+      setText('fuSub','');$$('fuBar').style.width='100%';renderQuote('none',l);return;
     }
+    var sig=keys.join('|')+'|'+l,anim=sig!==last.sig,doneN=0;
     keys.forEach(function(k,i){
-      var g=m.get(k),d=g.oldest===Infinity?0:Math.max(0,Math.floor((Date.now()-g.oldest)/864e5)),done=!!st.done[k];
-      tot+=g.due;
-      var msg=message(g,l),ph=g.phone?phoneIntl(g.phone):'',acts='';
+      var g=m.get(k),d=g.oldest===Infinity?0:Math.max(0,Math.floor((Date.now()-g.oldest)/864e5)),done=!!st.done[k],p=PAL[hash(k)%PAL.length];
+      if(done)doneN++;tot+=g.due;
+      var msg=message(g,l),ph=g.phone?phoneIntl(g.phone):'',tel=g.phone?g.phone.replace(/[^\d+]/g,''):'',acts='';
       if(g.phone){
-        acts+='<a class="fu-b call" href="tel:'+esc(g.phone.replace(/[^\d+]/g,''))+'" title="Call '+esc(g.phone)+'" aria-label="Call">'+SVG.call+'</a>';
-        acts+='<a class="fu-b wa" href="https://wa.me/'+ph+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener" title="WhatsApp reminder" aria-label="WhatsApp">'+SVG.wa+'</a>';
-        acts+='<a class="fu-b sms" href="sms:'+esc(g.phone.replace(/[^\d+]/g,''))+'?body='+encodeURIComponent(msg)+'" title="SMS reminder" aria-label="SMS">'+SVG.sms+'</a>';
+        acts+='<a class="fu-b call" href="tel:'+esc(tel)+'" title="'+T.call+' '+esc(g.phone)+'" aria-label="'+T.call+'">'+SVG.call+'</a>';
+        acts+='<a class="fu-b wa" href="https://wa.me/'+ph+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener" title="'+T.wa+'" aria-label="WhatsApp">'+SVG.wa+'</a>';
+        acts+='<a class="fu-b sms" href="sms:'+esc(tel)+'?body='+encodeURIComponent(msg)+'" title="'+T.sms+'" aria-label="SMS">'+SVG.sms+'</a>';
       }
-      acts+='<button type="button" class="fu-b cp" data-a="copy" data-k="'+esc(k)+'" title="Copy polite message" aria-label="Copy message">'+SVG.cp+'</button>';
-      acts+='<button type="button" class="fu-b kh" data-a="khata" data-k="'+esc(k)+'" title="Open khata" aria-label="Open khata">'+SVG.kh+'</button>';
-      acts+='<button type="button" class="fu-b dn'+(done?' on':'')+'" data-a="done" data-k="'+esc(k)+'" title="'+(done?'Contacted \u2014 tap to undo':'Mark as contacted')+'" aria-label="Mark contacted">'+SVG.ok+'</button>';
-      h+='<div class="fu-row'+(done?' done':'')+'" style="--i:'+i+'">'
-        +'<div class="fu-ava" style="background:'+GRAD[hash(k)%GRAD.length]+'">'+esc((g.name.charAt(0)||'?').toUpperCase())+'</div>'
-        +'<div class="fu-info"><div class="fu-name" data-a="khata" data-k="'+esc(k)+'" title="Open khata">'+esc(g.name)+'</div>'
-        +'<div class="fu-sub"><span class="fu-age '+ageCls(d)+'">\u23F3 oldest '+d+'d</span><span>\u00B7 '+g.count+(g.count===1?' entry':' entries')+'</span>'+(g.phone?'<span>\u00B7 \uD83D\uDCDE '+esc(g.phone)+'</span>':'<span>\u00B7 no phone saved</span>')+'</div></div>'
-        +'<div class="fu-due">'+fmt(g.due)+'</div><div class="fu-acts">'+acts+'</div></div>';
+      acts+='<button type="button" class="fu-b cp" data-a="copy" data-k="'+esc(k)+'" title="'+T.copy+'" aria-label="'+T.copy+'">'+SVG.cp+'</button>';
+      acts+='<button type="button" class="fu-b dn'+(done?' on':'')+'" data-a="done" data-k="'+esc(k)+'" title="'+(done?T.undo:T.done)+'" aria-label="'+T.done+'">'+SVG.ok+'</button>';
+      h+='<div class="fu-row'+(done?' done':'')+(anim?' in':'')+'" role="button" tabindex="0" aria-label="'+esc(g.name)+'" data-k="'+esc(k)+'" style="--i:'+i+';--tc:'+p.t+'">'
+        +'<div class="fu-ava">'+esc((g.name.charAt(0)||'?').toUpperCase())+'</div>'
+        +'<div class="fu-info"><div class="fu-name">'+esc(g.name)+'</div>'
+        +'<div class="fu-sub'+(l==='bn'?' fu-bn':'')+'"><span class="fu-age '+ageCls(d)+'">'+N(T.oldest(d),l)+'</span><span class="opt">\u00B7 '+N(T.entries(g.count),l)+'</span><span class="opt">\u00B7 '+(g.phone?esc(g.phone):T.noPhone)+'</span></div></div>'
+        +'<div class="fu-due">'+N(fmt(g.due),l)+'</div><div class="fu-acts">'+acts+'</div><span class="fu-go" aria-hidden="true">'+SVG.go+'</span></div>';
     });
-    host.innerHTML=h;
-    $$('fuSub').textContent=keys.length+' random customer'+(keys.length===1?'':'s')+' with due \u00B7 new picks every day';
-    $$('fuMeta').innerHTML='<span><b>'+doneN+'/'+keys.length+'</b> contacted</span><span>\u00B7</span><span>Due in this list: <b>'+fmt(tot)+'</b></span>';
+    last.sig=sig;
+    if(h!==last.html){host.innerHTML=h;last.html=h}
+    $$('fuSub').innerHTML='<b>'+N(doneN+'/'+keys.length,l)+'</b> '+T.contacted+' \u00B7 <b>'+N(fmt(tot),l)+'</b> '+T.inList;
+    $$('fuSub').className=l==='bn'?'fu-bn':'';
     $$('fuBar').style.width=Math.round(doneN/keys.length*100)+'%';
-    renderQuote(doneN===keys.length,false);
+    renderQuote(doneN===keys.length?'done':'',l);
   }
   function copyText(t){
-    function ok(){if(typeof dueToast==='function')dueToast('\u2713 Message copied \u2014 paste it in WhatsApp / SMS')}
-    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb();
+    var T=TX[lang()];
+    function ok(){if(typeof dueToast==='function')dueToast(T.copied)}
     function fb(){var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){}a.remove()}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb();
   }
+  function openCustomer(k){var g=groups().get(k);if(g)openKhata(g.name)}
+  /* soft colour fill that grows from the exact point where the mouse enters / leaves the card */
+  function pos(row,e){var r=row.getBoundingClientRect();row.style.setProperty('--mx',(e.clientX-r.left)+'px');row.style.setProperty('--my',(e.clientY-r.top)+'px')}
   function wire(){
     var host=$$('followupSection');if(!host||host._w)return;host._w=1;
-    host.addEventListener('click',function(e){
-      var t=e.target.closest('[data-a],[data-l],#fuShuf,#fuQNext');if(!t)return;
-      if(t.id==='fuShuf'){reshuffle();return}
-      if(t.id==='fuQNext'){qOff++;var b=$$('fuQBody');b.classList.remove('sw');void b.offsetWidth;b.classList.add('sw');renderQuote(false,false);
-        var m=groups(),r=todays(m);if(r.keys.length&&r.keys.every(function(k){return r.st.done[k]}))renderQuote(true,false);else if(!r.keys.length)renderQuote(false,true);return}
-      if(t.dataset.l){try{localStorage.setItem(LL,t.dataset.l)}catch(x){}renderFollowups();return}
-      var k=t.dataset.k,a=t.dataset.a,m2=groups(),g=m2.get(k);
-      if(a==='khata'&&g){openKhata(g.name)}
-      else if(a==='copy'&&g){copyText(message(g,lang()))}
-      else if(a==='done'){var st=load();st.done=st.done||{};if(st.done[k])delete st.done[k];else st.done[k]=Date.now();save(st);renderFollowups()}
+    host.addEventListener('mouseover',function(e){var r=e.target.closest('.fu-row');if(r&&!r.contains(e.relatedTarget))pos(r,e)});
+    host.addEventListener('mousemove',function(e){var r=e.target.closest('.fu-row');if(r)pos(r,e)});
+    host.addEventListener('mouseout',function(e){var r=e.target.closest('.fu-row');if(r&&!r.contains(e.relatedTarget))pos(r,e)});
+    host.addEventListener('keydown',function(e){
+      if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('fu-row')){e.preventDefault();openCustomer(e.target.dataset.k)}
     });
+    host.addEventListener('click',function(e){
+      var t=e.target;
+      if(t.closest('#fuShuf')){reshuffle();return}
+      var lb=t.closest('#fuLang button');if(lb){try{localStorage.setItem(LL,lb.dataset.l)}catch(x){}renderFollowups();return}
+      if(t.closest('#fuQNext')){var nb=$$('fuQNext');nb.classList.toggle('rot');qOff++;renderFollowups();return}
+      var b=t.closest('.fu-b');
+      if(b){
+        if(b.tagName==='A')return; /* call / WhatsApp / SMS links work natively */
+        var k=b.dataset.k,a=b.dataset.a;
+        if(a==='copy'){var g=groups().get(k);if(g)copyText(message(g,lang()))}
+        else if(a==='done'){var st=load();st.done=st.done||{};if(st.done[k])delete st.done[k];else st.done[k]=Date.now();save(st);renderFollowups()}
+        return;
+      }
+      var row=t.closest('.fu-row');if(row)openCustomer(row.dataset.k); /* click anywhere on the card */
+    });
+  }
+  /* the "screen": calling → texting → payment received, looping; holds on "payment received" when all follow-ups are done */
+  var SC={i:-1,t:null};
+  function showScene(n){
+    var S=document.querySelectorAll('#fuScreen .fu-sc'),G=document.querySelectorAll('#fuStories i');if(!S.length)return;
+    S.forEach(function(e,k){e.classList.toggle('on',k===n)});
+    G.forEach(function(e,k){e.className=(k<n)?'done':(k===n?'on':'')});SC.i=n;
+  }
+  function sceneTick(force){
+    if(document.hidden&&!force)return;
+    var card=$$('fuQuoteCard');
+    if(card&&card.classList.contains('cele')){showScene(2);document.querySelectorAll('#fuStories i').forEach(function(e){e.className='done'});return}
+    if(force&&SC.i>=0&&!(card&&card.classList.contains('cele'))&&SC.i!==2)return; /* celebration just ended: carry on */
+    showScene((SC.i+1)%3);
+  }
+  function sceneStart(){
+    if(SC.t)return;var c0=$$('fuQuoteCard');showScene(c0&&c0.classList.contains('cele')?2:0);
+    var rm=false;try{rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
+    if(!rm)SC.t=setInterval(function(){sceneTick(false)},4600);
   }
   /* hook into the existing dashboard render so it refreshes with sales / dues / cloud sync */
   var _rd=window.renderDashboard;
   if(typeof _rd==='function'){
     window.renderDashboard=function(){var r=_rd.apply(this,arguments);try{wire();renderFollowups()}catch(e){console.error(e)}return r};
   }
-  function init(){wire();renderFollowups()}
+  function init(){wire();renderFollowups();sceneStart()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
