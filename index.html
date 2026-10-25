@@ -8128,8 +8128,28 @@ renderWarranty();
   .mnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:transparent;color:var(--muted);font-size:11px;font-weight:600;padding:6px 2px;border-radius:12px;box-shadow:none;min-height:52px}
   .mnav button svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
   .mnav button.on{color:var(--pine);background:#1a73e81a}
+
+  /* card polish: name as header, hide empty rows, compact action row */
+  table.mcard td:first-child::before{display:none}
+  table.mcard td:first-child{justify-content:flex-start!important;text-align:left!important}
+  table.mcard td.mc-empty{display:none!important}
+  table.mcard td.mc-act{flex-wrap:wrap;justify-content:flex-start!important;gap:8px}
+  table.mcard td.mc-act::before{display:none}
+  table.mcard td.mc-act>*{flex:none}
+  /* follow-up cards: stop clipping names */
+  .fu-row{max-height:none!important;overflow:visible!important;flex-wrap:wrap!important;padding:10px 12px!important;row-gap:6px}
+  .fu-info{flex:1 1 0!important;min-width:0;flex-wrap:wrap!important}
+  .fu-name{white-space:normal!important;overflow:visible!important}
+  .fu-acts{width:100%!important;min-width:0!important;justify-content:flex-end}
+  /* due KPI cards: numbers must fit */
+  .dk-kpi>div{min-width:0}
+  #bizDueTab .dk-kpi,#paidHistoryModal .dk-kpi,.dk-kpi{padding:10px 12px!important;gap:8px!important}
+  #bizDueTab .dk-kpi b,#paidHistoryModal .dk-kpi b,#customerHistoryModal .dk-kpi b,.dk-kpi b{font-size:clamp(14px,4.4vw,19px)!important}
+  .dk-ico{display:none!important}
+  /* bell button: smaller, parked above the cart button */
+  .bill-alert-fab{top:auto!important;bottom:calc(150px + env(safe-area-inset-bottom,0px));right:10px;width:50px!important;height:50px!important}
+  .bill-alert-fab svg{width:24px!important;height:24px!important}
   .cart-fab{bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
-  .bill-alert-fab{bottom:calc(144px + env(safe-area-inset-bottom,0px))!important}
 }
 @media print{.mnav{display:none!important}}
 </style>
@@ -8155,6 +8175,10 @@ renderWarranty();
         if(td.tagName!=='TD')return;
         var l=hs[i]||'';
         if(td.getAttribute('data-label')!==l)td.setAttribute('data-label',l);
+        var tx=(td.textContent||'').trim();
+        var hasCtl=td.querySelector('button,a,input,select');
+        td.classList.toggle('mc-empty',!hasCtl&&(tx===''||tx==='—'||tx==='-'||tx==='–')&&i>0);
+        td.classList.toggle('mc-act',!!hasCtl&&!!td.querySelector('button')&&td.querySelectorAll('button').length>=1&&/action/i.test(l));
         i+=(td.colSpan||1);
       });
     });
