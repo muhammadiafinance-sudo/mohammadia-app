@@ -8102,4 +8102,69 @@ renderWarranty();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
+<!-- ===== MOBILE APP LAYOUT PATCH (cards + bottom nav) ===== -->
+<style id="mobilePatch">
+.mnav{display:none}
+@media(max-width:700px){
+  body{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+  .app{padding:10px!important}
+  .main{padding-bottom:8px}
+  /* tables -> cards */
+  .tablewrap{max-height:none!important;min-height:0!important;border:0!important;overflow:visible!important;background:transparent!important}
+  .tablewrap table,table.mcard{min-width:0!important;width:100%!important}
+  .ba-scroll{overflow:visible!important}
+  #billAlertModal .ba-table{min-width:0!important}
+  table.mcard,table.mcard tbody{display:block}
+  table.mcard thead{display:none}
+  table.mcard tr{display:block;height:auto!important;background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 10px;padding:4px 14px;box-shadow:0 1px 3px #0000001a}
+  table.mcard td{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:9px 0!important;border:0!important;border-top:1px dashed var(--line)!important;background:transparent!important;text-align:right!important;height:auto;word-break:break-word;box-shadow:none!important}
+  table.mcard td:first-child{border-top:0!important;font-weight:700;font-size:15px}
+  table.mcard td::before{content:attr(data-label);flex:none;color:var(--muted);font-size:12px;font-weight:600;text-align:left}
+  table.mcard td[data-label=""]::before,table.mcard td:not([data-label])::before{display:none}
+  table.mcard td[data-label=""],table.mcard td:not([data-label]){justify-content:flex-end}
+  table.mcard td button{padding:9px 14px}
+  /* bottom navigation */
+  .mnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:700;background:var(--card);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -2px 12px #00000018}
+  .mnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:transparent;color:var(--muted);font-size:11px;font-weight:600;padding:6px 2px;border-radius:12px;box-shadow:none;min-height:52px}
+  .mnav button svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .mnav button.on{color:var(--pine);background:#1a73e81a}
+  .cart-fab{bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+  .bill-alert-fab{bottom:calc(144px + env(safe-area-inset-bottom,0px))!important}
+}
+@media print{.mnav{display:none!important}}
+</style>
+<nav class="mnav no-print" id="mnav" aria-label="Quick navigation">
+  <button type="button" data-t="home" class="on" onclick="mnavGo(this,function(){goHome()})"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg><span>Home</span></button>
+  <button type="button" data-t="sales" onclick="mnavGo(this,function(){openActionModal('salesModal')})"><svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11l2-8H6"/></svg><span>Sales</span></button>
+  <button type="button" data-t="stock" onclick="mnavGo(this,function(){openStockList()})"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg><span>Stock</span></button>
+  <button type="button" data-t="due" class="admin-only" onclick="mnavGo(this,function(){openBizPage('due')})"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M17 11h5M19.5 8.5v5"/></svg><span>Due</span></button>
+  <button type="button" data-t="more" onclick="toggleSidebar()"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>More</span></button>
+</nav>
+<script id="mobilePatchJs">
+(function(){
+  window.mnavGo=function(btn,fn){
+    try{document.querySelectorAll('#mnav button').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');fn()}catch(e){console.error(e)}
+  };
+  function label(t){
+    if(t.classList.contains('xl'))return;
+    var hs=[].slice.call(t.querySelectorAll('thead th')).map(function(h){return (h.textContent||'').trim()});
+    t.classList.add('mcard');
+    t.querySelectorAll('tbody tr').forEach(function(tr){
+      var i=0;
+      [].slice.call(tr.children).forEach(function(td){
+        if(td.tagName!=='TD')return;
+        var l=hs[i]||'';
+        if(td.getAttribute('data-label')!==l)td.setAttribute('data-label',l);
+        i+=(td.colSpan||1);
+      });
+    });
+  }
+  var pend=false;
+  function run(){pend=false;document.querySelectorAll('table').forEach(function(t){try{label(t)}catch(e){}})}
+  function sched(){if(!pend){pend=true;requestAnimationFrame(run)}}
+  new MutationObserver(sched).observe(document.body,{childList:true,subtree:true});
+  sched();
+})();
+</script>
+
 </body></html>
