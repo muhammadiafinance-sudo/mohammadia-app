@@ -2215,6 +2215,16 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
 @media(prefers-reduced-motion:reduce){.fu-row.in,.fu-qt span,.fu-qa,.fu-qtag,.fu-thx .fu-tx,.fu-orb,.fu-qchip::before,.fu-thx>i svg{animation:none!important;opacity:1!important;transform:none!important}.fu-row::before{transition:none}}
 @media(prefers-reduced-motion:reduce){.fu-sc *,.fu-stories i::after{animation:none!important}.fu-sc .rg,.fu-sc .sp,.fu-sc .wv,.fu-sc .tp{display:none}.fu-stories i.on::after{width:100%}.fu-sc{transition:none}}
 
+
+/* ===== জমা (joma / advance) ===== */
+.ch-fcard.joma{background:rgba(24,128,56,.09)}
+.ch-fbtn.blue{background:#1a73e8}.ch-fbtn.blue:hover{background:#1558b0}
+.tk-amt.joma b{color:#188038}
+.tk-sum .tk-jm b{color:#188038}
+.tk-pf.joma{border-left-color:#188038}.tk-pf.joma>b{color:#188038}
+.joma-pill{display:inline-block;padding:4px 11px;border-radius:10px;background:rgba(24,128,56,.12);color:#188038;font-weight:800;white-space:nowrap}
+.ch-jbal{color:#188038;font-weight:800;white-space:nowrap}
+#customerHistoryModal tbody tr.ch-r-joma td:first-child{box-shadow:none}
 /* ===== Tally-Khata style Customers & Due ===== */
 #customerHistoryModal .dk-kpis{display:none!important}
 #bizDueTab .dk-kpis,#bizDueTab .cu-seg,#bizDueTab #dueWrap,#bizDueTab #custWrap{display:none!important}
@@ -2261,6 +2271,13 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
 .fu-ls .ln small{font-weight:400;opacity:.7;font-size:10px}
 .fu-ls .lm{color:#7ee2a0;font-weight:800;font-size:14px;flex:none;font-variant-numeric:tabular-nums}
 
+/* ===== Total Due / Advance cards: minimal soft fill, no accent line, no shadow ===== */
+.tk-sum,.tk-pf{border:0;border-left:0;box-shadow:none;border-radius:16px;background:rgba(217,48,37,.07)}
+.tk-pf.owe{border-left:0;background:rgba(217,48,37,.07)}
+.tk-pf:not(.owe){background:rgba(24,128,56,.08)}
+.tk-pf.joma{border-left:0;background:rgba(24,128,56,.08)}
+.tk-sum .tk-r{color:var(--muted)}
+.tk-sum .tk-jm b{color:#188038}
 </style></head>
 <body class="booting">
 
@@ -2759,7 +2776,7 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
 <div class="picker" id="lowStockList" style="max-height:320px"></div>
 <div class="actions"><button onclick="printLowStockReport()">🖨️ Print / Save as PDF</button></div>
 </div></div>
-<div class="modal" id="businessModal" aria-hidden="true"><div class="modalbox wide-modal" style="max-width:1100px"><button class="close" onclick="closeActionModal('businessModal')">✕ Close</button><h2 id="bizTitle">👥 Customers &amp; Due</h2><p class="hint" id="bizHint">Outstanding customer dues. Receive a payment here — it goes to Daily Cash → Due Paid automatically unless you tick Paid external.</p>
+<div class="modal" id="businessModal" aria-hidden="true"><div class="modalbox wide-modal" style="max-width:1100px"><button class="close" onclick="closeActionModal('businessModal')">✕ Close</button><h2 id="bizTitle">👥 Customers &amp; Due</h2><p class="hint" id="bizHint" hidden></p>
 <div class="biz-tabs"><button class="active" onclick="switchBizTab('bizDash',this)">📈 Dashboard</button><button onclick="switchBizTab('bizPurchase',this)">📦 Purchases</button><button onclick="switchBizTab('bizDueTab',this)">👥 Customers & Due</button><button onclick="switchBizTab('bizProfitTab',this)">💰 Profit & Loss</button></div>
 <div class="biz-tab active" id="bizDash"><div class="biz-grid"><div class="biz-kpi"><div class="k">Today Sales</div><div class="v" id="bizTodaySales">৳0.00</div><div class="s" id="bizTodayCount">0 invoices</div></div><div class="biz-kpi"><div class="k">7-Day Sales</div><div class="v" id="biz7Sales">৳0.00</div><div class="s">Last 7 calendar days</div></div><div class="biz-kpi"><div class="k">Outstanding Due</div><div class="v due" id="bizDue">৳0.00</div><div class="s" id="bizDueCount">0 invoices</div></div><div class="biz-kpi"><div class="k">Estimated Profit</div><div class="v positive" id="bizProfit">৳0.00</div><div class="s">Based on recorded purchase prices</div></div></div><div class="biz-two"><div class="biz-card"><h3>Sales — Last 7 Days</h3><div class="mini-chart" id="bizChart"></div></div><div class="biz-card"><h3>Top Selling Products</h3><div class="biz-table"><table><thead><tr><th>Product</th><th class="num">Qty</th><th class="num">Sales</th></tr></thead><tbody id="bizTopProducts"></tbody></table></div></div></div></div>
 <div class="biz-tab" id="bizPurchase"><div class="biz-two"><div class="biz-card"><h3>➕ Record Purchase / Stock Receive</h3><div class="biz-form"><input id="purchaseProduct" class="full" placeholder="Product name"><input id="purchaseQty" type="number" min="1" placeholder="Quantity"><input id="purchaseUnitCost" type="number" min="0" step=".01" placeholder="Purchase cost / unit (৳)"><input id="purchaseSellingPrice" type="number" min="0" step=".01" placeholder="Selling price / unit (৳)"><input id="purchaseSupplier" placeholder="Supplier name"><input id="purchaseNote" class="full" placeholder="Note (optional)"></div><div class="actions"><button onclick="recordPurchase()">Save Purchase</button></div><div class="status" id="purchaseStatus">Purchase receiving will increase stock automatically.</div></div><div class="biz-card"><h3>Recent Purchases</h3><div class="biz-table"><table><thead><tr><th>Date</th><th>Product</th><th class="num">Qty</th><th class="num">Cost</th><th>Supplier</th></tr></thead><tbody id="purchaseTable"></tbody></table></div></div></div></div>
@@ -2791,13 +2808,13 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
     <div class="due-menu" id="dueMenu" hidden onclick="event.stopPropagation()"><button type="button" class="dm-act" onclick="openPaidHistory()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>Paid History</button><button type="button" class="dm-act" onclick="toggleDueMenu(null,false);customerDuePDF()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg>Due Report PDF</button><button type="button" class="dm-act" onclick="toggleDueMenu(null,false);customerDueDetailsPDF()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 15h7M9 18h4"/></svg>Due Details PDF</button></div>
   </div>
 </div>
-<div id="tkWrap"><div class="tk-sum"><div><small>Total due</small><b id="tkTotal">৳0.00</b></div><div class="tk-r"><span>customers with due</span><b id="tkCount">0</b></div></div><div class="tk-chips" id="tkChips"><button type="button" class="on" data-f="all" onclick="setTkFilter('all')">All</button><button type="button" data-f="due" onclick="setTkFilter('due')">Due</button><button type="button" data-f="clear" onclick="setTkFilter('clear')">Clear</button><button type="button" class="tk-lang" data-no-i18n onclick="tkToggleLang()">বাংলা ⇄ English</button></div><div class="tk-list" id="tkList"></div></div>
+<div id="tkWrap"><div class="tk-sum"><div><small>Total due</small><b id="tkTotal">৳0.00</b></div><div class="tk-r"><span>customers with due</span><b id="tkCount">0</b></div><div class="tk-r tk-jm"><span>Total Advance</span><b id="tkJoma">৳0.00</b></div></div><div class="tk-chips" id="tkChips"><button type="button" class="on" data-f="all" onclick="setTkFilter('all')">All</button><button type="button" data-f="due" onclick="setTkFilter('due')">Due</button><button type="button" data-f="joma" onclick="setTkFilter('joma')">Advance</button><button type="button" data-f="clear" onclick="setTkFilter('clear')">Clear</button><button type="button" class="tk-lang" data-no-i18n onclick="tkToggleLang()">বাংলা ⇄ English</button></div><div class="tk-list" id="tkList"></div></div>
 <div class="biz-table" id="dueWrap"><table id="dueTbl"><thead><tr><th class="c-inv">Invoice</th><th>Customer</th><th class="c-date">Date</th><th class="num c-total">Total</th><th class="num c-paid">Paid</th><th class="num">Due</th><th>Payment</th><th class="c-ext">Paid external · Note</th></tr></thead><tbody id="dueTable"></tbody></table></div>
 <div class="biz-table" id="custWrap" hidden><table id="custTbl"><thead><tr><th>Customer</th><th>Contact</th><th class="num">Entries</th><th class="num">Due balance</th><th>Last activity</th><th class="cu-th-act">Actions</th></tr></thead><tbody id="custTable"></tbody></table></div></div></div>
 <div class="biz-tab" id="bizProfitTab"><div class="biz-grid"><div class="biz-kpi"><div class="k">Sales Revenue</div><div class="v" id="plRevenue">৳0.00</div></div><div class="biz-kpi"><div class="k">Estimated COGS</div><div class="v" id="plCogs">৳0.00</div></div><div class="biz-kpi"><div class="k">Gross Profit</div><div class="v positive" id="plGross">৳0.00</div></div><div class="biz-kpi"><div class="k">Margin</div><div class="v" id="plMargin">0.0%</div></div></div><div class="biz-card"><h3>Profit by Product</h3><div class="biz-table"><table><thead><tr><th>Product</th><th class="num">Qty Sold</th><th class="num">Revenue</th><th class="num">COGS</th><th class="num">Profit</th></tr></thead><tbody id="plTable"></tbody></table></div></div></div>
 </div></div>
 
-<div class="modal" id="paidHistoryModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closePaidHistory()" aria-label="Back to Customer Due">← Customer Due</button><h2>🕘 Paid History</h2><p class="hint">Every payment received on customer dues — customer, amount, date and note. Payments are saved in Daily Cash → Due Paid automatically unless marked Paid external.</p>
+<div class="modal" id="paidHistoryModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closePaidHistory()" aria-label="Back to Customer Due">← Customer Due</button><h2>🕘 Paid History</h2>
 <div class="dk-kpis">
   <div class="dk-kpi green"><span class="dk-ico" aria-hidden="true">✅</span><div><small>Total received</small><b id="phgTotal">৳0.00</b></div></div>
   <div class="dk-kpi"><span class="dk-ico" aria-hidden="true">🧾</span><div><small>Payments</small><b id="phgCount">0</b></div></div>
@@ -2812,20 +2829,20 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
 <div class="tablewrap"><table><thead><tr><th>Date &amp; time</th><th>Customer</th><th>For</th><th class="num">Paid</th><th class="num">Balance after</th><th>Mode</th><th>Note</th><th>Received by</th></tr></thead><tbody id="phgBody"></tbody></table></div>
 </div></div>
 
-<div class="modal" id="customerHistoryModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeCustomerHistory()" aria-label="Back">← Back</button><h2>👤 Customer History</h2><p class="hint">Complete due and payment history of this customer.</p>
+<div class="modal" id="customerHistoryModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeCustomerHistory()" aria-label="Back">← Back</button><h2>👤 Customer History</h2>
 <div class="ch-prof"><div class="ch-ava" id="chAva">?</div><div><div class="ch-name" id="chName">—</div><div class="ch-sub" id="chSub"></div></div><div class="ch-chip" id="chChip"></div></div>
 <div class="tk-pf" id="tkPf"><div class="tk-pf-top"><small id="tkPfLbl">Balance due</small><button type="button" class="tk-lang" data-no-i18n onclick="tkToggleLang()">বাংলা ⇄ English</button></div><b id="tkPfBal">৳0.00</b><div class="tk-pf-sub"><span class="g"><i>Due given</i> <em id="tkPfDr">৳0.00</em></span><span class="p"><i>Due paid</i> <em id="tkPfCr">৳0.00</em></span></div></div>
 <div class="dk-kpis">
   <div class="dk-kpi red"><span class="dk-ico" aria-hidden="true">📤</span><div><small>Due given</small><b id="chDr">৳0.00</b></div></div>
   <div class="dk-kpi green"><span class="dk-ico" aria-hidden="true">✅</span><div><small>Total paid</small><b id="chCr">৳0.00</b></div></div>
-  <div class="dk-kpi amber"><span class="dk-ico" aria-hidden="true">⚖️</span><div><small>Balance due</small><b id="chBal">৳0.00</b></div></div>
+  <div class="dk-kpi amber"><span class="dk-ico" aria-hidden="true">⚖️</span><div><small id="chBalLbl">Balance due</small><b id="chBal">৳0.00</b></div></div>
   <div class="dk-kpi"><span class="dk-ico" aria-hidden="true">🧾</span><div><small>Payments</small><b id="chPays">0</b></div></div>
 </div>
 <div class="ch-forms">
-  <div class="ch-fcard due"><h4>➕ Add due manually</h4><p>Only recorded in this customer’s profile — not added to Daily Cash.</p>
-    <div class="ch-frow"><input id="chDueAmt" type="number" min="0" step=".01" placeholder="Due amount ৳" onkeydown="if(event.key==='Enter'){event.preventDefault();khataAddDue()}"><input id="chDueNote" type="text" maxlength="120" placeholder="Note (optional)" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();khataAddDue()}"><button type="button" class="ch-fbtn red" onclick="khataAddDue()">Add due</button></div></div>
-  <div class="ch-fcard paid"><h4>💵 Receive payment</h4><p>Paid goes to Daily Cash → Due Paid like before (oldest due is cleared first).</p>
-    <div class="ch-frow"><input id="chPayAmt" type="number" min="0" step=".01" placeholder="Paid amount ৳" onkeydown="if(event.key==='Enter'){event.preventDefault();khataReceive()}"><button type="button" class="due-full" onclick="khataFull()">Full</button><input id="chPayNote" type="text" maxlength="120" placeholder="Note (optional)" autocomplete="off"><label class="due-ext-chk" title="Tick if received another way (bKash/bank). It will NOT be added to Daily Cash."><input type="checkbox" id="chPayExt"><span>Paid external</span></label><button type="button" class="ch-fbtn green" onclick="khataReceive()">Receive</button></div></div>
+  <div class="ch-fcard due"><h4>Due</h4>
+    <div class="ch-frow"><input id="chDueAmt" type="number" min="0" step=".01" placeholder="Amount" onkeydown="if(event.key==='Enter'){event.preventDefault();khataAddDue()}"><input id="chDueNote" type="text" maxlength="120" placeholder="Note" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();khataAddDue()}"><button type="button" class="ch-fbtn red" onclick="khataAddDue()">Add due</button></div></div>
+  <div class="ch-fcard paid"><h4>Receive Payment/Advance</h4>
+    <div class="ch-frow"><input id="chPayAmt" type="number" min="0" step=".01" placeholder="Amount" onkeydown="if(event.key==='Enter'){event.preventDefault();khataReceive()}"><button type="button" class="due-full" onclick="khataFull()">Full</button><input id="chPayNote" type="text" maxlength="120" placeholder="Note" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();khataReceive()}"><label class="due-ext-chk"><input type="checkbox" id="chPayExt"><span>Paid external</span></label><button type="button" class="ch-fbtn green" onclick="khataReceive()">Receive</button></div></div>
 </div>
 <div class="phg-tools">
   <div class="phg-search" id="chSearchWrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="chSearch" type="search" placeholder="Search invoice, note, amount, date…" oninput="renderCustomerHistory()" autocomplete="off" aria-label="Search history"><button type="button" class="phg-clear" onclick="var i=document.getElementById('chSearch');i.value='';i.focus();renderCustomerHistory()" aria-label="Clear search">✕</button></div>
@@ -3381,7 +3398,7 @@ function updateCloudReady(){
 let legacyEmbeddedSales=null, migrationAttempted=false;
 const $=id=>document.getElementById(id), money=n=>'৳'+Number(n||0).toFixed(2), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function setSyncPill(text,isWarning){const el=document.getElementById('cloudSyncPill');if(!el)return;el.textContent=text;el.style.background=isWarning?'#fbeaea':'';el.style.color=isWarning?'var(--maroon)':''}
-function ensureSchema(){if(!Array.isArray(db.customers))db.customers=[];if(!Array.isArray(db.deletedCustomers))db.deletedCustomers=[];if(!Array.isArray(db.manualDues))db.manualDues=[];if(!Array.isArray(db.manualPays))db.manualPays=[];if(!Array.isArray(db.warranty))db.warranty=[];if(!Array.isArray(db.billDuePayments))db.billDuePayments=[];if(!Array.isArray(db.stockRegister))db.stockRegister=[];if(!Array.isArray(db.purchases))db.purchases=[];if(!Array.isArray(db.dailyCashHistory))db.dailyCashHistory=[];if(!Array.isArray(db.stock))db.stock=[];db.stock.forEach(x=>{if(x.barcode===undefined||x.barcode===null)x.barcode='';if(x.service===undefined)x.service=false;if(x.quick===undefined)x.quick=false;if(x.lowStock===undefined||x.lowStock===null||x.lowStock==='')x.lowStock=5});if(!db.qsaleColors||typeof db.qsaleColors!=='object')db.qsaleColors={};ensureDailyCash()}
+function ensureSchema(){if(!Array.isArray(db.customers))db.customers=[];if(!Array.isArray(db.deletedCustomers))db.deletedCustomers=[];if(!Array.isArray(db.manualDues))db.manualDues=[];if(!Array.isArray(db.manualPays))db.manualPays=[];if(!Array.isArray(db.manualJoma))db.manualJoma=[];if(!Array.isArray(db.warranty))db.warranty=[];if(!Array.isArray(db.billDuePayments))db.billDuePayments=[];if(!Array.isArray(db.stockRegister))db.stockRegister=[];if(!Array.isArray(db.purchases))db.purchases=[];if(!Array.isArray(db.dailyCashHistory))db.dailyCashHistory=[];if(!Array.isArray(db.stock))db.stock=[];db.stock.forEach(x=>{if(x.barcode===undefined||x.barcode===null)x.barcode='';if(x.service===undefined)x.service=false;if(x.quick===undefined)x.quick=false;if(x.lowStock===undefined||x.lowStock===null||x.lowStock==='')x.lowStock=5});if(!db.qsaleColors||typeof db.qsaleColors!=='object')db.qsaleColors={};ensureDailyCash()}
 /* ---- Daily Cash / Others pad ----
    Manual cash-tracking sheet for sales that are NOT tied to stock items
    (e.g. photocopy, services, misc). Every calendar day gets its own
@@ -5685,7 +5702,7 @@ function fillDueFull(id,amt){const i=$(id);if(i){i.value=Math.round((+amt||0)*10
    Names are matched ignoring case/extra spaces, so "Rahim" and "rahim " are the same khata. */
 function khKey(n){return String(n||'').trim().replace(/\s+/g,' ').toLowerCase()}
 function khClean(n){return String(n||'').trim().replace(/\s+/g,' ')}
-let _khCache=null,_khAt=0,_khDue=null;
+let _khCache=null,_khAt=0,_khDue=null,_khJoma=new Map();
 function khataNames(force){
   const now=Date.now();if(!force&&_khCache&&now-_khAt<4000)return _khCache;
   const m=new Map();
@@ -5693,6 +5710,7 @@ function khataNames(force){
   const add=(name,ts)=>{name=khClean(name);if(!name||name==='Walk-in'||name==='—'||/^#|^\d+$/.test(name))return;const k=name.toLowerCase();{const dt=delMap.get(k);if(dt&&(+ts||0)<=dt)return}let e=m.get(k);if(!e){e={forms:new Map(),count:0,last:0};m.set(k,e)}e.forms.set(name,(e.forms.get(name)||0)+1);e.count++;if(ts>e.last)e.last=ts};
   (db.sales||[]).forEach(x=>{if(x&&!x.returned&&x.customer)add(x.customer,+new Date(x.date)||0)});
   (db.manualDues||[]).forEach(x=>{if(x&&x.customer)add(x.customer,+x.at||0)});
+  (db.manualJoma||[]).forEach(x=>{if(x&&x.customer)add(x.customer,+x.at||0)});
   const days=db.dailyCashByDate||{};
   Object.keys(days).forEach(k=>{const d=days[k]||{},ts=+new Date(k+'T00:00:00')||0;(d.bill||[]).forEach(r=>{if(r&&r.note&&r.pay!=='self')add(r.note,Math.max(ts,+r.at||0))});(d.due||[]).forEach(r=>{if(r&&r.name)add(r.name,Math.max(ts,+r.at||0))})});
   const out=[];
@@ -5706,6 +5724,8 @@ function khataNames(force){
     const hit=out.find(x=>x.key===k);
     if(hit){hit.name=nm}else out.push({key:k,name:nm,count:0,last:+(c.updatedAt||c.createdAt)||0});
   });
+  const jm=new Map();(Array.isArray(db.manualJoma)?db.manualJoma:[]).forEach(x=>{if(x&&x.customer){const k=khKey(x.customer);jm.set(k,Math.round(((jm.get(k)||0)+(+x.amount||0))*100)/100)}});
+  _khJoma=jm;
   _khCache=out;_khDue=dm;_khAt=now;return out;
 }
 function khataCanon(n){const c=khClean(n);if(!c||/^#|^\d+$/.test(c))return c;const e=khataNames(true).find(x=>x.key===c.toLowerCase());return e?e.name:c}
@@ -5784,17 +5804,18 @@ function tkToggleLang(){const cur=(localStorage.getItem('mh_lang')==='bn')?'bn':
 function tkRender(){
   const w=$('tkList');if(!w)return;
   const cl=custList(),q=dueQuery.trim().toLowerCase();
-  const tot=cl.reduce((t,c)=>t+(c.due>0.009?c.due:0),0),nDue=cl.filter(c=>c.due>0.009).length;
+  const tot=cl.reduce((t,c)=>t+(c.net>0.009?c.net:0),0),nDue=cl.filter(c=>c.net>0.009).length;
+  const totJ=cl.reduce((t,c)=>t+(c.net<-0.009?-c.net:0),0);{const e=$('tkJoma');if(e)e.textContent=money(totJ)}
   const set=(id,v)=>{const e=$(id);if(e)e.textContent=v};
   set('tkTotal',money(tot));set('tkCount',String(nDue));
   document.querySelectorAll('#tkChips button[data-f]').forEach(b=>b.classList.toggle('on',b.dataset.f===tkFilter));
   let l=q?cl.filter(c=>[c.name,c.phone,c.address,c.note,String(Math.round(c.due))].join(' ').toLowerCase().includes(q)):cl.slice();
-  if(tkFilter==='due')l=l.filter(c=>c.due>0.009);else if(tkFilter==='clear')l=l.filter(c=>c.due<=0.009);
+  if(tkFilter==='due')l=l.filter(c=>c.net>0.009);else if(tkFilter==='joma')l=l.filter(c=>c.net<-0.009);else if(tkFilter==='clear')l=l.filter(c=>Math.abs(c.net)<=0.009);
   sortRows(l,c=>c.last,c=>c.due,c=>c.name);
   w.innerHTML=l.length?l.map(c=>{
-    const owe=c.due>0.009,av=(c.name.trim().charAt(0)||'?').toUpperCase();
+    const owe=c.net>0.009,hasJ=c.net<-0.009,av=(c.name.trim().charAt(0)||'?').toUpperCase();
     const sub=[c.phone?'\u{1F4DE} '+esc(c.phone):'',c.address?esc(c.address):'',c.last?new Date(c.last).toLocaleDateString():''].filter(Boolean).join(' \u00b7 ');
-    return `<div class="tk-row" data-n="${esc(c.name)}" onclick="openKhata(this.dataset.n)"><span class="tk-ava" style="background:${tkColor(c.name)}">${esc(av)}</span><div class="tk-mid"><b data-no-i18n>${esc(c.name)}</b><small data-no-i18n>${sub||'&nbsp;'}</small></div><div class="tk-amt ${owe?'owe':'clear'}"><b>${owe?money(c.due):'Clear \u2713'}</b>${owe?'<small>due</small>':''}</div></div>`}).join(''):`<div class="tk-empty">${cl.length?'No customers found':'No customers yet'}</div>`;
+    return `<div class="tk-row" data-n="${esc(c.name)}" onclick="openKhata(this.dataset.n)"><span class="tk-ava" style="background:${tkColor(c.name)}">${esc(av)}</span><div class="tk-mid"><b data-no-i18n>${esc(c.name)}</b><small data-no-i18n>${sub||'&nbsp;'}</small></div><div class="tk-amt ${owe?'owe':hasJ?'joma':'clear'}"><b>${owe?money(c.net):hasJ?money(-c.net):'Clear \u2713'}</b>${owe?'<small>due'+(c.joma>0.009?' (after advance)':'')+'</small>':hasJ?'<small>Advance</small>':''}</div></div>`}).join(''):`<div class="tk-empty">${cl.length?'No customers found':'No customers yet'}</div>`;
 }
 function renderDueTable(){
   const tb=$('dueTable');if(!tb)return;
@@ -5850,7 +5871,7 @@ function custList(){
   const reg=custRegMap();
   return khataNames(true).map(n=>{
     const c=reg.get(n.key)||null,edit=c?(+c.updatedAt||+c.createdAt||0):0;
-    return{key:n.key,name:(c&&c.name)||n.name,phone:(c&&c.phone)||'',address:(c&&c.address)||'',note:(c&&c.note)||'',saved:!!c,entries:n.count,due:(_khDue&&_khDue.get(n.key))||0,last:Math.max(+n.last||0,edit)};
+    return{key:n.key,name:(c&&c.name)||n.name,phone:(c&&c.phone)||'',address:(c&&c.address)||'',note:(c&&c.note)||'',saved:!!c,entries:n.count,due:(_khDue&&_khDue.get(n.key))||0,joma:(_khJoma&&_khJoma.get(n.key))||0,net:Math.round((((_khDue&&_khDue.get(n.key))||0)-((_khJoma&&_khJoma.get(n.key))||0))*100)/100,last:Math.max(+n.last||0,edit)};
   });
 }
 function custVisible(list){
@@ -5863,7 +5884,7 @@ function custRowHtml(c){
   const av=(c.name.trim().charAt(0)||'?').toUpperCase();
   const contact=[c.phone?'📞 '+esc(c.phone):'',c.address?esc(c.address):''].filter(Boolean).join('<br>');
   const last=c.last?esc(new Date(c.last).toLocaleDateString()):'—';
-  return `<tr class="cu-row" data-n="${esc(c.name)}" onclick="custRowClick(event,this)"><td><div class="cu-who"><span class="cu-ava">${esc(av)}</span><div><b>${esc(c.name)}</b>${c.note?`<small>${esc(c.note)}</small>`:''}</div></div></td><td class="cu-contact">${contact||'<span class="cu-dash">—</span>'}</td><td class="num">${c.entries}</td><td class="num">${c.due>0.009?`<span class="due-pill">${money(c.due)}</span>`:'<span class="cu-clear">Clear ✓</span>'}</td><td>${last}</td><td class="cu-act"><button type="button" class="cu-btn" data-n="${esc(c.name)}" onclick="openCustomerForm(this.dataset.n)">✎ Edit</button><button type="button" class="cu-btn ghost" data-n="${esc(c.name)}" onclick="openKhata(this.dataset.n)">Khata</button></td></tr>`;
+  return `<tr class="cu-row" data-n="${esc(c.name)}" onclick="custRowClick(event,this)"><td><div class="cu-who"><span class="cu-ava">${esc(av)}</span><div><b>${esc(c.name)}</b>${c.note?`<small>${esc(c.note)}</small>`:''}</div></div></td><td class="cu-contact">${contact||'<span class="cu-dash">—</span>'}</td><td class="num">${c.entries}</td><td class="num">${c.net>0.009?`<span class="due-pill">${money(c.net)}</span>`:c.net<-0.009?`<span class="joma-pill">Advance ${money(-c.net)}</span>`:'<span class="cu-clear">Clear ✓</span>'}</td><td>${last}</td><td class="cu-act"><button type="button" class="cu-btn" data-n="${esc(c.name)}" onclick="openCustomerForm(this.dataset.n)">✎ Edit</button><button type="button" class="cu-btn ghost" data-n="${esc(c.name)}" onclick="openKhata(this.dataset.n)">Khata</button></td></tr>`;
 }
 function renderCustomerList(list,totalAll){
   const tb=$('custTable');if(!tb)return;
@@ -6006,7 +6027,7 @@ function collectManualDue(id){
 /* Add a due by hand from the customer profile (ledger only) */
 function khataAddDue(){
   if(!requireAdmin('Add Due'))return;
-  const name=khClean(_chName);if(!name)return;
+  const name=khClean(($('chDueName')||{}).value)||khClean(_chName);if(!name){alert('Enter the customer name.');return}
   const amount=Math.round((+$('chDueAmt').value||0)*100)/100,note=($('chDueNote').value||'').trim();
   if(!(amount>0)){alert('Enter the due amount.');$('chDueAmt').focus();return}
   const now=Date.now();
@@ -6017,23 +6038,25 @@ function khataAddDue(){
   dueSuccessShow('Due Added!');
 }
 function khataFull(){
-  const it=dueItems().filter(x=>khKey(x.customer)===khKey(_chName)),t=it.reduce((a,x)=>a+x.due,0);
+  const _pn=khClean(($('chPayName')||{}).value)||_chName,it=dueItems().filter(x=>khKey(x.customer)===khKey(_pn)),t=Math.max(0,it.reduce((a,x)=>a+x.due,0)-((_khJoma&&_khJoma.get(khKey(_pn)))||0));
   const i=$('chPayAmt');if(i){i.value=Math.round(t*100)/100;i.focus()}
 }
 /* Receive a payment from the profile: clears the oldest dues first, Due Paid in Daily Cash like before.
    Instant: applied on this device at once, cloud sync runs in the background. */
 function khataReceive(){
   if(!requireAdmin('Receive Due Payment'))return;
-  const key=khKey(_chName),name=khClean(_chName);
+  const name=khClean(($('chPayName')||{}).value)||khClean(_chName),key=khKey(name);
+  if(!name){alert('Enter the customer name.');return}
   const amount=Math.round((+$('chPayAmt').value||0)*100)/100;
-  if(!(amount>0)){alert('Enter a payment amount.');$('chPayAmt').focus();return}
+  if(!(amount>0)){alert('Enter the amount.');$('chPayAmt').focus();return}
   const items=dueItems().filter(it=>khKey(it.customer)===key).sort((a,b)=>a.date-b.date);
-  const total=items.reduce((a,x)=>a+x.due,0);
-  if(!items.length)return alert('This customer has no due to receive.');
-  if(amount>total+0.0001)return alert('Amount is more than the balance due ('+money(total)+').');
+  const total=Math.round(items.reduce((a,x)=>a+x.due,0)*100)/100;
   if(items.some(it=>it.kind==='inv'&&((db.sales.find(x=>x.invoiceNo===it.ref)||{}).pending)))return alert('A sale of this customer is still syncing to the cloud. Please try again in a moment.');
   const X={ext:!!$('chPayExt').checked,note:($('chPayNote').value||'').trim()};
-  let left=amount;const allocs=[];
+  /* more than the due → the extra is kept as Advance */
+  const excess=Math.round(Math.max(0,amount-total)*100)/100;
+  const payAmt=Math.min(amount,total);
+  let left=payAmt;const allocs=[];
   for(const it of items){
     if(left<=0.0001)break;
     const a=Math.round(Math.min(left,it.due)*100)/100;
@@ -6041,7 +6064,18 @@ function khataReceive(){
     left=Math.round((left-a)*100)/100;
   }
   $('chPayAmt').value='';$('chPayNote').value='';$('chPayExt').checked=false;
-  dueReceiveNow(name,allocs,X,'khata');
+  dueReceiveNow(name,allocs,X,'khata',excess>0.009?excess:0);
+  openKhata(name,true);
+}
+/* Add joma (advance deposit) by hand from the customer profile — cash goes to Daily Cash → Due Paid unless Paid external */
+function khataAddJoma(){
+  if(!requireAdmin('Add Advance'))return;
+  const name=khClean(_chName);if(!name)return;
+  const amount=Math.round((+$('chJomaAmt').value||0)*100)/100;
+  if(!(amount>0)){alert('Enter the advance amount.');$('chJomaAmt').focus();return}
+  const X={ext:!!$('chJomaExt').checked,note:($('chJomaNote').value||'').trim()};
+  $('chJomaAmt').value='';$('chJomaNote').value='';$('chJomaExt').checked=false;
+  dueReceiveNow(name,[],X,'joma',amount);
   openKhata(name,true);
 }
 
@@ -6076,6 +6110,9 @@ function dueOpApply(op){
   const p=op.payload;
   if(op.type==='addDue'){
     if(!db.manualDues.some(x=>x&&x.id===p.rec.id))db.manualDues.push({...p.rec});
+  }else if(op.type==='addJoma'){
+    db.manualJoma=Array.isArray(db.manualJoma)?db.manualJoma:[];
+    if(!db.manualJoma.some(x=>x&&x.id===p.rec.id))db.manualJoma.push({...p.rec});
   }else if(op.type==='saveCustomer'){
     const i=db.customers.findIndex(x=>x&&x.id===p.cust.id);
     if(i>=0)db.customers[i]={...db.customers[i],...p.cust};
@@ -6109,14 +6146,20 @@ function dueOpApply(op){
 function reapplyDueOps(){try{dueOps.forEach(dueOpApply)}catch(e){console.error('reapplyDueOps',e)}}
 
 /* Local part of every Receive button: record it, update the screen, add the Daily Cash row, show the check. */
-function dueReceiveNow(name,allocs,X,cashRef){
+function dueReceiveNow(name,allocs,X,cashRef,jomaAmt){
   const now=Date.now();
   allocs.forEach((a,i)=>{a.pid='rp'+now.toString(36)+i+Math.random().toString(36).slice(2,6)});
-  const total=Math.round(allocs.reduce((t,a)=>t+a.amount,0)*100)/100;
-  dueEnqueue({type:'receive',payload:{name,allocs,ext:!!X.ext,note:X.note||'',by:currentRole||'',at:now}});
+  let total=Math.round(allocs.reduce((t,a)=>t+a.amount,0)*100)/100;
+  if(allocs.length)dueEnqueue({type:'receive',payload:{name,allocs,ext:!!X.ext,note:X.note||'',by:currentRole||'',at:now}});
+  jomaAmt=Math.round((+jomaAmt||0)*100)/100;
+  if(jomaAmt>0.009){
+    const rec={id:'jm'+now.toString(36)+Math.random().toString(36).slice(2,6),customer:name,amount:jomaAmt,note:X.note||'',at:now+1,by:currentRole||'',ext:!!X.ext,src:allocs.length||cashRef==='khata'?'excess':'manual'};
+    dueEnqueue({type:'addJoma',payload:{rec}});
+    total=Math.round((total+jomaAmt)*100)/100;
+  }
   khataNames(true);render();renderBusinessCenter();
-  if(!X.ext)postDuePaidToDailyCash(name,total,cashRef,X.note);   // Daily Cash row is queued locally too (no waiting)
-  dueSuccessShow('Payment Received!');
+  if(!X.ext&&total>0)postDuePaidToDailyCash(name,total,cashRef,X.note);   // Daily Cash row is queued locally too (no waiting)
+  dueSuccessShow(jomaAmt>0.009&&!allocs.length?'Advance Added!':'Payment Received!');
 }
 
 /* Cloud part: one op at a time, in order. */
@@ -6157,6 +6200,14 @@ async function runDueOp(op){
       data.manualDues=Array.isArray(data.manualDues)?data.manualDues:[];
       if(data.manualDues.some(x=>x&&x.id===p.rec.id)){skip();return}
       data.manualDues.push(p.rec);
+    });
+    return{ok};
+  }
+  if(op.type==='addJoma'){
+    const ok=await dueCloudWrite((data,skip)=>{
+      data.manualJoma=Array.isArray(data.manualJoma)?data.manualJoma:[];
+      if(data.manualJoma.some(x=>x&&x.id===p.rec.id)){skip();return}
+      data.manualJoma.push(p.rec);
     });
     return{ok};
   }
@@ -6286,6 +6337,10 @@ function khataLedger(key){
     rows.push({ts:x.at,desc:'✍ Manual due',sub:x.note||'Added manually',dr:x.amount,cr:0});
     x.pays.forEach(p=>rows.push({ts:+p.at||x.at,desc:'Payment · ✍ Manual due',sub:(p.ext?'External':'Cash → Daily Cash')+(p.note?' · '+p.note:''),dr:0,cr:+p.amount||0,g:khRecvGroup(p,p.id),lbl:'✍ Manual due',ext:!!p.ext,note:p.note||''}));
   });
+  (db.manualJoma||[]).forEach(x=>{
+    if(!x||khKey(x.customer)!==key)return;
+    rows.push({ts:+x.at||0,desc:'💰 Advance',sub:(x.src==='excess'?'Extra received · saved as advance':'Added as advance')+(x.note?' · '+x.note:''),dr:0,cr:+x.amount||0,joma:true});
+  });
   /* One Receive = ONE payment line. A single amount that was applied across several invoices / bills / manual dues
      (oldest first) is shown as one row with the total; the split is listed in the details. */
   const out=[],grp=new Map();
@@ -6318,14 +6373,14 @@ function openKhata(name,keep){
   const key=khKey(name),rows=khataLedger(key);
   const hit=khataNames(true).find(n=>n.key===key),nm=hit?hit.name:khClean(name);
   const dr=rows.reduce((a,r)=>a+r.dr,0),cr=rows.reduce((a,r)=>a+r.cr,0);
-  const liveDue=_khDue&&_khDue.get(key);const bal=(liveDue!==undefined)?liveDue:Math.max(0,dr-cr);
+  const liveDue=_khDue&&_khDue.get(key);const jTot=(_khJoma&&_khJoma.get(key))||0;const bal=Math.round((((liveDue!==undefined)?liveDue:Math.max(0,dr-cr+jTot))-jTot)*100)/100;
   _chRows=rows.slice().reverse();_chMode='all';
   const set=(id,v)=>{const e=$(id);if(e)e.textContent=v};
-  set('chAva',(nm.trim().charAt(0)||'?').toUpperCase());set('chName',nm);_chName=nm;
+  set('chAva',(nm.trim().charAt(0)||'?').toUpperCase());set('chName',nm);_chName=nm;{const pn=$('chPayName');if(pn)pn.value=nm;const dn=$('chDueName');if(dn)dn.value=nm;const dl=$('chNameList');if(dl)dl.innerHTML=khataNames(true).map(n=>'<option value="'+esc(n.name)+'">').join('')}
   const last=rows.length?rows[rows.length-1].ts:0;
   set('chSub',rows.length+(rows.length===1?' entry':' entries')+(last?' · last activity '+new Date(last).toLocaleDateString():''));
-  const chip=$('chChip');if(chip){chip.textContent=bal>0.009?'Due '+money(bal):'All clear ✓';chip.classList.toggle('owe',bal>0.009)}
-  set('chDr',money(dr));set('chCr',money(cr));set('chBal',money(bal));set('tkPfBal',money(bal));set('tkPfDr',money(dr));set('tkPfCr',money(cr));set('tkPfLbl',bal>0.009?'Balance due':'All clear');{const c=$('tkPf');if(c)c.classList.toggle('owe',bal>0.009)}set('chPays',String(rows.filter(r=>r.cr>0).length));
+  const chip=$('chChip');if(chip){chip.textContent=bal>0.009?'Due '+money(bal):bal<-0.009?'Advance '+money(-bal):'All clear ✓';chip.classList.toggle('owe',bal>0.009)}
+  set('chDr',money(dr));set('chCr',money(cr));set('chBal',money(Math.abs(bal)));set('chBalLbl',bal<-0.009?'Advance':'Balance due');set('tkPfBal',money(Math.abs(bal)));set('tkPfDr',money(dr));set('tkPfCr',money(cr));set('tkPfLbl',bal>0.009?'Balance due':bal<-0.009?'Advance':'All clear');{const c=$('tkPf');if(c){c.classList.toggle('owe',bal>0.009);c.classList.toggle('joma',bal<-0.009)}}set('chPays',String(rows.filter(r=>r.cr>0).length));
   const i=$('chSearch');if(i)i.value='';
   document.querySelectorAll('#chChips button').forEach(b=>b.classList.toggle('on',b.dataset.m==='all'));
   renderCustomerHistory();
@@ -6342,7 +6397,7 @@ function renderCustomerHistory(){
   {const so=($('chSort')||{}).value||'new';if(so==='old')l=l.slice().reverse();else if(so==='amt')l=l.slice().sort((a,b)=>Math.max(b.dr,b.cr)-Math.max(a.dr,a.cr))}
   const sh=$('chShowing');if(sh)sh.textContent=(q||_chMode!=='all')?'Showing '+l.length+' of '+_chRows.length:_chRows.length+(_chRows.length===1?' entry':' entries');
   const tb=$('chBody');if(!tb)return;
-  tb.innerHTML=l.length?l.map(r=>`<tr class="${r.dr>0?'ch-r-dr':'ch-r-cr'}"><td>${khDT(r.ts)}</td><td>${esc(r.desc)}<small class="kh-sub">${esc(r.sub)}</small></td><td class="num ch-dr">${r.dr?money(r.dr):''}</td><td class="num ch-cr">${r.cr?money(r.cr):''}</td><td class="num">${money(Math.max(0,r.bal))}</td></tr>`).join(''):`<tr><td colspan="5"><div class="phg-empty"><b>${_chRows.length?'No entries match':'No history yet'}</b>${_chRows.length?'Try a different search.':'Dues and payments will appear here.'}</div></td></tr>`;
+  tb.innerHTML=l.length?l.map(r=>`<tr class="${r.dr>0?'ch-r-dr':r.joma?'ch-r-cr ch-r-joma':'ch-r-cr'}"><td>${khDT(r.ts)}</td><td>${esc(r.desc)}<small class="kh-sub">${esc(r.sub)}</small></td><td class="num ch-dr">${r.dr?money(r.dr):''}</td><td class="num ch-cr">${r.cr?money(r.cr):''}</td><td class="num">${r.bal<-0.009?`<span class="ch-jbal">Advance ${money(-r.bal)}</span>`:money(Math.max(0,r.bal))}</td></tr>`).join(''):`<tr><td colspan="5"><div class="phg-empty"><b>${_chRows.length?'No entries match':'No history yet'}</b>${_chRows.length?'Try a different search.':'Dues and payments will appear here.'}</div></td></tr>`;
 }
 function closeCustomerHistory(){closeActionModal('customerHistoryModal');if(_chFrom==='ph')openPaidHistory();else openBizPage('due')}
 document.addEventListener('keydown',e=>{
@@ -6476,7 +6531,7 @@ function openBizPage(which){
   switchBizTab(isDue?'bizDueTab':'bizPurchase',null);
   const t=$('bizTitle'),h=$('bizHint');
   if(t)t.textContent=isDue?'👥 Customers & Due':'📦 Purchases';
-  if(h)h.textContent=isDue?'Outstanding customer dues. Receive a payment here — it goes to Daily Cash → Due Paid automatically unless you tick Paid external.':'Record purchases / stock received. Purchase prices are Admin-only.';
+  if(h)h.textContent='';
   renderBusinessCenter();openActionModal('businessModal');syncNavActive();
 }
 function openBusinessCenter(){openBizPage('due')}
