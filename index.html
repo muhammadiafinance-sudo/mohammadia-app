@@ -5940,6 +5940,7 @@ async function deleteCustomer(name){
   if(!confirm('Delete customer \u201C'+nm+'\u201D?\n\nThey will be removed from the Customers list and the saved details (phone, address, note) are deleted.'+(used?'\nTheir '+used+' past invoice / bill / due '+(used===1?'entry stays':'entries stay')+' in History and reports.':'')+'\n\nIf this name is used again later (a new sale, bill or due), the customer will appear again automatically.'))return;
   dueEnqueue({type:'deleteCustomer',payload:{key:key,name:nm,by:currentRole||'',at:Date.now()}});   // instant: removed on this device now, cloud sync runs in the background
   khataNames(true);khClose();renderDueTable();dueSuccessShow('Customer Deleted!');
+  {const m=$('customerHistoryModal');if(m&&m.classList.contains('show'))closeCustomerHistory()}
 }
 
 /* ---- Manual dues (profile): ledger-only due, never added to Daily Cash; payments go to Daily Cash → Due Paid ---- */
@@ -6364,7 +6365,7 @@ function openKhata(name,keep){
   const set=(id,v)=>{const e=$(id);if(e)e.textContent=v};
   set('chAva',(nm.trim().charAt(0)||'?').toUpperCase());set('chName',nm);_chName=nm;{const pn=$('chPayName');if(pn)pn.value=nm;const dn=$('chDueName');if(dn)dn.value=nm;const dl=$('chNameList');if(dl)dl.innerHTML=khataNames(true).map(n=>'<option value="'+esc(n.name)+'">').join('')}
   const last=rows.length?rows[rows.length-1].ts:0;
-  set('chSub',rows.length+(rows.length===1?' entry':' entries')+(last?' · last activity '+new Date(last).toLocaleDateString():''));
+  set('chSub',rows.length+(rows.length===1?' entry':' entries')+' · Given '+money(dr)+' · Receive '+money(cr));
   const chip=$('chChip');if(chip){chip.textContent=bal>0.009?'Due '+money(bal):bal<-0.009?'Advance '+money(-bal):'All clear ✓';chip.classList.toggle('owe',bal>0.009)}
   set('chDr',money(dr));set('chCr',money(cr));set('chBal',money(Math.abs(bal)));set('chBalLbl',bal<-0.009?'Advance':'Balance due');set('tkPfBal',money(Math.abs(bal)));set('tkPfDr',money(dr));set('tkPfCr',money(cr));set('tkPfLbl',bal>0.009?'Balance due':bal<-0.009?'Advance':'All clear');{const c=$('tkPf');if(c){c.classList.toggle('owe',bal>0.009);c.classList.toggle('joma',bal<-0.009)}}set('chPays',String(rows.filter(r=>r.cr>0).length));
   const i=$('chSearch');if(i)i.value='';khDateReset();
@@ -8310,4 +8311,66 @@ renderWarranty();
 })();
 </script>
 
+<style id="chtop">
+/* Customer profile: short, simple top + 3-dot menu */
+#customerHistoryModal .pg-head{flex-wrap:nowrap;justify-content:space-between;position:relative}
+#customerHistoryModal .pg-head>h2{display:none}
+#customerHistoryModal #tkPf{display:none!important}
+#customerHistoryModal .ch-prof{padding:10px 14px;margin:8px 0;gap:12px;flex-wrap:nowrap;background:var(--card);border:1px solid var(--line);box-shadow:none;border-radius:14px}
+#customerHistoryModal .ch-prof>div:nth-child(2){flex:1 1 0;min-width:0}
+#customerHistoryModal .ch-ava{width:40px;height:40px;font-size:18px;background:#e8f0fe;color:#1a73e8;box-shadow:none}
+#customerHistoryModal .ch-name{display:block;padding:0;font-size:18px;color:var(--ink);background:none;border:0;text-shadow:none}
+#customerHistoryModal .ch-sub{margin-top:2px;font-size:12px;color:var(--muted)}
+#customerHistoryModal .ch-chip{margin-left:0;flex:none;font-size:14px;padding:7px 14px;box-shadow:none}
+.ch-menu{position:relative;margin-left:auto;flex:none}
+.ch-dots{width:38px;height:38px;padding:0;display:grid;place-items:center;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;box-shadow:none}
+.ch-dots:hover,.ch-dots[aria-expanded="true"]{background:rgba(26,115,232,.10)}
+.ch-dots svg{width:20px;height:20px;fill:currentColor}
+.ch-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:190px;padding:6px;border-radius:12px;background:var(--card);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.ch-pop[hidden]{display:none}
+.ch-pop button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:var(--ink);font-size:14px;font-weight:600;text-align:left;cursor:pointer;box-shadow:none}
+.ch-pop button:hover{background:rgba(26,115,232,.10)}
+.ch-pop button.dng{color:#d93025}.ch-pop button.dng:hover{background:rgba(217,48,37,.10)}
+</style>
+<script>
+/* Customer profile: 3-dot menu (Edit / Language / Delete) */
+(function(){
+  "use strict";
+  var head=document.querySelector('#customerHistoryModal .pg-head');if(!head)return;
+  var wrap=document.createElement('div');wrap.className='ch-menu';
+  wrap.innerHTML='<button type="button" class="ch-dots" id="chDots" aria-haspopup="true" aria-expanded="false" aria-label="More options"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>'
+   +'<div class="ch-pop" id="chPop" role="menu" hidden>'
+   +'<button type="button" role="menuitem" data-a="edit">\u270E <span>Edit customer</span></button>'
+   +'<button type="button" role="menuitem" data-a="lang" data-no-i18n>\uD83C\uDF10 <span>\u09AC\u09BE\u0982\u09B2\u09BE / English</span></button>'
+   +'<button type="button" role="menuitem" data-a="del" class="dng">\uD83D\uDDD1 <span>Delete customer</span></button></div>';
+  head.appendChild(wrap);
+  var pop=wrap.querySelector('#chPop'),dots=wrap.querySelector('#chDots');
+  function setOpen(o){pop.hidden=!o;dots.setAttribute('aria-expanded',o?'true':'false')}
+  dots.addEventListener('click',function(e){e.stopPropagation();setOpen(pop.hidden)});
+  pop.addEventListener('click',function(e){
+    var b=e.target.closest('button[data-a]');if(!b)return;
+    setOpen(false);
+    var a=b.dataset.a;
+    if(a==='edit')openCustomerForm(_chName);
+    else if(a==='del')deleteCustomer(_chName);
+    else if(a==='lang')tkToggleLang();
+  });
+  document.addEventListener('click',function(e){if(!pop.hidden&&!wrap.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!pop.hidden){e.stopImmediatePropagation();setOpen(false)}},true);
+  /* closed whenever the profile is (re)opened */
+  var m=document.getElementById('customerHistoryModal');
+  if(m)new MutationObserver(function(){if(!m.classList.contains('show'))setOpen(false)}).observe(m,{attributes:true,attributeFilter:['class']});
+  /* after saving an edit, refresh the open profile (name may have changed) */
+  var _sc=saveCustomer;
+  saveCustomer=function(id){
+    var r=_sc.apply(this,arguments);
+    try{
+      if(m&&m.classList.contains('show')&&!document.getElementById('khOv')){
+        setTimeout(function(){var c=id&&(db.customers||[]).find(function(x){return x&&x.id===id});openKhata(c?c.name:_chName,true)},80);
+      }
+    }catch(e){console.error(e)}
+    return r;
+  };
+})();
+</script>
 </body></html>
