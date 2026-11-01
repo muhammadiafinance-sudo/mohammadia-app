@@ -2825,7 +2825,7 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
   <div class="phg-chips" id="chChips"><button type="button" class="on" data-m="all" onclick="setCustomerHistoryMode('all')">All</button><button type="button" data-m="dr" onclick="setCustomerHistoryMode('dr')">Given</button><button type="button" data-m="cr" onclick="setCustomerHistoryMode('cr')">Receive</button><select id="chSort" onchange="renderCustomerHistory()" aria-label="Sort by"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="amt">Highest amount</option></select></div>
   <div class="phg-count" id="chShowing"></div>
 </div>
-<div class="tablewrap"><table><thead><tr><th>Date &amp; time</th><th>Details</th><th class="num ch-th-dr">Given</th><th class="num ch-th-cr">Receive</th><th class="num">Balance</th></tr></thead><tbody id="chBody"></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>Date &amp; time</th><th>Details</th><th class="num ch-th-dr">Given</th><th class="num ch-th-cr">Receive</th><th class="num">Balance</th><th class="ch-th-ed"></th></tr></thead><tbody id="chBody"></tbody></table></div>
 </div></div>
 
 <div class="modal" id="dailyCashModal" aria-hidden="true"><div class="modalbox cash-page">
@@ -6097,6 +6097,13 @@ function dueOpApply(op){
   const p=op.payload;
   if(op.type==='addDue'){
     if(!db.manualDues.some(x=>x&&x.id===p.rec.id))db.manualDues.push({...p.rec});
+  }else if(op.type==='editDue'){
+    const d=(Array.isArray(db.manualDues)?db.manualDues:[]).find(x=>x&&x.id===p.id);
+    if(d){d.amount=p.amount;d.note=p.note;d.at=p.at;d.editedAt=p.editedAt}
+  }else if(op.type==='editPay'){
+    editApplyMain(db,p);
+    (p.parts||[]).forEach(pt=>{if(pt.k==='inv'){const s=(db.sales||[]).find(x=>x&&x.invoiceNo===pt.ref);if(s)editApplyInv(s,pt,p)}});
+    editApplyPending(p);
   }else if(op.type==='addJoma'){
     db.manualJoma=Array.isArray(db.manualJoma)?db.manualJoma:[];
     if(!db.manualJoma.some(x=>x&&x.id===p.rec.id))db.manualJoma.push({...p.rec});
@@ -6129,6 +6136,65 @@ function dueOpApply(op){
       }
     });
   }
+}
+
+/* ---- Edit a Receive / advance entry (amount · date · note). Every step is guarded by p.editedAt so it can be replayed safely. ---- */
+function editDayKey(ts){return dateKeyOf(new Date(ts))}
+function editApplyMain(st,p){
+  const find=(arr,id)=>(Array.isArray(arr)?arr:[]).find(q=>q&&q.id===id);
+  (p.parts||[]).forEach(pt=>{
+    if(pt.k==='inv')return;
+    const rec=pt.k==='man'?find(st.manualPays,pt.id):pt.k==='bill'?find(st.billDuePayments,pt.id):find(st.manualJoma,pt.id);
+    if(!rec||rec.editedAt===p.editedAt)return;
+    if(p.amount!=null&&p.parts.length===1){
+      let a=p.amount;
+      if(pt.k==='man'){const d=find(st.manualDues,pt.ref),oth=(st.manualPays||[]).filter(q=>q&&q.dueId===pt.ref&&q.id!==pt.id).reduce((t,q)=>t+(+q.amount||0),0);if(d)a=Math.min(a,Math.max(0,Math.round(((+d.amount||0)-oth)*100)/100))}
+      rec.amount=a;
+    }
+    rec.at=pt.nat;rec.note=p.note;rec.editedAt=p.editedAt;
+  });
+  const c=p.cash;
+  if(c&&st.dailyCashByDate){
+    const days=st.dailyCashByDate,ok=editDayKey(c.oldAt),nk=editDayKey(c.newAt);
+    const day=days[ok],arr=day&&Array.isArray(day.due)?day.due:null;
+    const row=arr?arr.find(r=>r&&r.src==='due'&&+r.at===c.oldAt&&khKey(r.name)===c.key&&r.editedAt!==p.editedAt):null;
+    if(row){
+      row.amount=Math.round(((+row.amount||0)+c.delta)*100)/100;
+      row.at=c.newAt;row.editedAt=p.editedAt;if(p.note)row.note=p.note;else delete row.note;
+      if(row.amount<=0.0001)arr.splice(arr.indexOf(row),1);
+      else if(nk!==ok){
+        arr.splice(arr.indexOf(row),1);
+        let nd=days[nk];if(!nd||typeof nd!=='object')nd=days[nk]={};
+        ['bill','due','others','cost'].forEach(k=>{if(!Array.isArray(nd[k]))nd[k]=[]});
+        nd.due.push(row);
+      }
+    }
+  }
+}
+function editApplyInv(s,pt,p){
+  const e=(Array.isArray(s.payLog)?s.payLog:[]).find(q=>q&&q.pid===pt.id);
+  if(!e||e.editedAt===p.editedAt)return false;
+  if(p.amount!=null&&p.parts.length===1){
+    let a=p.amount;const base=(+s.paid||0)-(+e.amount||0);a=Math.min(a,Math.max(0,Math.round(((+s.total||0)-base)*100)/100));
+    const d=a-(+e.amount||0);
+    s.paid=Math.round(((+s.paid||0)+d)*100)/100;s.due=Math.max(0,Math.round(((+s.total||0)-s.paid)*100)/100);s.paymentStatus=s.due?(s.paid>0?'partial':'unpaid'):'paid';
+    if(e.ext)s.extPaid=Math.max(0,(+s.extPaid||0)+d);
+    e.amount=a;
+  }
+  e.at=pt.nat;e.note=p.note;e.editedAt=p.editedAt;
+  return true;
+}
+function editApplyPending(p){
+  const c=p.cash;if(!c)return;
+  cashPending.forEach(x=>{
+    const r=x&&x.col==='due'?x.entry:null;
+    if(!r||r.src!=='due'||+r.at!==c.oldAt||khKey(r.name)!==c.key||r.editedAt===p.editedAt)return;
+    r.amount=Math.round(((+r.amount||0)+c.delta)*100)/100;r.at=c.newAt;r.editedAt=p.editedAt;if(p.note)r.note=p.note;else delete r.note;
+    x.date=editDayKey(c.newAt);
+  });
+  cashPending=cashPending.filter(x=>!(x&&x.col==='due'&&x.entry&&x.entry.src==='due'&&(+x.entry.amount||0)<=0.0001));
+  persistCashPending();
+  try{refreshCashDraftFromDb()}catch(e){}
 }
 function reapplyDueOps(){try{dueOps.forEach(dueOpApply)}catch(e){console.error('reapplyDueOps',e)}}
 
@@ -6189,6 +6255,38 @@ async function runDueOp(op){
       data.manualDues.push(p.rec);
     });
     return{ok};
+  }
+  if(op.type==='editDue'){
+    const ok=await dueCloudWrite((data,skip)=>{
+      const d=(Array.isArray(data.manualDues)?data.manualDues:[]).find(x=>x&&x.id===p.id);
+      if(!d){skip();return}
+      d.amount=p.amount;d.note=p.note;d.at=p.at;d.editedAt=p.editedAt;
+    });
+    return{ok};
+  }
+  if(op.type==='editPay'){
+    const mainParts=(p.parts||[]).filter(x=>x.k!=='inv');
+    if(mainParts.length||p.cash){
+      const ok=await dueCloudWrite((data,skip)=>{
+        data.manualPays=Array.isArray(data.manualPays)?data.manualPays:[];data.billDuePayments=Array.isArray(data.billDuePayments)?data.billDuePayments:[];data.manualJoma=Array.isArray(data.manualJoma)?data.manualJoma:[];
+        const before=JSON.stringify([data.manualPays,data.billDuePayments,data.manualJoma,data.dailyCashByDate||{}]);
+        editApplyMain(data,p);
+        if(JSON.stringify([data.manualPays,data.billDuePayments,data.manualJoma,data.dailyCashByDate||{}])===before)skip();
+      });
+      if(!ok)return{ok:false};
+    }
+    for(const pt of (p.parts||[]).filter(x=>x.k==='inv')){
+      const saleRef=SALES_COL.doc(pt.ref);let finalSale=null;
+      try{
+        await fsdb.runTransaction(async(tx)=>{
+          const snap=await tx.get(saleRef);if(!snap.exists)return;
+          const q=snap.data();q.payLog=Array.isArray(q.payLog)?q.payLog:[];
+          if(editApplyInv(q,pt,p)){tx.set(saleRef,q);finalSale=q}
+        });
+      }catch(err){console.error('Invoice payment edit failed:',err);return{ok:false}}
+      if(finalSale){const i=db.sales.findIndex(x=>x.invoiceNo===pt.ref);if(i>=0)db.sales[i]=finalSale;schedulePersistDb()}
+    }
+    return{ok:true};
   }
   if(op.type==='addJoma'){
     const ok=await dueCloudWrite((data,skip)=>{
@@ -6309,7 +6407,7 @@ function khataLedger(key){
     const initDue=Math.max(0,(+x.total||0)-cashNow),ts=+new Date(x.date)||0;
     if(initDue>0.009)rows.push({ts,desc:'Invoice '+x.invoiceNo,sub:'Total '+money(x.total)+(cashNow>0?' · paid now '+money(cashNow):''),dr:initDue,cr:0});
     let logged=0;
-    (Array.isArray(x.payLog)?x.payLog:[]).forEach(p=>{if(!p)return;const a=+p.amount||0;logged+=a;rows.push({ts:+p.at||ts,desc:'Payment · '+x.invoiceNo,sub:(p.ext?'External':'Cash → Daily Cash')+(p.note?' · '+p.note:''),dr:0,cr:a,g:khRecvGroup(p,p.pid),lbl:x.invoiceNo,ext:!!p.ext,note:p.note||''})});
+    (Array.isArray(x.payLog)?x.payLog:[]).forEach(p=>{if(!p)return;const a=+p.amount||0;logged+=a;rows.push({ts:+p.at||ts,desc:'Payment · '+x.invoiceNo,sub:(p.ext?'External':'Cash → Daily Cash')+(p.note?' · '+p.note:'')+(p.editedAt?' · edited':''),dr:0,cr:a,g:khRecvGroup(p,p.pid),lbl:x.invoiceNo,ext:!!p.ext,note:p.note||'',ep:[{k:'inv',id:p.pid,ref:x.invoiceNo,amt:a,at:+p.at||ts,cap:Math.round(((+x.due||Math.max(0,(+x.total||0)-(+x.paid||0)))+a)*100)/100}]})});
     const earlier=(+x.paid||0)-cashNow-logged;
     if(earlier>0.009)rows.push({ts:+new Date(x.lastPaymentAt||x.date)||ts,desc:'Payment · '+x.invoiceNo,sub:'Earlier payment',dr:0,cr:earlier});
   });
@@ -6317,16 +6415,16 @@ function khataLedger(key){
     if(khKey(x.name)!==key)return;
     const ts=+new Date(x.date+'T00:00:00')||0;
     rows.push({ts,desc:'⚡ Electricity Bill',sub:'Bill '+money(x.amount)+(x.cash>0?' · paid now '+money(x.cash):''),dr:x.due,cr:0});
-    (db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id).forEach(p=>rows.push({ts:+p.at||ts,desc:'Payment · ⚡ Bill',sub:(p.ext?'External':'Cash → Daily Cash')+(p.note?' · '+p.note:''),dr:0,cr:+p.amount||0,g:khRecvGroup(p,p.id),lbl:'⚡ Bill',ext:!!p.ext,note:p.note||''}));
+    (db.billDuePayments||[]).filter(p=>p&&p.entryId===x.id).forEach(p=>rows.push({ts:+p.at||ts,desc:'Payment · ⚡ Bill',sub:(p.ext?'External':'Cash → Daily Cash')+(p.note?' · '+p.note:'')+(p.editedAt?' · edited':''),dr:0,cr:+p.amount||0,g:khRecvGroup(p,p.id),lbl:'⚡ Bill',ext:!!p.ext,note:p.note||'',ep:[{k:'bill',id:p.id,ref:p.entryId,amt:+p.amount||0,at:+p.at||ts,cap:Math.round(((+x.remaining||0)+(+p.amount||0))*100)/100}]}));
   });
   manualDueList().forEach(x=>{
     if(khKey(x.customer)!==key)return;
-    rows.push({ts:x.at,desc:'✍ Manual due',sub:x.note||'Added manually',dr:x.amount,cr:0});
-    x.pays.forEach(p=>rows.push({ts:+p.at||x.at,desc:'Payment · ✍ Manual due',sub:(p.ext?'External':'Cash → Daily Cash')+(p.note?' · '+p.note:''),dr:0,cr:+p.amount||0,g:khRecvGroup(p,p.id),lbl:'✍ Manual due',ext:!!p.ext,note:p.note||''}));
+    rows.push({ts:x.at,desc:'✍ Manual due',sub:x.note||'Added manually',dr:x.amount,cr:0,eid:x.id,enote:x.note||'',epaid:x.paid||0});
+    x.pays.forEach(p=>rows.push({ts:+p.at||x.at,desc:'Payment · ✍ Manual due',sub:(p.ext?'External':'Cash → Daily Cash')+(p.note?' · '+p.note:'')+(p.editedAt?' · edited':''),dr:0,cr:+p.amount||0,g:khRecvGroup(p,p.id),lbl:'✍ Manual due',ext:!!p.ext,note:p.note||'',ep:[{k:'man',id:p.id,ref:x.id,amt:+p.amount||0,at:+p.at||x.at,cap:Math.round((x.remaining+(+p.amount||0))*100)/100}]}));
   });
   (db.manualJoma||[]).forEach(x=>{
     if(!x||khKey(x.customer)!==key)return;
-    rows.push({ts:+x.at||0,desc:'💰 Advance',sub:(x.src==='excess'?'Extra received · saved as advance':'Added as advance')+(x.note?' · '+x.note:''),dr:0,cr:+x.amount||0,joma:true});
+    rows.push({ts:+x.at||0,desc:'💰 Advance',sub:(x.src==='excess'?'Extra received · saved as advance':'Added as advance')+(x.note?' · '+x.note:'')+(x.editedAt?' · edited':''),dr:0,cr:+x.amount||0,joma:true,note:x.note||'',ext:!!x.ext,ep:[{k:'joma',id:x.id,amt:+x.amount||0,at:+x.at||0,cap:0}]});
   });
   /* One Receive = ONE payment line. A single amount that was applied across several invoices / bills / manual dues
      (oldest first) is shown as one row with the total; the split is listed in the details. */
@@ -6335,13 +6433,13 @@ function khataLedger(key){
     if(!r.g){out.push(r);return}
     let m=grp.get(r.g);
     if(!m){m={first:r,parts:[],cr:0};grp.set(r.g,m);out.push(m)}
-    m.parts.push({lbl:r.lbl,amt:r.cr});m.cr+=r.cr;
+    m.parts.push({lbl:r.lbl,amt:r.cr,ep:r.ep});m.cr+=r.cr;
   });
   const fin=out.map(m=>{
     if(!m.parts)return m;
     if(m.parts.length===1)return m.first;
     const f=m.first,tot=Math.round(m.cr*100)/100;
-    return {ts:f.ts,desc:'Payment received',sub:(f.ext?'External':'Cash → Daily Cash')+(f.note?' · '+f.note:'')+' · Applied to '+m.parts.map(p=>p.lbl+' '+money(p.amt)).join(', '),dr:0,cr:tot};
+    return {ts:f.ts,desc:'Payment received',sub:(f.ext?'External':'Cash → Daily Cash')+(f.note?' · '+f.note:'')+' · Applied to '+m.parts.map(p=>p.lbl+' '+money(p.amt)).join(', '),dr:0,cr:tot,note:f.note||'',ext:!!f.ext,ep:[].concat(...m.parts.map(p=>p.ep||[]))};
   });
   fin.sort((a,b)=>(a.ts-b.ts)||(b.dr-a.dr));
   let bal=0;fin.forEach(r=>{bal+=r.dr-r.cr;r.bal=bal});
@@ -6361,7 +6459,7 @@ function openKhata(name,keep){
   const hit=khataNames(true).find(n=>n.key===key),nm=hit?hit.name:khClean(name);
   const dr=rows.reduce((a,r)=>a+r.dr,0),cr=rows.reduce((a,r)=>a+r.cr,0);
   const liveDue=_khDue&&_khDue.get(key);const jTot=(_khJoma&&_khJoma.get(key))||0;const bal=Math.round((((liveDue!==undefined)?liveDue:Math.max(0,dr-cr+jTot))-jTot)*100)/100;
-  _chRows=rows.slice().reverse();_chMode='all';
+  _chRows=rows.slice().reverse();_chRows.forEach((r,i)=>{r._i=i;/* only the newest entry can be edited, and only manual dues / advances / invoice payments */const ok=i===0&&(r.eid||(r.ep&&r.ep.length&&r.ep.every(x=>x.k!=='bill')));if(!ok){delete r.eid;delete r.ep}});_chMode='all';
   const set=(id,v)=>{const e=$(id);if(e)e.textContent=v};
   set('chAva',(nm.trim().charAt(0)||'?').toUpperCase());set('chName',nm);_chName=nm;{const pn=$('chPayName');if(pn)pn.value=nm;const dn=$('chDueName');if(dn)dn.value=nm;const dl=$('chNameList');if(dl)dl.innerHTML=khataNames(true).map(n=>'<option value="'+esc(n.name)+'">').join('')}
   const last=rows.length?rows[rows.length-1].ts:0;
@@ -6384,7 +6482,7 @@ function renderCustomerHistory(){
   {const so=($('chSort')||{}).value||'new';if(so==='old')l=l.slice().reverse();else if(so==='amt')l=l.slice().sort((a,b)=>Math.max(b.dr,b.cr)-Math.max(a.dr,a.cr))}
   const sh=$('chShowing');if(sh)sh.textContent=(q||_chMode!=='all')?'Showing '+l.length+' of '+_chRows.length:_chRows.length+(_chRows.length===1?' entry':' entries');
   const tb=$('chBody');if(!tb)return;
-  tb.innerHTML=l.length?l.map(r=>`<tr class="${r.dr>0?'ch-r-dr':r.joma?'ch-r-cr ch-r-joma':'ch-r-cr'}"><td>${khDT(r.ts)}</td><td>${esc(r.desc)}<small class="kh-sub">${esc(r.sub)}</small></td><td class="num ch-dr">${r.dr?money(r.dr):''}</td><td class="num ch-cr">${r.cr?money(r.cr):''}</td><td class="num">${r.bal<-0.009?`<span class="ch-jbal">Advance ${money(-r.bal)}</span>`:money(Math.max(0,r.bal))}</td></tr>`).join(''):`<tr><td colspan="5"><div class="phg-empty"><b>${_chRows.length?'No entries match':'No history yet'}</b>${_chRows.length?'Try a different search.':'Dues and payments will appear here.'}</div></td></tr>`;
+  tb.innerHTML=l.length?l.map(r=>`<tr class="${r.dr>0?'ch-r-dr':r.joma?'ch-r-cr ch-r-joma':'ch-r-cr'}"${r.eid||r.ep?' data-ri="'+r._i+'"':''}><td>${khDT(r.ts)}</td><td>${esc(r.desc)}<small class="kh-sub">${esc(r.sub)}</small></td><td class="num ch-dr">${r.dr?money(r.dr):''}</td><td class="num ch-cr">${r.cr?money(r.cr):''}</td><td class="num">${r.bal<-0.009?`<span class="ch-jbal">Advance ${money(-r.bal)}</span>`:money(Math.max(0,r.bal))}</td><td class="ch-ed">${r.eid||r.ep?`<button type="button" class="ch-edbtn" data-ri="${r._i}" title="Edit this entry" aria-label="Edit this entry">✎</button>`:`<span class="ch-lock" title="Only the last entry can be edited">🔒</span>`}</td></tr>`).join(''):`<tr><td colspan="6"><div class="phg-empty"><b>${_chRows.length?'No entries match':'No history yet'}</b>${_chRows.length?'Try a different search.':'Dues and payments will appear here.'}</div></td></tr>`;
 }
 function closeCustomerHistory(){closeActionModal('customerHistoryModal');if(_chFrom==='ph')openPaidHistory();else openBizPage('due')}
 document.addEventListener('keydown',e=>{
@@ -8370,6 +8468,108 @@ renderWarranty();
       }
     }catch(e){console.error(e)}
     return r;
+  };
+})();
+</script>
+<style id="chedit">
+#customerHistoryModal #chBody tr{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#customerHistoryModal #chBody tr[data-eid]{cursor:pointer}
+#customerHistoryModal #chBody tr.ch-lp td{outline:0;box-shadow:inset 0 0 0 2px rgba(26,115,232,.55)}
+.ch-edbtn{border:0;background:rgba(26,115,232,.1);color:#1a73e8;width:30px;height:30px;border-radius:50%;font-size:15px;cursor:pointer;line-height:1}.ch-edbtn:hover{background:rgba(26,115,232,.2)}.ch-lock{opacity:.45;font-size:13px;cursor:help}#customerHistoryModal td.ch-ed,#customerHistoryModal th.ch-th-ed{width:44px;text-align:center;padding-left:4px;padding-right:4px}
+.ch-hint{margin:6px 2px 0;font-size:11.5px;color:var(--muted)}
+.ch-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:99995;max-width:min(92vw,420px);padding:10px 16px;border-radius:12px;background:#202124;color:#fff;font-size:13.5px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+</style>
+<script>
+/* Customer profile: edit any Given (added by hand) or Receive / advance entry — amount, date, note */
+(function(){
+  "use strict";
+  var tb=document.getElementById('chBody');if(!tb)return;
+  var tools=document.querySelector('#customerHistoryModal .phg-tools');
+  if(tools){var h=document.createElement('div');h.className='ch-hint';h.textContent='Only the last entry can be edited — tap ✎ (or long-press it)';tools.appendChild(h)}
+  var timer=0,sx=0,sy=0,tt=0;
+  function toast(t){
+    var o=document.querySelector('.ch-toast');if(o)o.remove();
+    var d=document.createElement('div');d.className='ch-toast';d.textContent=t;document.body.appendChild(d);
+    clearTimeout(tt);tt=setTimeout(function(){d.remove()},3600);
+  }
+  function stop(){clearTimeout(timer);var r=tb.querySelector('tr.ch-lp');if(r)r.classList.remove('ch-lp')}
+  var LOCK='Only the last (newest) entry can be edited — manual Given / Receive or an invoice payment. Invoice due and electricity-bill entries are not editable here.';
+  tb.addEventListener('click',function(e){
+    var b=e.target.closest('.ch-edbtn');if(b){openEntryEdit(+b.dataset.ri);return}
+    if(e.target.closest('.ch-lock'))toast(LOCK);
+  });
+  tb.addEventListener('pointerdown',function(e){
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    if(e.target.closest('.ch-ed'))return;
+    var tr=e.target.closest('tr');if(!tr||tr.querySelector('.phg-empty'))return;
+    sx=e.clientX;sy=e.clientY;clearTimeout(timer);
+    timer=setTimeout(function(){
+      tr.classList.add('ch-lp');
+      if(navigator.vibrate)try{navigator.vibrate(25)}catch(x){}
+      if(tr.dataset.ri!==undefined)openEntryEdit(+tr.dataset.ri);
+      else{toast(LOCK);setTimeout(stop,400)}
+    },600);
+  });
+  tb.addEventListener('pointermove',function(e){if(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10)stop()});
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){tb.addEventListener(ev,function(){clearTimeout(timer)})});
+  tb.addEventListener('contextmenu',function(e){if(e.target.closest('tr'))e.preventDefault()});
+  tb.addEventListener('scroll',stop,true);
+
+  function shiftAt(at,dv){
+    var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dv||'');if(!m)return at;
+    var o=new Date(at||Date.now()),n=new Date(+m[1],+m[2]-1,+m[3],o.getHours(),o.getMinutes(),o.getSeconds(),o.getMilliseconds());
+    return isNaN(n)?at:n.getTime();
+  }
+  var KEYS="onkeydown=\"if(event.key==='Enter'){event.preventDefault();saveEntryEdit()}\"";
+  function form(title,amt,amtLocked,hint,note,ts){
+    khOverlay(title,
+      '<div class="cu-form">'
+      +'<label>Amount <i>*</i><input id="eeAmt" type="number" min="0" step=".01" value="'+esc(String(amt))+'"'+(amtLocked?' disabled':'')+' '+KEYS+'></label>'
+      +(hint?'<div class="cu-hint">'+esc(hint)+'</div>':'')
+      +'<label>Note<input id="eeNote" type="text" maxlength="120" autocomplete="off" value="'+esc(note||'')+'" '+KEYS+'></label>'
+      +'<label>Date<input id="eeDate" type="date" max="'+todayKey()+'" value="'+dateKeyOf(new Date(ts||Date.now()))+'" '+KEYS+'></label>'
+      +'<div class="cu-btns"><span></span><div><button type="button" class="cu-cancel" onclick="khClose()">Cancel</button><button type="button" class="cu-save" onclick="saveEntryEdit()">Save changes</button></div></div></div>');
+    setTimeout(function(){var i=document.getElementById(amtLocked?'eeNote':'eeAmt');if(i){i.focus();i.select()}},60);
+  }
+  window.openEntryEdit=function(ri){
+    if(!requireAdmin('Edit Entry'))return;
+    var r=_chRows[ri];if(!r){toast('This entry could not be found.');return}
+    window._eeRow=r;
+    if(r.eid){
+      var d=manualDueList().find(function(x){return x.id===r.eid});if(!d){toast('This entry could not be found.');return}
+      form('✎ Edit Given entry',d.amount,false,d.paid>0.009?money(d.paid)+' is already received against this entry, so the amount cannot go below that.':'',d.note,d.at);
+    }else if(r.ep&&r.ep.length){
+      var multi=r.ep.length>1;
+      form('✎ Edit Receive entry',r.cr,multi,multi?'This payment was split across several dues, so its amount is locked. Date and note can be changed.':(r.ep[0].k==='joma'?'':'Amount can be up to '+money(r.ep[0].cap)+' (what is still due on this item plus this payment).'),r.note,r.ts);
+    }else toast(LOCK);
+  };
+  window.saveEntryEdit=function(){
+    var r=window._eeRow;if(!r)return;
+    var amt=Math.round((parseFloat(document.getElementById('eeAmt').value)||0)*100)/100;
+    var note=(document.getElementById('eeNote').value||'').trim();
+    var dv=document.getElementById('eeDate').value;
+    if(!(amt>0)){alert('Please enter the amount.');return}
+    if(dv&&dv>todayKey()){alert('The date cannot be in the future.');return}
+    if(r.eid){
+      var d=manualDueList().find(function(x){return x.id===r.eid});if(!d){khClose();return}
+      if(amt<d.paid-0.005){alert('Amount cannot be less than '+money(d.paid)+', which is already received against this entry.');return}
+      var at=+d.at||Date.now();if(dv&&dv!==dateKeyOf(new Date(at)))at=shiftAt(at,dv);
+      dueEnqueue({type:'editDue',payload:{id:r.eid,amount:amt,note:note,at:at,editedAt:Date.now(),by:currentRole||''}});
+    }else{
+      var multi=r.ep.length>1,pt0=r.ep[0];
+      if(!multi&&pt0.k!=='joma'&&amt>pt0.cap+0.005){alert('Amount cannot be more than '+money(pt0.cap)+'.');return}
+      var oldAt=+r.ts||pt0.at,newAt=(dv&&dv!==dateKeyOf(new Date(oldAt)))?shiftAt(oldAt,dv):oldAt;
+      var pl={parts:r.ep.map(function(x){var o=+x.at||oldAt;return{k:x.k,id:x.id,ref:x.ref||'',nat:(o===oldAt)?newAt:shiftAt(o,dateKeyOf(new Date(newAt)))}}),
+        amount:multi?null:amt,note:note,editedAt:Date.now(),by:currentRole||''};
+      if(!r.ext){
+        var jm=pt0.k==='joma',off=jm?1:0;   // an advance's own record is saved 1 ms after its Daily Cash row
+        pl.cash={key:khKey(_chName),oldAt:oldAt-off,newAt:newAt-off,delta:multi?0:Math.round((amt-r.cr)*100)/100};
+      }
+      dueEnqueue({type:'editPay',payload:pl});
+    }
+    khClose();khataNames(true);render();renderBusinessCenter();
+    openKhata(_chName,true);
+    dueSuccessShow('Entry Updated!');
   };
 })();
 </script>
