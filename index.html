@@ -2360,6 +2360,117 @@ html[data-theme="dark"] .fs-res,html[data-theme="dark"] .fs-row{background-color
 html[data-theme="dark"] .fs-row:hover{background-color:rgb(32,37,44)!important}
 html[data-theme="dark"] .sr-meta.empty{background-color:#3a2f12!important;color:#f3d38a!important}
 @media(max-width:650px){.fblk{padding:8px 10px 10px}.fblk .barcode-field{flex-direction:column}}
+
+/* ===== Daily Cash quick add (Sale section): soft-fill colour cards ===== */
+.sale-cash .sc-list{gap:12px}
+.sale-cash .sc-item{--c:#1a73e8;padding:11px 12px 12px!important;border:1px solid color-mix(in srgb,var(--c) 28%,#fff)!important;border-left:6px solid var(--c)!important;border-radius:14px;background:color-mix(in srgb,var(--c) 11%,#fff);box-shadow:0 1px 3px color-mix(in srgb,var(--c) 14%,transparent);transition:box-shadow .15s,transform .15s}
+.sale-cash .sc-item:focus-within{box-shadow:0 5px 16px color-mix(in srgb,var(--c) 30%,transparent);transform:translateY(-1px)}
+.sale-cash .sc-it-head{margin-bottom:8px;font-size:13.5px}
+.sale-cash .sc-it-head b{font-weight:800;color:var(--c);letter-spacing:.2px}
+.sale-cash .sc-it-head b::before{width:10px;height:10px;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 25%,transparent)}
+.sale-cash .sc-tot{color:var(--c);font-weight:800;background:color-mix(in srgb,var(--c) 15%,#fff);padding:2px 9px;border-radius:12px}
+.sale-cash .sc-tot:empty{display:none}
+.sale-cash .sc-it-row input,.sale-cash .sc-it-row select{border:1.5px solid color-mix(in srgb,var(--c) 35%,#d5dae1);background:#fff}
+.sale-cash .sc-it-row input:focus,.sale-cash .sc-it-row select:focus{border-color:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 25%,transparent)}
+.sale-cash .sc-add{background:var(--c)}
+.sale-cash .sc-add:hover{background:var(--c);filter:brightness(.9)}
+.sale-cash .sc-last{border-top:1px dashed color-mix(in srgb,var(--c) 35%,#fff);padding-top:6px}
+.sale-cash .sc-last .sc-l-tag{color:var(--c)}
+.sale-cash .sc-info:hover{background:color-mix(in srgb,var(--c) 18%,#fff);color:var(--c)}
+html[data-theme="dark"] .sale-cash .sc-item{background-color:color-mix(in srgb,var(--c) 18%,#15191e)!important;border-color:color-mix(in srgb,var(--c) 45%,#15191e)!important}
+html[data-theme="dark"] .sale-cash .sc-tot{background-color:color-mix(in srgb,var(--c) 28%,#15191e)!important}
+html[data-theme="dark"] .sale-cash .sc-it-row input,html[data-theme="dark"] .sale-cash .sc-it-row select{background:#0f141c!important;color:#e6e9ef!important}
+
+/* ===== Clean "developer UI" polish: no left colour line ===== */
+.sale-cash .sc-item{border:1px solid color-mix(in srgb,var(--c) 30%,#fff)!important;border-left-width:1px!important;border-radius:12px;background:color-mix(in srgb,var(--c) 8%,#fff);box-shadow:none;position:relative}
+.sale-cash .sc-it-head b{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--c);background:color-mix(in srgb,var(--c) 16%,#fff);padding:3px 10px 3px 8px;border-radius:7px}
+.sale-cash .sc-it-head b::before{width:7px;height:7px;box-shadow:none}
+.sale-cash .sc-tot{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;background:#fff;border:1px solid color-mix(in srgb,var(--c) 30%,#fff);border-radius:7px;padding:2px 8px}
+.sale-cash .sc-it-row input,.sale-cash .sc-it-row select{border-radius:8px;border:1px solid color-mix(in srgb,var(--c) 30%,#d5dae1)}
+.sale-cash .sc-a{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.sale-cash .sc-add{border-radius:8px;font-weight:700}
+.sale-cash .sc-item:focus-within{transform:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 18%,transparent)}
+.fblk{border:1px solid color-mix(in srgb,var(--fc) 30%,#fff)!important;border-left-width:1px!important;border-radius:12px;background:color-mix(in srgb,var(--fc) 8%,#fff)}
+.fblk .fb-l{display:inline-block;align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.6px;background:color-mix(in srgb,var(--fc) 16%,#fff);padding:2px 9px;border-radius:7px}
+.fblk input:not([type=checkbox]){border-radius:8px;border:1px solid color-mix(in srgb,var(--fc) 30%,#d5dae1)!important}
+.fblk:focus-within{transform:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--fc) 18%,transparent)}
+html[data-theme="dark"] .sale-cash .sc-item{border-left-width:1px!important}
+html[data-theme="dark"] .sale-cash .sc-it-head b{background-color:color-mix(in srgb,var(--c) 28%,#15191e)!important}
+html[data-theme="dark"] .sale-cash .sc-tot{background-color:#0f141c!important}
+html[data-theme="dark"] .fblk{border-left-width:1px!important}
+html[data-theme="dark"] .fblk .fb-l{background-color:color-mix(in srgb,var(--fc) 28%,#15191e)!important}
+
+/* ===== Daily Cash quick add = Daily Hisab panel style ===== */
+.sale-cash .sc-list{gap:14px}
+.sale-cash .sc-item{padding:0 0 12px!important;background:#fff!important;border:1px solid #e1e5dd!important;border-top:3px solid var(--c)!important;border-radius:12px;box-shadow:0 1px 2px rgba(28,36,32,.04),0 6px 18px rgba(28,36,32,.05);overflow:hidden;transform:none!important}
+.sale-cash .sc-item:focus-within{box-shadow:0 1px 2px rgba(28,36,32,.04),0 6px 18px rgba(28,36,32,.05)!important}
+.sale-cash .sc-it-head{margin:0 0 10px;padding:10px 13px;background:#f8faf7;border-bottom:1px solid #e1e5dd;font-size:.92rem}
+.sale-cash .sc-it-head b{background:none;padding:0;border-radius:0;text-transform:none;letter-spacing:0;font-size:.92rem;font-weight:600;color:#1c2420}
+.sale-cash .sc-it-head b::before{display:none}
+.sale-cash .sc-tot{background:none;border:0;padding:1px 5px;border-radius:5px;font-family:Arial,sans-serif;font-size:.95rem;font-weight:700;color:var(--c)}
+.sale-cash .sc-item>:not(.sc-it-head){margin-left:13px;margin-right:13px}
+.sale-cash .sc-it-row input,.sale-cash .sc-it-row select{border:1px solid #cdd3c8;background:#fff;border-radius:8px}
+.sale-cash .sc-it-row input:focus,.sale-cash .sc-it-row select:focus{border-color:#2c6e58;box-shadow:0 0 0 3px rgba(44,110,88,.15)}
+.sale-cash .sc-a{font-family:Arial,sans-serif;font-weight:700}
+.sale-cash .sc-add{background:#1c2420;border-radius:9px}
+.sale-cash .sc-add:hover{background:#1c2420;filter:brightness(1.25)}
+.sale-cash .sc-last{border-top:1px solid #e1e5dd;padding-top:8px}
+.sale-cash .sc-last .sc-l-tag{color:var(--c)}
+html[data-theme="dark"] .sale-cash .sc-item{background-color:rgb(21,25,30)!important;border-color:#2a3342!important;border-top-color:var(--c)!important}
+html[data-theme="dark"] .sale-cash .sc-it-head{background:#1a2028;border-color:#2a3342}
+html[data-theme="dark"] .sale-cash .sc-it-head b{color:#e6e9ef!important;background:none!important}
+html[data-theme="dark"] .sale-cash .sc-tot{background:none!important}
+html[data-theme="dark"] .sale-cash .sc-add{background:#e6e9ef;color:#15191e}
+html[data-theme="dark"] .sale-cash .sc-last{border-color:#2a3342}
+
+/* ===== Quick add: one card, 5 tabs, full history ===== */
+.sale-cash .sc-list,.sale-cash .sc-list{display:block!important}
+.sale-cash .sc-item{display:none!important}
+.sale-cash .sc-item.sc-on{display:block!important}
+.sale-cash .sc-last{display:none!important}
+.sc-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 12px}
+.sc-tabs button{--c:#1a73e8;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px 7px;font-size:11.5px;font-weight:700;line-height:1.15;text-align:center;border-radius:10px;background:#f8faf7;color:#1c2420;border:1px solid #e1e5dd;border-bottom:3px solid #e1e5dd;box-shadow:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .15s,border-color .15s,color .15s}
+.sc-tabs button span{font-size:19px;line-height:1}
+.sc-tabs button:hover{background:color-mix(in srgb,var(--c) 8%,#fff);filter:none}
+.sc-tabs button.on{background:color-mix(in srgb,var(--c) 12%,#fff);border-color:color-mix(in srgb,var(--c) 45%,#fff);border-bottom-color:var(--c);color:var(--c)}
+.sc-hist{margin-top:14px;background:#fff;border:1px solid #e1e5dd;border-radius:12px;box-shadow:0 1px 2px rgba(28,36,32,.04),0 6px 18px rgba(28,36,32,.05);overflow:hidden}
+.sc-hist{--c:#1a73e8;border-top:3px solid var(--c)}
+.sc-h-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px;background:#f8faf7;border-bottom:1px solid #e1e5dd;font-size:.92rem}
+.sc-h-head b{font-weight:600;color:#1c2420}.sc-h-head span{font-size:12px;color:#67716b}
+.sc-hsw{margin:10px 12px}
+.sc-h-body{max-height:min(46vh,420px);overflow:auto}
+.sc-h-day{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;padding:6px 13px;background:#f1f4ef;border-top:1px solid #e1e5dd;border-bottom:1px solid #e1e5dd;font-size:11.5px;font-weight:700;color:#67716b;text-transform:uppercase;letter-spacing:.4px}
+.sc-h-row{display:flex;align-items:center;gap:10px;width:100%;padding:9px 13px;border:0;border-bottom:1px solid #eef0eb;background:#fff;color:#1c2420;text-align:left;border-radius:0;cursor:pointer;box-shadow:none;font-size:14px}
+.sc-h-row:hover,.sc-h-row:focus-visible{background:#f4f8f5;filter:none}
+.sc-h-main{flex:1;min-width:0}
+.sc-h-main b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc-h-main small{display:block;color:#67716b;font-size:11.5px;margin-top:1px}
+.sc-h-main mark{background:#fde68a;color:inherit;border-radius:3px;padding:0 1px}
+.sc-h-amt{flex:none;font-weight:700;color:var(--c)}
+.sc-h-tag{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:9px;margin-left:6px;background:#eceef1;color:#4d5761}
+.sc-h-tag.due{background:#fdecea;color:#b3261e}.sc-h-tag.partial{background:#fff3d6;color:#8a5a00}.sc-h-tag.self{background:#efe7fd;color:#5b21b6}
+.sc-h-empty{padding:26px 14px;text-align:center;color:#80868b;font-size:13.5px}
+.sc-h-more{display:block;width:calc(100% - 26px);margin:10px 13px;background:#f1f4ef;color:#1c2420;border:1px solid #e1e5dd;border-radius:9px;font-weight:600;box-shadow:none}
+.sc-h-more:hover{filter:none;background:#e8efe9}
+html[data-theme="dark"] .sc-tabs button{background-color:#1a2028!important;border-color:#2a3342!important;border-bottom-color:#2a3342!important;color:#e6e9ef!important}
+html[data-theme="dark"] .sc-tabs button.on{background-color:color-mix(in srgb,var(--c) 22%,#15191e)!important;border-bottom-color:var(--c)!important;color:#fff!important}
+html[data-theme="dark"] .sc-hist{background-color:#15191e!important;border-color:#2a3342!important}
+html[data-theme="dark"] .sc-h-head,html[data-theme="dark"] .sc-h-day{background-color:#1a2028!important;border-color:#2a3342!important}
+html[data-theme="dark"] .sc-h-head b,html[data-theme="dark"] .sc-h-row{color:#e6e9ef!important}
+html[data-theme="dark"] .sc-h-row{background-color:#15191e!important;border-color:#232b36!important}
+html[data-theme="dark"] .sc-h-row:hover{background-color:#1e2630!important}
+html[data-theme="dark"] .sc-h-more{background-color:#1a2028!important;color:#e6e9ef!important;border-color:#2a3342!important}
+
+/* ===== Quick add v3: today's entries under input, no colour lines, solid active tab ===== */
+.sc-hist .sc-h-head,.sc-hist .sc-hsw,.sc-hist .sc-h-day{display:none!important}
+.sc-hist{margin-top:12px;border:1px solid #e1e5dd!important;border-top:1px solid #e1e5dd!important;box-shadow:none}
+.sale-cash .sc-item{border:1px solid #e1e5dd!important;border-top:1px solid #e1e5dd!important}
+.sc-tabs button{border:1px solid #e1e5dd!important;border-bottom:1px solid #e1e5dd!important}
+.sc-tabs button.on{background:var(--c)!important;border-color:var(--c)!important;border-bottom-color:var(--c)!important;color:#fff!important;box-shadow:0 3px 10px color-mix(in srgb,var(--c) 40%,transparent)}
+.sc-tabs button.on span{filter:none}
+html[data-theme="dark"] .sale-cash .sc-item{border-top-color:#2a3342!important}
+html[data-theme="dark"] .sc-hist{border-top-color:#2a3342!important}
+html[data-theme="dark"] .sc-tabs button.on{background-color:var(--c)!important;border-color:var(--c)!important;color:#fff!important}
 </style><style id="hisabPagesCss">
 .hisab-wrap{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
 .hisab-bar{flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;font-size:12.5px}
@@ -3600,7 +3711,7 @@ window.bankRemitShow=async function(){
 </div>
 <div class="cartsummary" id="cartSummary"></div>
 <div class="actions"><button class="green" onclick="sell()">✅ Complete Sale</button><button class="gray" onclick="clearCart()">Clear Cart</button><button class="steel" onclick="generateInvoiceForLastSale()">🧾 Generate Invoice</button></div>
-<div class="status" id="saleStatus">Sale completes instantly offline · invoice is generated only when you ask for it.</div></div><div class="sale-cash no-print" id="scCard"><div class="sc-title"><span>💵 Daily Cash — quick add</span><a onclick="openDailyCash()">Open ›</a></div><div class="sc-list"><div class="sc-item" data-col="bill" style="--c:#1a73e8">
+<div class="status" id="saleStatus">Sale completes instantly offline · invoice is generated only when you ask for it.</div></div><div class="sale-cash no-print" id="scCard"><div class="sc-title"><span>💵 Daily Cash — quick add</span><a onclick="openDailyCash()">Open ›</a></div><div class="sc-tabs" id="scTabs" role="tablist"><button type="button" role="tab" data-col="bill" class="on" style="--c:#1a73e8" onclick="scTab('bill')"><span>🧾</span>Electricity</button><button type="button" role="tab" data-col="due" class="" style="--c:#188038" onclick="scTab('due')"><span>👤</span>Due Paid</button><button type="button" role="tab" data-col="others" class="" style="--c:#7c3aed" onclick="scTab('others')"><span>➕</span>Add</button><button type="button" role="tab" data-col="cost" class="" style="--c:#d93025" onclick="scTab('cost')"><span>💸</span>Outgoing</button><button type="button" role="tab" data-col="self" class="" style="--c:#b45309" onclick="scTab('self')"><span>🙋</span>Self</button></div><div class="sc-list"><div class="sc-item sc-on" data-col="bill" style="--c:#1a73e8">
  <div class="sc-it-head"><b>Electricity Bill</b><span class="sc-tot" id="scTot_bill"></span></div>
  <div class="sc-it-row"><input class="sc-n" id="scNote_bill" type="text" autocomplete="off" placeholder="Customer name or SMS no" aria-label="Customer name or SMS no" onkeydown="scKey(event,'bill',true)" oninput="scClr(this)" list="scNames"><input class="sc-a" id="scAmt_bill" type="number" inputmode="decimal" min="0" step=".01" placeholder="৳ 0.00" aria-label="Amount" onkeydown="scKey(event,'bill')" oninput="scClr(this)"><button type="button" class="sc-add" onclick="scAdd('bill')" aria-label="Add Electricity Bill" title="Add">+</button></div>
 <div class="sc-it-row sc-bill-extra"><select id="scPay_bill" aria-label="Payment type" onchange="scPayChange()"><option value="cash">Cash</option><option value="due">Due</option><option value="partial">Partial</option><option value="self">Self</option></select><input class="sc-paid" id="scPaid_bill" style="display:none" type="number" inputmode="decimal" min="0" step=".01" placeholder="Paid ৳" aria-label="Paid now" onkeydown="scKey(event,'bill')" oninput="scClr(this)"><label class="sc-dl">Last date<input id="scDate_bill" type="date" onkeydown="scKey(event,'bill')" oninput="scClr(this)"></label></div>
@@ -3631,7 +3742,7 @@ window.bankRemitShow=async function(){
  <div class="sc-msg" id="scMsg_self" role="status" aria-live="polite"></div>
  <div class="sc-last" id="scLast_self"></div>
 </div>
-</div><datalist id="scNames"></datalist></div></section>
+</div><div class="sc-hist" id="scHist"><div class="sc-h-head"><b id="scHTitle">History</b><span id="scHMeta"></span></div><div class="fs-find sc-hsw" id="scHSW"><div class="fs-field"><input type="search" id="scHSearch" placeholder="Search full history — name or amount…" oninput="scHRender(true)" autocomplete="off" aria-label="Search history"><button type="button" class="fs-x" onclick="scHClear()" aria-label="Clear search">✕</button></div></div><div class="sc-h-body" id="scHBody"></div></div><datalist id="scNames"></datalist></div></section>
 </div>
 
 
@@ -9997,6 +10108,80 @@ function scShowInfo(col,i){if(scEnsure())showCashInfo(col,i)}
   var o=window.renderDailyCash;
   if(typeof o!=='function')return;
   window.renderDailyCash=function(){var r=o.apply(this,arguments);try{scRenderAll()}catch(e){}return r};
+})();
+
+/* ---- Quick add: tabs + full history ---- */
+var scTabCol='bill',scHLimit=60;
+function scTab(col){
+  if(SC_COLS.indexOf(col)<0)col='bill';
+  scTabCol=col;scHLimit=60;
+  document.querySelectorAll('#scTabs button').forEach(function(b){b.classList.toggle('on',b.dataset.col===col)});
+  document.querySelectorAll('#scCard .sc-item').forEach(function(i){i.classList.toggle('sc-on',i.dataset.col===col)});
+  var h=$('scHist'),t=document.querySelector('#scTabs button[data-col="'+col+'"]');
+  if(h&&t)h.style.setProperty('--c',t.style.getPropertyValue('--c'));
+  var q=$('scHSearch');if(q)q.value='';
+  scHRender();
+  try{localStorage.setItem('scTab',col)}catch(e){}
+}
+function scHClear(){var q=$('scHSearch');if(q){q.value='';q.focus()}scHRender()}
+function scHRows(col){
+  var by=Object.assign({},(window.db&&db.dailyCashByDate)||{});
+  try{if(cashDraft&&cashViewDate===todayKey())by[cashViewDate]=cashDraft}catch(e){}
+  var out=[];
+  Object.keys(by).filter(function(k){return k===todayKey()}).sort().reverse().forEach(function(k){
+    var arr=by[k]&&by[k][col];if(!Array.isArray(arr))return;
+    for(var i=arr.length-1;i>=0;i--){
+      var r=arr[i];if(!r)continue;
+      var name=col==='due'?(r.name||''):(r.note||''),amt=+r.amount||0;
+      if(!name&&!amt)continue;
+      out.push({k:k,i:i,name:name,amt:amt,pay:r.pay||'',due:r.dueDate||'',at:+r.at||0});
+    }
+  });
+  return out;
+}
+function scHHl(t,q){t=String(t==null?'':t);if(!q)return esc(t);var i=t.toLowerCase().indexOf(q);if(i<0)return esc(t);return esc(t.slice(0,i))+'<mark>'+esc(t.slice(i,i+q.length))+'</mark>'+esc(t.slice(i+q.length))}
+function scHRender(fromSearch){
+  var body=$('scHBody');if(!body)return;
+  if(fromSearch===true)scHLimit=60;
+  var col=scTabCol,labels={bill:'Electricity Bill',due:'Due Paid',others:'Add',cost:'Outgoing Cash',self:'Self Expense'};
+  var raw=($('scHSearch')||{value:''}).value.trim(),q=raw.toLowerCase(),qn=q.replace(/[৳,\s]/g,'');
+  var sw=$('scHSW');if(sw)sw.classList.toggle('has-q',!!raw);
+  var all=scHRows(col),rows=all;
+  if(q)rows=all.filter(function(r){
+    if(r.name.toLowerCase().indexOf(q)>-1)return true;
+    return qn!==''&&/^[0-9.]+$/.test(qn)&&(String(r.amt).indexOf(qn)>-1||r.amt.toFixed(2).indexOf(qn)>-1);
+  });
+  $('scHTitle').textContent=labels[col]+' — history';
+  var tot=rows.reduce(function(a,r){return a+r.amt},0);
+  $('scHMeta').textContent=(q?rows.length+' of '+all.length:all.length)+' entries'+(col!=='bill'&&rows.length?' · '+money(tot):'');
+  if(!rows.length){body.innerHTML='<div class="sc-h-empty">'+(q?'No entry matching “'+esc(raw)+'”.':'No entry today yet.')+'</div>';return}
+  var today=todayKey(),html='',last='',shown=rows.slice(0,scHLimit);
+  shown.forEach(function(r){
+    if(r.k!==last){
+      last=r.k;
+      var d=new Date(r.k+'T00:00:00'),ds=d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+      var n=rows.filter(function(x){return x.k===r.k}).length;
+      html+='<div class="sc-h-day"><span>'+esc(ds)+(r.k===today?' · Today':'')+'</span><span>'+n+(n===1?' entry':' entries')+'</span></div>';
+    }
+    var tm=r.at?new Date(r.at).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit',hour12:true}):'';
+    var tag=col==='bill'&&r.pay&&r.pay!=='cash'?'<span class="sc-h-tag '+esc(r.pay)+'">'+esc(r.pay==='due'?'Due':r.pay==='partial'?'Partial':'Self')+'</span>':'';
+    var sub=[];if(tm)sub.push(tm);
+    if(col==='bill'&&r.due){var fd=r.due;try{fd=fmtBillDate(r.due)}catch(e){}sub.push('Last date '+fd)}
+    html+='<button type="button" class="sc-h-row" onclick="scHOpen(\''+r.k+'\',\''+col+'\','+r.i+')"><span class="sc-h-main"><b>'+scHHl(r.name||'—',q)+tag+'</b>'+(sub.length?'<small>'+esc(sub.join(' · '))+'</small>':'')+'</span><span class="sc-h-amt">'+esc(money(r.amt))+'</span></button>';
+  });
+  if(rows.length>shown.length)html+='<button type="button" class="sc-h-more" onclick="scHLimit+=60;scHRender()">Show more ('+(rows.length-shown.length)+' left)</button>';
+  body.innerHTML=html;
+}
+function scHOpen(k,col,i){
+  if(k===todayKey()){scShowInfo(col,i);return}
+  openDailyCash();setTimeout(function(){openCashHit(k,col,i)},150);
+}
+(function(){
+  var o=window.scRenderAll;
+  if(typeof o==='function')window.scRenderAll=function(){o.apply(this,arguments);try{scHRender()}catch(e){}};
+  var c='bill';try{c=localStorage.getItem('scTab')||'bill'}catch(e){}
+  function go(){if($('scTabs'))scTab(c)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
 })();
 </script>
 
