@@ -89,6 +89,7 @@ input:focus,select:focus{border-color:var(--brass);box-shadow:0 0 0 3px #1a73e82
 .carttable th{position:sticky;top:0;background:#f8f9fa;padding:9px;text-align:left}
 .carttable td{padding:8px 9px;border-bottom:1px solid var(--line)}
 .carttable input[type=number]{width:66px;padding:6px;text-align:right;font-size:13.5px}
+.carttable input[data-num]{width:66px;padding:6px;text-align:right;font-size:13.5px}
 .cart-empty{padding:18px;text-align:center;color:#9aa0a6}
 .rm{background:var(--maroon);padding:7px 11px;font-size:12px}
 .cartsummary{background:#f8f9fa;border-radius:10px;padding:13px 15px;font-size:14.5px;line-height:1.85;margin-top:2px;border:1px solid var(--line)}
@@ -221,10 +222,12 @@ body.role-employee .admin-only{display:none!important}
 .cash-idx{width:20px;flex-shrink:0;color:var(--muted);font-size:10.5px;text-align:right}
 .cash-row input{padding:6px 4px;font-size:12.5px;border:none;border-bottom:1.5px solid var(--line);border-radius:0;background:transparent;box-shadow:none}
 .cash-row input[type=number]{text-align:right}
+.cash-row input[data-num]{text-align:right}
 .cash-row input.xl-cell:focus{border-bottom-color:var(--brass);background:#eef4fe;box-shadow:none}
 .cash-row input.xl-cell.cell-selected{background:#e8f0fe;border-bottom-color:var(--brass)}
 .cash-row-due input[type=text]{flex:1.35;text-align:left}
 .cash-row-due input[type=number]{flex:1}
+.cash-row-due input[data-num]{flex:1}
 .cash-total{margin-top:10px;padding-top:9px;border-top:1px solid var(--line);font-weight:700;font-size:13px;text-align:right;color:var(--ink)}
 .cash-total span{color:var(--brass2)}
 @media(max-width:1100px){.cash-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -379,7 +382,9 @@ html[data-theme="dark"] .cp-tabs button.on{background-color:rgb(21,25,30)!import
 #dailyCashModal .cash-row input.xl-cell.cell-selected{background:#e8f0fe}
 #dailyCashModal .cash-row.filled input[type=text]{font-weight:700}
 #dailyCashModal .cash-row input[type=number]{text-align:right;font-weight:800;color:var(--brass2);padding-left:22px;-moz-appearance:textfield}
+#dailyCashModal .cash-row input[data-num]{text-align:right;font-weight:800;color:var(--brass2);padding-left:22px;-moz-appearance:textfield}
 #dailyCashModal .cash-row input[type=number]::-webkit-outer-spin-button,#dailyCashModal .cash-row input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+#dailyCashModal .cash-row input[data-num]::-webkit-outer-spin-button,#dailyCashModal .cash-row input[data-num]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 #dailyCashModal .cash-row input[type=date]{font-size:12.5px;padding:0 4px;text-align:left;color:var(--muted);font-weight:600}
 #dailyCashModal .cash-row-bill.bill-row-warn input[type=date]{color:var(--maroon);font-weight:700;border-color:#f28b82;background:#fdecea}
 #dailyCashModal .cash-row-bill.bill-row-warn input[type=date]{text-align:left}
@@ -450,6 +455,7 @@ html[data-theme="dark"] .cp-tabs button.on{background-color:rgb(21,25,30)!import
   #dailyCashModal .cash-row.filled{padding:6px 1px}
   #dailyCashModal .cash-row input{font-size:13.5px;padding:2px 1px}
   #dailyCashModal .cash-row input[type=number]{padding-left:18px;font-size:13.5px}
+  #dailyCashModal .cash-row input[data-num]{padding-left:18px;font-size:13.5px}
   #dailyCashModal .amt::before{left:7px;font-size:11.5px}
   #dailyCashModal .cash-row input[type=date]{font-size:10.5px;padding:0 4px}
   #dailyCashModal .cash-total{margin-top:8px;padding-top:8px}
@@ -505,6 +511,7 @@ html[data-theme="dark"] #dailyCashModal .cash-add-pay.p-self{background:rgb(30,3
 .cash-subhead-bill span:nth-child(3){flex:1;text-align:right}
 .cash-row-bill input[type=text]{flex:1.1;text-align:left}
 .cash-row-bill input[type=number]{flex:.8;text-align:right}
+.cash-row-bill input[data-num]{flex:.8;text-align:right}
 .cash-row-bill input[type=date]{flex:1;font-size:10.5px;text-align:right;color:var(--ink)}
 .cash-row-bill.bill-row-warn input[type=date]{color:var(--maroon);font-weight:700}
 .bill-alert-fab{position:fixed;top:14px;right:14px;z-index:700;width:76px;height:76px;border-radius:50%;background:linear-gradient(145deg,#ef4b3f 0%,#b3261e 100%);color:#fff;display:none;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(179,38,30,.55),inset 0 1px 0 rgba(255,255,255,.35);cursor:grab;border:3px solid #fff;padding:0;touch-action:none;user-select:none;-webkit-user-select:none;animation:billFabShake 4s ease-in-out infinite}
@@ -1362,6 +1369,7 @@ html[data-theme="dark"] #dailyCashModal .cash-row input::placeholder{color:rgb(1
 html[data-theme="dark"] #dailyCashModal .cash-row input.xl-cell:focus{background-color:rgb(17,26,40)!important}
 html[data-theme="dark"] #dailyCashModal .cash-row input.xl-cell.cell-selected{background-color:rgb(18,27,42)!important}
 html[data-theme="dark"] #dailyCashModal .cash-row input[type="number"]{color:var(--brass2)!important}
+html[data-theme="dark"] #dailyCashModal .cash-row input[data-num]{color:var(--brass2)!important}
 html[data-theme="dark"] #dailyCashModal .cash-row input[type="date"]{color:var(--muted)!important}
 html[data-theme="dark"] #dailyCashModal .cash-row-bill.bill-row-warn input[type="date"]{color:var(--maroon)!important;border-top-color:rgb(108,60,55)!important;border-right-color:rgb(108,60,55)!important;border-bottom-color:rgb(108,60,55)!important;border-left-color:rgb(108,60,55)!important;background-color:rgb(42,20,18)!important}
 html[data-theme="dark"] #dailyCashModal .amt::before{color:rgb(185,188,191)!important}
@@ -2043,6 +2051,7 @@ html[data-theme="dark"]{--cu-soft:#1b2434;--cu-soft2:#232f45}
 .ch-fcard p{margin:0 0 10px;font-size:11.5px;color:var(--muted)}
 .ch-frow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .ch-frow input[type=number],.ch-frow input[type=text]{flex:1 1 120px;min-width:0;box-sizing:border-box;padding:10px 13px;border-radius:12px;border:1px solid transparent;background:var(--card);color:var(--ink);font-size:14px}
+.ch-frow input[data-num],.ch-frow input[type=text]{flex:1 1 120px;min-width:0;box-sizing:border-box;padding:10px 13px;border-radius:12px;border:1px solid transparent;background:var(--card);color:var(--ink);font-size:14px}
 .ch-frow input:focus{outline:0;border-color:#1a73e8;box-shadow:0 0 0 3px var(--cu-ring)}
 .ch-frow .due-ext-chk{background:var(--card);padding:8px 10px;border-radius:10px}
 .ch-frow .due-full{background:var(--card);border-color:transparent}
@@ -4010,7 +4019,7 @@ window.bankRemitShow=async function(){
 <div class="modal" id="sessionsModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('sessionsModal')" aria-label="Close">✕ Close</button><h2>🖥️ Active Sessions</h2><p class="hint">Every device signed in to this app. Press Logout to sign a device out remotely — it logs out within a few seconds if it is online, or the next time it opens the app.</p><div class="actions" style="margin:0 0 10px"><button class="red" onclick="revokeOtherSessions()">Logout all other devices</button></div><div class="tablewrap"><table><thead><tr><th>Device</th><th>User</th><th>Logged in</th><th>Last active</th><th>Status</th><th>Action</th></tr></thead><tbody id="sessionsTable"></tbody></table></div></div></div>
 
 <div class="modal" id="dataModal"><div class="modalbox"><button class="close" onclick="closeData()">Close</button><h2>💾 Data Center — Backup & Restore</h2><p class="hint">Stock &amp; sales now sync live to your Firebase cloud database, so every device signed into the same Firebase project sees the same data. For extra safety, still make regular backups below — CSV backup files can be opened in Excel and CSV files exported by this app can be restored here.</p>
-<h3>Export / Backup</h3><div class="actions"><button onclick="backupJSON()">⬇ Complete JSON Backup</button><button onclick="stockCSV()">⬇ Stock CSV</button><button onclick="salesCSV()">⬇ Sales CSV</button><button class="green" onclick="todayCSV()">⬇ Today's Sales CSV</button><button class="gray" onclick="customerDuePDF()">📄 Customer Due PDF</button><button class="gray" onclick="customerDueDetailsPDF()">📄 Due Details PDF</button></div>
+<h3>Export / Backup</h3><div class="actions"><button onclick="backupJSON()">⬇ Complete JSON Backup</button><button onclick="customerDueAdvancePDF(this)">⬇ Due + Advance PDF (all)</button><button onclick="stockCSV()">⬇ Stock CSV</button><button onclick="salesCSV()">⬇ Sales CSV</button><button class="green" onclick="todayCSV()">⬇ Today's Sales CSV</button><button class="gray" onclick="customerDuePDF()">📄 Customer Due PDF</button><button class="gray" onclick="customerDueDetailsPDF()">📄 Due Details PDF</button></div>
 
 <h3>Auto Daily Backup</h3>
 <div class="filebox" id="abBox">
@@ -7551,7 +7560,8 @@ function renderCustomerHistory(){
 /* ---------- CUSTOMER HISTORY → PDF (share) ----------
    Exactly what is on screen: the current All / Given / Receive filter, search and sort.
    Real selectable text; Bengali / emoji are drawn as small images so they always show. */
-function customerHistoryPdf(info){
+function customerHistoryPdf(info0){
+  const infoList=Array.isArray(info0)?info0:[info0];let info=infoList[0];
   const W=595.28,H=841.89,M=28,SC=4;
   const FONT='"Segoe UI","Nirmala UI","Noto Sans Bengali","Noto Sans",Arial,sans-serif';
   const LAT='Arial,Helvetica,"Liberation Sans",sans-serif';
@@ -7599,7 +7609,7 @@ function customerHistoryPdf(info){
   const vline=(x,y1,y2,g,lw)=>pg.ops.push(g+' RG '+lw+' w '+x.toFixed(2)+' '+Y(y1)+' m '+x.toFixed(2)+' '+Y(y2)+' l S');
   const tk=v=>'Tk '+fmt(v);
   // ---- layout ----
-  const rows=info.rows,bottom=H-M-12,FS=8,LH=FS*1.2,SFS=6.8,SLH=SFS*1.22;
+  let rows=info.rows;const bottom=H-M-12,FS=8,LH=FS*1.2,SFS=6.8,SLH=SFS*1.22;
   const x0=M,tw=W-2*M,balR=x0+tw-4,recR=balR-84,givR=recR-72,detL=x0+66,detW=givR-62-detL;
   const E=[x0,detL-5,givR-60,givR+5,recR+5,x0+tw],GRID='0.80 0.84 0.90',SOFT='0.90 0.92 0.96';
   const cols=(y1,y2)=>E.forEach((x,i)=>vline(x,y1,y2,GRID,0.5));
@@ -7634,7 +7644,7 @@ function customerHistoryPdf(info){
     }
     head();
   };
-  newPage(true);
+  infoList.forEach(inf=>{info=inf;rows=info.rows;newPage(true);
   let tDr=0,tCr=0;
   rows.forEach(r=>{
     const d=r.ts?new Date(r.ts):null,ok=d&&!isNaN(d);
@@ -7664,6 +7674,7 @@ function customerHistoryPdf(info){
     text(fmt(tDr),givR,y+13.5,9,true,'r',RED);text(fmt(tCr),recR,y+13.5,9,true,'r',GRN);
     cols(y,y+20);line(E[0],y+20,E[5],GRID,0.6);
   }
+  });
   pages.forEach((p,i)=>{pg=p;text('Page '+(i+1)+' of '+pages.length,W/2,H-M+4,7.5,false,'c',MUT)});
   return pdfWrite(pages);
 }
@@ -7940,7 +7951,7 @@ async function abRenderStatus(){
   if(fo)fo.style.display=dir?'':'none';
   let perm='';if(dir){try{perm=await dir.queryPermission({mode:'readwrite'})}catch(e){}}
   const lines=[];
-  lines.push(ab.on?('⏱ Next backup: '+abNextText()+' · 4 files: backup · stock CSV · 2 due PDFs · the app must be open'):'Off — tick the box and set a time.');
+  lines.push(ab.on?('⏱ Next backup: '+abNextText()+' · 3 files: backup · stock CSV · due + advance PDF · the app must be open'):'Off — tick the box and set a time.');
   if(ab.lastAt){const d=new Date(ab.lastAt);lines.push('✓ Last backup: '+d.toLocaleDateString()+' '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})+(ab.lastMode==='folder'?' · folder “'+esc(ab.folder)+'”':' · Downloads'))}
   if(dir&&perm!=='granted')lines.push('⚠️ Folder needs one click to be allowed again — press “Now”. Until then backups download.');
   const st=$('abStatus');if(st)st.innerHTML=lines.join('<br>');
@@ -8295,13 +8306,46 @@ async function customerDuePDF(){
   }catch(e){console.error('Due PDF failed:',e);alert('Could not create the Due PDF.')}
 }
 /* saved next to every daily backup: into the chosen folder, otherwise as a second download */
+/* ---------- DUE + ADVANCE PDF — every customer, same layout as the individual Customer History PDF ----------
+   One section per customer who has a due or an advance (biggest due first, advances last):
+   header card (DUE / ADVANCE / NET) + the full Date · Details · Given · Receive · Balance ledger. */
+function allCustomersHistoryInfos(){
+  const names=khataNames(true);            // refreshes the live due / advance maps
+  const list=[];
+  names.forEach(n=>{
+    const key=n.key,rows=khataLedger(key);
+    const dr=rows.reduce((a,r)=>a+r.dr,0),cr=rows.reduce((a,r)=>a+r.cr,0);
+    const liveDue=_khDue&&_khDue.get(key),jTot=(_khJoma&&_khJoma.get(key))||0;
+    const due=Math.round((((liveDue!==undefined)?liveDue:Math.max(0,dr-cr+jTot)))*100)/100;
+    const bal=Math.round((due-jTot)*100)/100;
+    if(due<=0.009&&jTot<=0.009)return;
+    const chip=bal>0.009?'Due Tk '+money(bal):bal<-0.009?'Advance Tk '+money(-bal):'All clear';
+    list.push({name:n.name,rows:rows.slice().reverse(),dr,cr,chip,owe:bal>0.009,filter:'Full history',due,adv:jTot,net:bal});
+  });
+  list.sort((a,b)=>(b.net-a.net)||a.name.localeCompare(b.name));
+  if(!list.length)list.push({name:'No customer has a due or an advance',rows:[],dr:0,cr:0,chip:'All clear',owe:false,filter:'Full history',due:0,adv:0,net:0});
+  return list;
+}
+async function allCustomersHistoryPdfBlob(){
+  await new Promise(r=>setTimeout(r,0));
+  return customerHistoryPdf(allCustomersHistoryInfos());
+}
+async function customerDueAdvancePDF(btn){
+  if(!requireAdmin('Due + Advance PDF'))return;
+  if(btn)btn.disabled=true;
+  try{
+    const blob=await allCustomersHistoryPdfBlob();
+    dlBlob('mohammadia_customer_due_advance_'+todayKey()+'.pdf',blob);
+    try{dueToast('✓ Due + Advance PDF downloaded')}catch(e){}
+  }catch(e){console.error('Due + Advance PDF failed:',e);alert('Could not create the Due + Advance PDF.')}
+  finally{if(btn)btn.disabled=false}
+}
 /* The other 3 files saved with every daily backup: Stock CSV + the two Customer Due PDFs
    (folder mode: written into the folder; otherwise downloaded one after another). */
 async function abSaveDuePdf(dir){
   const jobs=[
     {pre:'mohammadia_stock_',ext:'csv',make:async()=>new Blob(['\ufeff'+stockCsvText()],{type:'text/csv;charset=utf-8'})},
-    {pre:'mohammadia_customer_due_',ext:'pdf',make:customerDuePdfBlob},
-    {pre:'mohammadia_customer_due_details_',ext:'pdf',make:customerDueDetailsPdfBlob}
+    {pre:'mohammadia_customer_due_advance_',ext:'pdf',make:allCustomersHistoryPdfBlob}
   ];
   for(const j of jobs){
     try{
@@ -10237,6 +10281,71 @@ function scHOpen(k,col,i){
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   setTimeout(boot,600);setTimeout(boot,2000);
   document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.modal,button'))setTimeout(boot,50)},true);
+})();
+</script>
+
+<script>
+/* Digit boxes accept digits only (amount, qty, price, phone…). Barcode boxes are left alone (scanners). */
+(function(){
+  function kind(el){
+    if(!el||el.tagName!=='INPUT')return '';
+    if(/barcode/i.test(el.id||''))return '';
+    var t=(el.getAttribute('type')||'text').toLowerCase(),m=(el.getAttribute('inputmode')||'').toLowerCase();
+    if(t==='number')return 'num';
+    if(t==='tel')return 'tel';
+    if(m==='decimal')return 'dec';
+    if(m==='numeric')return 'int';
+    return '';
+  }
+  function allowNeg(el){var mn=el.getAttribute('min');return mn!==null&&mn!==''&&parseFloat(mn)<0}
+  function clean(el,k,v){
+    v=String(v==null?'':v);
+    if(k==='tel')return v.replace(/[^0-9+\-\s()]/g,'');
+    if(k==='int')return v.replace(/[^0-9]/g,'');
+    var neg=allowNeg(el)&&/^\s*-/.test(v);
+    v=v.replace(/[^0-9.]/g,'');
+    var i=v.indexOf('.');if(i>-1)v=v.slice(0,i+1)+v.slice(i+1).replace(/\./g,'');
+    return (neg?'-':'')+v;
+  }
+  /* Android keyboards let letters show inside type=number boxes. Make every number box a plain
+     text box with a digit keypad (same look via [data-num]); the cleaner below keeps digits only. */
+  function convert(el){
+    if(!el||el.tagName!=='INPUT'||el.getAttribute('type')!=='number'||/barcode/i.test(el.id||''))return;
+    var st=el.getAttribute('step'),dec=!!st&&st!=='1';
+    el.setAttribute('data-num',dec?'dec':'int');
+    el.setAttribute('inputmode',dec?'decimal':'numeric');
+    el.setAttribute('autocomplete','off');el.setAttribute('spellcheck','false');
+    el.type='text';
+  }
+  function convertAll(root){(root||document).querySelectorAll('input[type=number]').forEach(convert)}
+  convertAll();
+  new MutationObserver(function(ms){
+    ms.forEach(function(m){
+      m.addedNodes.forEach(function(n){
+        if(n.nodeType!==1)return;
+        if(n.tagName==='INPUT')convert(n);else if(n.querySelectorAll)convertAll(n);
+      });
+    });
+  }).observe(document.documentElement,{childList:true,subtree:true});
+  document.addEventListener('keydown',function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey||!e.key||e.key.length!==1)return;
+    var el=e.target,k=kind(el);if(!k)return;
+    var ch=e.key,ok;
+    if(k==='tel')ok=/[0-9+\-\s()]/.test(ch);
+    else if(k==='int')ok=/[0-9]/.test(ch);
+    else ok=/[0-9.]/.test(ch)||(ch==='-'&&allowNeg(el));
+    if(!ok)e.preventDefault();
+  },true);
+  document.addEventListener('paste',function(e){
+    var el=e.target,k=kind(el);if(!k)return;
+    var txt=(e.clipboardData||window.clipboardData).getData('text'),c=clean(el,k,txt);
+    if(c!==txt){e.preventDefault();if(c)try{document.execCommand('insertText',false,c)}catch(err){}}
+  },true);
+  document.addEventListener('input',function(e){
+    var el=e.target,k=kind(el);if(!k||k==='num')return;     /* number boxes already drop invalid text */
+    var c=clean(el,k,el.value);
+    if(c!==el.value){var p=el.selectionStart,d=el.value.length-c.length;el.value=c;try{el.setSelectionRange(Math.max(0,p-d),Math.max(0,p-d))}catch(err){}}
+  },true);
 })();
 </script>
 </body></html>
