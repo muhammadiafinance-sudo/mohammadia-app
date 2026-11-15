@@ -3236,6 +3236,36 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
   body.bk-print-remit #remitSheet{display:block!important;position:static;width:186mm;margin:0 auto;color:#000;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.35}
 }
 </style>
+<style id="bankThemeCss">
+#bankApp{--bk-navy2:#082756;--bk-bg:#f3f6fa;--bk-soft:#e9eff9}
+#bankApp .bk-view{background:var(--bk-bg)}
+#bankApp .bks{background:linear-gradient(180deg,var(--bk-navy),var(--bk-navy2))}
+#bankApp .bkbar{border-top:3px solid var(--bk-navy)}
+#bankApp .bk-btn{color:var(--bk-navy)}
+#bankApp .bk-btn.pri{color:#fff}
+#bankApp .bk-btn.pri:hover{background:var(--bk-navy);filter:brightness(.88)}
+#bankApp .bkk.bkk-nav{background:var(--bk-soft)}
+#bankApp .bkk.bkk-nav .k i{background:var(--bk-navy)}
+#bankApp svg.ch .bkhit:hover{fill:var(--bk-navy)}
+#bankApp[data-theme="emerald"]{--bk-navy:#0b5d44;--bk-navy2:#07402f;--bk-bg:#f0f7f3;--bk-soft:#e0f1e8}
+#bankApp[data-theme="purple"]{--bk-navy:#4c1d95;--bk-navy2:#341368;--bk-bg:#f5f2fb;--bk-soft:#ebe5f8}
+#bankApp[data-theme="crimson"]{--bk-navy:#9b1c31;--bk-navy2:#6e1222;--bk-bg:#fbf3f4;--bk-soft:#f7e3e6}
+#bankApp[data-theme="sunset"]{--bk-navy:#b45309;--bk-navy2:#823a05;--bk-bg:#fbf6ee;--bk-soft:#f8e9d2}
+#bankApp[data-theme="midnight"]{--bk-navy:#1f2937;--bk-navy2:#0b1220;--bk-bg:#f1f3f6;--bk-soft:#e3e7ee}
+#bankApp .bkth{margin-left:auto;position:relative;flex:none}
+#bankApp .bkth-btn{display:flex;align-items:center;gap:8px;height:36px;padding:0 13px;border:1px solid var(--bk-line);border-radius:9px;background:#fff;color:var(--bk-navy);font-size:13px;font-weight:600;cursor:pointer;box-shadow:none}
+#bankApp .bkth-btn:hover{background:#f1f5f9}
+#bankApp .bkth-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#bankApp .bkth-menu{position:absolute;right:0;top:44px;z-index:60;min-width:210px;padding:6px;background:#fff;border:1px solid var(--bk-line);border-radius:12px;box-shadow:0 14px 40px rgba(15,23,42,.18)}
+#bankApp .bkth-menu[hidden]{display:none}
+#bankApp .bkth-menu button{display:flex;align-items:center;gap:11px;width:100%;padding:9px 10px;border:0;border-radius:8px;background:transparent;color:#0f172a;font-size:13.5px;font-weight:600;text-align:left;cursor:pointer;box-shadow:none}
+#bankApp .bkth-menu button:hover{background:#f1f5f9}
+#bankApp .bkth-menu button.on{background:#eef2f7}
+#bankApp .bkth-menu button.on::after{content:"✓";margin-left:auto;color:var(--bk-navy);font-weight:800}
+#bankApp .bkth-sw{width:24px;height:24px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55),0 0 0 1px rgba(15,23,42,.15)}
+@media(max-width:560px){#bankApp .bkth-btn span{display:none}#bankApp .bkth-btn{padding:0 10px}}
+</style>
+
 <div id="bankApp" aria-label="Bank portal">
   <aside class="bks" id="bkSide" aria-label="Bank navigation">
     <div class="bks-brand">
@@ -3246,7 +3276,7 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
       <div class="bks-group">Overview</div>
       <button type="button" class="bks-item on" id="bkTabDash" data-bk="dash" role="tab" onclick="bankTab('dash')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Dashboard</span></button>
       <button type="button" class="bks-item" id="bkTabHisab" data-bk="hisab" role="tab" onclick="bankTab('hisab')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3z"/><path d="M5 17a3 3 0 013-3h11M9 8h6"/></svg><span>DBBL Daily Hisab</span></button>
-      <div class="bks-group">Forms</div><button type="button" class="bks-item bks-parent open" id="bkParentForms" aria-expanded="true" onclick="bankToggleForms()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg><span>Bank Forms</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="width:15px;height:15px;margin-left:auto"><path d="M9 6l6 6-6 6"/></svg></button><div class="bks-subs open" id="bkSubs" role="group" aria-label="Bank forms"><button type="button" class="bks-sub" id="bkTabRemit" onclick="bankTab('remit')"><span>Remittance Request</span></button><button type="button" class="bks-sub" id="bkSub_cheque" data-form="cheque" onclick="bankGo('cheque')"><span>Cheque Book Request</span></button><button type="button" class="bks-sub" id="bkSub_atm" data-form="atm" onclick="bankGo('atm')"><span>ATM Card Acknowledgement</span></button><button type="button" class="bks-sub" id="bkSub_nodebit" data-form="nodebit" onclick="bankGo('nodebit')"><span>No-Debit Letter</span></button><button type="button" class="bks-sub" id="bkSub_receipt" data-form="receipt" onclick="bankGo('receipt')"><span>Account Receipt</span></button><button type="button" class="bks-sub" id="bkTabForms" onclick="bankTab('forms')"><span>Saved Files</span></button></div>
+      <div class="bks-group">Forms</div><button type="button" class="bks-item bks-parent open" id="bkParentForms" aria-expanded="true" onclick="bankToggleForms()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg><span>Bank Forms</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="width:15px;height:15px;margin-left:auto"><path d="M9 6l6 6-6 6"/></svg></button><div class="bks-subs open" id="bkSubs" role="group" aria-label="Bank forms"><button type="button" class="bks-sub" id="bkTabRemit" onclick="bankTab('remit')"><span>Remittance Request</span></button><button type="button" class="bks-sub" id="bkSub_cheque" data-form="cheque" onclick="bankGo('cheque')"><span>Cheque Book Request</span></button><button type="button" class="bks-sub" id="bkSub_atm" data-form="atm" onclick="bankGo('atm')"><span>ATM Card Acknowledgement</span></button><button type="button" class="bks-sub" id="bkSub_nodebit" data-form="nodebit" onclick="bankGo('nodebit')"><span>No-Debit Letter</span></button><button type="button" class="bks-sub" id="bkSub_receipt" data-form="receipt" onclick="bankGo('receipt')"><span>Account Receipt</span></button><button type="button" class="bks-sub" id="bkSub_kyc" data-form="kyc" onclick="bankGo('kyc')"><span>Beneficial Owner KYC</span></button><button type="button" class="bks-sub" id="bkTabForms" onclick="bankTab('forms')"><span>Saved Files</span></button></div>
     </nav>
     <button type="button" class="bks-tog" id="bkMiniBtn" onclick="bankMini()" aria-expanded="true" aria-label="Minimize sidebar" title="Minimize sidebar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg><span>Minimize</span></button>
     <div class="bks-foot">
@@ -3258,11 +3288,12 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
   <div class="bkmain">
   <div class="bkbar">
     <button type="button" class="bkburger" onclick="bankSide(true)" aria-label="Open menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-    <h1 id="bkBarTitle">DBBL Dashboard</h1><span class="bkbar-sub" id="bkBarSub">Cash, commission and daily flow</span>
+    <h1 id="bkBarTitle">DBBL Dashboard</h1><span class="bkbar-sub" id="bkBarSub">Cash, commission and daily flow</span><div class="bkth" id="bkTheme"><button type="button" class="bkth-btn" id="bkThemeBtn" onclick="bankThemeMenu()" aria-haspopup="true" title="Change colour theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.4 0 2-1 2-2 0-.6-.3-1-.6-1.4-.3-.4-.4-.7-.4-1.1 0-.9.8-1.5 1.7-1.5H17a4 4 0 004-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10.5" cy="7" r="1"/><circle cx="15.5" cy="7.5" r="1"/></svg><span>Theme</span></button><div class="bkth-menu" id="bkThemeMenu" hidden><button type="button" data-t="ocean" onclick="bankSetTheme('ocean')"><span class="bkth-sw" style="background:linear-gradient(135deg,#0a2f6b 55%,#082756 55%)"></span>Ocean Blue</button><button type="button" data-t="emerald" onclick="bankSetTheme('emerald')"><span class="bkth-sw" style="background:linear-gradient(135deg,#0b5d44 55%,#07402f 55%)"></span>Emerald Green</button><button type="button" data-t="purple" onclick="bankSetTheme('purple')"><span class="bkth-sw" style="background:linear-gradient(135deg,#4c1d95 55%,#341368 55%)"></span>Royal Purple</button><button type="button" data-t="crimson" onclick="bankSetTheme('crimson')"><span class="bkth-sw" style="background:linear-gradient(135deg,#9b1c31 55%,#6e1222 55%)"></span>Crimson Red</button><button type="button" data-t="sunset" onclick="bankSetTheme('sunset')"><span class="bkth-sw" style="background:linear-gradient(135deg,#b45309 55%,#823a05 55%)"></span>Sunset Amber</button><button type="button" data-t="midnight" onclick="bankSetTheme('midnight')"><span class="bkth-sw" style="background:linear-gradient(135deg,#1f2937 55%,#0b1220 55%)"></span>Midnight Slate</button></div></div>
   </div>
 
   <div class="bk-view" id="bkViewDash">
     <div class="bk-dash">
+      <div id="bkTopOff" style="display:none" aria-hidden="true">
       <div class="bk-greet" id="bkGreet" data-no-i18n></div>
       <div class="bkd-top bkd-one">
         <div class="bkd-ctl">
@@ -3277,6 +3308,7 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
       <div class="bkks" id="bkKpis"></div>
       <div class="bksec"><span>This month</span><em id="bkMonLbl"></em></div>
       <div class="bkks" id="bkKpisM"></div>
+      </div>
       <div class="bkp bkwide"><h3>Deposits vs withdrawals <span class="bklg"><span><i style="background:#0f7b55"></i>Deposit</span><span><i style="background:#d9531e"></i>Withdrawal</span></span><span class="bkrng" id="bkRng"><button type="button" data-n="7" onclick="bankRange(7)">7D</button><button type="button" data-n="14" onclick="bankRange(14)">14D</button><button type="button" data-n="30" onclick="bankRange(30)">30D</button><button type="button" data-n="90" onclick="bankRange(90)">90D</button></span></h3><p class="sub">Click any day on the graph to see its full details below</p><div id="bkChartFlow"></div></div>
       <div id="bkDayPanel"></div>
       <div class="bkp bkwide"><h3>Commission trend <span class="bklg"><span id="bkCommSub">last 14 days</span></span></h3><p class="sub">Commission earned per day — click a day to open its details</p><div id="bkChartComm"></div></div>
@@ -3868,6 +3900,12 @@ function val(d,k,w){var v=String(d[k]==null?'':d[k]).trim();return v?hl(d,k,'<b>
 function box(on){return on?'&#9745;':'&#9744;'}
 var BN='font-family:"Noto Sans Bengali","Nirmala UI","Kalpurush","Siyam Rupali",Vrinda,sans-serif;';
 
+var DIST=[["Bagerhat", "বাগেরহাট"], ["Bandarban", "বান্দরবান"], ["Barguna", "বরগুনা"], ["Barishal", "বরিশাল"], ["Bhola", "ভোলা"], ["Bogura", "বগুড়া"], ["Brahmanbaria", "ব্রাহ্মণবাড়িয়া"], ["Chandpur", "চাঁদপুর"], ["Chapainawabganj", "চাঁপাইনবাবগঞ্জ"], ["Chattogram", "চট্টগ্রাম"], ["Chuadanga", "চুয়াডাঙ্গা"], ["Cumilla", "কুমিল্লা"], ["Cox's Bazar", "কক্সবাজার"], ["Dhaka", "ঢাকা"], ["Dinajpur", "দিনাজপুর"], ["Faridpur", "ফরিদপুর"], ["Feni", "ফেনী"], ["Gaibandha", "গাইবান্ধা"], ["Gazipur", "গাজীপুর"], ["Gopalganj", "গোপালগঞ্জ"], ["Habiganj", "হবিগঞ্জ"], ["Jamalpur", "জামালপুর"], ["Jashore", "যশোর"], ["Jhalokathi", "ঝালকাঠি"], ["Jhenaidah", "ঝিনাইদহ"], ["Joypurhat", "জয়পুরহাট"], ["Khagrachhari", "খাগড়াছড়ি"], ["Khulna", "খুলনা"], ["Kishoreganj", "কিশোরগঞ্জ"], ["Kurigram", "কুড়িগ্রাম"], ["Kushtia", "কুষ্টিয়া"], ["Lakshmipur", "লক্ষ্মীপুর"], ["Lalmonirhat", "লালমনিরহাট"], ["Madaripur", "মাদারীপুর"], ["Magura", "মাগুরা"], ["Manikganj", "মানিকগঞ্জ"], ["Meherpur", "মেহেরপুর"], ["Moulvibazar", "মৌলভীবাজার"], ["Munshiganj", "মুন্সিগঞ্জ"], ["Mymensingh", "ময়মনসিংহ"], ["Naogaon", "নওগাঁ"], ["Narail", "নড়াইল"], ["Narayanganj", "নারায়ণগঞ্জ"], ["Narsingdi", "নরসিংদী"], ["Natore", "নাটোর"], ["Netrokona", "নেত্রকোনা"], ["Nilphamari", "নীলফামারী"], ["Noakhali", "নোয়াখালী"], ["Pabna", "পাবনা"], ["Panchagarh", "পঞ্চগড়"], ["Patuakhali", "পটুয়াখালী"], ["Pirojpur", "পিরোজপুর"], ["Rajbari", "রাজবাড়ী"], ["Rajshahi", "রাজশাহী"], ["Rangamati", "রাঙ্গামাটি"], ["Rangpur", "রংপুর"], ["Satkhira", "সাতক্ষীরা"], ["Shariatpur", "শরীয়তপুর"], ["Sherpur", "শেরপুর"], ["Sirajganj", "সিরাজগঞ্জ"], ["Sunamganj", "সুনামগঞ্জ"], ["Sylhet", "সিলেট"], ["Tangail", "টাঙ্গাইল"], ["Thakurgaon", "ঠাকুরগাঁও"]];
+var DISTEN=[''].concat(DIST.map(function(x){return x[0]}));
+var UPA={"Bagerhat":[["Bagerhat Sadar","বাগেরহাট সদর"],["Chitalmari","চিতলমারী"],["Fakirhat","ফকিরহাট"],["Kachua","কচুয়া"],["Mollahat","মোল্লাহাট"],["Mongla","মোংলা"],["Morrelganj","মোড়েলগঞ্জ"],["Rampal","রামপাল"],["Sarankhola","শরণখোলা"]],"Bandarban":[["Bandarban Sadar","বান্দরবান সদর"],["Alikadam","আলীকদম"],["Lama","লামা"],["Naikhongchhari","নাইক্ষ্যংছড়ি"],["Rowangchhari","রোয়াংছড়ি"],["Ruma","রুমা"],["Thanchi","থানচি"]],"Barguna":[["Barguna Sadar","বরগুনা সদর"],["Amtali","আমতলী"],["Bamna","বামনা"],["Betagi","বেতাগী"],["Patharghata","পাথরঘাটা"],["Taltali","তালতলী"]],"Barishal":[["Barishal Sadar","বরিশাল সদর"],["Agailjhara","আগৈলঝাড়া"],["Babuganj","বাবুগঞ্জ"],["Bakerganj","বাকেরগঞ্জ"],["Banaripara","বানারীপাড়া"],["Gaurnadi","গৌরনদী"],["Hizla","হিজলা"],["Mehendiganj","মেহেন্দিগঞ্জ"],["Muladi","মুলাদী"],["Wazirpur","উজিরপুর"]],"Bhola":[["Bhola Sadar","ভোলা সদর"],["Burhanuddin","বুরহানউদ্দিন"],["Char Fasson","চরফ্যাশন"],["Daulatkhan","দৌলতখান"],["Lalmohan","লালমোহন"],["Manpura","মনপুরা"],["Tazumuddin","তজুমদ্দিন"]],"Bogura":[["Bogura Sadar","বগুড়া সদর"],["Adamdighi","আদমদিঘী"],["Dhunat","ধুনট"],["Dhupchanchia","দুপচাঁচিয়া"],["Gabtali","গাবতলী"],["Kahaloo","কাহালু"],["Nandigram","নন্দীগ্রাম"],["Sariakandi","সারিয়াকান্দি"],["Shajahanpur","শাজাহানপুর"],["Sherpur","শেরপুর"],["Shibganj","শিবগঞ্জ"],["Sonatola","সোনাতলা"]],"Brahmanbaria":[["Brahmanbaria Sadar","ব্রাহ্মণবাড়িয়া সদর"],["Akhaura","আখাউড়া"],["Ashuganj","আশুগঞ্জ"],["Bancharampur","বাঞ্ছারামপুর"],["Bijoynagar","বিজয়নগর"],["Kasba","কসবা"],["Nabinagar","নবীনগর"],["Nasirnagar","নাসিরনগর"],["Sarail","সরাইল"]],"Chandpur":[["Chandpur Sadar","চাঁদপুর সদর"],["Faridganj","ফরিদগঞ্জ"],["Haimchar","হাইমচর"],["Haziganj","হাজীগঞ্জ"],["Kachua","কচুয়া"],["Matlab Dakshin","মতলব দক্ষিণ"],["Matlab Uttar","মতলব উত্তর"],["Shahrasti","শাহরাস্তি"]],"Chapainawabganj":[["Chapainawabganj Sadar","চাঁপাইনবাবগঞ্জ সদর"],["Bholahat","ভোলাহাট"],["Gomastapur","গোমস্তাপুর"],["Nachole","নাচোল"],["Shibganj","শিবগঞ্জ"]],"Chattogram":[["Anwara","আনোয়ারা"],["Banshkhali","বাঁশখালী"],["Boalkhali","বোয়ালখালী"],["Chandanaish","চন্দনাইশ"],["Fatikchhari","ফটিকছড়ি"],["Hathazari","হাটহাজারী"],["Lohagara","লোহাগাড়া"],["Mirsharai","মীরসরাই"],["Patiya","পটিয়া"],["Rangunia","রাঙ্গুনিয়া"],["Raozan","রাউজান"],["Sandwip","সন্দ্বীপ"],["Satkania","সাতকানিয়া"],["Sitakunda","সীতাকুণ্ড"]],"Chuadanga":[["Chuadanga Sadar","চুয়াডাঙ্গা সদর"],["Alamdanga","আলমডাঙ্গা"],["Damurhuda","দামুড়হুদা"],["Jibannagar","জীবননগর"]],"Cumilla":[["Adarsha Sadar","আদর্শ সদর"],["Barura","বড়ুরা"],["Brahmanpara","ব্রাহ্মণপাড়া"],["Burichang","বুড়িচং"],["Chandina","চান্দিনা"],["Chauddagram","চৌদ্দগ্রাম"],["Daudkandi","দাউদকান্দি"],["Debidwar","দেবিদ্বার"],["Homna","হোমনা"],["Laksam","লাকসাম"],["Lalmai","লালমাই"],["Meghna","মেঘনা"],["Monohorgonj","মনোহরগঞ্জ"],["Muradnagar","মুরাদনগর"],["Nangalkot","নাঙ্গলকোট"],["Cumilla Sadar Dakshin","কুমিল্লা সদর দক্ষিণ"],["Titas","তিতাস"]],"Cox's Bazar":[["Cox's Bazar Sadar","কক্সবাজার সদর"],["Chakaria","চকরিয়া"],["Kutubdia","কুতুবদিয়া"],["Maheshkhali","মহেশখালী"],["Pekua","পেকুয়া"],["Ramu","রামু"],["Teknaf","টেকনাফ"],["Ukhia","উখিয়া"]],"Dhaka":[["Dhamrai","ধামরাই"],["Dohar","দোহার"],["Keraniganj","কেরানীগঞ্জ"],["Nawabganj","নবাবগঞ্জ"],["Savar","সাভার"],["Mirpur","মিরপুর"],["Gulshan","গুলশান"],["Dhanmondi","ধানমন্ডি"],["Uttara","উত্তরা"],["Mohammadpur","মোহাম্মদপুর"],["Motijheel","মতিঝিল"],["Tejgaon","তেজগাঁও"],["Badda","বাড্ডা"],["Khilgaon","খিলগাঁও"],["Demra","ডেমরা"],["Jatrabari","যাত্রাবাড়ী"],["Kotwali","কোতোয়ালী"],["Lalbagh","লালবাগ"],["Ramna","রমনা"],["Sutrapur","সূত্রাপুর"],["Pallabi","পল্লবী"],["Kafrul","কাফরুল"],["Banani","বনানী"],["Shahbag","শাহবাগ"],["Hazaribagh","হাজারীবাগ"],["Khilkhet","খিলক্ষেত"]],"Dinajpur":[["Dinajpur Sadar","দিনাজপুর সদর"],["Birampur","বিরামপুর"],["Birganj","বীরগঞ্জ"],["Biral","বিরল"],["Bochaganj","বোচাগঞ্জ"],["Chirirbandar","চিরিরবন্দর"],["Fulbari","ফুলবাড়ী"],["Ghoraghat","ঘোড়াঘাট"],["Hakimpur","হাকিমপুর"],["Kaharole","কাহারোল"],["Khansama","খানসামা"],["Nawabganj","নবাবগঞ্জ"],["Parbatipur","পার্বতীপুর"]],"Faridpur":[["Faridpur Sadar","ফরিদপুর সদর"],["Alfadanga","আলফাডাঙ্গা"],["Bhanga","ভাঙ্গা"],["Boalmari","বোয়ালমারী"],["Charbhadrasan","চরভদ্রাসন"],["Madhukhali","মধুখালী"],["Nagarkanda","নগরকান্দা"],["Sadarpur","সদরপুর"],["Saltha","সালথা"]],"Feni":[["Feni Sadar","ফেনী সদর"],["Chhagalnaiya","ছাগলনাইয়া"],["Daganbhuiyan","দাগনভূঞা"],["Fulgazi","ফুলগাজী"],["Parshuram","পরশুরাম"],["Sonagazi","সোনাগাজী"]],"Gaibandha":[["Gaibandha Sadar","গাইবান্ধা সদর"],["Fulchhari","ফুলছড়ি"],["Gobindaganj","গোবিন্দগঞ্জ"],["Palashbari","পলাশবাড়ী"],["Sadullapur","সাদুল্লাপুর"],["Saghata","সাঘাটা"],["Sundarganj","সুন্দরগঞ্জ"]],"Gazipur":[["Gazipur Sadar","গাজীপুর সদর"],["Kaliakair","কালিয়াকৈর"],["Kaliganj","কালীগঞ্জ"],["Kapasia","কাপাসিয়া"],["Sreepur","শ্রীপুর"],["Tongi","টঙ্গী"]],"Gopalganj":[["Gopalganj Sadar","গোপালগঞ্জ সদর"],["Kashiani","কাশিয়ানী"],["Kotalipara","কোটালীপাড়া"],["Muksudpur","মুকসুদপুর"],["Tungipara","টুঙ্গিপাড়া"]],"Habiganj":[["Habiganj Sadar","হবিগঞ্জ সদর"],["Ajmiriganj","আজমিরীগঞ্জ"],["Bahubal","বাহুবল"],["Baniachong","বানিয়াচং"],["Chunarughat","চুনারুঘাট"],["Lakhai","লাখাই"],["Madhabpur","মাধবপুর"],["Nabiganj","নবীগঞ্জ"],["Shayestaganj","শায়েস্তাগঞ্জ"]],"Jamalpur":[["Jamalpur Sadar","জামালপুর সদর"],["Baksiganj","বকশীগঞ্জ"],["Dewanganj","দেওয়ানগঞ্জ"],["Islampur","ইসলামপুর"],["Madarganj","মাদারগঞ্জ"],["Melandaha","মেলান্দহ"],["Sarishabari","সরিষাবাড়ী"]],"Jashore":[["Jashore Sadar","যশোর সদর"],["Abhaynagar","অভয়নগর"],["Bagherpara","বাঘারপাড়া"],["Chaugachha","চৌগাছা"],["Jhikargachha","ঝিকরগাছা"],["Keshabpur","কেশবপুর"],["Manirampur","মণিরামপুর"],["Sharsha","শার্শা"]],"Jhalokathi":[["Jhalokathi Sadar","ঝালকাঠি সদর"],["Kathalia","কাঁঠালিয়া"],["Nalchity","নলছিটি"],["Rajapur","রাজাপুর"]],"Jhenaidah":[["Jhenaidah Sadar","ঝিনাইদহ সদর"],["Harinakunda","হরিণাকুণ্ডু"],["Kaliganj","কালীগঞ্জ"],["Kotchandpur","কোটচাঁদপুর"],["Maheshpur","মহেশপুর"],["Shailkupa","শৈলকুপা"]],"Joypurhat":[["Joypurhat Sadar","জয়পুরহাট সদর"],["Akkelpur","আক্কেলপুর"],["Kalai","কালাই"],["Khetlal","ক্ষেতলাল"],["Panchbibi","পাঁচবিবি"]],"Khagrachhari":[["Khagrachhari Sadar","খাগড়াছড়ি সদর"],["Dighinala","দীঘিনালা"],["Guimara","গুইমারা"],["Lakshmichhari","লক্ষ্মীছড়ি"],["Mahalchhari","মহালছড়ি"],["Manikchhari","মানিকছড়ি"],["Matiranga","মাটিরাঙ্গা"],["Panchhari","পানছড়ি"],["Ramgarh","রামগড়"]],"Khulna":[["Batiaghata","বটিয়াঘাটা"],["Dacope","দাকোপ"],["Dighalia","দিঘলিয়া"],["Dumuria","ডুমুরিয়া"],["Koyra","কয়রা"],["Paikgachha","পাইকগাছা"],["Phultala","ফুলতলা"],["Rupsha","রূপসা"],["Terokhada","তেরখাদা"]],"Kishoreganj":[["Kishoreganj Sadar","কিশোরগঞ্জ সদর"],["Austagram","অষ্টগ্রাম"],["Bajitpur","বাজিতপুর"],["Bhairab","ভৈরব"],["Hossainpur","হোসেনপুর"],["Itna","ইটনা"],["Karimganj","করিমগঞ্জ"],["Katiadi","কটিয়াদী"],["Kuliarchar","কুলিয়ারচর"],["Mithamain","মিঠামইন"],["Nikli","নিকলী"],["Pakundia","পাকুন্দিয়া"],["Tarail","তাড়াইল"]],"Kurigram":[["Kurigram Sadar","কুড়িগ্রাম সদর"],["Bhurungamari","ভূরুঙ্গামারী"],["Char Rajibpur","চর রাজিবপুর"],["Chilmari","চিলমারী"],["Phulbari","ফুলবাড়ী"],["Nageshwari","নাগেশ্বরী"],["Rajarhat","রাজারহাট"],["Raumari","রৌমারী"],["Ulipur","উলিপুর"]],"Kushtia":[["Kushtia Sadar","কুষ্টিয়া সদর"],["Bheramara","ভেড়ামারা"],["Daulatpur","দৌলতপুর"],["Khoksa","খোকসা"],["Kumarkhali","কুমারখালী"],["Mirpur","মিরপুর"]],"Lakshmipur":[["Lakshmipur Sadar","লক্ষ্মীপুর সদর"],["Kamalnagar","কমলনগর"],["Raipur","রায়পুর"],["Ramganj","রামগঞ্জ"],["Ramgati","রামগতি"]],"Lalmonirhat":[["Lalmonirhat Sadar","লালমনিরহাট সদর"],["Aditmari","আদিতমারী"],["Hatibandha","হাতীবান্ধা"],["Kaliganj","কালীগঞ্জ"],["Patgram","পাটগ্রাম"]],"Madaripur":[["Madaripur Sadar","মাদারীপুর সদর"],["Dasar","ডাসার"],["Kalkini","কালকিনি"],["Rajoir","রাজৈর"],["Shibchar","শিবচর"]],"Magura":[["Magura Sadar","মাগুরা সদর"],["Mohammadpur","মোহাম্মদপুর"],["Shalikha","শালিখা"],["Sreepur","শ্রীপুর"]],"Manikganj":[["Manikganj Sadar","মানিকগঞ্জ সদর"],["Daulatpur","দৌলতপুর"],["Ghior","ঘিওর"],["Harirampur","হরিরামপুর"],["Saturia","সাটুরিয়া"],["Shivalaya","শিবালয়"],["Singair","সিঙ্গাইর"]],"Meherpur":[["Meherpur Sadar","মেহেরপুর সদর"],["Gangni","গাংনী"],["Mujibnagar","মুজিবনগর"]],"Moulvibazar":[["Moulvibazar Sadar","মৌলভীবাজার সদর"],["Barlekha","বড়লেখা"],["Juri","জুড়ী"],["Kamalganj","কমলগঞ্জ"],["Kulaura","কুলাউড়া"],["Rajnagar","রাজনগর"],["Sreemangal","শ্রীমঙ্গল"]],"Munshiganj":[["Munshiganj Sadar","মুন্সীগঞ্জ সদর"],["Gazaria","গজারিয়া"],["Lohajang","লৌহজং"],["Sirajdikhan","সিরাজদিখান"],["Sreenagar","শ্রীনগর"],["Tongibari","টংগীবাড়ী"]],"Mymensingh":[["Mymensingh Sadar","ময়মনসিংহ সদর"],["Bhaluka","ভালুকা"],["Dhobaura","ধোবাউড়া"],["Fulbaria","ফুলবাড়িয়া"],["Gaffargaon","গফরগাঁও"],["Gauripur","গৌরীপুর"],["Haluaghat","হালুয়াঘাট"],["Ishwarganj","ঈশ্বরগঞ্জ"],["Muktagachha","মুক্তাগাছা"],["Nandail","নান্দাইল"],["Phulpur","ফুলপুর"],["Tarakanda","তারাকান্দা"],["Trishal","ত্রিশাল"]],"Naogaon":[["Naogaon Sadar","নওগাঁ সদর"],["Atrai","আত্রাই"],["Badalgachhi","বদলগাছী"],["Dhamoirhat","ধামইরহাট"],["Manda","মান্দা"],["Mahadebpur","মহাদেবপুর"],["Niamatpur","নিয়ামতপুর"],["Patnitala","পত্নীতলা"],["Porsha","পোরশা"],["Raninagar","রাণীনগর"],["Sapahar","সাপাহার"]],"Narail":[["Narail Sadar","নড়াইল সদর"],["Kalia","কালিয়া"],["Lohagara","লোহাগড়া"],["Naragati","নড়াগাতী"]],"Narayanganj":[["Narayanganj Sadar","নারায়ণগঞ্জ সদর"],["Araihazar","আড়াইহাজার"],["Bandar","বন্দর"],["Rupganj","রূপগঞ্জ"],["Sonargaon","সোনারগাঁও"],["Siddhirganj","সিদ্ধিরগঞ্জ"]],"Narsingdi":[["Narsingdi Sadar","নরসিংদী সদর"],["Belabo","বেলাব"],["Monohardi","মনোহরদী"],["Palash","পলাশ"],["Raipura","রায়পুরা"],["Shibpur","শিবপুর"]],"Natore":[["Natore Sadar","নাটোর সদর"],["Bagatipara","বাগাতিপাড়া"],["Baraigram","বড়াইগ্রাম"],["Gurudaspur","গুরুদাসপুর"],["Lalpur","লালপুর"],["Singra","সিংড়া"],["Naldanga","নলডাঙ্গা"]],"Netrokona":[["Netrokona Sadar","নেত্রকোনা সদর"],["Atpara","আটপাড়া"],["Barhatta","বারহাট্টা"],["Durgapur","দুর্গাপুর"],["Kalmakanda","কলমাকান্দা"],["Kendua","কেন্দুয়া"],["Khaliajuri","খালিয়াজুরী"],["Madan","মদন"],["Mohanganj","মোহনগঞ্জ"],["Purbadhala","পূর্বধলা"]],"Nilphamari":[["Nilphamari Sadar","নীলফামারী সদর"],["Dimla","ডিমলা"],["Domar","ডোমার"],["Jaldhaka","জলঢাকা"],["Kishoreganj","কিশোরগঞ্জ"],["Saidpur","সৈয়দপুর"]],"Noakhali":[["Noakhali Sadar","নোয়াখালী সদর"],["Begumganj","বেগমগঞ্জ"],["Chatkhil","চাটখিল"],["Companiganj","কোম্পানীগঞ্জ"],["Hatiya","হাতিয়া"],["Kabirhat","কবিরহাট"],["Senbagh","সেনবাগ"],["Sonaimuri","সোনাইমুড়ী"],["Subarnachar","সুবর্ণচর"]],"Pabna":[["Pabna Sadar","পাবনা সদর"],["Atgharia","আটঘরিয়া"],["Bera","বেড়া"],["Bhangura","ভাঙ্গুড়া"],["Chatmohar","চাটমোহর"],["Faridpur","ফরিদপুর"],["Ishwardi","ঈশ্বরদী"],["Santhia","সাঁথিয়া"],["Sujanagar","সুজানগর"]],"Panchagarh":[["Panchagarh Sadar","পঞ্চগড় সদর"],["Atwari","আটোয়ারী"],["Boda","বোদা"],["Debiganj","দেবীগঞ্জ"],["Tetulia","তেতুলিয়া"]],"Patuakhali":[["Patuakhali Sadar","পটুয়াখালী সদর"],["Bauphal","বাউফল"],["Dashmina","দশমিনা"],["Dumki","দুমকি"],["Galachipa","গলাচিপা"],["Kalapara","কলাপাড়া"],["Mirzaganj","মির্জাগঞ্জ"],["Rangabali","রাঙ্গাবালী"]],"Pirojpur":[["Pirojpur Sadar","পিরোজপুর সদর"],["Bhandaria","ভান্ডারিয়া"],["Kawkhali","কাউখালী"],["Mathbaria","মঠবাড়িয়া"],["Nazirpur","নাজিরপুর"],["Nesarabad","নেছারাবাদ"],["Zianagar","জিয়ানগর"]],"Rajbari":[["Rajbari Sadar","রাজবাড়ী সদর"],["Baliakandi","বালিয়াকান্দি"],["Goalanda","গোয়ালন্দ"],["Kalukhali","কালুখালী"],["Pangsha","পাংশা"]],"Rajshahi":[["Bagha","বাঘা"],["Bagmara","বাগমারা"],["Charghat","চারঘাট"],["Durgapur","দুর্গাপুর"],["Godagari","গোদাগাড়ী"],["Mohanpur","মোহনপুর"],["Paba","পবা"],["Puthia","পুঠিয়া"],["Tanore","তানোর"]],"Rangamati":[["Rangamati Sadar","রাঙ্গামাটি সদর"],["Baghaichhari","বাঘাইছড়ি"],["Barkal","বরকল"],["Belaichhari","বিলাইছড়ি"],["Juraichhari","জুরাছড়ি"],["Kaptai","কাপ্তাই"],["Kawkhali","কাউখালী"],["Langadu","লংগদু"],["Naniarchar","নানিয়ারচর"],["Rajasthali","রাজস্থলী"]],"Rangpur":[["Rangpur Sadar","রংপুর সদর"],["Badarganj","বদরগঞ্জ"],["Gangachara","গংগাচড়া"],["Kaunia","কাউনিয়া"],["Mithapukur","মিঠাপুকুর"],["Pirgachha","পীরগাছা"],["Pirganj","পীরগঞ্জ"],["Taraganj","তারাগঞ্জ"]],"Satkhira":[["Satkhira Sadar","সাতক্ষীরা সদর"],["Assasuni","আশাশুনি"],["Debhata","দেবহাটা"],["Kalaroa","কলারোয়া"],["Kaliganj","কালিগঞ্জ"],["Shyamnagar","শ্যামনগর"],["Tala","তালা"]],"Shariatpur":[["Shariatpur Sadar","শরীয়তপুর সদর"],["Bhedarganj","ভেদরগঞ্জ"],["Damudya","ডামুড্যা"],["Gosairhat","গোসাইরহাট"],["Naria","নড়িয়া"],["Zanjira","জাজিরা"]],"Sherpur":[["Sherpur Sadar","শেরপুর সদর"],["Jhenaigati","ঝিনাইগাতী"],["Nakla","নকলা"],["Nalitabari","নালিতাবাড়ী"],["Sreebardi","শ্রীবরদী"]],"Sirajganj":[["Sirajganj Sadar","সিরাজগঞ্জ সদর"],["Belkuchi","বেলকুচি"],["Chauhali","চৌহালী"],["Kamarkhanda","কামারখন্দ"],["Kazipur","কাজীপুর"],["Raiganj","রায়গঞ্জ"],["Shahjadpur","শাহজাদপুর"],["Tarash","তাড়াশ"],["Ullahpara","উল্লাপাড়া"]],"Sunamganj":[["Sunamganj Sadar","সুনামগঞ্জ সদর"],["Bishwamvarpur","বিশ্বম্ভরপুর"],["Chhatak","ছাতক"],["Dakshin Sunamganj","দক্ষিণ সুনামগঞ্জ"],["Derai","দিরাই"],["Dharamapasha","ধর্মপাশা"],["Dowarabazar","দোয়ারাবাজার"],["Jagannathpur","জগন্নাথপুর"],["Jamalganj","জামালগঞ্জ"],["Sullah","শাল্লা"],["Tahirpur","তাহিরপুর"]],"Sylhet":[["Sylhet Sadar","সিলেট সদর"],["Balaganj","বালাগঞ্জ"],["Beanibazar","বিয়ানীবাজার"],["Bishwanath","বিশ্বনাথ"],["Companiganj","কোম্পানীগঞ্জ"],["Dakshin Surma","দক্ষিণ সুরমা"],["Fenchuganj","ফেঞ্চুগঞ্জ"],["Golapganj","গোলাপগঞ্জ"],["Gowainghat","গোয়াইনঘাট"],["Jaintiapur","জৈন্তাপুর"],["Kanaighat","কানাইঘাট"],["Osmani Nagar","ওসমানীনগর"],["Zakiganj","জকিগঞ্জ"]],"Tangail":[["Tangail Sadar","টাঙ্গাইল সদর"],["Basail","বাসাইল"],["Bhuapur","ভূঞাপুর"],["Delduar","দেলদুয়ার"],["Dhanbari","ধনবাড়ী"],["Ghatail","ঘাটাইল"],["Gopalpur","গোপালপুর"],["Kalihati","কালিহাতী"],["Madhupur","মধুপুর"],["Mirzapur","মির্জাপুর"],["Nagarpur","নাগরপুর"],["Sakhipur","সখিপুর"]],"Thakurgaon":[["Thakurgaon Sadar","ঠাকুরগাঁও সদর"],["Baliadangi","বালিয়াডাঙ্গী"],["Haripur","হরিপুর"],["Pirganj","পীরগঞ্জ"],["Ranisankail","রাণীশংকৈল"]]};
+var DISTBN=[''].concat(DIST.map(function(x){return x[1]}));
+var UPAALL=null;
+function allUpa(){if(!UPAALL){UPAALL=[];Object.keys(UPA).forEach(function(k){UPA[k].forEach(function(x){UPAALL.push(x)})})}return UPAALL}
 var FORMS={
  cheque:{title:'Cheque Book Request',desc:'Customer request form through agent outlet — letter of requisition for an agent banking cheque book.',
   fields:[
@@ -3970,9 +4008,123 @@ var FORMS={
     '</table>'+
     '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 16px;background:#eef2f8;font-size:11.5px;font-weight:700;color:#0b2a6b;border-top:1px solid #d5dbe6;'+PC+'"><span>Help Line : +8801710460845</span><span><span style="color:#00a651">E-mail</span> : dbblabsirajgonjb@gmail.com</span></div>'+
     tri+'</div>';
+  }},
+ kyc:{nohl:1,sections:[
+   {st:1,t:'Account details',items:[['date','Date'],['acc','Account No'],['uid','Unique ID',1]]},
+   {st:1,t:'Account title',items:[['titleEn','Account title (block letter)',1]]},
+   {st:1,t:'Beneficial Owner',items:[['boEn',"Beneficial Owner's name (block letter)",1],['dob','Date of birth'],['nat','Nationality'],['father',"Father's name",1],['mother',"Mother's name",1],['spouse',"Spouse's name",1],['gender','Gender'],['income','Monthly income'],['prof','Profession (detail)',1],['fund','Source of fund (detail)',1],['tin','Tax ID No — TIN (if any)',1]]},
+   {st:1,t:'Present address',items:[['pre_p','Quick address (optional)',1],['pvE','Road / Village'],['ppoE','PO'],['pdE','District'],['ptE','PS'],['pphone','Phone / Mobile'],['pemail','e-mail']]},
+   {st:1,t:'Permanent address',items:[['same','Same as present address',1],['pre_a','Quick address (optional)',1],['avE','Road / Village'],['apoE','PO'],['adE','District'],['atE','PS'],['aphone','Phone / Mobile'],['aemail','e-mail']]},
+   {st:1,t:'Identification document',items:[['nid','NID No',1],['other','Passport / Birth Registration / Others — number',1]]},
+   {st:2,t:'হিসাবের শিরোনাম (Account title)',items:[['titleBn','হিসাবের শিরোনাম (বাংলায়)',1]]},
+   {st:2,t:'প্রকৃত সুবিধাভোগী (Beneficial Owner)',items:[['boBn','প্রকৃত সুবিধাভোগীর নাম (বাংলায়)',1]]},
+   {st:2,t:'বর্তমান ঠিকানা (Present address)',items:[['pvB','রোড/গ্রাম'],['ppoB','পো'],['pdB','জেলা'],['ptB','থানা']]},
+   {st:2,t:'স্থায়ী ঠিকানা (Permanent address)',items:[['same_b','বর্তমান ঠিকানার মতোই (Same as present address)',1],['avB','রোড/গ্রাম'],['apoB','পো'],['adB','জেলা'],['atB','থানা']]}
+  ],
+  title:'Beneficial Owner (BO) KYC Form',desc:'Beneficial Owner (BO) KYC form — type the details, preview and print on A4. The BO photo is pasted by hand on the printed copy (the photo box prints empty).',
+  fields:[
+   {k:'date',l:'Date (তারিখ)',t:'date',v:todayStr},
+   {k:'acc',l:'Account No (হিসাব নম্বর)',v:''},
+   {k:'uid',l:'Unique ID (ইউনিক আইডি)',v:''},
+   {k:'titleBn',l:'1. Account title — Bangla (হিসাবের শিরোনাম)',v:'',full:1},
+   {k:'titleEn',l:'1. Account title — Block letter',v:'',full:1},
+   {k:'boBn',l:'2. Beneficial Owner name — Bangla (প্রকৃত সুবিধাভোগীর নাম)',v:'',full:1},
+   {k:'boEn',l:"2. Beneficial Owner's name — Block letter",v:'',full:1},
+   {k:'dob',l:'3. Date of birth (জন্ম তারিখ)',t:'date',v:''},
+   {k:'nat',l:'7. Nationality (জাতীয়তা)',v:'BANGLADESHI'},
+   {k:'father',l:"4. Father's name (পিতার নাম)",v:'',full:1},
+   {k:'mother',l:"5. Mother's name (মাতার নাম)",v:'',full:1},
+   {k:'spouse',l:"6. Spouse's name (স্বামী/স্ত্রীর নাম)",v:'',full:1},
+   {k:'gender',l:'8. Gender (লিঙ্গ)',t:'select',o:['','MALE','FEMALE','OTHER'],v:''},
+   {k:'income',l:'10. Monthly income (মাসিক আয়)',v:''},
+   {k:'prof',l:'9. Profession — detail (পেশা)',v:'',full:1},
+   {k:'fund',l:'11. Source of fund — detail (অর্থের উৎস)',v:'',full:1},
+   {k:'tin',l:'12. Tax ID No — TIN (if any)',v:'',full:1},
+   {k:'pvB',l:'13(K) Present — Road/Village (বাংলা)',v:''},
+   {k:'pvE',l:'13(K) Present — Road/Village (English)',v:''},
+   {k:'ppoB',l:'Present — PO (বাংলা)',v:''},
+   {k:'ppoE',l:'Present — PO (English)',v:''},
+   {k:'ptB',l:'Present — Thana (বাংলা)',t:'select',o:[''],v:''},
+   {k:'ptE',l:'Present — PS (English)',t:'select',o:[''],v:''},
+   {k:'pdB',l:'Present — District (বাংলা)',t:'select',o:DISTBN,v:''},
+   {k:'pdE',l:'Present — District (English)',t:'select',o:DISTEN,v:''},
+   {k:'pphone',l:'Present — Phone/Mobile',v:''},
+   {k:'pemail',l:'Present — e-mail',v:''},
+   {k:'same',l:'Permanent address is the same as present',t:'check',v:false},
+   {k:'avB',l:'13(L) Permanent — Road/Village (বাংলা)',v:''},
+   {k:'avE',l:'13(L) Permanent — Road/Village (English)',v:''},
+   {k:'apoB',l:'Permanent — PO (বাংলা)',v:''},
+   {k:'apoE',l:'Permanent — PO (English)',v:''},
+   {k:'atB',l:'Permanent — Thana (বাংলা)',t:'select',o:[''],v:''},
+   {k:'atE',l:'Permanent — PS (English)',t:'select',o:[''],v:''},
+   {k:'adB',l:'Permanent — District (বাংলা)',t:'select',o:DISTBN,v:''},
+   {k:'adE',l:'Permanent — District (English)',t:'select',o:DISTEN,v:''},
+   {k:'aphone',l:'Permanent — Phone/Mobile',v:''},
+   {k:'aemail',l:'Permanent — e-mail',v:''},
+   {k:'nid',l:'14(K) NID No (জাতীয় পরিচয় পত্র নম্বর)',v:'',full:1},
+   {k:'other',l:'14(L) Passport / Birth Registration / Others — number',v:'',full:1}
+  ],
+  html:function(d){
+   var TF="font-family:'Times New Roman',Times,'Liberation Serif',serif;";
+   var BJ={"ph1": "wnmv\u2021ei c\u00d6K\u2026Z", "ph2": "myweav\u2021fvMxi Qwe", "sub": "( wnmv\u2021ei c\u00d6K\u2026Z myweav\u2021fvMxi Rb\u00a8 c~iYxq| )", "date": "ZvwiL :", "date2": "ZvwiL :", "acc": "wnmve b\u00a4^i", "uid": "BDwbK AvBwW", "r1": "1| wnmv\u2021ei wk\u2021ivbvg (evsjvq) :", "r2": "2| c\u00d6K\u2026Z myweav\u2021fvMxi bvg (evsjvq) :", "r3": "3| Rb\u00a5 ZvwiL/", "r4": "4| wcZvi bvg/", "r5": "5| gvZvi bvg/", "r6": "6| \u00af^vgx/\u00af\u00cd\u00aaxi bvg/", "r7": "7| RvZxqZv/", "r8": "8| wj\u00bd/", "r9": "9| \u2021ckv (we\u00af\u00cdvwiZ)/", "r10": "10| gvwmK Avq/", "r11": "11| A\u2021_\u00a9i Drm (we\u00af\u00cdvwiZ)/", "r12a": "12| U\u00a8v\u00b7 AvBwW b\u00a4^i", "r12b": "(hw` _v\u2021K) :", "a13": "13| (K) eZ\u00a9gvb wVKvbv : ", "a13L": "(L) \u00af\u2019vqx wVKvbv : ", "road": "\u2021ivW/M\u00d6vg : ", "po": "\u2021cv : ", "thana": "_vbv : ", "dist": "\u2021Rjv : ", "phone": "\u2021dvb/\u2021gvevBj b\u00a4^i : ", "email": "B\u2021gBj : ", "r14": "14| cwiwPwZ c\u00ce/", "r14k": "(K) RvZxq cwiPq c\u00ce b\u00a4^i/", "or": "A_ev,", "r14l": "(L) cvm\u2021cvU\u00a9 b\u00a4^i/ Rb\u00a5 wbe\u00dcb b\u00a4^i/ Ab\u00a8vb\u00a8 (wbw`\u00a9\u00f3fv\u2021e D\u2021j\u00adL Ki\u2021Z n\u2021e) : ", "end": "Dc\u2021i c\u00d6`\u00cb, Avgvi wnmv\u2021ei c\u00d6K\u2026Z myweav\u2021fvMxi mKj Z_\u00a8 mwVK| \u00af^v\u00b6i : "};
+   var K=function(s,b,px){return '<span class="bnj" style="font-size:'+(px||16)+'px;line-height:1.15'+(b?';font-weight:700':'')+'">'+esc(s)+'</span>'};
+   var DOTS=new Array(220).join('.');
+   var lead='<span style="flex:1 1 0;min-width:6px;overflow:hidden;white-space:nowrap;letter-spacing:0">'+DOTS+'</span>';
+   var gv=function(k,o){o=o||{};var v=String(d[k]==null?'':d[k]).trim();if(o.up)v=v.toUpperCase();if(o.date&&v)v=dmy(v);if(o.bnd&&v)v=bn(v);return v};
+   var vs=function(k,v){return hl(d,k,'<b style="'+(/[\u0980-\u09FF]/.test(v)?'font-size:.893em':'')+'">'+esc(v)+'</b>')};
+   /* dotted fill-in line: dots, the typed value in the middle, dots */
+   var F=function(k,o){o=o||{};var v=gv(k,o),b='<span style="flex:'+(o.w||1)+' 1 0;min-width:0;display:flex;align-items:baseline">';
+     return v?b+lead+'<span style="flex:0 1 auto;max-width:100%;padding:0 3px;text-align:center">'+vs(k,v)+'</span>'+lead+'</span>':b+lead+'</span>'};
+   /* short inline value (top of the form) */
+   var I=function(k,w,o){var v=gv(k,o);return v?vs(k,v):'<span style="display:inline-block;min-width:'+w+'px;border-bottom:1.3px dotted #000">&nbsp;</span>'};
+   var Lb=function(h,wrap){return '<span style="'+(wrap?'flex:0 1 auto':'flex:none;white-space:nowrap')+'">'+h+'</span>'};
+   var R=function(items,pt,pb,ind){return '<div style="display:flex;align-items:baseline;gap:6px;padding:'+pt+'px 0 '+pb+'px '+(ind||0)+'px">'+items.join('')+'</div>'};
+   var addr=function(pre,first){
+     var P=(pre==='a'&&d.same)?'p':pre;
+     return R([Lb(first),F(P+'vB'),Lb(K(BJ.po)),F(P+'poB',{w:1.7}),Lb(K(BJ.thana)),F(P+'tB')],4,0,0)+
+      R([Lb('Present Address : Road/Village : '.replace('Present',pre==='a'?'Permanent':'Present')),F(P+'vE',{w:1.4}),Lb('PO : '),F(P+'poE',{w:1.6}),Lb('PS : '),F(P+'tE')],0,2.7,30.7)+
+      R([Lb(K(BJ.dist)),F(P+'dB'),Lb(K(BJ.phone)),F(P+'phone',{bnd:1}),Lb(K(BJ.email)),F(P+'email')],1.3,0,30.7)+
+      R([Lb('District : '),F(P+'dE'),Lb('Phone/Mobile'),F(P+'phone'),Lb('e-mail'),F(P+'email')],0,4,30.7);
+   };
+   var two=function(bnLab,enLab,kb,ke,pt,pb){return R([Lb(K(bnLab)+enLab),F(kb,ke)],pt,pb)};
+   var h='<div style="'+TF+'font-size:16px;line-height:1.32;color:#000;width:660px;margin-left:41px;box-sizing:border-box">';
+   /* title + photo box (photo is stuck on by hand) */
+   h+='<div style="position:relative;padding:18.7px 0 2.7px;text-align:center;font-size:17.33px;font-weight:700">'+
+      '<div style="position:absolute;left:555.6px;top:5px;width:100px;height:118px;box-sizing:border-box;border:1px solid #000;padding:4.8px 9.6px;text-align:center;line-height:1.32;background:#fff">'+
+       '<div style="padding:10.7px 0 2.7px">'+K(BJ.ph1,1,12.67)+'</div><div style="padding:0 0 5.3px">'+K(BJ.ph2,1,12.67)+'</div>'+
+       '<div style="padding:13.3px 0 0;font-size:11.33px;font-weight:700">(Photo of BO)</div></div>'+
+      'Beneficial Owner (BO) - KYC Form</div>';
+   h+='<div style="padding:13.3px 0 0;text-align:center">'+K(BJ.sub,1,14)+'</div>';
+   h+='<div style="height:26px"></div>';
+   h+='<div style="padding:5.3px 0 1.3px">'+K(BJ.date)+' '+I('date',110,{date:1})+'</div>';
+   h+='<div style="padding:5.3px 0 1.3px;text-align:right">'+K(BJ.acc)+'<b>/ Account No. : </b>'+I('acc',150)+'</div>';
+   h+='<div style="padding:0 0 13.3px 336px;text-indent:48px">'+K(BJ.uid)+'<b>/ Unique ID : </b>'+I('uid',110)+'</div>';
+   h+=R([Lb(K(BJ.r1)),F('titleBn')],5.3,1.3);
+   h+=R([Lb('Account Title (Block Letter) :'),F('titleEn',{up:1})],0,4,21.1);
+   h+=R([Lb(K(BJ.r2)),F('boBn')],2.7,1.3);
+   h+=R([Lb("Beneficial Owner's Name (Block Letter) :"),F('boEn',{up:1})],0,4,21.1);
+   h+=two(BJ.r3,'Date of Birth :','dob',{date:1},4,4);
+   h+=two(BJ.r4,"Father's Name :",'father',{},4,4);
+   h+=two(BJ.r5,"Mother's Name :",'mother',{},4,4);
+   h+=two(BJ.r6,"Spouse's Name :",'spouse',{},4,4);
+   h+=R([Lb(K(BJ.r7)+'Nationality :'),F('nat',{up:1}),Lb(K(BJ.r8)+'Gender :'),F('gender')],4,4);
+   h+=two(BJ.r9,'Profession (Detail) :','prof',{},4,4);
+   h+=two(BJ.r10,'Monthly Income :','income',{},4,4);
+   h+=two(BJ.r11,'Source of Fund (Detail) :','fund',{},4,4);
+   h+=R([Lb(K(BJ.r12a)+'(TIN)'+K(BJ.r12b)),F('tin')],4,5.3);
+   h+=addr('p',K(BJ.a13)+K(BJ.road));
+   h+=addr('a',K(BJ.a13L)+K(BJ.road));
+   h+=R([Lb('<b>'+K(BJ.r14,1)+'Identification Document:</b>')],4,0);
+   h+=R([Lb(K(BJ.r14k)+'NID No. :'),F('nid')],1.3,1.3,21.1);
+   h+=R([Lb(K(BJ.or))],0,1.3,21.1);
+   h+=R([Lb(K(BJ.r14l),1),F('other')],0,0,21.1);
+   h+=R([Lb('Number of Passport/Birth Registration/Others (Specifically)')],0,10.7,43.2);
+   h+=R([Lb(K(BJ.end)),'<span style="flex:1 1 0;min-width:0;display:flex;align-items:baseline">'+lead+'</span>',Lb(K(BJ.date2)),'<span style="flex:0.8 1 0;min-width:0;display:flex;align-items:baseline">'+lead+'</span>'],13.3,0);
+   return h+'</div>';
   }}
+
 };
-var ORDER=['cheque','atm','nodebit','receipt'];
+var ORDER=['cheque','atm','nodebit','receipt','kyc'];
 var E={key:null,data:{}};
 
 function ensureView(){
@@ -3988,8 +4140,34 @@ function fieldHtml(f){
   else if(t==='date')inner='<input id="'+id+'" type="date">';
   else inner='<input id="'+id+'" type="text" autocomplete="off">';
   tick='<label class="fe-hl" title="Highlight this text in yellow when printed"><input type="checkbox" id="hl_'+f.k+'" aria-label="Highlight '+esc(f.l)+' in yellow"></label>';
+  if(FORMS[E.key]&&FORMS[E.key].nohl)tick='';
   return '<div class="'+cls+'"><label for="'+id+'">'+esc(f.l)+'</label><div class="fe-row">'+inner+tick+'</div></div>';
 }
+function sectionsHtml(F){
+  var m={};F.fields.forEach(function(f){m[f.k]=f});
+  var card=function(sc){
+    var h='<div style="border:1px solid #dbe3ee;border-radius:12px;padding:12px 14px;margin-bottom:12px;background:#fff"><div style="font-weight:700;font-size:13.5px;color:var(--bk-navy,#0a2f6b);margin-bottom:10px">'+esc(sc.t)+'</div><div class="rm-grid">';
+    sc.items.forEach(function(it){
+      if(it[0]==='same_b'){h+='<div class="rm-f full"><label style="display:flex;align-items:center;gap:9px;margin:0;font-size:13.5px;cursor:pointer"><input id="fe_same_b" type="checkbox" style="width:18px;height:18px;flex:none"> '+esc(it[1])+'</label></div>';return}
+      if(it[0].indexOf('pre_')===0){h+='<div class="rm-f full"><label for="fe_'+it[0]+'">'+esc(it[1])+'</label><select id="fe_'+it[0]+'"><option value="">— type manually —</option><option value="sing">Singchapair, Sirajgonj Bazar, Chhatak, Sunamganj</option></select></div>';return}
+      var f=m[it[0]];if(!f)return;var c={};for(var x in f)c[x]=f[x];c.l=it[1];c.full=it[2]?1:0;h+=fieldHtml(c)});
+    return h+'</div></div>';
+  };
+  var tb='display:flex;gap:8px;margin-bottom:12px';
+  var tab=function(n,txt,on){return '<button type="button" id="feTab'+n+'" onclick="bankFormStep('+n+')" style="flex:1;height:40px;border-radius:10px;border:1px solid '+(on?'var(--bk-navy,#0a2f6b)':'#cbd5e1')+';background:'+(on?'var(--bk-navy,#0a2f6b)':'#fff')+';color:'+(on?'#fff':'#0f172a')+';font-weight:700;font-size:13.5px;cursor:pointer">'+txt+'</button>'};
+  var nav=function(n){return '<div style="display:flex;gap:8px;justify-content:space-between;margin-bottom:6px">'+(n===1?'<span></span><button type="button" class="bk-btn pri" onclick="bankFormStep(2)">Next: বাংলা info →</button>':'<button type="button" class="bk-btn" onclick="bankFormStep(1)">← Back: English info</button><span></span>')+'</div>'};
+  return '<div style="'+tb+'">'+tab(1,'Step 1 · English info',true)+tab(2,'Step 2 · বাংলা info',false)+'</div>'+
+    '<div id="feStep1">'+F.sections.filter(function(x){return x.st===1}).map(card).join('')+nav(1)+'</div>'+
+    '<div id="feStep2" style="display:none">'+F.sections.filter(function(x){return x.st===2}).map(card).join('')+nav(2)+'</div>';
+}
+window.bankFormStep=function(n){
+  var sa0=g('fe_same'),sb0=g('fe_same_b');if(sa0&&sb0)sb0.checked=sa0.checked;
+  [1,2].forEach(function(i){
+    var p=g('feStep'+i),t=g('feTab'+i);if(!p||!t)return;var on=i===n;
+    p.style.display=on?'':'none';
+    t.style.background=on?'var(--bk-navy,#0a2f6b)':'#fff';t.style.color=on?'#fff':'#0f172a';t.style.borderColor=on?'var(--bk-navy,#0a2f6b)':'#cbd5e1';
+  });
+};
 function gather(){
   var d={};FORMS[E.key].fields.forEach(function(f){var e=g('fe_'+f.k);d[f.k]=!e?'':(f.t==='check'?e.checked:String(e.value).trim())});
   d._hl={};FORMS[E.key].fields.forEach(function(f){var h=g('hl_'+f.k);if(h&&h.checked)d._hl[f.k]=1});return d;
@@ -4016,16 +4194,62 @@ function initValues(){
 window.bankFormOpen=function(key){
   if(!FORMS[key])return;
   E.key=key;var F=FORMS[key],v=ensureView();
-  v.innerHTML='<div class="rm-wrap" style="grid-template-columns:minmax(280px,390px) minmax(0,1fr)">'+
+  v.innerHTML='<div class="rm-wrap" style="grid-template-columns:'+(F.sections?'minmax(400px,560px)':'minmax(280px,390px)')+' minmax(0,1fr)">'+
    '<div class="rm-card"><div class="rm-head"><h3>'+esc(F.title)+'</h3></div><div class="rm-body">'+
     '<p style="margin:0 0 14px;color:var(--bk-muted);font-size:12.5px;line-height:1.5">'+esc(F.desc)+'</p>'+
-    '<div class="rm-grid">'+F.fields.map(fieldHtml).join('')+'</div>'+
+    (F.sections?sectionsHtml(F):'<div class="rm-grid">'+F.fields.map(fieldHtml).join('')+'</div>')+
     '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px"><button type="button" class="bk-btn pri" onclick="bankFormPrint()">Print (A4)</button><button type="button" class="bk-btn" onclick="bankFormReset()">Clear</button></div>'+
    '</div></div>'+
    '<div class="rm-card"><div class="rm-head"><h3>Print preview</h3><span class="rm-status">Updates as you type · A4</span></div>'+
     '<div class="rm-body" style="background:#e6ebf2;border-radius:0 0 12px 12px"><div id="feFit" style="position:relative;width:100%"><div id="fePaper" style="width:794px;min-height:1123px;box-sizing:border-box;padding:45px;background:#fff;box-shadow:0 2px 14px rgba(15,23,42,.18);transform-origin:top left"><div id="feInner" style="width:703px"></div></div></div></div></div>'+
   '</div>';
   initValues();
+  if(F.sections)['p','a'].forEach(function(pre){
+    var set=function(k,val){var e=g('fe_'+k);if(e)e.value=val};
+    var de=g('fe_'+pre+'dE'),db=g('fe_'+pre+'dB'),pe=g('fe_'+pre+'tE'),pb=g('fe_'+pre+'tB');
+    var setOpt=function(el,val){
+      if(!el)return;
+      if(val&&![].some.call(el.options,function(o){return o.value===val})){var o=document.createElement('option');o.value=val;o.textContent=val;el.appendChild(o)}
+      el.value=val;
+    };
+    /* PS / Thana dropdowns (same style as District): list follows the chosen district */
+    var fillPS=function(reset){
+      var has0=!!(de&&UPA[de.value]),list=has0?UPA[de.value]:[];
+      [[pe,0],[pb,1]].forEach(function(c){
+        var el=c[0],i=c[1];if(!el)return;
+        var keep=el.value,has=false,h='<option value="">'+(has0?(i?'— থানা বাছুন —':'— select PS —'):(i?'— আগে জেলা বাছুন —':'— select district first —'))+'</option>';
+        list.forEach(function(x){h+='<option value="'+esc(x[i])+'">'+esc(x[i])+'</option>';if(x[i]===keep)has=true});
+        if(keep&&!has&&!reset)h+='<option value="'+esc(keep)+'">'+esc(keep)+'</option>';
+        el.innerHTML=h;el.value=(has||!reset)?keep:'';
+        el.disabled=!has0&&!el.value;
+      });
+    };
+    fillPS(false);
+    if(de)de.addEventListener('change',function(){
+      var x=DIST.filter(function(y){return y[0]===de.value})[0];
+      set(pre+'dB',x?x[1]:'');fillPS(true);
+    });
+    if(db&&de)db.addEventListener('change',function(){
+      var x=DIST.filter(function(y){return y[1]===db.value})[0];
+      de.value=x?x[0]:'';de.dispatchEvent(new Event('change'));
+    });
+    if(pe)pe.addEventListener('change',function(){var hit=allUpa().filter(function(x){return x[0]===pe.value})[0];setOpt(pb,hit?hit[1]:'')});
+    if(pb)pb.addEventListener('change',function(){var hit=allUpa().filter(function(x){return x[1]===pb.value})[0];setOpt(pe,hit?hit[0]:'')});
+    var ps=g('fe_pre_'+pre);
+    if(ps)ps.addEventListener('change',function(){
+      if(ps.value!=='sing')return;
+      set(pre+'vE','Singchapair');set(pre+'poE','Sirajgonj bazar');set(pre+'dE','Sunamganj');
+      set(pre+'vB','সিংচাপইড়');set(pre+'poB','সিরাজগঞ্জ বাজার');set(pre+'dB','সুনামগঞ্জ');
+      fillPS(true);setOpt(pe,'Chhatak');setOpt(pb,'ছাতক');paint();
+    });
+  });
+  if(F.sections){
+    var sa=g('fe_same'),sb=g('fe_same_b');
+    if(sa&&sb){
+      sa.addEventListener('change',function(){sb.checked=sa.checked});
+      sb.addEventListener('change',function(){sa.checked=sb.checked;sa.dispatchEvent(new Event('change'))});
+    }
+  }
   v.querySelectorAll('input,select').forEach(function(e){e.addEventListener('input',paint);e.addEventListener('change',paint)});
   g('bkViewForms').style.display='none';v.style.display='';
   paint();v.scrollTop=0;
@@ -4036,7 +4260,7 @@ window.bankFormClose=function(){
 };
 window.bankFormReset=function(){
   FORMS[E.key].fields.forEach(function(f){var e=g('fe_'+f.k);if(!e)return;
-    var keep=(f.k==='outlet'||f.k==='off'||f.k==='desg'||f.k==='cell'||f.k==='branch'||f.k==='routing'||f.k==='leaves'||f.k==='status'||f.k==='date');
+    var keep=(f.k==='outlet'||f.k==='off'||f.k==='desg'||f.k==='cell'||f.k==='branch'||f.k==='routing'||f.k==='leaves'||f.k==='status'||f.k==='nat'||f.k==='date');
     var v=typeof f.v==='function'?f.v():f.v;
     if(f.t==='check')e.checked=false;else if(keep)e.value=v==null?'':v;else e.value='';
     var h=g('hl_'+f.k);if(h)h.checked=!!f.hl;
@@ -5307,6 +5531,7 @@ function enterApp(){
     mainApp.classList.add('show');
   },320);
   seed();render();startCloudSync();
+  if(window.billDangerStart)billDangerStart();
 }
 
 function doLogout(){
@@ -9835,6 +10060,7 @@ window.addEventListener('resize',()=>{if(window.innerWidth>960)closeSidebar()});
     db.stock=computeDisplayStock(lastServerStock);
     render();
     startCloudSync();
+    if(window.billDangerStart)billDangerStart();
     startSessionWatch(user);
     if(opQueue.length)kickQueue();
     if(typeof dueOps!=='undefined'&&dueOps.length)kickDueOps();
@@ -11373,4 +11599,121 @@ function scHOpen(k,col,i){
   },true);
 })();
 </script>
+<script id="bankThemeJs">
+(function(){
+  var KEY='mh_bank_theme',T=['ocean','emerald','purple','crimson','sunset','midnight'];
+  function apply(t){
+    var a=document.getElementById('bankApp');if(!a)return;
+    if(T.indexOf(t)<0)t='ocean';
+    a.setAttribute('data-theme',t);
+    [].forEach.call(document.querySelectorAll('#bkThemeMenu button'),function(b){b.classList.toggle('on',b.getAttribute('data-t')===t)});
+  }
+  window.bankThemeMenu=function(f){var m=document.getElementById('bkThemeMenu');if(m)m.hidden=(f===false)?true:!m.hidden};
+  window.bankSetTheme=function(t){try{localStorage.setItem(KEY,t)}catch(e){}apply(t);window.bankThemeMenu(false)};
+  document.addEventListener('click',function(e){var w=document.getElementById('bkTheme');if(w&&!w.contains(e.target))window.bankThemeMenu(false)});
+  var t='ocean';try{t=localStorage.getItem(KEY)||'ocean'}catch(e){}
+  apply(t);
+})();
+</script>
+<style id="billDangerCss">
+#billNotice{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(15,23,42,.58);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);animation:bnFade .2s ease-out;font-family:'Inter',Arial,Helvetica,sans-serif}
+@keyframes bnFade{from{opacity:0}to{opacity:1}}
+#billNotice .bn-box{position:relative;width:80vw;max-width:1000px;max-height:80vh;display:flex;flex-direction:column;background:#fff;color:#0f172a;border-radius:14px;overflow:hidden;box-shadow:0 24px 70px rgba(15,23,42,.38);animation:bnUp .25s ease-out}
+@keyframes bnUp{from{transform:translateY(14px);opacity:.4}to{transform:none;opacity:1}}
+#billNotice .bn-head{flex:none;padding:20px 68px 16px 26px;border-top:5px solid #b91c1c;border-bottom:1px solid #e5e9f0;background:#fbfcfe}
+#billNotice .bn-title{margin:0;font-size:21px;font-weight:700;letter-spacing:-.2px;color:#0f172a}
+#billNotice .bn-sub{margin-top:4px;font-size:13px;color:#64748b}
+#billNotice .bn-x{position:absolute;top:14px;right:14px;width:40px;height:40px;padding:0;border:1px solid #e2e8f0;border-radius:50%;background:#fff;color:#475569;font-size:24px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:none}
+#billNotice .bn-x:hover{background:#fee2e2;border-color:#fecaca;color:#b91c1c}
+#billNotice .bn-body{flex:1;min-height:0;overflow:auto;padding:4px 26px 22px}
+#billNotice table{width:100%;border-collapse:collapse;font-size:14.5px}
+#billNotice th{position:sticky;top:0;background:#fff;text-align:left;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b;padding:14px 10px 10px;border-bottom:2px solid #e5e9f0;white-space:nowrap}
+#billNotice td{padding:13px 10px;border-bottom:1px solid #eef1f6;vertical-align:middle}
+#billNotice tr:last-child td{border-bottom:0}
+#billNotice .n{font-weight:600}
+#billNotice .r{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+#billNotice .dt{white-space:nowrap}
+#billNotice .dt small{display:block;margin-top:2px;font-size:11.5px;color:#94a3b8}
+#billNotice .chip{display:inline-block;padding:5px 12px;border-radius:999px;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;background:#e0ecff;color:#1e40af}
+#billNotice .chip.soon{background:#fef3c7;color:#92400e}
+#billNotice .chip.over{background:#fee2e2;color:#b91c1c}
+@media(max-width:700px){#billNotice .bn-box{width:94vw;max-height:86vh}#billNotice .bn-head{padding:16px 60px 12px 18px}#billNotice .bn-body{padding:2px 12px 16px}#billNotice table{font-size:13.5px}}
+</style>
+<script id="billDangerJs">
+(function(){
+  var HOUR=3600000,started=false,lastShown=0,box=null;
+  function h(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function fd(k){var p=String(k||'').split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:h(k)}
+  function money(n){try{return '৳'+Math.round(+n||0).toLocaleString('en-US')}catch(e){return '৳'+(+n||0)}}
+  function entries(){try{return typeof billAlertEntries==='function'?billAlertEntries():[]}catch(e){return[]}}
+  function isShop(){
+    try{
+      if(typeof currentRole==='undefined'||currentRole!=='admin')return false;
+      var m=document.getElementById('mainApp');return !!(m&&m.style.display!=='none');
+    }catch(e){return false}
+  }
+  function close(){if(box){box.remove();box=null;document.removeEventListener('keydown',onKey,true)}}
+  function onKey(e){if(box&&e.key==='Escape'){e.preventDefault();close()}}
+  function deadline(x){
+    var k=x.dueDate;
+    try{if(typeof computeBillAlert==='function')k=computeBillAlert(x.dateKey,x.dueDate).alertDate||k}catch(e){}
+    var p=String(k).split('-');
+    return new Date(+p[0],(+p[1])-1,+p[2],22,0,0).getTime();     // Last Date, 10:00 PM
+  }
+  function two(n){return n<10?'0'+n:''+n}
+  function rem(ms){
+    var over=ms<0,t=Math.floor(Math.abs(ms)/1000),d=Math.floor(t/86400),hh=Math.floor(t%86400/3600),m=Math.floor(t%3600/60),s=t%60;
+    return {over:over,txt:(d?d+'d ':'')+two(hh)+'h '+two(m)+'m '+two(s)+'s'};
+  }
+  function show(){
+    if(box)return;
+    lastShown=Date.now();            // counts as "checked" even when nothing is pending
+    if(!isShop())return;
+    var list=entries().map(function(x){x._dl=deadline(x);return x});
+    if(!list.length)return;
+    list.sort(function(a,b){return a._dl-b._dl});
+    var rows=list.map(function(x,i){
+      return '<tr data-i="'+i+'"><td class="n">'+h(x.note||'(no name)')+'</td><td class="r">'+money(x.amount)+'</td><td class="dt">'+fd(x.dueDate)+'<small>until 10:00 PM</small></td><td><span class="chip">…</span></td></tr>';
+    }).join('');
+    box=document.createElement('div');box.id='billNotice';box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-label','Bill last date notice');
+    box.innerHTML=
+      '<div class="bn-box">'+
+        '<button type="button" class="bn-x" aria-label="Close notice" title="Close">&times;</button>'+
+        '<div class="bn-head"><h2 class="bn-title">Bill Notice</h2><div class="bn-sub">Last date reminder — '+list.length+' bill'+(list.length===1?'':'s')+' pending</div></div>'+
+        '<div class="bn-body"><table><thead><tr><th>Customer / Details</th><th class="r">Amount</th><th>Last Date</th><th>Time Remaining</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+      '</div>';
+    document.body.appendChild(box);
+    document.addEventListener('keydown',onKey,true);
+    box.querySelector('.bn-x').addEventListener('click',close);
+    function tickRem(){
+      if(!box)return false;
+      var now=Date.now();
+      box.querySelectorAll('tbody tr').forEach(function(r){
+        var x=list[+r.getAttribute('data-i')],left=x._dl-now,q=rem(left),c=r.querySelector('.chip');
+        c.className='chip'+(q.over?' over':(left<86400000?' soon':''));
+        c.textContent=q.over?('Overdue '+q.txt):(q.txt+' left');
+      });
+      return true;
+    }
+    tickRem();
+    var rt=setInterval(function(){if(!tickRem())clearInterval(rt)},1000);
+  }
+  function whenReady(cb){
+    var tries=0,iv=setInterval(function(){
+      tries++;
+      var ready=false;try{ready=typeof cloudReady!=='undefined'&&cloudReady}catch(e){}
+      if(ready||tries>100){clearInterval(iv);setTimeout(cb,900)}   // wait for the cloud data (max ~60 s)
+    },600);
+  }
+  function check(){if(!box&&lastShown&&Date.now()-lastShown>=HOUR)show()}
+  window.billDangerStart=function(){
+    if(started)return;started=true;
+    whenReady(show);                      // on login / every time the app is opened
+    setInterval(check,20000);             // then once every hour (also catches up after the phone slept)
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)check()});
+  };
+  window.billDangerShow=show;
+})();
+</script>
+
 </body></html>
