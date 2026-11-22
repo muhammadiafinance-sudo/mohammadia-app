@@ -5378,7 +5378,10 @@ const WARRANTY_COL = CLOUD_DOC.collection('warranty'); // one tiny doc per warra
 // own small document, kept separate from the stock/sales document above so
 // that a password change never touches (or races with) business data.
 const fbAuth = firebase.auth();                     // Firebase Authentication (email/password)
-const SESSIONS_COL = CLOUD_DOC.collection('sessions'); // one doc per signed-in device
+const SESSIONS_COL = CLOUD_DOC.collection('sessions');
+// `_u` = server time a sale doc last changed. Lets each device download only the
+// invoices that changed since its last sync instead of the whole history.
+function stampSale(o){return {...o,_u:firebase.firestore.FieldValue.serverTimestamp()}} // one doc per signed-in device
 // Which Firebase account is which role. Must match firestore.rules.
 const ROLE_EMAILS = {'muhammadiafinance+admin@gmail.com':'admin','muhammadiafinance+employee@gmail.com':'employee'};
 </script>
@@ -5466,10 +5469,9 @@ function startSessionWatch(user){
       forceLogout('This device was removed by an admin. Please log in again.');
     }
   },err=>console.error('Session watch error:',err));
-  sessBeat=setInterval(sessionBeat,60000);
+  sessBeat=setInterval(sessionBeat,5*60000);
   sessionBeat();
   if(!sessVisHooked){sessVisHooked=true;document.addEventListener('visibilitychange',()=>{if(!document.hidden)sessionBeat()})}
-  if(roleOfUser(user)==='admin')startAdminSessionsListener();
 }
 function stopSessionWatch(){
   try{if(sessUnsub)sessUnsub()}catch(e){}
@@ -5512,7 +5514,7 @@ function renderSessions(){
   const now=Date.now();
   const rows=sessionsCache.slice().sort((a,b)=>tsMs(b.lastActive)-tsMs(a.lastActive));
   tb.innerHTML=rows.length?rows.map(s=>{
-    const mine=s.id===mySid,last=tsMs(s.lastActive),online=!s.revoked&&(now-last)<150000;
+    const mine=s.id===mySid,last=tsMs(s.lastActive),online=!s.revoked&&(now-last)<6*60000;
     const roleTxt=s.role==='admin'?'🏪 Shop':'🏦 Bank';
     let status;
     if(s.revoked)status='<span class="badge-returned" style="background:#fff4d6;color:#8a5a00">Logging out…</span>';
@@ -5525,7 +5527,7 @@ function renderSessions(){
     return `<tr><td><b>${esc(s.device||'Unknown device')}</b>${mine?' <span class="barcode-tag">(you)</span>':''}</td><td>${roleTxt}<div class="barcode-tag">${esc(s.email||'')}</div></td><td>${esc(tsMs(s.loginAt)?new Date(tsMs(s.loginAt)).toLocaleString():'—')}</td><td>${esc(timeAgo(last))}</td><td>${status}</td><td>${action}</td></tr>`;
   }).join(''):'<tr><td colspan="6" class="empty">No sessions yet.</td></tr>';
 }
-setInterval(()=>{const m=document.getElementById('sessionsModal');if(m&&m.classList.contains('show'))renderSessions()},30000);
+setInterval(()=>{const m=document.getElementById('sessionsModal');if(m&&m.classList.contains('show'))renderSessions();else if(adminSessUnsub){try{adminSessUnsub()}catch(e){}adminSessUnsub=null}},30000);
 function openSessions(){
   if(!requireAdmin('Active Sessions'))return;
   startAdminSessionsListener();
@@ -6736,13 +6738,14 @@ async function replaceSalesCollection(salesArray){
   existing.forEach(doc=>ops.push({del:doc.ref}));
   (salesArray||[]).forEach((s,i)=>{
     const id=s.invoiceNo||('imported_'+Date.now()+'_'+i);
-    ops.push({ref:SALES_COL.doc(id),data:{...s,invoiceNo:id}});
+    ops.push({ref:SALES_COL.doc(id),data:stampSale({...s,invoiceNo:id})});
   });
   for(let i=0;i<ops.length;i+=450){
     const chunk=ops.slice(i,i+450),batch=fsdb.batch();
     chunk.forEach(op=>{if(op.del)batch.delete(op.del);else batch.set(op.ref,op.data)});
     await batch.commit();
   }
+  try{await CLOUD_DOC.update({salesEpoch:Date.now()})}catch(e){console.error('Could not flag full sales re-sync',e)}
 }
 // One-time background upgrade: if this shop's data was created before sales
 // were split into their own documents, copy the old embedded array into the
@@ -6773,7 +6776,7 @@ async function migrateLegacySalesIfNeeded(){
     });
     for(let i=0;i<missing.length;i+=450){
       const chunk=missing.slice(i,i+450),batch=fsdb.batch();
-      chunk.forEach(m=>batch.set(SALES_COL.doc(m.id),m.data));
+      chunk.forEach(m=>batch.set(SALES_COL.doc(m.id),stampSale(m.data)));
       await batch.commit();
     }
     await CLOUD_DOC.update({sales:firebase.firestore.FieldValue.delete()});
@@ -6859,7 +6862,7 @@ function persistQueue(){localStorage.setItem(QUEUE_KEY,JSON.stringify(opQueue))}
 let persistDbTimer=null;
 function schedulePersistDb(){
   clearTimeout(persistDbTimer);
-  persistDbTimer=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){console.error('Local save failed:',e)}},0);
+  persistDbTimer=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(db));if(typeof saveSalesMark==='function')saveSalesMark()}catch(e){console.error('Local save failed:',e)}},0);
 }
 function genOpId(){return 'op'+Date.now()+Math.random().toString(16).slice(2,8)}
 // ids of queued ops the SERVER says it has already applied (state doc `appliedOps`).
@@ -7020,7 +7023,7 @@ async function runSaleOp(op){
       data.appliedOps=trimApplied(applied);
       const saved={...sale,invoiceNo,opId};delete saved.pending;
       tx.set(CLOUD_DOC,data);
-      tx.set(SALES_COL.doc(invoiceNo),saved);
+      tx.set(SALES_COL.doc(invoiceNo),stampSale(saved));
       finalStock=data.stock;finalSeq=n;
     });
   }catch(err){console.error('Sale sync failed, will retry:',err);return {ok:false}}
@@ -7081,6 +7084,7 @@ function startCloudSync(){
       if(Array.isArray(incoming.sales)&&incoming.sales.length&&legacyEmbeddedSales===null){
         legacyEmbeddedSales=incoming.sales;
       }
+      checkSalesEpoch(incoming.salesEpoch);
       const mySales=db.sales;
       lastServerStock=incoming.stock||[];
       lastServerApplied=incoming.appliedOps||{};
@@ -7110,38 +7114,7 @@ function startCloudSync(){
     }
   }, err=>{settled=true;clearTimeout(watchdog);console.error('Firebase sync error:',err);hideBootOverlay();setSyncPill('⚠️ Sync error — check Firebase config/rules',true)});
 
-  // Sales mirror: each sale is its own tiny document, kept in db.sales as a
-  // plain in-memory array so every existing report/render function keeps
-  // working unchanged. Only the very first snapshot transfers the full
-  // history (once per session) — every sale/return/due-payment afterwards
-  // is a tiny single-document write, not a full-history rewrite.
-  let salesFirstSnapshot=true;
-  SALES_COL.onSnapshot(snap=>{
-    const withKey=d=>{const x=d.data();if(!x.invoiceNo)x.invoiceNo=d.id;return x};
-    if(salesFirstSnapshot){
-      // First snapshot = the COMPLETE list of sales in the cloud. Rebuild from it so
-      // stale/ghost invoices cached on this device (e.g. ones another device
-      // overwrote) can never linger and make two screens disagree. Sales still
-      // waiting in the upload queue are kept.
-      salesFirstSnapshot=false;
-      const pending=(db.sales||[]).filter(x=>x&&x.pending&&opQueue.some(o=>o.id===x.opId));
-      db.sales=snap.docs.map(withKey);
-      pending.forEach(x=>{if(!db.sales.some(y=>y.opId===x.opId||y.invoiceNo===x.invoiceNo))db.sales.push(x)});
-    }else{
-      snap.docChanges().forEach(change=>{
-        const x=withKey(change.doc);
-        if(change.type==='removed'){
-          const idx=db.sales.findIndex(y=>y.invoiceNo===x.invoiceNo);
-          if(idx>=0)db.sales.splice(idx,1);
-        }else upsertSale(x);
-      });
-    }
-    sortSalesByDate();
-    if(typeof reapplyDueOps==='function')reapplyDueOps();
-    salesReady=true;updateCloudReady();
-    schedulePersistDb(); // never let a full-quota localStorage error stop the screen from updating
-    render();
-  }, err=>{console.error('Sales sync error:',err);setSyncPill('⚠️ Sales sync error — check Firebase rules/connection',true)});
+  startSalesListener();
 
   // Mobile Warranty: live list shared by every device.
   // Re-subscribes by itself if the connection drops (a failed Firestore listener never restarts on its own).
@@ -7164,6 +7137,77 @@ function startCloudSync(){
     warListen();
     window.addEventListener('online',()=>{if(!window._warUnsub)warListen()});
   }
+}
+/* ---- Sales mirror (read-saving delta sync) ----
+   db.sales is kept in localStorage. The first time a device syncs (and once a
+   week, or after a full restore) it downloads the whole sales history; every
+   other app open only downloads invoices whose `_u` changed since the last
+   sync. Before this, EVERY open re-read every invoice (1 read each), which is
+   what used up the daily Firestore read quota. */
+const SALES_MARK_KEY='mohammadia_sales_sync_v1';
+const SALES_FULL_EVERY=7*24*60*60*1000, SALES_MARGIN=5*60*1000;
+let salesUnsub=null,salesMark=null,salesEpochSeen=null,salesDelta=false;
+function loadSalesMark(){try{return JSON.parse(localStorage.getItem(SALES_MARK_KEY)||'null')}catch(e){return null}}
+function saveSalesMark(){
+  if(!salesMark||!salesMark.ready)return;
+  try{localStorage.setItem(SALES_MARK_KEY,JSON.stringify({at:salesMark.at,full:salesMark.full,epoch:salesMark.epoch,count:(db.sales||[]).length}))}catch(e){}
+}
+function startSalesListener(forceFull){
+  try{if(salesUnsub)salesUnsub()}catch(e){}
+  salesUnsub=null;
+  const m=forceFull?null:loadSalesMark(),now=Date.now();
+  const delta=!!(m&&m.at&&m.full&&now-m.full<SALES_FULL_EVERY&&Array.isArray(db.sales)&&db.sales.length>=(m.count||0)
+    &&(salesEpochSeen==null||salesEpochSeen===(m.epoch||0)));
+  salesDelta=delta;
+  salesMark=delta?{at:m.at,full:m.full,epoch:m.epoch||0,ready:false}:{at:0,full:now,epoch:salesEpochSeen||0,ready:false};
+  const q=delta?SALES_COL.where('_u','>',firebase.firestore.Timestamp.fromMillis(m.at-SALES_MARGIN)):SALES_COL;
+  let first=true;
+  const withKey=d=>{const x=d.data();if(!x.invoiceNo)x.invoiceNo=d.id;delete x._u;return x};
+  salesUnsub=q.onSnapshot(snap=>{
+    if(first&&!delta){
+      // Full download = the COMPLETE list of sales in the cloud. Rebuild from it so
+      // stale/ghost invoices cached on this device can never linger. Sales still
+      // waiting in the upload queue are kept.
+      const pending=(db.sales||[]).filter(x=>x&&x.pending&&opQueue.some(o=>o.id===x.opId));
+      db.sales=snap.docs.map(withKey);
+      pending.forEach(x=>{if(!db.sales.some(y=>y.opId===x.opId||y.invoiceNo===x.invoiceNo))db.sales.push(x)});
+    }else{
+      snap.docChanges().forEach(change=>{
+        const x=withKey(change.doc);
+        if(change.type==='removed'){
+          if(delta)return; // in delta mode a doc can only leave the result by being deleted, which only a full restore does (that triggers a full re-sync)
+          const idx=db.sales.findIndex(y=>y.invoiceNo===x.invoiceNo);
+          if(idx>=0)db.sales.splice(idx,1);
+        }else upsertSale(x);
+      });
+    }
+    // advance the sync mark only from server-confirmed timestamps
+    if(!snap.metadata.fromCache){
+      snap.docs.forEach(d=>{if(d.metadata.hasPendingWrites)return;const u=d.get('_u');if(u&&u.toMillis)salesMark.at=Math.max(salesMark.at,u.toMillis())});
+      if(!salesMark.at)salesMark.at=Date.now()-24*60*60*1000; // no stamped invoices yet: be generous about clock differences
+      salesMark.ready=true;
+    }
+    first=false;
+    sortSalesByDate();
+    if(typeof reapplyDueOps==='function')reapplyDueOps();
+    salesReady=true;updateCloudReady();
+    schedulePersistDb(); // never let a full-quota localStorage error stop the screen from updating
+    render();
+  }, err=>{
+    console.error('Sales sync error:',err);
+    setSyncPill('⚠️ Sales sync error — check Firebase rules/connection',true);
+    if(delta){try{localStorage.removeItem(SALES_MARK_KEY)}catch(e){}setTimeout(()=>startSalesListener(true),15000)}
+  });
+}
+// A full restore elsewhere bumps `salesEpoch` on the state doc → re-download everything once.
+function checkSalesEpoch(ep){
+  ep=ep||0;
+  if(salesEpochSeen===ep)return;
+  const prev=salesEpochSeen;salesEpochSeen=ep;
+  const m=loadSalesMark();
+  if(salesMark)salesMark.epoch=ep;
+  if(prev===null&&(!salesDelta||(m&&(m.epoch||0)===ep)))return; // already doing a full download, or the mark is current
+  if(salesUnsub)startSalesListener(true);
 }
 function seed(){/* no demo data — new shops start with an empty stock list */}
 function isToday(s){let d=new Date(s),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate()}
@@ -7376,7 +7420,7 @@ async function returnSale(no){
       // Only the stock state doc and this one sale document are read/written —
       // the rest of the sales history is never touched.
       tx.set(CLOUD_DOC,data);
-      tx.set(saleRef,s);
+      tx.set(saleRef,stampSale(s));
       finalStock=data.stock;finalSale=s;
     });
   }catch(err){
@@ -8368,7 +8412,7 @@ async function payInvoiceCore(invoice,amount,X){
       q.paid=(q.paid||0)+amount;q.due=Math.max(0,q.total-q.paid);q.paymentStatus=q.due?'partial':'paid';q.lastPaymentAt=new Date().toISOString();
       q.payLog=Array.isArray(q.payLog)?q.payLog:[];q.payLog.push({amount:amount,ext:!!X.ext,note:X.note||'',at:Date.now(),by:currentRole||''});
       if(X.ext)q.extPaid=(+q.extPaid||0)+amount;
-      tx.set(saleRef,q);finalSale=q;
+      tx.set(saleRef,stampSale(q));finalSale=q;
     });
   }catch(err){console.error('Invoice payment failed:',err);return false}
   const i=db.sales.findIndex(x=>x.invoiceNo===invoice);if(i>=0)db.sales[i]=finalSale;
@@ -8662,7 +8706,7 @@ async function runDueOp(op){
         await fsdb.runTransaction(async(tx)=>{
           const snap=await tx.get(saleRef);if(!snap.exists)return;
           const q=snap.data();q.payLog=Array.isArray(q.payLog)?q.payLog:[];
-          if(editApplyInv(q,pt,p)){tx.set(saleRef,q);finalSale=q}
+          if(editApplyInv(q,pt,p)){tx.set(saleRef,stampSale(q));finalSale=q}
         });
       }catch(err){console.error('Invoice payment edit failed:',err);return{ok:false}}
       if(finalSale){const i=db.sales.findIndex(x=>x.invoiceNo===pt.ref);if(i>=0)db.sales[i]=finalSale;schedulePersistDb()}
@@ -8747,7 +8791,7 @@ async function runDueOp(op){
           q.paid=(q.paid||0)+amt;q.due=Math.max(0,q.total-q.paid);q.paymentStatus=q.due?'partial':'paid';q.lastPaymentAt=new Date().toISOString();
           q.payLog.push({pid:a.pid,amount:amt,ext:!!p.ext,note:p.note,method:p.method||'',at:p.at,by:p.by});
           if(p.ext)q.extPaid=(+q.extPaid||0)+amt;
-          tx.set(saleRef,q);finalSale=q;
+          tx.set(saleRef,stampSale(q));finalSale=q;
         });
       }catch(err){console.error('Invoice payment sync failed:',err);return{ok:false}}
       if(finalSale){const i=db.sales.findIndex(x=>x.invoiceNo===a.ref);if(i>=0)db.sales[i]=finalSale;schedulePersistDb()}
@@ -9774,7 +9818,7 @@ async function mergeSalesFromCsv(imported){
       await fsdb.runTransaction(async(tx)=>{
         const snaps=await Promise.all(chunk.map(c=>tx.get(SALES_COL.doc(c.id))));
         let a=0,r=0;
-        chunk.forEach((c,k)=>{if(snaps[k].exists){r++}else{tx.set(SALES_COL.doc(c.id),c.data);a++}});
+        chunk.forEach((c,k)=>{if(snaps[k].exists){r++}else{tx.set(SALES_COL.doc(c.id),stampSale(c.data));a++}});
         chunk._a=a;chunk._r=r;
       });
       added+=chunk._a;raced+=chunk._r;
@@ -11314,7 +11358,7 @@ function makeStore(id){
     });
     try{await Promise.all(jobs);localStorage.setItem(flag,'1')}catch(e){console.error('Hisab local→cloud copy failed',e);migrated=false}
   }
-  var timer=null,unsub=null;
+  var timer=null,unsub=null,retries=0;
   function listen(){
     if(unsub){try{unsub()}catch(e){}unsub=null}
     unsub=col.onSnapshot({includeMetadataChanges:true},function(snap){
@@ -11327,11 +11371,11 @@ function makeStore(id){
       });
       var was=trusted;
       if(!trusted&&(!snap.metadata.fromCache||cache.size>0))trusted=true;
-      failed=null;
+      failed=null;retries=0;
       state=snap.metadata.hasPendingWrites?'saving':(snap.metadata.fromCache?(navigator.onLine===false?'offline':'syncing'):'synced');
       if(trusted){clearTimeout(timer);resolveReady();if(!was){if(timedOut)refreshDay();migrateLocal()}}
       paint();
-    },function(err){failed=err;console.error('Hisab sync error ('+cfg.col+')',err);clearTimeout(timer);resolveReady();paint();setTimeout(listen,8000)});
+    },function(err){failed=err;console.error('Hisab sync error ('+cfg.col+')',err);clearTimeout(timer);resolveReady();paint();setTimeout(listen,Math.min(300000,8000*Math.pow(2,retries++)))});
   }
   function start(){
     timer=setTimeout(function(){if(!trusted){timedOut=true;paint();resolveReady()}},12000);
