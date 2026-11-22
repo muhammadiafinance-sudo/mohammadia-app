@@ -7,7 +7,7 @@ A separate app with two logins, using its **own Firebase project**, so it has it
 | **Bank** | The full Bank portal: dashboard, DBBL Daily Hisab, remittance and bank forms. It's the same as in the shop app. |
 | **Shop** | Only the shop **Daily Hisab** sheet |
 
-The shop app (`../index.html`) is not changed by this app. This app starts with empty data, because it uses a different project.
+The shop app (repo `mohammadia-app`) is not changed by this app. This app starts with empty data, because it uses a different project.
 
 ## 1. Create the Firebase project (one time)
 
@@ -24,21 +24,21 @@ The shop app (`../index.html`) is not changed by this app. This app starts with 
 
 ## 2. Put it online at its OWN address
 
-Don't open it at `muhammadiafinance-sudo.github.io/...`. That's the shop app's address, and the two apps would mix data saved on each device. The app refuses to start there.
+Don't use GitHub Pages for this repo: every repo of this GitHub account shares `muhammadiafinance-sudo.github.io`, the shop app's address, and the two apps would mix data saved on each device. The app refuses to start there.
 
-The easiest free option is **Netlify**, connected to this GitHub repo:
+The easiest free option is **Netlify**, connected to this app's GitHub repo:
 
-1. Go to https://app.netlify.com, choose **Add new site → Import an existing project → GitHub**, and pick `mohammadia-app`.
-2. Leave **Base directory** and **Build command** empty, and set **Publish directory** to `hisab-app`.
+1. Go to https://app.netlify.com, choose **Add new site → Import an existing project → GitHub**, and pick this app's repo.
+2. Leave **Base directory** and **Build command** empty, and leave **Publish directory** empty too (the app is at the repo root).
 3. Deploy. You get an address like `https://mohammadia-hisab.netlify.app`, and every change pushed to the repo updates it automatically.
 4. In Firebase → **Authentication → Settings → Authorized domains**, add that Netlify address.
 
 ## 3. Updating from the shop app
 
-The bank portal and the hisab sheets are copied from `../index.html`. After the shop app's bank portal or hisab changes, run:
+The bank portal and the hisab sheets are copied from the shop app's `index.html` (repo `mohammadia-app`). After the shop app's bank portal or hisab changes, get its `index.html` and run:
 
 ```
-python3 hisab-app/build.py
+python3 build.py path/to/mohammadia-app/index.html
 ```
 
-This regenerates `hisab-app/index.html`, and `../index.html` is only read. To change this app's own parts, edit `src/app.js`, `src/app.css`, `src/shop.html` or `config.js`, never the generated `index.html`.
+This regenerates `index.html` here; the shop app's file is only read. To change this app's own parts, edit `src/app.js`, `src/app.css`, `src/shop.html` or `config.js`, never the generated `index.html` by hand.

@@ -8,15 +8,17 @@ The new app has two logins and its OWN Firebase project:
 The bank portal and the hisab sheets are copied unchanged out of ../index.html,
 so improvements made there can be brought over by running this script again:
 
-    python3 hisab-app/build.py
+    python3 build.py path/to/shop-app/index.html
 
-../index.html is only READ, never changed. Edit the Firebase config in
+(default source: ../index.html). The shop app's file is only READ, never changed. Edit the Firebase config in
 hisab-app/config.js (not in the generated index.html).
 """
 import os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(HERE, '..', 'index.html')
+SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '..', 'index.html')
+if not os.path.exists(SRC):
+    sys.exit('build: shop app index.html not found: ' + SRC + '\nusage: python3 build.py path/to/shop-app/index.html')
 OUT = os.path.join(HERE, 'index.html')
 
 src = open(SRC, encoding='utf-8').read()
