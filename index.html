@@ -2931,7 +2931,7 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
           <button type="button" class="role-btn active" id="roleBtnAdmin" role="tab" aria-selected="true" onclick="selectLoginRole('admin')">
             <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9v11h16V9"/><path d="M4 9a3 3 0 006 0 3 3 0 006 0 3 3 0 004 0"/><path d="M10 20v-5h4v5"/></svg>Shop</button>
           <button type="button" class="role-btn" id="roleBtnEmployee" role="tab" aria-selected="false" onclick="selectLoginRole('employee')">
-            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 21h18"/></svg>Employee</button>
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>Employee</button>
         </div>
       </div>
 
@@ -3574,6 +3574,7 @@ function authErrorText(e){
   if(c==='auth/network-request-failed')return 'No internet connection. Please check your network and try again.';
   if(c==='auth/user-disabled')return 'This account has been disabled in Firebase.';
   if(c==='auth/operation-not-allowed')return 'Email/Password sign-in is not enabled in Firebase Authentication.';
+  if(c==='app/full')return 'Device limit exceeded.';
   if(c==='app/no-role')return 'This account is not allowed to use this app.';
   return 'Login failed'+(c?' ('+c+')':'')+'. Please try again.';
 }
@@ -3591,15 +3592,45 @@ function deviceInfo(){
   return{os,browser:br,model,label:(model?model+' · ':'')+os+' · '+br};
 }
 
-/* ---- session document for THIS device ---- */
-let mySid=null,sessUnsub=null,sessBeat=null,adminSessUnsub=null,sessSeenConfirmed=false,sessionsCache=[],loggingOut=false,sessVisHooked=false;
-function createSessionDoc(user){
-  const sid=user.uid+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-  localStorage.setItem(SID_KEY,sid);localStorage.removeItem(SID_CONF_KEY);
-  mySid=sid;
+/* ---- 2-device limit: every signed-in device holds one of TWO slots ----
+   sessions/slot1 and sessions/slot2 are the only session records the Firestore
+   rules allow, so at most 2 devices (Shop + Employee together) can be signed in.
+   Each device keeps a random token; if another device takes over its slot the
+   token changes and this device signs itself out. */
+const SLOTS=['slot1','slot2'], TOKEN_KEY='mohammadia_tok_v1';
+let mySid=null,myToken=null,sessUnsub=null,sessBeat=null,adminSessUnsub=null,sessSeenConfirmed=false,sessionsCache=[],loggingOut=false,sessVisHooked=false;
+// A device that signed in before the password was last changed no longer counts:
+// resetting the password (Forgot password?) signs out every device.
+function slotFree(d,pwAt){
+  if(!d||d.revoked)return true;
+  const t=d.loginAt&&d.loginAt.toMillis?d.loginAt.toMillis():0;
+  return !!(pwAt&&t&&t<pwAt);
+}
+// When this account's password was last changed (ms), from Firebase Auth.
+async function passwordChangedAt(user){
+  try{
+    const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+encodeURIComponent(firebaseConfig.apiKey),
+      {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idToken:await user.getIdToken()})});
+    const j=await r.json();return +(j&&j.users&&j.users[0]&&j.users[0].passwordUpdatedAt)||0;
+  }catch(e){return 0}
+}
+// Claims a free slot for this device. Throws {code:'app/full'} when both are in use.
+async function claimSlot(user){
+  const pwAt=await passwordChangedAt(user);
+  const token=Math.random().toString(36).slice(2)+Date.now().toString(36);
   const d=deviceInfo(),ts=firebase.firestore.FieldValue.serverTimestamp();
-  SESSIONS_COL.doc(sid).set({uid:user.uid,email:user.email,role:roleOfUser(user),device:d.label,os:d.os,browser:d.browser,model:d.model,loginAt:ts,lastActive:ts,revoked:false})
-    .catch(e=>console.error('Could not create session record (check Firestore rules):',e));
+  let sid=null;
+  await fsdb.runTransaction(async tx=>{
+    sid=null;
+    const snaps=await Promise.all(SLOTS.map(id=>tx.get(SESSIONS_COL.doc(id))));
+    {const i=snaps.findIndex(x=>slotFree(x.exists?x.data():null,pwAt));if(i>=0)sid=SLOTS[i]}
+    if(!sid)throw {code:'app/full'};
+    // after a password reset: every other device that signed in before it is logged out now
+    snaps.forEach((x,i)=>{if(SLOTS[i]!==sid&&x.exists&&!x.data().revoked&&slotFree(x.data(),pwAt))tx.update(x.ref,{revoked:true,revokedAt:ts,revokedBy:'password reset'})});
+    tx.set(SESSIONS_COL.doc(sid),{uid:user.uid,email:user.email,role:roleOfUser(user),token,device:d.label,os:d.os,browser:d.browser,model:d.model,loginAt:ts,lastActive:ts,revoked:false});
+  });
+  localStorage.setItem(SID_KEY,sid);localStorage.setItem(TOKEN_KEY,token);localStorage.removeItem(SID_CONF_KEY);
+  mySid=sid;myToken=token;
   return sid;
 }
 function sessionBeat(){
@@ -3608,16 +3639,18 @@ function sessionBeat(){
 }
 function startSessionWatch(user){
   stopSessionWatch();
-  mySid=localStorage.getItem(SID_KEY);
-  if(!mySid||mySid.indexOf(user.uid+'_')!==0)createSessionDoc(user);
+  mySid=localStorage.getItem(SID_KEY);myToken=localStorage.getItem(TOKEN_KEY);
+  if(SLOTS.indexOf(mySid)<0||!myToken){forceLogout('Please log in again.');return}
   sessSeenConfirmed=localStorage.getItem(SID_CONF_KEY)===mySid;
   const ref=SESSIONS_COL.doc(mySid);
   sessUnsub=ref.onSnapshot(snap=>{
     if(snap.exists){
+      const x=snap.data();
+      if(x.token&&x.token!==myToken){hardSignOut('This device was logged out.',false);return}
       if(!snap.metadata.hasPendingWrites){sessSeenConfirmed=true;try{localStorage.setItem(SID_CONF_KEY,mySid)}catch(e){}}
-      if(snap.data().revoked)forceLogout('An admin logged this device out. Please log in again.');
+      if(x.revoked)forceLogout('This device was logged out. Please log in again.');
     }else if(sessSeenConfirmed&&!snap.metadata.fromCache){
-      forceLogout('This device was removed by an admin. Please log in again.');
+      hardSignOut('This device was removed. Please log in again.',false);
     }
   },err=>console.error('Session watch error:',err));
   sessBeat=setInterval(sessionBeat,5*60000);
@@ -3629,15 +3662,20 @@ function stopSessionWatch(){
   try{if(adminSessUnsub)adminSessUnsub()}catch(e){}
   clearInterval(sessBeat);sessUnsub=adminSessUnsub=null;
 }
+// Frees this device's slot — but never one another device has already taken over.
+async function releaseMySlot(sid,token){
+  if(SLOTS.indexOf(sid)<0||!token)return;
+  await fsdb.runTransaction(async tx=>{const r=SESSIONS_COL.doc(sid),x=await tx.get(r);if(x.exists&&x.data().token===token)tx.delete(r)});
+}
 async function hardSignOut(msg,deleteDoc){
   if(loggingOut)return;loggingOut=true;
   stopSessionWatch();
-  const sid=mySid||localStorage.getItem(SID_KEY);
+  const sid=mySid||localStorage.getItem(SID_KEY),tok=myToken||localStorage.getItem(TOKEN_KEY);
   if(deleteDoc&&sid){
-    try{await Promise.race([SESSIONS_COL.doc(sid).delete(),new Promise(r=>setTimeout(r,2500))])}catch(e){}
+    try{await Promise.race([releaseMySlot(sid,tok),new Promise(r=>setTimeout(r,2500))])}catch(e){}
   }
   try{await fbAuth.signOut()}catch(e){}
-  localStorage.removeItem(SID_KEY);localStorage.removeItem(SID_CONF_KEY);
+  localStorage.removeItem(SID_KEY);localStorage.removeItem(SID_CONF_KEY);localStorage.removeItem(TOKEN_KEY);
   try{if(msg)sessionStorage.setItem(FORCE_MSG_KEY,msg)}catch(e){}
   location.reload();
 }
@@ -3647,7 +3685,8 @@ function forceLogout(msg){hardSignOut(msg,true)}
 function startAdminSessionsListener(){
   if(adminSessUnsub)return;
   adminSessUnsub=SESSIONS_COL.onSnapshot(snap=>{
-    sessionsCache=snap.docs.map(d=>({id:d.id,...d.data({serverTimestamps:'estimate'})}));
+    snap.docs.forEach(d=>{if(SLOTS.indexOf(d.id)<0)d.ref.delete().catch(()=>{})}); // records from before the 2-device limit
+    sessionsCache=snap.docs.filter(d=>SLOTS.indexOf(d.id)>=0).map(d=>({id:d.id,...d.data({serverTimestamps:'estimate'})}));
     renderSessions();
   },err=>console.error('Sessions list error:',err));
 }
@@ -3754,6 +3793,7 @@ async function doLogin(){
     if(!role){await fbAuth.signOut();throw {code:'app/no-role'}}
     loginPassword.value='';
     loginError.classList.remove('show');
+    try{await claimSlot(cred.user)}catch(e){try{await fbAuth.signOut()}catch(x){}throw e}
     startSession(role,cred.user);
     ok=true;
   }catch(e){
@@ -3769,7 +3809,6 @@ async function doLogin(){
 
 function startSession(role,user){
   currentRole=role;
-  localStorage.removeItem(SID_KEY); // every login gets its own, fresh session record
   enterApp();
   startSessionWatch(user);
 }
@@ -8335,24 +8374,30 @@ window.addEventListener('resize',()=>{if(window.innerWidth>960)closeSidebar()});
   // A refresh must not bring back a device the admin has logged out:
   // check this device's session record before entering the app.
   if(user&&role){
-    const sid=localStorage.getItem(SID_KEY);
-    if(sid&&sid.indexOf(user.uid+'_')===0){
+    const sid=localStorage.getItem(SID_KEY),tok=localStorage.getItem(TOKEN_KEY);
+    if(SLOTS.indexOf(sid)<0||!tok){
+      msg='Please log in again.';
+      try{await fbAuth.signOut()}catch(e){}user=null;
+    }else{
       try{
         const snap=await Promise.race([
           SESSIONS_COL.doc(sid).get({source:'server'}),
           new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))
         ]);
         const confirmed=localStorage.getItem(SID_CONF_KEY)===sid;
-        if(snap.exists&&snap.data().revoked){
-          msg='An admin logged this device out. Please log in again.';
-          try{await SESSIONS_COL.doc(sid).delete()}catch(e){}
+        if(snap.exists&&snap.data().token&&snap.data().token!==tok){
+          msg='This device was logged out.';
+          user=null;
+        }else if(snap.exists&&snap.data().revoked){
+          msg='This device was logged out. Please log in again.';
+          try{await releaseMySlot(sid,tok)}catch(e){}
           user=null;
         }else if(!snap.exists&&confirmed){
-          msg='This device was removed by an admin. Please log in again.';
+          msg='This device was removed. Please log in again.';
           user=null;
         }
       }catch(e){ /* offline or slow network: let the user in, the live watcher will catch up */ }
-      if(!user){try{await fbAuth.signOut()}catch(e){}localStorage.removeItem(SID_KEY);localStorage.removeItem(SID_CONF_KEY)}
+      if(!user){try{await fbAuth.signOut()}catch(e){}localStorage.removeItem(SID_KEY);localStorage.removeItem(SID_CONF_KEY);localStorage.removeItem(TOKEN_KEY)}
     }
   }
   if(user&&role){
