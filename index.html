@@ -3077,10 +3077,6 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
 <div class="qsale-wrap no-print" id="qsaleWrap" style="display:none">
   <div class="qsale-topbar">
     <span class="qsale-topbar-title">⚡ Quick Sale</span>
-    <button type="button" class="qsale-menu-toggle" onclick="toggleQsaleMenu(event)" aria-label="Quick Sale menu" title="Menu">⋮</button>
-    <div class="menu-dropdown qsale-menu-dropdown" id="qsaleMenuDropdown">
-      <button type="button" onclick="openQsaleCustomizeModal()">🎨 Customization</button>
-    </div>
   </div>
   <div id="qsaleInner"></div>
 </div>
@@ -5867,8 +5863,8 @@ async function resetQsaleColor(word){
 const QS_FIXED=[
   /* row 1 */ ['gp','GP','#1a73e8',1,/(^|[^a-z])(gp|grameenphone|grameen)(?![a-z])/i],
   ['airtel','Airtel','#d93025',1,/(^|[^a-z])airtel(?![a-z])/i],
-  ['khata','Khata','#e37400',1,/khata/i],
   ['pen','Pen','#0b8043',1,/(^|[^a-z])pen(?![a-z])/i],
+  ['khata','Khata','#e37400',1,/khata/i],
   /* row 2 */ ['print','Print','#5f6368',2,/print/i],
   ['photocopy','Photocopy','#7c3aed',2,/photo\s*copy|photocopy|xerox/i],
   ['passport','Passport Photo','#0097a7',2,/passport/i]
@@ -12480,13 +12476,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .sv-acts{grid-template-columns:minmax(0,1fr) auto!important}
 @media(min-width:961px) and (max-width:1440px){.sv-inv span{display:none}.sv-inv{padding:0 16px!important}}
 
-/* Quick Sale shows only GP / Robi / Airtel */
-#qsaleInner .qs-brand:not([data-k="gp"]):not([data-k="robi"]):not([data-k="airtel"]){display:none!important}
+/* Quick Sale shows only GP / Robi / Airtel / Pen / Khata */
+#qsaleInner .qs-brand:not([data-k="gp"]):not([data-k="robi"]):not([data-k="airtel"]):not([data-k="pen"]):not([data-k="khata"]){display:none!important}
 #qsaleInner .qs-brand[data-k]:disabled{display:flex!important;opacity:.4}
-#qsaleInner .qs-top,#qsaleInner .qs-row2:not(:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"])){display:none!important}
-#qsaleInner .qs-row:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"]){display:flex!important}
+#qsaleInner .qs-top,#qsaleInner .qs-row2:not(:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"],.qs-brand[data-k="pen"],.qs-brand[data-k="khata"])){display:none!important}
+#qsaleInner .qs-row:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"],.qs-brand[data-k="pen"],.qs-brand[data-k="khata"]){display:flex!important}
 #qsaleInner .qs-brand[data-k]{min-width:96px!important;height:54px!important;font-size:15px!important}
-#qsaleInner .qs-row:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"]){flex-wrap:nowrap!important}
+#qsaleInner .qs-row:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"],.qs-brand[data-k="pen"],.qs-brand[data-k="khata"]){flex-wrap:wrap!important}
 #qsaleInner .qs-brand[data-k]{flex:1 1 0;min-width:0!important;max-width:160px}
 /* compact, colour-filled GP / Robi / Airtel cards */
 #salePanel #qsaleInner .qs-row:has(.qs-brand[data-k]){gap:8px!important}
@@ -12738,10 +12734,10 @@ function refreshTop(){
     if(bd){if(n){if(bd.textContent!==String(n)){bd.classList.remove('bump');void bd.offsetWidth;bd.classList.add('bump')}bd.hidden=false;bd.textContent=n}else{bd.hidden=true;bd.textContent=''}}
   });
 }
-/* Quick Sale = only the mobile-recharge cards: GP, Robi, Airtel.
+/* Quick Sale = GP, Robi, Airtel, Pen and Khata.
    Every in-stock (or service) product whose name/category/model says GP, Robi or Airtel shows here,
    no "Frequently sold" tick needed. */
-var TEL=['gp','robi','airtel'];
+var TEL=['gp','robi','airtel','pen','khata'];
 try{
   if(typeof QS_FIXED!=='undefined'&&!QS_FIXED.some(function(f){return f[0]==='robi'})){
     var ai=QS_FIXED.findIndex(function(f){return f[0]==='gp'});
@@ -12773,7 +12769,7 @@ document.addEventListener('click',function(e){
 
 /* hold (or right-click) a product to choose a quantity */
 var SUPPRESS=false,timer=null,start=null,POP=null;
-var SEL='#qsaleInner .qs-top-t,#qsaleInner .qs-amt,#productPicker .picker-row';
+var SEL='#qsaleInner .qs-top-t,#qsaleInner .qs-amt,#qsaleInner .qx-item,#productPicker .picker-row';
 function idOf(el){if(el.dataset.id)return el.dataset.id;var oc=el.getAttribute('onclick')||'';var m=oc.match(/'([^']+)'/);return m?m[1]:null}
 document.addEventListener('pointerdown',function(e){
   var el=e.target.closest&&e.target.closest(SEL);if(!el||el.disabled||(e.pointerType==='mouse'&&e.button!==0))return;
@@ -13021,4 +13017,141 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 
 </script>
+<style id="qsV3css">
+/* ===== Quick Sale v3: your own categories → tap to open its products ===== */
+#qsaleWrap .qsale-topbar{display:flex;align-items:center;gap:8px}
+#qsaleInner .qx-cats{display:flex;flex-wrap:wrap;gap:8px}
+#qsaleInner .qx-cat{position:relative;display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 16px;border-radius:10px;border:2px solid var(--qc);background:var(--qc);color:#fff;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 2px 6px color-mix(in srgb,var(--qc) 28%,transparent);transition:filter .12s,transform .08s}
+#qsaleInner .qx-cat:hover{filter:brightness(1.07)}
+#qsaleInner .qx-cat:active{transform:scale(.97)}
+#qsaleInner .qx-cat.on{background:#fff;color:var(--qc)}
+#qsaleInner .qx-cat.empty{opacity:.45}
+#qsaleInner .qx-cat .qx-n{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#fff;color:var(--qc);font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+#qsaleInner .qx-cat.on .qx-n{background:var(--qc);color:#fff}
+#qsaleInner .qx-add{height:40px;padding:0 14px;border-radius:10px;border:2px dashed #b8c2cf;background:transparent;color:#5f6b7a;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:none}
+#qsaleInner .qx-add:hover{border-color:#1a73e8;color:#1a73e8}
+#qsaleInner .qx-form{display:flex;gap:8px;margin-top:10px}
+#qsaleInner .qx-form input{flex:1;min-width:0;height:40px;padding:0 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px}
+#qsaleInner .qx-form button{height:40px;padding:0 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+#qsaleInner .qx-form .ok{background:#1a73e8;color:#fff}
+#qsaleInner .qx-form .no{background:#eef1f5;color:#334155}
+#qsaleInner .qx-panel{margin-top:10px;padding:10px;border-radius:12px;background:color-mix(in srgb,var(--qc) 8%,#fff);border:1px solid color-mix(in srgb,var(--qc) 25%,transparent)}
+#qsaleInner .qx-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+#qsaleInner .qx-item{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:58px;padding:9px 11px;border-radius:10px;border:1px solid color-mix(in srgb,var(--qc) 35%,transparent);background:#fff;color:#0f172a;text-align:left;cursor:pointer;box-shadow:none}
+#qsaleInner .qx-item:hover{border-color:var(--qc)}
+#qsaleInner .qx-item:active{transform:scale(.98)}
+#qsaleInner .qx-item b{font-size:13.5px;font-weight:700;line-height:1.25;overflow-wrap:anywhere}
+#qsaleInner .qx-item span{font-size:12px;color:#64748b}
+#qsaleInner .qx-item span em{font-style:normal;font-weight:800;color:var(--qc)}
+#qsaleInner .qx-item:disabled{opacity:.45;cursor:default}
+#qsaleInner .qx-item .qx-n{position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--qc);color:#fff;font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+#qsaleInner .qx-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px;color:#64748b}
+#qsaleInner .qx-del{border:0;background:none;color:#b42318;font-size:12px;font-weight:700;cursor:pointer;padding:4px 6px;box-shadow:none}
+#qsaleInner .qx-empty{font-size:13px;color:#64748b;padding:6px 2px}
+#qsaleInner .qx-hint{margin-top:8px;font-size:12px;color:#94a3b8}
+html[data-theme="dark"] #qsaleInner .qx-item{background:#1c2128;color:#e6e6e6}
+html[data-theme="dark"] #qsaleInner .qx-panel{background:#161b22}
+html[data-theme="dark"] #qsaleInner .qx-cat.on{background:#161b22}
+</style>
+<script id="qsV3">
+(function(){
+"use strict";
+/* Quick Sale = a list of categories you choose (saved in the cloud, same on every device).
+   Tap a category → its products open below → tap a product to add it to the cart.
+   A product belongs to a category when its Category is that name, or its name contains that word. */
+var DEFAULT=['GP','Robi','Airtel','Pen','Khata'];
+var KNOWN={gp:'#1a73e8',robi:'#ea580c',airtel:'#d93025',pen:'#0b8043',khata:'#e37400'};
+var PALETTE=['#7c3aed','#0097a7','#c2185b','#5d4037','#2e7d32','#3949ab','#ef6c00','#00838f','#6d4c41','#ad1457'];
+var open=null,adding=false;
+function $(i){return document.getElementById(i)}
+function E(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function cats(){var c=db&&Array.isArray(db.quickCats)?db.quickCats:DEFAULT;return c.filter(function(x){return typeof x==='string'&&x.trim()})}
+function color(name){var k=name.toLowerCase();if(KNOWN[k])return KNOWN[k];var h=0;for(var i=0;i<k.length;i++)h=(h*31+k.charCodeAt(i))>>>0;return PALETTE[h%PALETTE.length]}
+function esc2(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+function matches(x,name){
+  var n=name.trim().toLowerCase();if(!n)return false;
+  if(String(x.category||'').trim().toLowerCase()===n)return true;
+  var re=new RegExp('(^|[^a-z0-9\\u0980-\\u09ff])'+esc2(n)+'(?![a-z0-9\\u0980-\\u09ff])','i');
+  return re.test(String(x.name||''))||(n==='gp'&&/grameen/i.test(String(x.name||'')));
+}
+function inStock(x){return x.service||x.qty>0}
+function itemsOf(name){return (db.stock||[]).filter(function(x){return matches(x,name)}).sort(function(a,b){return (+a.price||0)-(+b.price||0)||String(a.name).localeCompare(String(b.name))})}
+function inCart(id){var c=(typeof cart!=='undefined'?cart:[]).find(function(a){return a.id===id});return c?c.qty:0}
+function left(x){return x.service?Infinity:x.qty-inCart(x.id)}
+function money2(n){try{return money(n)}catch(e){return '৳'+(+n||0)}}
+function badge(n){return n?'<i class="qx-n">'+n+'</i>':''}
+
+function render(){
+  var wrap=$('qsaleWrap'),inner=$('qsaleInner');if(!wrap||!inner)return;
+  var f=inner.querySelector('.qx-form input');if(f&&document.activeElement===f)return; // don't wipe what is being typed
+  wrap.style.display='block';
+  var list=cats();
+  if(open&&!list.some(function(c){return c.toLowerCase()===open.toLowerCase()}))open=null;
+  var h='<div class="qx-cats">'+list.map(function(c){
+    var its=itemsOf(c),n=its.reduce(function(a,x){return a+inCart(x.id)},0),on=open&&open.toLowerCase()===c.toLowerCase();
+    return '<button type="button" class="qx-cat'+(on?' on':'')+(its.some(inStock)?'':' empty')+'" style="--qc:'+color(c)+'" data-cat="'+E(c)+'">'+E(c)+badge(n)+'</button>';
+  }).join('')+'<button type="button" class="qx-add" data-act="add">+ Add</button></div>';
+  if(adding)h+='<div class="qx-form"><input type="text" maxlength="24" placeholder="Category name (e.g. Biscuit)" list="qxSuggest" aria-label="New category name"><button type="button" class="ok" data-act="save">Add</button><button type="button" class="no" data-act="cancel">Cancel</button></div><datalist id="qxSuggest">'+suggestions().map(function(s){return '<option value="'+E(s)+'">'}).join('')+'</datalist>';
+  if(open){
+    var its=itemsOf(open),col=color(open);
+    h+='<div class="qx-panel" style="--qc:'+col+'">'+(its.length?'<div class="qx-items">'+its.map(function(x){
+      var l=left(x),out=l<=0;
+      return '<button type="button" class="qx-item" data-id="'+E(x.id)+'"'+(out?' disabled':'')+' title="'+E(x.name)+'"><b data-no-i18n>'+E(x.name)+'</b><span><em>'+E(money2(x.price))+'</em>'+(x.service?'':' · '+Math.max(0,x.qty)+' left')+'</span>'+badge(inCart(x.id))+'</button>';
+    }).join('')+'</div>':'<div class="qx-empty">No product for “'+E(open)+'” yet. Add one in Add Product with “'+E(open)+'” in its name or as its Category.</div>')+
+      '<div class="qx-foot"><span>'+its.length+' product'+(its.length===1?'':'s')+'</span><button type="button" class="qx-del" data-act="del">Remove category</button></div></div>';
+  }else if(!adding)h+='<div class="qx-hint">Tap a category to see its products</div>';
+  inner.innerHTML=h;
+  if(adding){var inp=inner.querySelector('.qx-form input');if(inp)inp.focus()}
+}
+function suggestions(){
+  var have={};cats().forEach(function(c){have[c.toLowerCase()]=1});
+  var out={};(db.stock||[]).forEach(function(x){var c=String(x.category||'').trim();if(c&&!have[c.toLowerCase()])out[c]=1});
+  return Object.keys(out).sort().slice(0,40);
+}
+async function saveCats(list){
+  var prev=db.quickCats;db.quickCats=list;render();
+  var r=await mutateCloud(function(d){d.quickCats=list});
+  if(!r){db.quickCats=prev;render()}
+}
+function addCat(){
+  var inp=$('qsaleInner').querySelector('.qx-form input');if(!inp)return;
+  var name=inp.value.replace(/\s+/g,' ').trim();if(!name)return inp.focus();
+  var list=cats().slice();
+  if(list.some(function(c){return c.toLowerCase()===name.toLowerCase()})){adding=false;open=list.find(function(c){return c.toLowerCase()===name.toLowerCase()});render();return}
+  list.push(name);adding=false;open=name;inp.blur();saveCats(list);
+}
+document.addEventListener('click',function(e){
+  var inner=$('qsaleInner');if(!inner||!inner.contains(e.target))return;
+  var t=e.target.closest('button');if(!t)return;
+  if(t.classList.contains('qx-cat')){var c=t.getAttribute('data-cat');open=(open&&open.toLowerCase()===c.toLowerCase())?null:c;adding=false;render();return}
+  if(t.classList.contains('qx-item')){if(t.disabled)return;if(typeof addToCart==='function'&&addToCart(t.getAttribute('data-id'))){try{cartPop(e,t.getAttribute('data-id'))}catch(x){}try{renderCart()}catch(x){refresh()}}return}
+  var a=t.getAttribute('data-act');
+  if(a==='add'){adding=!adding;render();return}
+  if(a==='cancel'){adding=false;var i=inner.querySelector('.qx-form input');if(i)i.blur();render();return}
+  if(a==='save'){addCat();return}
+  if(a==='del'&&open){if(!confirm('Remove the category “'+open+'” from Quick Sale?\n\nIts products are not deleted.'))return;var o=open;open=null;saveCats(cats().filter(function(c){return c.toLowerCase()!==o.toLowerCase()}))}
+});
+document.addEventListener('keydown',function(e){
+  if(!e.target.closest||!e.target.closest('#qsaleInner .qx-form'))return;
+  if(e.key==='Enter'){e.preventDefault();addCat()}else if(e.key==='Escape'){adding=false;e.target.blur();render()}
+});
+/* keeps badges / "left" counts current without rebuilding the buttons */
+function refresh(){
+  var inner=$('qsaleInner');if(!inner||!inner.querySelector('.qx-cats'))return;
+  inner.querySelectorAll('.qx-item').forEach(function(b){
+    var x=(db.stock||[]).find(function(a){return a.id===b.getAttribute('data-id')});if(!x)return;
+    var n=inCart(x.id),old=b.querySelector('.qx-n');b.disabled=left(x)<=0;
+    if(n){if(!old){old=document.createElement('i');old.className='qx-n';b.appendChild(old)}old.textContent=n}else if(old)old.remove();
+  });
+  inner.querySelectorAll('.qx-cat').forEach(function(b){
+    var n=itemsOf(b.getAttribute('data-cat')).reduce(function(a,x){return a+inCart(x.id)},0),old=b.querySelector('.qx-n');
+    if(n){if(!old){old=document.createElement('i');old.className='qx-n';b.appendChild(old)}old.textContent=n}else if(old)old.remove();
+  });
+}
+window.renderQuickSale=render;
+window.qsRefresh=refresh;
+try{render()}catch(e){}
+})();
+</script>
+
 </body></html>
