@@ -7052,7 +7052,9 @@ function khataLedger(key){
   });
   (db.manualJoma||[]).forEach(x=>{
     if(!x||khKey(x.customer)!==key)return;
-    rows.push({ts:+x.at||0,desc:'💰 Advance',sub:(x.src==='excess'?'Extra received · saved as advance':'Added as advance')+(x.note?' · '+x.note:'')+(x.editedAt?' · edited':''),dr:0,cr:+x.amount||0,joma:true,note:x.note||'',ext:!!x.ext,ep:[{k:'joma',id:x.id,amt:+x.amount||0,at:+x.at||0,cap:0}]});
+    /* the extra part of a Receive (saved as advance 1 ms after the payment) belongs to that same Receive line */
+    const rg=x.src==='excess'?[(+x.at||0)-1,x.ext?1:0,x.note||'',x.by||''].join('|'):'';
+    rows.push({g:rg,lbl:'💰 Advance',ts:+x.at||0,desc:'💰 Advance',sub:(x.src==='excess'?'Extra received · saved as advance':'Added as advance')+(x.note?' · '+x.note:'')+(x.editedAt?' · edited':''),dr:0,cr:+x.amount||0,joma:true,note:x.note||'',ext:!!x.ext,ep:[{k:'joma',id:x.id,amt:+x.amount||0,at:+x.at||0,cap:0}]});
   });
   /* One Receive = ONE payment line. A single amount that was applied across several invoices / bills / manual dues
      (oldest first) is shown as one row with the total; the split is listed in the details. */
@@ -10730,7 +10732,7 @@ function todayCollected(){
   function add(a,at,x){if((+at||0)>=t0){a=+a||0;if(x)ext+=a;else cash+=a;cnt++}}
   (db.manualPays||[]).forEach(function(p){if(p)add(p.amount,p.at,p.ext)});
   (db.billDuePayments||[]).forEach(function(p){if(p)add(p.amount,p.at,p.ext)});
-  (db.manualJoma||[]).forEach(function(p){if(p)add(p.amount,p.at,p.ext)});
+  (db.manualJoma||[]).forEach(function(p){if(!p)return;if(p.src==='excess'){var a0=+p.amount||0;if((+p.at||0)>=t0){if(p.ext)ext+=a0;else cash+=a0}return}add(p.amount,p.at,p.ext)}); // extra of a Receive: same payment, not a new one
   (db.sales||[]).forEach(function(s){if(s&&!s.returned&&Array.isArray(s.payLog))s.payLog.forEach(function(p){if(p)add(p.amount,p.at,p.ext)})});
   return {cash:r2(cash),ext:r2(ext),total:r2(cash+ext),n:cnt};
 }
