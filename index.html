@@ -8296,7 +8296,7 @@ function drawDashChart(){
   const top=sc.max,bot=sc.min,span=(top-bot)||1;
   const y=v=>T+(top-v)/span*(H-T-B),y0=y(0);
   const slot=(W-L-Rr)/n,X=i=>L+slot*(i+.5);
-  const tone=metric==='profit'?'#0f9d58':'#1a73e8';
+  const tone='#1d6bf3';
   const F=anim?' anim':'';
   let g='';
   sc.ticks.forEach(t=>{const yy=y(t).toFixed(1);g+=`<line x1="${L}" x2="${W-Rr}" y1="${yy}" y2="${yy}" stroke="${t===0&&bot<0?'#cdd3de':'#eceff4'}"/>`+(hasData?`<text x="${L-10}" y="${(+yy+3.5).toFixed(1)}" text-anchor="end" font-size="10.5" fill="#8a94a6">${dashShort(t)}</text>`:'')});
@@ -8305,7 +8305,7 @@ function drawDashChart(){
   if(hasData){
     const lp=dcMono(pts);
     const ap=lp+'L'+pts[n-1][0].toFixed(1)+' '+y0.toFixed(1)+'L'+pts[0][0].toFixed(1)+' '+y0.toFixed(1)+'Z';
-    series=`<defs><linearGradient id="dcGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tone}" stop-opacity=".28"/><stop offset="1" stop-color="${tone}" stop-opacity=".02"/></linearGradient></defs><path class="dc-area${F}" d="${ap}" fill="url(#dcGrad)"/><path class="dc-line${F}" d="${lp}" pathLength="1" fill="none" stroke="${tone}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    series=`<defs><linearGradient id="dcGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tone}" stop-opacity=".14"/><stop offset="1" stop-color="${tone}" stop-opacity=".02"/></linearGradient></defs><path class="dc-area${F}" d="${ap}" fill="url(#dcGrad)"/><path class="dc-line${F}" d="${lp}" pathLength="1" fill="none" stroke="${tone}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
     pts.forEach(p=>{marks+=n<=12?`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="#fff" stroke="${tone}" stroke-width="2"/>`:`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.2" fill="${tone}"/>`});
     const lp2=pts[n-1];
     marks+=`<circle class="dc-pulse" cx="${lp2[0].toFixed(1)}" cy="${lp2[1].toFixed(1)}" r="5" fill="${tone}"/><circle cx="${lp2[0].toFixed(1)}" cy="${lp2[1].toFixed(1)}" r="4.5" fill="${tone}" stroke="#fff" stroke-width="2"/>`;
@@ -13174,6 +13174,95 @@ function refresh(){
 window.renderQuickSale=render;
 window.qsRefresh=refresh;
 try{render()}catch(e){}
+})();
+</script>
+
+<style id="themeV3">
+/* ===== Theme v3: navy sidebar · light blue canvas · white cards · blue accent ===== */
+:root{--t-bg:#eef3fb;--t-card:#fff;--t-line:#e4eaf4;--t-ink:#0f172a;--t-mute:#64748b;--t-blue:#1d6bf3;--t-blue2:#0b4fd8;--t-nav:#0f1f3d;--t-nav2:#14284d;--canvas:#eef3fb;--brass:#1d6bf3;--pine:#1d6bf3}
+html body{background:var(--t-bg)!important}
+html body .main{background:var(--t-bg)!important}
+/* sidebar */
+html body #sidebar{background:linear-gradient(180deg,var(--t-nav),var(--t-nav2))!important;border-right:0!important;color:#cbd5e1!important}
+html body #sidebar .sb-name{color:#fff!important;font-weight:700!important}
+html body #sidebar .sb-sub{color:#94a3b8!important}
+html body #sidebar .sb-logo{background:var(--t-blue)!important;color:#fff!important;border-radius:50%!important;font-weight:800!important;font-size:18px!important;border:0!important;box-shadow:0 2px 8px #1d6bf355!important}
+html body #sidebar .sb-search{display:none!important}
+html body #sidebar .sbg-h,html body #sidebar .sbg-h span{color:#7f8ea8!important;background:transparent!important}
+html body #sidebar .sbg-h svg{stroke:#7f8ea8!important}
+html body #sidebar .sb-item{color:#d5dce8!important;background:transparent!important;border-radius:9px!important}
+html body #sidebar .sb-item svg{stroke:#aab6c9!important;color:#aab6c9!important}
+html body #sidebar .sb-item:hover{background:#ffffff14!important;color:#fff!important}
+html body #sidebar .sb-item[aria-current="page"]{background:var(--t-blue)!important;color:#fff!important;box-shadow:0 4px 12px #1d6bf355!important}
+html body #sidebar .sb-item[aria-current="page"] svg{stroke:#fff!important;color:#fff!important}
+html body #sidebar .sb-badge{background:#ef4444!important;color:#fff!important}
+html body #sidebar .sb-badge.blue{background:#ffffff26!important}
+html body #sidebar .sb-tog{color:#94a3b8!important}
+html body #sidebar .sb-tog svg{stroke:#94a3b8!important}
+html body #sidebar hr,html body #sidebar .sb-account,html body #sidebar .sb-foot,html body #sidebar [class*="sb-sep"]{border-color:#ffffff1a!important}
+html body #sidebar .sb-foot,html body #sidebar .sb-copy,html body #sidebar small{color:#7f8ea8!important}
+html body #sidebar .rolepill,html body #sidebar .sb-role{background:#ffffff1a!important;color:#e2e8f0!important}
+html body #sidebar button:not(.sb-item):not(.sbg-h) svg{stroke:#aab6c9}
+/* top bar */
+html body .main .topbar{background:transparent!important;box-shadow:none!important;border:0!important}
+html body .main .topbar .top-shop{display:none!important}
+html body .main .topbar h1{font-size:26px!important;font-weight:800!important;color:var(--t-ink)!important;letter-spacing:-.3px!important}
+html body .main .topbar .top-date{color:var(--t-mute)!important}
+html body #cloudSyncPill{background:#fff!important;border:1px solid var(--t-line)!important;color:#0f172a!important;font-weight:700!important;border-radius:999px!important;padding:7px 14px!important;box-shadow:0 1px 2px rgba(15,23,42,.05)!important}
+html body #cloudSyncPill::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:7px;vertical-align:1px}
+html body #cloudSyncPill.warn::before,html body #cloudSyncPill.bad::before{background:#f59e0b}
+.t-avatar{width:38px;height:38px;border-radius:50%;background:var(--t-blue);color:#fff;font-weight:800;font-size:15px;display:inline-flex;align-items:center;justify-content:center;flex:none;margin-left:10px;box-shadow:0 2px 8px #1d6bf355;text-transform:uppercase}
+/* cards */
+html body .main .stat,html body .main .profit-card,html body .main .dx-card,html body .main .dc-card{background:var(--t-card)!important;border:1px solid var(--t-line)!important;border-radius:14px!important;box-shadow:0 1px 3px rgba(16,24,40,.06)!important}
+html body .main .stat .stat-label{color:#334155!important;font-weight:600!important}
+html body .main .stat .value{color:var(--t-ink)!important;font-weight:800!important}
+html body .main .stat.feature{background:linear-gradient(135deg,#2a7bff,var(--t-blue2))!important;border:0!important;box-shadow:0 8px 22px #1d6bf340!important}
+html body .main .stat.feature *{color:#fff!important}
+html body .main .stat.feature .stat-ico{background:#ffffff2e!important}
+html body .main .stat.feature .stat-ico svg{stroke:#fff!important}
+/* follow-up cards: soft tints, no colour bar */
+html body .main .dc-card{border-top-width:1px!important}
+html body .main .dc-card::before{display:none!important}
+html body .main .dc-due{background:#fff5f6!important;border-color:#fde2e6!important}
+html body .main .dc-rand{background:#f1f6ff!important;border-color:#dbe7ff!important}
+html body .main .dc-paid{background:#effcf4!important;border-color:#d3f2df!important}
+html body .main .dc-card .dc-list,html body .main .dc-card .dc-empty{background:transparent!important}
+/* chart card */
+html body .main .profit-card{border-top-width:1px!important}
+html body .main .profit-card .pc-total,html body .main .profit-card .pc-meta{display:none!important}
+html body .main .profit-card .pc-title{font-size:15px!important;font-weight:800!important;color:var(--t-ink)!important}
+html body .main .profit-card .pc-controls{gap:6px!important}
+html body .main .profit-card .seg{background:#f1f5fb!important;border-radius:9px!important;padding:3px!important}
+html body .main .profit-card .seg button{font-size:12px!important;padding:5px 11px!important;border-radius:7px!important;color:#64748b!important;background:transparent!important}
+html body .main .profit-card .seg button.on{background:var(--t-blue)!important;color:#fff!important;box-shadow:0 2px 6px #1d6bf344!important}
+/* today in detail */
+html body .main #dxToday,html body .main .profit-card,html body .main .dc-card{border-top:1px solid var(--t-line)!important}
+html body .main #dxToday::before,html body .main .profit-card::before{display:none!important}
+html body .main .dc-due{border-top-color:#fde2e6!important}html body .main .dc-rand{border-top-color:#dbe7ff!important}html body .main .dc-paid{border-top-color:#d3f2df!important}
+html body #sidebar .sb-item{font-size:13.5px!important;padding-top:8px!important;padding-bottom:8px!important;min-height:0!important}
+html body #sidebar .sbg-h{padding-top:10px!important}
+html body .main #dxToday .dx-h i{background:#eaf1ff!important}
+html body .main #dxToday .dx-foot{display:none!important}
+@media(max-width:600px){.t-avatar{display:none}html body .main .topbar h1{font-size:22px!important}html body #cloudSyncPill{padding:5px 11px!important;font-size:13px!important}}
+/* only what the design shows */
+html body .main #dxTop,html body .main #dxAlert,html body .main #dxMonth,html body .main #dxHours,html body .main #dxDue,html body .main #dxRecent{display:none!important}
+/* buttons and accents across the app */
+html body .main button.primary,html body .main .btn-primary{background:var(--t-blue)!important}
+</style>
+<script id="themeV3js">
+(function(){
+  /* chart: Sales by default, blue line */
+  try{if(!localStorage.getItem('dashMetricV3')){localStorage.setItem('dashMetricV3','1');localStorage.setItem('dashMetric','sales');if(typeof dashMetric!=='undefined'){dashMetric='sales';try{scheduleDashboard()}catch(e){}}}}catch(e){}
+  /* sidebar logo: "M" unless a shop logo image is set */
+  function logo(){var l=document.getElementById('sbLogo');if(l&&!l.querySelector('img')&&l.textContent!=='M')l.textContent='M'}
+  /* sync pill: green dot instead of the cloud emoji */
+  function pill(){var p=document.getElementById('cloudSyncPill');if(!p)return;var t=p.textContent,c=t.replace(/^\s*☁️\s*/,'');if(c!==t)p.textContent=c}
+  /* avatar with the login's initial */
+  function avatar(){var tb=document.querySelector('.main .topbar');if(!tb)return;var a=tb.querySelector('.t-avatar');if(!a){a=document.createElement('span');a.className='t-avatar';a.setAttribute('aria-hidden','true');tb.appendChild(a)}
+    var r=(typeof currentRole!=='undefined'&&currentRole==='employee')?'E':'A';if(a.textContent!==r)a.textContent=r}
+  function all(){try{logo();pill();avatar()}catch(e){}}
+  all();
+  new MutationObserver(all).observe(document.body,{subtree:true,childList:true,characterData:true});
 })();
 </script>
 
