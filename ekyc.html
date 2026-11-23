@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>e-KYC Form Prep</title>
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+:root{
+  --navy:#1f3f8f; --navy2:#2a52b0; --navy-dark:#163070; --head-grad:linear-gradient(90deg,#1b3a8a 0%,#2c55b5 45%,#5a83d6 75%,#1b3a8a 100%);
+  --page:#f3f6fb; --panel:#ffffff; --line:#2a52b0; --ro:#d9d9d9; --text:#111; --req:#e00; --muted:#555;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:Tahoma,Verdana,"Segoe UI",Arial,sans-serif;font-size:13px;color:var(--text);background:var(--page)}
+/* ---------- top banner ---------- */
+.top{background:var(--head-grad);color:#fff}
+.top .r1{display:flex;align-items:center;justify-content:space-between;padding:6px 6px 0 6px;flex-wrap:wrap;gap:6px}
+.top .brand{font-size:21px;font-weight:bold;letter-spacing:.2px}
+.top .who{font-weight:bold;font-style:italic;color:#ffd54a;font-size:13px}
+.top .who b{font-style:normal}
+.top .logout{color:#fff;font-weight:bold;margin-left:30px;cursor:pointer;font-style:normal}
+.top .r2{background:linear-gradient(90deg,#1e3d8d,#2b4fa8);padding:8px 0 10px 60px;font-size:20px;font-weight:bold;border-bottom:3px solid #4f7bd1}
+.gap{height:30px;background:linear-gradient(#e9eef8,#f7f9fd)}
+/* ---------- layout ---------- */
+.wrap{display:flex;align-items:stretch;min-height:calc(100vh - 160px)}
+.menu{width:398px;flex:0 0 398px;background:#fff;border-right:10px solid #c8cfdc}
+.bar{background:linear-gradient(90deg,#1f3f8f 0%,#2c55b5 60%,#7fa3e6 100%);color:#fff;font-size:15px;font-weight:bold;padding:6px 10px}
+.main{flex:1;background:#fff;min-width:0;border-left:8px solid #e9edf5}
+/* ---------- tree ---------- */
+.tree{padding:4px 8px 12px;font-size:13px}
+.tree ul{list-style:none;margin:0;padding-left:20px}
+.tree>ul{padding-left:0}
+.tree li{position:relative;line-height:23px;white-space:nowrap}
+.tree .node{cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:0 3px}
+.tree .node:hover{background:#e8efff}
+.tree .node.active{background:#cfe0ff;font-weight:bold}
+.tree .pm{display:inline-block;width:9px;height:9px;border:1px solid #888;font-size:9px;line-height:7px;text-align:center;margin-right:2px;color:#333;background:#fff}
+.tree .pm.none{border:none;background:none}
+.ic-fold{width:16px;height:13px;display:inline-block;background:#f8d775;border:1px solid #c9a230;border-radius:1px 3px 1px 1px;position:relative}
+.ic-fold:before{content:"";position:absolute;left:-1px;top:-4px;width:7px;height:4px;background:#f8d775;border:1px solid #c9a230;border-bottom:none;border-radius:2px 2px 0 0}
+.ic-page{width:12px;height:15px;display:inline-block;background:#fff;border:1px solid #666;margin:0 2px}
+.tree li.closed>ul{display:none}
+/* ---------- form panel ---------- */
+.content{padding:14px 20px 26px}
+.hdrgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 40px;margin:6px 0 12px}
+.row{display:flex;align-items:center;gap:6px;min-height:27px}
+.row>label{flex:0 0 240px;text-align:right;font-weight:bold;font-size:13px}
+.row>label .s{color:var(--req)}
+.row .ctl{flex:1;max-width:300px;display:flex;align-items:center;gap:6px}
+.wide .row .ctl{max-width:300px}
+input[type=text],input[type=date],input[type=number],input[type=tel],input[type=email],select{
+  width:100%;height:21px;border:1px solid #9fb6e6;border-top:2px solid #7d9ad4;padding:1px 4px;font-size:12px;font-family:Arial,sans-serif;background:#fff}
+select{height:23px;border:1px solid #7f93c4;box-shadow:inset 0 0 0 1px #e7eefc}
+input.ro,select.ro{background:var(--ro);border:1px solid var(--ro);color:#222}
+input.err,select.err{outline:2px solid #ff4d4d;background:#fff4f4}
+.radio{display:flex;gap:6px;font-weight:bold;align-items:center}
+.radio label{display:flex;align-items:center;gap:2px;cursor:pointer}
+.box{border:1px solid var(--line);padding:0 0 18px;margin-top:8px}
+.tabs{display:flex;flex-wrap:wrap;gap:2px;padding:8px 14px 0;border-bottom:1px solid #b9c8e8}
+.tab{background:var(--navy);color:#fff;font-weight:bold;padding:6px 6px;cursor:pointer;border:1px solid var(--navy);font-size:12.5px;user-select:none}
+.tab.on{background:#fff;color:#111;border-color:#7f9bd9;border-bottom-color:#fff;margin-bottom:-1px}
+.tab .ok{color:#7CFC00;margin-left:3px}
+.tab.on .ok{color:#1a8f1a}
+.pane{display:none;padding:12px 10px 0}
+.pane.on{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:2px 30px}
+.g2 .row>label{flex-basis:220px}
+.sec{border:1px solid #d5dced;margin-bottom:14px}
+.sech{background:linear-gradient(90deg,#1f3f8f 0%,#2c55b5 70%,#4f77cc 100%);color:#fff;padding:6px 10px;font-size:13px}
+.sec .body{padding:10px 4px}
+.sec .row>label{flex-basis:150px}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:var(--navy2);color:#fff;text-align:left;padding:7px 5px;border-right:1px solid #fff;font-weight:bold;vertical-align:middle}
+.tbl th .s{color:#ff6b6b}
+.tbl td{padding:4px 3px;border-bottom:1px solid #e4e8f0;vertical-align:middle}
+.tbl input[type=text],.tbl input[type=date],.tbl input[type=number],.tbl input[type=tel],.tbl select{width:100%}
+.iconbtn{width:24px;height:24px;border:1px solid #333;background:#fff;cursor:pointer;font-weight:bold;font-size:15px;line-height:20px;padding:0}
+.iconbtn.add{background:#3ba3ff;color:#fff;border:2px solid #cfe7ff;font-size:20px}
+.btns{display:flex;justify-content:center;gap:10px;margin:26px 0 18px;flex-wrap:wrap}
+.btn{background:var(--navy);color:#fff;border:1px solid #fff;outline:1px solid var(--navy);padding:3px 16px;font-weight:bold;cursor:pointer;font-size:13px;min-width:74px}
+.btn:hover{background:var(--navy-dark)}
+.btn.grey{background:#6b7a99;outline-color:#6b7a99}
+.btn.green{background:#1d7a3a;outline-color:#1d7a3a}
+.foot{display:grid;grid-template-columns:1fr 1fr;gap:6px 40px}
+.copyright{background:var(--head-grad);color:#fff;text-align:center;padding:10px;font-size:14px}
+/* photos */
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:30px 40px;padding:30px 20px;align-items:center;justify-items:center}
+.ph{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer}
+.ph .frame{border:1px solid #333;display:flex;align-items:center;justify-content:center;background:#fff;overflow:hidden;position:relative}
+.ph.nid .frame{width:333px;height:187px}
+.ph.cp .frame{width:146px;height:146px}
+.ph.cs .frame{width:146px;height:78px}
+.ph .frame img{max-width:100%;max-height:100%;object-fit:contain}
+.ph .cap{font-weight:bold;font-size:14px}
+.ph.nid .cap{color:#1f8fe0}
+.cam{width:36px;height:30px;border-radius:6px;position:relative}
+.cam:before{content:"";position:absolute;left:10px;top:-5px;width:14px;height:6px;border-radius:2px 2px 0 0;background:inherit}
+.cam:after{content:"";position:absolute;left:11px;top:7px;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px currentColor inset}
+.cam.blue{background:#1fa0f0;color:#1fa0f0}
+.cam.dark{background:#444;color:#444}
+.ph .rm{font-size:11px;color:#c00;text-decoration:underline;display:none}
+.ph.has .rm{display:inline}
+.fileui{display:flex;align-items:center;border:1px solid #9fb6e6;background:#fff;height:23px;font-size:12px;min-width:220px}
+.fileui button{height:21px;border:none;border-right:1px solid #aaa;background:#eee;cursor:pointer;font-size:12px}
+.fileui span{padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.eye,.xx{cursor:pointer;font-size:15px;user-select:none;background:none;border:none}
+.eye[disabled]{opacity:.35;cursor:default}
+/* toast / modal */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#222;color:#fff;padding:8px 16px;border-radius:4px;display:none;z-index:99;max-width:90vw}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.on{display:flex}
+.modal .card{background:#fff;max-width:900px;width:100%;max-height:90vh;overflow:auto;border:2px solid var(--navy)}
+.modal .card .bar{display:flex;justify-content:space-between;align-items:center}
+.modal .card .bar span{cursor:pointer;font-size:18px}
+.modal .inner{padding:12px}
+.modal img{max-width:100%}
+.sum td{border:1px solid #ccd5ea;padding:4px 6px;font-size:12.5px}
+.sum td:first-child{font-weight:bold;background:#f0f4fc;width:38%}
+.sum td.c{width:52px;text-align:center}
+.sum .grp td{background:var(--navy2);color:#fff;font-weight:bold}
+.cpy{font-size:11px;padding:1px 6px;cursor:pointer}
+.list td,.list th{border:1px solid #ccd5ea;padding:5px}
+.note{background:#fff8d6;border:1px solid #e6cf6a;padding:6px 10px;margin:0 0 10px;font-size:12px}
+.pcpick{position:absolute;background:#fff;border:1px solid #666;max-height:200px;overflow:auto;z-index:20;min-width:120px;font-size:12px}
+.pcpick div{padding:3px 8px;cursor:pointer}.pcpick div:hover{background:#cfe0ff}
+.minihint{font-size:11px;color:#666}
+.menuToggle{display:none}
+/* responsive */
+@media (max-width:1100px){
+  .menu{width:260px;flex-basis:260px}
+  .row>label,.g2 .row>label{flex-basis:160px}
+}
+@media (max-width:860px){
+  .menuToggle{display:inline-block;background:none;border:1px solid #fff;color:#fff;font-size:16px;padding:2px 8px;cursor:pointer}
+  .wrap{display:block}
+  .menu{width:auto;border-right:none;display:none}
+  .menu.open{display:block}
+  .main{border-left:none}
+  .content{padding:10px 10px 20px}
+  .hdrgrid,.g2,.foot,.photos{grid-template-columns:1fr}
+  .row{flex-wrap:wrap}
+  .row>label,.g2 .row>label,.sec .row>label{flex:0 0 100%;text-align:left}
+  .row .ctl{max-width:none}
+  .top .r2{padding-left:16px}
+  .tblwrap{overflow-x:auto}
+  .tbl{min-width:900px}
+  .ph.nid .frame{width:290px;height:163px}
+}
+@media print{
+  body *{visibility:hidden}
+  #sumModal,#sumModal *{visibility:visible}
+  #sumModal{position:absolute;inset:0;background:#fff;display:block}
+  #sumModal .card{max-height:none;border:none}
+  .noprint{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="r1">
+    <div class="brand"><button class="menuToggle" onclick="document.querySelector('.menu').classList.toggle('open')">☰</button> Mohammadia Library &amp; Computer</div>
+    <div class="who">👤 Prepared by: <b id="whoId">—</b> || Outlet: <b id="whoOutlet">—</b> || Date: <b id="whoDate"></b> <span class="logout" onclick="editProfile()">Settings</span></div>
+  </div>
+  <div class="r2">Agent Banking — e-KYC Form Prep</div>
+</div>
+<div class="gap"></div>
+
+<div class="wrap">
+  <!-- ================= MENU ================= -->
+  <aside class="menu">
+    <div class="bar">MENU</div>
+    <div class="tree" id="tree">
+      <ul>
+        <li><span class="node"><span class="ic-fold"></span> ABPortal</span>
+          <ul>
+            <li class="closed"><span class="node"><span class="pm">+</span><span class="ic-fold"></span> Account Mainteinance</span></li>
+            <li class="closed"><span class="node"><span class="pm">+</span><span class="ic-fold"></span> Account Statement</span></li>
+            <li class="closed"><span class="node"><span class="pm">+</span><span class="ic-fold"></span> Customer Enquiry</span></li>
+            <li class="closed"><span class="node"><span class="pm">+</span><span class="ic-fold"></span> Desktop App Versions</span></li>
+            <li><span class="node"><span class="pm">−</span><span class="ic-fold"></span> Registration</span>
+              <ul>
+                <li class="closed"><span class="node" data-view="list"><span class="pm">+</span><span class="ic-fold"></span> Customer Information</span></li>
+                <li><span class="node"><span class="pm">−</span><span class="ic-fold"></span> Customer eKYC Registration</span>
+                  <ul>
+                    <li><span class="node" data-view="screen"><span class="pm none"></span><span class="ic-page"></span> Customer Screening</span></li>
+                    <li><span class="node active" data-view="form"><span class="pm none"></span><span class="ic-page"></span> Input EKYC Information</span></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><span class="node"><span class="pm">−</span><span class="ic-fold"></span> Reports</span>
+              <ul>
+                <li class="closed"><span class="node"><span class="pm">+</span><span class="ic-fold"></span> Adhoc Report</span></li>
+                <li class="closed"><span class="node"><span class="pm">+</span><span class="ic-fold"></span> Commission Invoice Generation</span></li>
+                <li><span class="node"><span class="pm none"></span><span class="ic-page"></span> Deposit Performance</span></li>
+                <li><span class="node"><span class="pm">−</span><span class="ic-fold"></span> Outlet Wise Report</span>
+                  <ul>
+                    <li><span class="node"><span class="pm none"></span><span class="ic-page"></span> Outlet Bill Pay Txn Summary Report</span></li>
+                    <li><span class="node"><span class="pm none"></span><span class="ic-page"></span> Outlet Teller Txn report</span></li>
+                    <li><span class="node"><span class="pm none"></span><span class="ic-page"></span> Outlet Transaction Report Today</span></li>
+                    <li><span class="node"><span class="pm none"></span><span class="ic-page"></span> Outlet Wise Dormant Account List</span></li>
+                    <li><span class="node"><span class="pm none"></span><span class="ic-page"></span> Outlet Wise Irregular RD List</span></li>
+                    <li><span class="node"><span class="pm none"></span><span class="ic-page"></span> Sub Agent Txn</span></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="closed"><span class="node"><span class="pm">+</span><span class="ic-fold"></span> System Management</span></li>
+            <li class="closed"><span class="node"><span class="pm">+</span><span class="ic-fold"></span> Transaction Info</span></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+    <div class="bar" id="mainTitle">Customer E-KYC Input</div>
+
+    <!-- ===== FORM VIEW ===== -->
+    <div class="content" id="view-form">
+      <div class="hdrgrid">
+        <div class="row"><label>Customer ID: <span class="s">*</span></label><div class="ctl"><input type="text" class="ro" id="customerId" data-req inputmode="numeric"></div></div>
+        <div class="row"><label>Branch Code: <span class="s">*</span></label><div class="ctl"><input type="text" class="ro" id="branchCode" data-req></div></div>
+        <div class="row"><label>Product Code: <span class="s">*</span></label><div class="ctl"><input type="text" class="ro" id="productCode" data-req></div></div>
+        <div class="row"><label>Product Name: <span class="s">*</span></label><div class="ctl"><input type="text" class="ro" id="productName" data-req></div></div>
+      </div>
+
+      <div class="box">
+        <div class="tabs" id="tabs">
+          <div class="tab on" data-tab="main">Main</div>
+          <div class="tab" data-tab="contact">Contact &amp; Address</div>
+          <div class="tab" data-tab="nominee">Nominee</div>
+          <div class="tab" data-tab="txn">Transaction Profile</div>
+          <div class="tab" data-tab="photo">Photo &amp; Signature</div>
+          <div class="tab" data-tab="docs">Customer Document</div>
+        </div>
+
+        <!-- ---------- MAIN ---------- -->
+        <div class="pane on" id="pane-main">
+          <div class="g2">
+            <div class="row"><label>Short Name/IC: <span class="s">*</span></label><div class="ctl"><input type="text" id="shortName" data-req maxlength="40"></div></div>
+            <div class="row"><label>Customer Category :</label><div class="ctl"><select id="custCategory"></select></div></div>
+
+            <div class="row"><label>First Name: <span class="s">*</span></label><div class="ctl"><input type="text" class="ro" id="firstName" data-req></div></div>
+            <div class="row"><label>Last Name:</label><div class="ctl"><input type="text" class="ro" id="lastName"></div></div>
+
+            <div class="row"><label>Father's Name: <span class="s">*</span></label><div class="ctl"><input type="text" class="ro" id="fatherName" data-req></div></div>
+            <div class="row"><label>Mother's Name: <span class="s">*</span></label><div class="ctl"><input type="text" class="ro" id="motherName" data-req></div></div>
+
+            <div class="row"><label>Spouse Name:</label><div class="ctl"><input type="text" id="spouseName"></div></div>
+            <div class="row"><label>Religion: <span class="s">*</span></label><div class="ctl"><select id="religion" data-req></select></div></div>
+
+            <div class="row"><label>Gender: <span class="s">*</span></label><div class="ctl"><select id="gender" data-req></select></div></div>
+            <div class="row"><label>Profession: <span class="s">*</span></label><div class="ctl"><select id="profession" data-req></select></div></div>
+
+            <div class="row"><label>Sector Code: <span class="s">*</span></label><div class="ctl"><select id="sectorCode" data-req></select></div></div>
+            <div class="row"><label>Profession Detail:</label><div class="ctl"><input type="text" id="professionDetail"></div></div>
+
+            <div class="row"><label>Maritial Status: <span class="s">*</span></label><div class="ctl"><select id="maritalStatus" data-req></select></div></div>
+            <div class="row"><label>Customer Status : <span class="s">*</span></label><div class="ctl"><select id="custStatus" data-req></select></div></div>
+
+            <div class="row"><label>Resident Status: <span class="s">*</span></label><div class="ctl radio" id="residentStatus" data-req data-radio>
+              <label><input type="radio" name="resident" value="Resident">Resident</label>
+              <label><input type="radio" name="resident" value="Nonresident">Nonresident</label></div></div>
+            <div class="row"><label>Nationality: <span class="s">*</span></label><div class="ctl"><select id="nationality" data-req></select></div></div>
+
+            <div class="row" style="margin-top:12px"><label>Identity Type: <span class="s">*</span></label><div class="ctl"><select id="identityType" data-req></select></div></div>
+            <div class="row" style="margin-top:12px"><label>Unique ID No. <span class="s">*</span></label><div class="ctl"><input type="text" class="ro" id="uniqueId" data-req inputmode="numeric"></div></div>
+
+            <div class="row"><label>Date Of Birth : <span class="s">*</span></label><div class="ctl"><input type="text" class="ro" id="dob" data-req placeholder="DD/MM/YYYY" maxlength="10"></div></div>
+            <div class="row"><label>Place Of Birth: <span class="s">*</span></label><div class="ctl"><select id="placeOfBirth" data-req></select></div></div>
+
+            <div class="row"><label>ARO/ORO/ABRO/ABJRO ID: <span class="s">*</span></label><div class="ctl"><input type="text" id="aroId" data-req></div></div>
+            <div class="row"><label>Tin:</label><div class="ctl"><input type="text" id="tin" inputmode="numeric"></div></div>
+          </div>
+        </div>
+
+        <!-- ---------- CONTACT & ADDRESS ---------- -->
+        <div class="pane" id="pane-contact">
+          <div class="g2" style="gap:0 30px">
+            <div class="sec" id="sec-mail">
+              <div class="sech">Mailing Address</div>
+              <div class="body" data-addr="mail"></div>
+            </div>
+            <div>
+              <div class="sec" id="sec-pres" style="border:none">
+                <div class="sech">Present Address</div>
+                <div class="body" data-addr="pres"></div>
+                <div class="row"><label style="flex-basis:150px">Same As Mailing Address</label><div class="ctl"><input type="checkbox" id="presSameMail"></div></div>
+              </div>
+            </div>
+            <div class="sec" id="sec-perm">
+              <div class="sech">Permanent Address</div>
+              <div class="body" data-addr="perm"></div>
+              <div class="row"><label style="flex-basis:150px">Same As Present Adderss</label><div class="ctl"><input type="checkbox" id="permSamePres"></div></div>
+            </div>
+            <div>
+              <div class="sec" style="border:none">
+                <div class="sech">Phone</div>
+                <div class="body">
+                  <div class="row"><label>Residence Phone :</label><div class="ctl"><input type="tel" id="resPhone"></div></div>
+                  <div class="row"><label>Mobile : <span class="s">*</span></label><div class="ctl"><input type="tel" id="mobile" data-req maxlength="11" inputmode="numeric"></div></div>
+                  <div class="row"><label>Office :</label><div class="ctl"><input type="tel" id="officePhone"></div></div>
+                  <div class="row"><label>Fax :</label><div class="ctl"><input type="tel" id="fax"></div></div>
+                  <div class="row"><label>Email :</label><div class="ctl"><input type="email" id="email"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---------- NOMINEE ---------- -->
+        <div class="pane" id="pane-nominee">
+          <div class="tblwrap">
+          <table class="tbl" id="nomTbl">
+            <thead><tr>
+              <th>Name: <span class="s">*</span></th><th>Date Of Birth: <span class="s">*</span></th><th>Unique ID: <span class="s">*</span></th>
+              <th>Mobile No.: <span class="s">*</span></th><th>Relation: <span class="s">*</span></th><th>Address: <span class="s">*</span></th>
+              <th>Share (%): <span class="s">*</span></th><th>Is Minor: <span class="s">*</span></th><th>G. Name : <span class="s">*</span></th>
+              <th>G. Relation : <span class="s">*</span></th><th>G. Address : <span class="s">*</span></th>
+              <th style="width:34px;text-align:center"><button class="iconbtn add" title="Add nominee" onclick="addNominee()">+</button></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+          </div>
+          <div class="minihint" id="shareInfo" style="padding:6px 4px"></div>
+        </div>
+
+        <!-- ---------- TRANSACTION PROFILE ---------- -->
+        <div class="pane" id="pane-txn">
+          <div class="g2" style="margin-bottom:8px">
+            <div class="row"><label>Select Income Range: <span class="s">*</span></label><div class="ctl"><select id="incomeRange" data-req></select></div></div>
+            <div class="row"><label>Income Source Doc:</label><div class="ctl" id="incomeDocCtl"></div></div>
+          </div>
+          <div class="tblwrap">
+          <table class="tbl" id="txnTbl">
+            <thead><tr>
+              <th>Transaction Type: <span class="s">*</span></th>
+              <th>No. Of Transaction: <span class="s">*</span></th>
+              <th>Max Transaction Amount: <span class="s">*</span></th>
+              <th>Total Transaction Amount: <span class="s">*</span></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+          </div>
+          <div class="minihint" style="padding:6px 4px">Monthly figures. Total is filled automatically as No. × Max (you can override).</div>
+        </div>
+
+        <!-- ---------- PHOTO & SIGNATURE ---------- -->
+        <div class="pane" id="pane-photo">
+          <div class="photos">
+            <div class="ph nid" data-img="nidFront"><div class="frame"><span class="cam blue"></span></div><div class="cap">NID Front</div><a class="rm">remove</a></div>
+            <div class="ph cp" data-img="custPhoto"><div class="frame"><span class="cam dark"></span></div><div class="cap">Customer Photo</div><a class="rm">remove</a></div>
+            <div class="ph nid" data-img="nidBack"><div class="frame"><span class="cam blue"></span></div><div class="cap">NID Back</div><a class="rm">remove</a></div>
+            <div class="ph cs" data-img="custSign"><div class="frame"><span class="cam dark"></span></div><div class="cap">Customer Sign</div><a class="rm">remove</a></div>
+          </div>
+          <div class="minihint" style="text-align:center">Tap a box to take a photo (phone camera) or choose an image file. Images are compressed before saving.</div>
+        </div>
+
+        <!-- ---------- CUSTOMER DOCUMENT ---------- -->
+        <div class="pane" id="pane-docs">
+          <div class="tblwrap">
+          <table class="tbl" id="docTbl">
+            <thead><tr><th style="width:22%">Document Type:</th><th style="width:30%">Document Name:</th><th>Upload Document:</th><th style="width:10%">Document View:</th><th style="width:11%">Remove Document:</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="btns">
+        <button class="btn grey" id="prevBtn" onclick="stepTab(-1)">« Previous</button>
+        <button class="btn" onclick="cancelForm()">Cancel</button>
+        <button class="btn" onclick="saveForm()">Save</button>
+        <button class="btn grey" id="nextBtn" onclick="stepTab(1)">Next »</button>
+        <button class="btn green" onclick="showSummary()">Summary / Print</button>
+      </div>
+
+      <div class="foot">
+        <div class="row"><label>KYC Inputter ID : <span class="s">*</span></label><div class="ctl"><input type="text" class="ro" id="inputterId" readonly></div></div>
+        <div class="row"><label>KYC Input Date :</label><div class="ctl"><input type="text" class="ro" id="inputDate" readonly></div></div>
+        <div class="row"><label>KYC Approver ID :</label><div class="ctl"><input type="text" class="ro" id="approverId"></div></div>
+        <div class="row"><label>KYC Approver Date :</label><div class="ctl"><input type="text" class="ro" id="approverDate" placeholder="DD/MM/YYYY"></div></div>
+      </div>
+    </div>
+
+    <!-- ===== SAVED LIST VIEW ===== -->
+    <div class="content" id="view-list" style="display:none">
+      <div class="row" style="margin-bottom:10px"><label style="flex-basis:auto">Search (ID / Name / NID / Mobile):</label><div class="ctl" style="max-width:340px"><input type="text" id="listSearch"></div>
+        <button class="btn" onclick="newForm()">New Customer</button>
+        <button class="btn grey" onclick="exportAll()">Export JSON</button>
+        <label class="btn grey" style="display:inline-block">Import JSON<input type="file" accept="application/json" style="display:none" onchange="importAll(this)"></label>
+      </div>
+      <div class="tblwrap">
+      <table class="tbl list" id="listTbl">
+        <thead><tr><th>Customer ID</th><th>Name</th><th>NID</th><th>Mobile</th><th>Saved</th><th>Status</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="copyright">Copyright © 2026. Mohammadia Library &amp; Computer — e-KYC data preparation helper (not a bank system).</div>
+
+<!-- hidden file input for photos/docs -->
+<input type="file" id="fileIn" accept="image/*" style="display:none">
+
+<div class="modal" id="sumModal"><div class="card">
+  <div class="bar"><b>e-KYC Summary — copy each value into the portal</b><span class="noprint" onclick="closeModal('sumModal')">✕</span></div>
+  <div class="inner">
+    <div class="noprint" style="margin-bottom:8px"><button class="btn" onclick="window.print()">Print</button> <span class="minihint">Click “Copy” next to any value.</span></div>
+    <div id="sumMissing"></div>
+    <table class="tbl sum" id="sumTbl"></table>
+  </div>
+</div></div>
+<div class="modal" id="viewModal"><div class="card">
+  <div class="bar"><b id="viewTitle">Document</b><span onclick="closeModal('viewModal')">✕</span></div>
+  <div class="inner" id="viewBody" style="text-align:center"></div>
+</div></div>
+<div id="toast"></div>
+
+<script>
+/* ===================================================================
+   OPTIONS
+   Options visible in the reference screenshots are reproduced exactly
+   (Customer Category "9-Individual Resident", Gender "Female", Customer
+   Status "Active", Nationality "Bangladeshi", Identity Type
+   "3 - National ID", income ranges, document types). The rest are the
+   standard Bangladesh KYC values and can be edited here if the portal
+   shows different wording.
+   =================================================================== */
+const OPT = {
+  custCategory:["9-Individual Resident","10-Individual Non-Resident","11-Joint Account","12-Minor"],
+  religion:["Islam","Hinduism","Buddhism","Christianity","Others"],
+  gender:["Male","Female","Third Gender"],
+  profession:["Agriculture/Farmer","Business","Service (Govt.)","Service (Private)","Day Labourer","Driver","Fisherman","Garments Worker","Housewife","Student","Teacher","Doctor","Engineer","Lawyer","Retired","Expatriate/Remittance","Self Employed","Unemployed","Others"],
+  sectorCode:["Individual (Private Sector)","Individual (Public Sector)","Agriculture","Small Business/SME","Service Holder","Housewife","Student","Expatriate","Others"],
+  maritalStatus:["Married","Unmarried","Widowed","Divorced","Separated"],
+  custStatus:["Active","Inactive"],
+  nationality:["Bangladeshi","Others"],
+  identityType:["1 - Birth Registration","2 - Passport","3 - National ID","4 - Driving License","5 - Smart Card"],
+  relation:["Father","Mother","Husband","Wife","Son","Daughter","Brother","Sister","Grand Father","Grand Mother","Uncle","Aunt","Nephew","Niece","Cousin","Father-in-law","Mother-in-law","Others"],
+  incomeRange:["1-50000","50001-100000","100001-300000","300001-500000","500001 - Above"],
+  txnTypes:["Cash Deposit","Cash Withdrawal","Fund Transfer (In)","Fund Transfer (Out)","Foreign Remittance"],
+  countries:["Bangladesh","India","Saudi Arabia","United Arab Emirates","Qatar","Kuwait","Oman","Malaysia","Singapore","United Kingdom","United States","Others"],
+  docTypes:["Driving License","TIN Certificate","Passport","Birth Registration Certificate","Service ID","Nominee Photo","Nominee NID","Other 1","Other 2","Other 3","Other 4"]
+};
+const DIV = {
+  "Barishal":["Barguna","Barishal","Bhola","Jhalokati","Patuakhali","Pirojpur"],
+  "Chattogram":["Bandarban","Brahmanbaria","Chandpur","Chattogram","Cox's Bazar","Cumilla","Feni","Khagrachhari","Lakshmipur","Noakhali","Rangamati"],
+  "Dhaka":["Dhaka","Faridpur","Gazipur","Gopalganj","Kishoreganj","Madaripur","Manikganj","Munshiganj","Narayanganj","Narsingdi","Rajbari","Shariatpur","Tangail"],
+  "Khulna":["Bagerhat","Chuadanga","Jashore","Jhenaidah","Khulna","Kushtia","Magura","Meherpur","Narail","Satkhira"],
+  "Mymensingh":["Jamalpur","Mymensingh","Netrokona","Sherpur"],
+  "Rajshahi":["Bogura","Chapai Nawabganj","Joypurhat","Naogaon","Natore","Pabna","Rajshahi","Sirajganj"],
+  "Rangpur":["Dinajpur","Gaibandha","Kurigram","Lalmonirhat","Nilphamari","Panchagarh","Rangpur","Thakurgaon"],
+  "Sylhet":["Habiganj","Moulvibazar","Sunamganj","Sylhet"]
+};
+const ALL_DISTRICTS = Object.values(DIV).flat().sort();
+const TABS = ["main","contact","nominee","txn","photo","docs"];
+const TAB_NAMES = {main:"Main",contact:"Contact & Address",nominee:"Nominee",txn:"Transaction Profile",photo:"Photo & Signature",docs:"Customer Document"};
+const ADDR_KEYS = ["house","road","village","upazila","country","division","district","postal"];
+const ADDR_LABELS = {house:"House No. :",road:"Road No. :",village:"Village :",upazila:"Upazila :",country:"Country :",division:"Division :",district:"District :",postal:"Postal Code :"};
+const ADDR_NAMES = {mail:"Mailing Address",pres:"Present Address",perm:"Permanent Address"};
+
+/* ---------------- helpers ---------------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function fill(sel, list, def){ sel.innerHTML = '<option value="">--Select--</option>' + list.map(v=>`<option${v===def?" selected":""}>${esc(v)}</option>`).join(""); }
+function toast(m,ms){ const t=$("toast"); t.textContent=m; t.style.display="block"; clearTimeout(toast._t); toast._t=setTimeout(()=>t.style.display="none",ms||2600); }
+function today(){ const d=new Date(); return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear(); }
+function store(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ return false; } }
+function load(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }
+function closeModal(id){ $(id).classList.remove("on"); }
+
+/* ---------------- build address blocks ---------------- */
+document.querySelectorAll("[data-addr]").forEach(body=>{
+  const p = body.dataset.addr;
+  body.innerHTML = ADDR_KEYS.map(k=>{
+    const id = p+"_"+k;
+    let ctl;
+    if(k==="country"||k==="division"||k==="district") ctl = `<select id="${id}" data-req></select>`;
+    else if(k==="postal") ctl = `<input type="text" id="${id}" data-req maxlength="4" inputmode="numeric">`;
+    else ctl = `<input type="text" id="${id}" data-req>`;
+    let extra = "";
+    if(k==="postal" && p==="mail") extra = `<div class="row" style="justify-content:center;position:relative"><button class="btn grey" style="background:#fff;color:#000;outline:1px solid #555;font-weight:normal;padding:1px 4px;min-width:0" onclick="pickPostal(event,'${p}')">--Select--</button></div>`;
+    return `<div class="row"><label>${ADDR_LABELS[k]} <span class="s">*</span></label><div class="ctl">${ctl}</div></div>`+extra;
+  }).join("");
+  fill($(p+"_country"), OPT.countries, "Bangladesh");
+  fill($(p+"_division"), Object.keys(DIV));
+  fill($(p+"_district"), []);
+  $(p+"_division").addEventListener("change",()=>{ fill($(p+"_district"), DIV[$(p+"_division").value]||[]); });
+  $(p+"_country").addEventListener("change",()=>{
+    const bd = $(p+"_country").value==="Bangladesh";
+    if(!bd){ fill($(p+"_division"),["Outside Bangladesh"],"Outside Bangladesh"); fill($(p+"_district"),["Outside Bangladesh"],"Outside Bangladesh"); }
+    else { fill($(p+"_division"),Object.keys(DIV)); fill($(p+"_district"),[]); }
+  });
+});
+
+/* postal code history picker */
+function pickPostal(ev,p){
+  ev.stopPropagation();
+  document.querySelectorAll(".pcpick").forEach(x=>x.remove());
+  const hist = load("ekyc_postal",[]);
+  const box = document.createElement("div"); box.className="pcpick";
+  box.innerHTML = hist.length ? hist.map(h=>`<div data-c="${esc(h.c)}">${esc(h.c)} — ${esc(h.l)}</div>`).join("") : '<div style="color:#888;cursor:default">No saved postal codes yet.<br>They are remembered after Save.</div>';
+  ev.target.parentNode.appendChild(box);
+  box.addEventListener("click",e=>{ const c=e.target.dataset.c; if(c){ $(p+"_postal").value=c; markDirty(); } box.remove(); });
+  setTimeout(()=>document.addEventListener("click",()=>box.remove(),{once:true}),0);
+}
+
+/* ---------------- fill selects ---------------- */
+fill($("custCategory"),OPT.custCategory,"9-Individual Resident");
+fill($("religion"),OPT.religion); fill($("gender"),OPT.gender); fill($("profession"),OPT.profession);
+fill($("sectorCode"),OPT.sectorCode); fill($("maritalStatus"),OPT.maritalStatus);
+fill($("custStatus"),OPT.custStatus,"Active"); fill($("nationality"),OPT.nationality,"Bangladeshi");
+fill($("identityType"),OPT.identityType,"3 - National ID"); fill($("placeOfBirth"),ALL_DISTRICTS);
+fill($("incomeRange"),OPT.incomeRange);
+
+/* read-only-looking header fields are still editable here (data comes from NID / portal) */
+["customerId","branchCode","productCode","productName","firstName","lastName","fatherName","motherName","uniqueId","dob"].forEach(id=>$(id).readOnly=false);
+$("dob").addEventListener("input",e=>{ let v=e.target.value.replace(/[^\d]/g,"").slice(0,8); if(v.length>4) v=v.slice(0,2)+"/"+v.slice(2,4)+"/"+v.slice(4); else if(v.length>2) v=v.slice(0,2)+"/"+v.slice(2); e.target.value=v; });
+$("firstName").addEventListener("input",()=>{ if(!$("shortName").dataset.touched) $("shortName").value=($("firstName").value+" "+$("lastName").value).trim().toUpperCase(); });
+$("lastName").addEventListener("input",()=>$("firstName").dispatchEvent(new Event("input")));
+$("shortName").addEventListener("input",()=>$("shortName").dataset.touched=1);
+$("maritalStatus").addEventListener("change",()=>{ if($("maritalStatus").value==="Unmarried") $("spouseName").value=""; });
+$("nationality").addEventListener("change",()=>{ document.querySelector(`input[name=resident][value=${$("nationality").value==="Bangladeshi"?"Resident":"Nonresident"}]`).checked=true; });
+
+/* same-as checkboxes */
+function copyAddr(from,to){ ADDR_KEYS.forEach(k=>{ const s=$(from+"_"+k), d=$(to+"_"+k);
+  if(d.tagName==="SELECT"){ if(k==="district") fill(d, DIV[$(to+"_division").value]||[...s.options].map(o=>o.value).filter(Boolean)); if(k==="division"&&s.value==="Outside Bangladesh") fill(d,["Outside Bangladesh"]); }
+  d.value=s.value; }); }
+$("presSameMail").addEventListener("change",e=>{ if(e.target.checked) copyAddr("mail","pres"); setLock("pres",e.target.checked); });
+$("permSamePres").addEventListener("change",e=>{ if(e.target.checked) copyAddr("pres","perm"); setLock("perm",e.target.checked); });
+function setLock(p,on){ ADDR_KEYS.forEach(k=>{ const el=$(p+"_"+k); el.disabled=on; el.classList.toggle("ro",on); }); }
+document.querySelectorAll("[data-addr=mail] input,[data-addr=mail] select").forEach(el=>el.addEventListener("change",()=>{ if($("presSameMail").checked){ copyAddr("mail","pres"); if($("permSamePres").checked) copyAddr("pres","perm"); } }));
+document.querySelectorAll("[data-addr=pres] input,[data-addr=pres] select").forEach(el=>el.addEventListener("change",()=>{ if($("permSamePres").checked) copyAddr("pres","perm"); }));
+
+/* ---------------- nominee ---------------- */
+function addNominee(d){
+  d = d||{};
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><input type="text" data-k="name"></td>
+    <td><input type="text" data-k="dob" placeholder="DD/MM/YYYY" maxlength="10"></td>
+    <td><input type="text" data-k="uid" inputmode="numeric"></td>
+    <td><input type="tel" data-k="mobile" maxlength="11" inputmode="numeric"></td>
+    <td><select data-k="relation"></select></td>
+    <td><input type="text" data-k="address"></td>
+    <td><input type="number" data-k="share" min="1" max="100"></td>
+    <td style="text-align:center"><input type="checkbox" data-k="minor"></td>
+    <td><input type="text" data-k="gname" class="ro" disabled></td>
+    <td><select data-k="grelation" class="ro" disabled></select></td>
+    <td><input type="text" data-k="gaddress" class="ro" disabled></td>
+    <td style="text-align:center"><button class="iconbtn" title="Remove" onclick="rmNominee(this)">✖</button></td>`;
+  $("nomTbl").tBodies[0].appendChild(tr);
+  fill(tr.querySelector("[data-k=relation]"),OPT.relation);
+  fill(tr.querySelector("[data-k=grelation]"),OPT.relation);
+  Object.entries(d).forEach(([k,v])=>{ const el=tr.querySelector(`[data-k=${k}]`); if(!el) return; if(el.type==="checkbox") el.checked=!!v; else el.value=v; });
+  const minor = tr.querySelector("[data-k=minor]");
+  const dob = tr.querySelector("[data-k=dob]");
+  const syncMinor = ()=>{ ["gname","grelation","gaddress"].forEach(k=>{ const el=tr.querySelector(`[data-k=${k}]`); el.disabled=!minor.checked; el.classList.toggle("ro",!minor.checked); if(!minor.checked) el.value=""; }); };
+  minor.addEventListener("change",syncMinor);
+  dob.addEventListener("input",e=>{ let v=e.target.value.replace(/[^\d]/g,"").slice(0,8); if(v.length>4) v=v.slice(0,2)+"/"+v.slice(2,4)+"/"+v.slice(4); else if(v.length>2) v=v.slice(0,2)+"/"+v.slice(2); e.target.value=v;
+    const a=ageOf(v); if(a!=null){ minor.checked=a<18; syncMinor(); } });
+  tr.querySelector("[data-k=share]").addEventListener("input",shareInfo);
+  syncMinor(); if(d.minor){ minor.checked=true; syncMinor(); Object.entries(d).forEach(([k,v])=>{ const el=tr.querySelector(`[data-k=${k}]`); if(el&&el.type!=="checkbox") el.value=v; }); }
+  if(!d.share && $("nomTbl").tBodies[0].rows.length===1) tr.querySelector("[data-k=share]").value=100;
+  shareInfo();
+}
+function rmNominee(b){ const tb=$("nomTbl").tBodies[0]; if(tb.rows.length<=1){ toast("At least one nominee row is required."); return; } b.closest("tr").remove(); shareInfo(); markDirty(); }
+function ageOf(s){ const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s||""); if(!m) return null; const b=new Date(+m[3],+m[2]-1,+m[1]); if(isNaN(b)) return null; const n=new Date(); let a=n.getFullYear()-b.getFullYear(); if(n<new Date(n.getFullYear(),b.getMonth(),b.getDate())) a--; return a; }
+function shareTotal(){ return [...$("nomTbl").querySelectorAll("[data-k=share]")].reduce((s,e)=>s+(+e.value||0),0); }
+function shareInfo(){ const t=shareTotal(); $("shareInfo").innerHTML = `Total share: <b style="color:${t===100?'#1a8f1a':'#c00'}">${t}%</b> (must be 100%). A nominee under 18 is marked minor automatically and needs guardian details.`; }
+
+/* ---------------- transaction profile ---------------- */
+OPT.txnTypes.forEach(t=>{
+  const tr=document.createElement("tr");
+  tr.innerHTML=`<td><input type="text" class="ro" value="${esc(t)}" readonly data-k="type"></td>
+    <td><input type="number" min="0" data-k="count"></td><td><input type="number" min="0" data-k="max"></td><td><input type="number" min="0" data-k="total"></td>`;
+  const calc=()=>{ const c=+tr.querySelector("[data-k=count]").value, m=+tr.querySelector("[data-k=max]").value; if(c&&m) tr.querySelector("[data-k=total]").value=c*m; };
+  tr.querySelector("[data-k=count]").addEventListener("input",calc); tr.querySelector("[data-k=max]").addEventListener("input",calc);
+  $("txnTbl").tBodies[0].appendChild(tr);
+});
+
+/* ---------------- files (photos, income doc, documents) ---------------- */
+let FILES = {};        // key -> {name, data(dataURL)}
+let pendingKey = null;
+function fileUI(key){ return `<div class="fileui"><button type="button" onclick="chooseFile('${key}',false)">Browse...</button><span id="fn_${key}">No file selected.</span></div>`; }
+$("incomeDocCtl").innerHTML = fileUI("incomeDoc") + ` <button class="eye" id="eye_incomeDoc" onclick="viewFile('incomeDoc')" title="View">👁</button>`;
+OPT.docTypes.forEach((t,i)=>{
+  const key="doc"+i, tr=document.createElement("tr");
+  tr.innerHTML=`<td><input type="text" class="ro" readonly value="${esc(t)}"></td><td><input type="text" class="ro" readonly id="dn_${key}"></td>
+    <td>${fileUI(key)}</td><td style="text-align:center"><button class="eye" id="eye_${key}" onclick="viewFile('${key}')">👁</button></td>
+    <td style="text-align:center"><button class="xx" onclick="removeFile('${key}')" title="Remove">✖</button></td>`;
+  $("docTbl").tBodies[0].appendChild(tr);
+});
+document.querySelectorAll(".ph").forEach(ph=>{
+  ph.addEventListener("click",e=>{ if(e.target.classList.contains("rm")){ e.stopPropagation(); removeFile(ph.dataset.img); return; } chooseFile(ph.dataset.img,true); });
+});
+function chooseFile(key,camera){
+  pendingKey=key; const fi=$("fileIn");
+  fi.accept = key.startsWith("doc")||key==="incomeDoc" ? "image/*,application/pdf" : "image/*";
+  if(camera) fi.setAttribute("capture", key==="custPhoto"?"user":"environment"); else fi.removeAttribute("capture");
+  fi.value=""; fi.click();
+}
+$("fileIn").addEventListener("change",async e=>{
+  const f=e.target.files[0]; if(!f||!pendingKey) return;
+  const key=pendingKey; pendingKey=null;
+  let data;
+  if(f.type.startsWith("image/")) data = await compress(f, key==="custSign"?900:1280, 0.8);
+  else { if(f.size>1.5e6){ toast("PDF is larger than 1.5 MB — use an image or a smaller PDF."); return; } data = await new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.readAsDataURL(f); }); }
+  FILES[key]={name:f.name,data}; renderFiles(); markDirty();
+});
+function compress(file,maxW,q){ return new Promise(res=>{ const img=new Image(); const url=URL.createObjectURL(file);
+  img.onload=()=>{ const s=Math.min(1,maxW/Math.max(img.width,img.height)); const c=document.createElement("canvas"); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s);
+    const x=c.getContext("2d"); x.fillStyle="#fff"; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg",q)); };
+  img.onerror=()=>{ URL.revokeObjectURL(url); const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.readAsDataURL(file); };
+  img.src=url; }); }
+function removeFile(key){ delete FILES[key]; renderFiles(); markDirty(); }
+function renderFiles(){
+  document.querySelectorAll(".ph").forEach(ph=>{ const f=FILES[ph.dataset.img], fr=ph.querySelector(".frame");
+    const cam = ph.classList.contains("nid") ? '<span class="cam blue"></span>' : '<span class="cam dark"></span>';
+    fr.innerHTML = f ? `<img src="${f.data}" alt="">` : cam; ph.classList.toggle("has",!!f); });
+  ["incomeDoc",...OPT.docTypes.map((_,i)=>"doc"+i)].forEach(k=>{ const f=FILES[k];
+    $("fn_"+k).textContent = f ? f.name : "No file selected.";
+    if($("dn_"+k)) $("dn_"+k).value = f ? f.name : "";
+    $("eye_"+k).disabled = !f; });
+}
+function viewFile(key){ const f=FILES[key]; if(!f) return; $("viewTitle").textContent=f.name;
+  $("viewBody").innerHTML = f.data.startsWith("data:application/pdf") ? `<iframe src="${f.data}" style="width:100%;height:70vh;border:0"></iframe>` : `<img src="${f.data}" alt="">`;
+  $("viewModal").classList.add("on"); }
+
+/* ---------------- tabs / steps ---------------- */
+let curTab="main";
+function showTab(t){ curTab=t; document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.tab===t)); document.querySelectorAll(".pane").forEach(x=>x.classList.toggle("on",x.id==="pane-"+t));
+  const i=TABS.indexOf(t); $("prevBtn").style.visibility=i?"visible":"hidden"; $("nextBtn").style.visibility=i<TABS.length-1?"visible":"hidden"; }
+document.querySelectorAll(".tab").forEach(x=>x.addEventListener("click",()=>showTab(x.dataset.tab)));
+function stepTab(d){
+  if(d>0){ const errs=validateTab(curTab); if(errs.length){ toast("Please fill: "+errs.slice(0,4).join(", ")+(errs.length>4?" …":""),4000); return; } }
+  $("toast").style.display="none"; const i=TABS.indexOf(curTab)+d; if(i>=0&&i<TABS.length){ showTab(TABS[i]); window.scrollTo({top:0,behavior:"smooth"}); }
+}
+
+/* ---------------- validation ---------------- */
+function labelOf(el){ const r=el.closest(".row"); return r? r.querySelector("label").textContent.replace(/[*:]/g,"").trim() : el.id; }
+function validateTab(t){
+  const pane=$("pane-"+t), errs=[];
+  pane.querySelectorAll(".err").forEach(e=>e.classList.remove("err"));
+  if(t==="main"){ ["customerId","branchCode","productCode","productName"].forEach(id=>{ const el=$(id); el.classList.remove("err"); if(!el.value.trim()){ el.classList.add("err"); errs.push(labelOf(el)); } }); }
+  pane.querySelectorAll("input[data-req],select[data-req]").forEach(el=>{ if(el.disabled) return; if(!el.value.trim()){ el.classList.add("err"); errs.push((el.closest(".sec")?el.closest(".sec").querySelector(".sech").textContent+" › ":"")+labelOf(el)); } });
+  if(t==="main"){
+    if(!document.querySelector("input[name=resident]:checked")) errs.push("Resident Status");
+    const dob=$("dob").value; if(dob && ageOf(dob)==null){ $("dob").classList.add("err"); errs.push("Date Of Birth (DD/MM/YYYY)"); }
+    const nid=$("uniqueId").value.trim(); if(nid && $("identityType").value.startsWith("3") && !/^(\d{10}|\d{13}|\d{17})$/.test(nid)){ $("uniqueId").classList.add("err"); errs.push("Unique ID No. (NID must be 10, 13 or 17 digits)"); }
+  }
+  if(t==="contact"){ const m=$("mobile").value.trim(); if(m && !/^01[3-9]\d{8}$/.test(m)){ $("mobile").classList.add("err"); errs.push("Mobile (11 digits, 01XXXXXXXXX)"); }
+    ["mail","pres","perm"].forEach(p=>{ const pc=$(p+"_postal"); if(pc.value && $(p+"_country").value==="Bangladesh" && !/^\d{4}$/.test(pc.value)){ pc.classList.add("err"); errs.push(ADDR_NAMES[p]+" › Postal Code (4 digits)"); } }); }
+  if(t==="nominee"){
+    [...$("nomTbl").tBodies[0].rows].forEach((tr,i)=>{ tr.querySelectorAll("input,select").forEach(el=>{ if(el.type==="checkbox"||el.disabled) return; if(!String(el.value).trim()){ el.classList.add("err"); errs.push(`Nominee ${i+1} ${el.closest("table").tHead.rows[0].cells[el.closest("td").cellIndex].textContent.replace(/[*:]/g,"").trim()}`); } }); });
+    if(shareTotal()!==100) errs.push("Nominee share total must be 100%");
+  }
+  if(t==="txn"){ [...$("txnTbl").tBodies[0].rows].forEach(tr=>tr.querySelectorAll("input:not([readonly])").forEach(el=>{ if(el.value===""){ el.classList.add("err"); errs.push(tr.cells[0].querySelector("input").value+" "+["","No. Of Transaction","Max Amount","Total Amount"][el.closest("td").cellIndex]); } })); }
+  if(t==="photo"){ ["nidFront","nidBack","custPhoto","custSign"].forEach(k=>{ if(!FILES[k]) errs.push(document.querySelector(`[data-img=${k}] .cap`).textContent); }); }
+  const tab=document.querySelector(`.tab[data-tab=${t}]`); tab.querySelector(".ok")?.remove(); if(!errs.length) tab.insertAdjacentHTML("beforeend",'<span class="ok">✔</span>');
+  return errs;
+}
+
+/* ---------------- collect / apply ---------------- */
+const SIMPLE = ["customerId","branchCode","productCode","productName","shortName","custCategory","firstName","lastName","fatherName","motherName","spouseName","religion","gender","profession","sectorCode","professionDetail","maritalStatus","custStatus","nationality","identityType","uniqueId","dob","placeOfBirth","aroId","tin","resPhone","mobile","officePhone","fax","email","incomeRange","approverId","approverDate"];
+function collect(){
+  const d={}; SIMPLE.forEach(id=>d[id]=$(id).value.trim());
+  d.residentStatus=(document.querySelector("input[name=resident]:checked")||{}).value||"";
+  ["mail","pres","perm"].forEach(p=>{ d[p]={}; ADDR_KEYS.forEach(k=>d[p][k]=$(p+"_"+k).value.trim()); });
+  d.presSameMail=$("presSameMail").checked; d.permSamePres=$("permSamePres").checked;
+  d.nominees=[...$("nomTbl").tBodies[0].rows].map(tr=>{ const o={}; tr.querySelectorAll("[data-k]").forEach(el=>o[el.dataset.k]=el.type==="checkbox"?el.checked:el.value.trim()); return o; });
+  d.txn=[...$("txnTbl").tBodies[0].rows].map(tr=>{ const o={}; tr.querySelectorAll("[data-k]").forEach(el=>o[el.dataset.k]=el.value); return o; });
+  d.files=FILES; d.inputterId=$("inputterId").value; d.inputDate=$("inputDate").value;
+  return d;
+}
+function apply(d){
+  SIMPLE.forEach(id=>{ if(d[id]!=null) $(id).value=d[id]; });
+  document.querySelectorAll("input[name=resident]").forEach(r=>r.checked=r.value===d.residentStatus);
+  ["mail","pres","perm"].forEach(p=>{ if(!d[p]) return; $(p+"_country").value=d[p].country||"Bangladesh"; $(p+"_country").dispatchEvent(new Event("change"));
+    $(p+"_division").value=d[p].division||""; fill($(p+"_district"), d[p].division==="Outside Bangladesh"?["Outside Bangladesh"]:(DIV[d[p].division]||[]));
+    ADDR_KEYS.forEach(k=>{ if(k!=="country"&&k!=="division") $(p+"_"+k).value=d[p][k]||""; }); });
+  $("presSameMail").checked=!!d.presSameMail; setLock("pres",!!d.presSameMail);
+  $("permSamePres").checked=!!d.permSamePres; setLock("perm",!!d.permSamePres);
+  $("nomTbl").tBodies[0].innerHTML=""; (d.nominees&&d.nominees.length?d.nominees:[{}]).forEach(n=>addNominee(n));
+  (d.txn||[]).forEach((t,i)=>{ const tr=$("txnTbl").tBodies[0].rows[i]; if(!tr) return; ["count","max","total"].forEach(k=>tr.querySelector(`[data-k=${k}]`).value=t[k]||""); });
+  FILES=d.files||{}; renderFiles();
+  if(d.inputterId) $("inputterId").value=d.inputterId; if(d.inputDate) $("inputDate").value=d.inputDate;
+  $("shortName").dataset.touched = d.shortName?1:"";
+  document.querySelectorAll(".tab .ok").forEach(x=>x.remove());
+}
+
+/* ---------------- save / draft / records ---------------- */
+let dirty=false, draftTimer=null;
+function markDirty(){ dirty=true; clearTimeout(draftTimer); draftTimer=setTimeout(()=>{ if(!store("ekyc_draft",collect())) store("ekyc_draft",{...collect(),files:{}}); },800); }
+document.addEventListener("input",e=>{ if(e.target.closest("#view-form")) markDirty(); });
+document.addEventListener("change",e=>{ if(e.target.closest("#view-form")) markDirty(); });
+
+function saveForm(){
+  const all=[]; TABS.forEach(t=>validateTab(t).forEach(e=>all.push(TAB_NAMES[t]+": "+e)));
+  const d=collect();
+  if(!d.customerId){ showTab("main"); toast("Customer ID is required to save."); $("customerId").focus(); return; }
+  const recs=load("ekyc_records",{});
+  d.savedAt=new Date().toISOString(); d.complete=!all.length;
+  recs[d.customerId]=d;
+  if(!store("ekyc_records",recs)){ // storage full — keep text, drop images
+    recs[d.customerId]={...d,files:{},filesDropped:true};
+    if(!store("ekyc_records",recs)){ toast("Browser storage is full. Delete old records in Customer Information.",5000); return; }
+    toast("Saved WITHOUT photos/documents (browser storage full). Delete old records to free space.",5000);
+  } else toast(all.length ? `Saved as draft — ${all.length} required item(s) still missing.` : "Saved. All required fields complete ✔");
+  // remember postal codes
+  const hist=load("ekyc_postal",[]); ["mail","pres","perm"].forEach(p=>{ const c=d[p].postal; if(/^\d{4}$/.test(c)&&!hist.some(h=>h.c===c)) hist.unshift({c,l:[d[p].upazila,d[p].district].filter(Boolean).join(", ")}); }); store("ekyc_postal",hist.slice(0,40));
+  dirty=false; try{ localStorage.removeItem("ekyc_draft"); }catch(e){}
+}
+function cancelForm(){ if(dirty && !confirm("Discard unsaved changes and clear the form?")) return; newForm(true); }
+function newForm(force){
+  if(!force && dirty && !confirm("Discard unsaved changes?")) return;
+  document.querySelectorAll("#view-form input[type=text],#view-form input[type=tel],#view-form input[type=email],#view-form input[type=number]").forEach(el=>{ if(!el.readOnly) el.value=""; });
+  $("txnTbl").querySelectorAll("tbody tr").forEach((tr,i)=>tr.cells[0].querySelector("input").value=OPT.txnTypes[i]);
+  document.querySelectorAll("#view-form .err").forEach(e=>e.classList.remove("err"));
+  const prof=load("ekyc_profile",{});
+  apply({custCategory:"9-Individual Resident",custStatus:"Active",nationality:"Bangladeshi",identityType:"3 - National ID",residentStatus:"Resident",
+    branchCode:prof.branch||"",productCode:prof.productCode||"1000",productName:prof.productName||"GENERAL SAVINGS AC",aroId:prof.aro||"",
+    religion:"",gender:"",profession:"",sectorCode:"",maritalStatus:"",placeOfBirth:"",incomeRange:"",
+    mail:{country:"Bangladesh"},pres:{country:"Bangladesh"},perm:{country:"Bangladesh"},nominees:[{}],txn:[],files:{}});
+  $("inputterId").value=prof.id||""; $("inputDate").value=today(); $("approverId").value=""; $("approverDate").value="";
+  dirty=false; try{ localStorage.removeItem("ekyc_draft"); }catch(e){}
+  showView("form"); showTab("main");
+}
+function openRecord(id){ const r=load("ekyc_records",{})[id]; if(!r) return; apply(r); dirty=false; showView("form"); showTab("main"); if(r.filesDropped) toast("Photos/documents were not stored for this record (storage was full).",4000); }
+function deleteRecord(id){ if(!confirm("Delete record "+id+"?")) return; const r=load("ekyc_records",{}); delete r[id]; store("ekyc_records",r); renderList(); }
+function renderList(){
+  const q=$("listSearch").value.trim().toLowerCase(), recs=Object.values(load("ekyc_records",{})).sort((a,b)=>(b.savedAt||"").localeCompare(a.savedAt||""));
+  const rows=recs.filter(r=>!q||[r.customerId,r.firstName,r.lastName,r.shortName,r.uniqueId,r.mobile].join(" ").toLowerCase().includes(q));
+  $("listTbl").tBodies[0].innerHTML = rows.length ? rows.map(r=>`<tr><td>${esc(r.customerId)}</td><td>${esc((r.firstName+" "+r.lastName).trim())}</td><td>${esc(r.uniqueId)}</td><td>${esc(r.mobile)}</td>
+    <td>${esc(new Date(r.savedAt).toLocaleString())}</td><td style="color:${r.complete?'#1a8f1a':'#c60'};font-weight:bold">${r.complete?"Complete":"Draft"}</td>
+    <td style="white-space:nowrap"><button class="btn" onclick="openRecord('${esc(r.customerId)}')">Open</button> <button class="btn grey" onclick="deleteRecord('${esc(r.customerId)}')">Delete</button></td></tr>`).join("")
+    : '<tr><td colspan="7" style="text-align:center;color:#777;padding:16px">No saved customers.</td></tr>';
+}
+$("listSearch").addEventListener("input",renderList);
+function exportAll(){ const b=new Blob([JSON.stringify(load("ekyc_records",{}),null,1)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="ekyc-records-"+new Date().toISOString().slice(0,10)+".json"; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); }
+function importAll(inp){ const f=inp.files[0]; if(!f) return; const fr=new FileReader(); fr.onload=()=>{ try{ const d=JSON.parse(fr.result); if(typeof d!=="object"||Array.isArray(d)) throw 0; const r={...load("ekyc_records",{}),...d}; if(!store("ekyc_records",r)) toast("Not enough browser storage to import."); else { toast("Imported "+Object.keys(d).length+" record(s)."); renderList(); } }catch(e){ toast("Not a valid export file."); } }; fr.readAsText(f); inp.value=""; }
+
+/* ---------------- summary ---------------- */
+function showSummary(){
+  const d=collect(), miss=[]; TABS.forEach(t=>validateTab(t).forEach(e=>miss.push(TAB_NAMES[t]+": "+e)));
+  const rows=[]; const grp=t=>rows.push(`<tr class="grp"><td colspan="3">${esc(t)}</td></tr>`);
+  const add=(l,v)=>rows.push(`<tr><td>${esc(l)}</td><td>${esc(v)}</td><td class="c">${v?`<button class="cpy noprint" data-v="${esc(v)}">Copy</button>`:""}</td></tr>`);
+  grp("Account"); add("Customer ID",d.customerId); add("Branch Code",d.branchCode); add("Product Code",d.productCode); add("Product Name",d.productName);
+  grp("Main"); [["Short Name/IC","shortName"],["Customer Category","custCategory"],["First Name","firstName"],["Last Name","lastName"],["Father's Name","fatherName"],["Mother's Name","motherName"],["Spouse Name","spouseName"],["Religion","religion"],["Gender","gender"],["Profession","profession"],["Sector Code","sectorCode"],["Profession Detail","professionDetail"],["Maritial Status","maritalStatus"],["Customer Status","custStatus"]].forEach(([l,k])=>add(l,d[k]));
+  add("Resident Status",d.residentStatus); [["Nationality","nationality"],["Identity Type","identityType"],["Unique ID No.","uniqueId"],["Date Of Birth","dob"],["Place Of Birth","placeOfBirth"],["ARO/ORO/ABRO/ABJRO ID","aroId"],["Tin","tin"]].forEach(([l,k])=>add(l,d[k]));
+  ["mail","pres","perm"].forEach(p=>{ grp(ADDR_NAMES[p]); ADDR_KEYS.forEach(k=>add(ADDR_LABELS[k].replace(" :",""),d[p][k])); });
+  grp("Phone"); [["Residence Phone","resPhone"],["Mobile","mobile"],["Office","officePhone"],["Fax","fax"],["Email","email"]].forEach(([l,k])=>add(l,d[k]));
+  d.nominees.forEach((n,i)=>{ grp("Nominee "+(i+1)); add("Name",n.name); add("Date Of Birth",n.dob); add("Unique ID",n.uid); add("Mobile No.",n.mobile); add("Relation",n.relation); add("Address",n.address); add("Share (%)",n.share); add("Is Minor",n.minor?"Yes":"No");
+    if(n.minor){ add("G. Name",n.gname); add("G. Relation",n.grelation); add("G. Address",n.gaddress); } });
+  grp("Transaction Profile"); add("Income Range",d.incomeRange); d.txn.forEach(t=>add(t.type,`No.: ${t.count||"-"} | Max: ${t.max||"-"} | Total: ${t.total||"-"}`));
+  grp("Photo, Signature & Documents"); add("NID Front",FILES.nidFront?"✔ attached":""); add("NID Back",FILES.nidBack?"✔ attached":""); add("Customer Photo",FILES.custPhoto?"✔ attached":""); add("Customer Sign",FILES.custSign?"✔ attached":"");
+  OPT.docTypes.forEach((t,i)=>{ if(FILES["doc"+i]) add(t,FILES["doc"+i].name); });
+  grp("KYC"); add("KYC Inputter ID",d.inputterId); add("KYC Input Date",d.inputDate);
+  $("sumTbl").innerHTML=rows.join("");
+  $("sumMissing").innerHTML = miss.length ? `<div class="note"><b>${miss.length} required item(s) missing:</b><br>${miss.map(esc).join("<br>")}</div>` : '<div class="note" style="background:#e6f7e9;border-color:#8bc79a"><b>All required fields are complete ✔</b></div>';
+  $("sumModal").classList.add("on");
+}
+$("sumTbl").addEventListener("click",e=>{ const v=e.target.dataset.v; if(v==null) return;
+  (navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(()=>toast("Copied: "+v)).catch(()=>{ const t=document.createElement("textarea"); t.value=v; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); toast("Copied: "+v); }); });
+
+/* ---------------- views / menu ---------------- */
+function showView(v){
+  $("view-form").style.display = v==="form"?"":"none";
+  $("view-list").style.display = v==="form"?"none":"";
+  $("mainTitle").textContent = v==="form"?"Customer E-KYC Input": v==="screen"?"Customer Screening":"Customer Information";
+  document.querySelectorAll(".tree .node").forEach(n=>n.classList.toggle("active",n.dataset.view===v));
+  if(v!=="form"){ renderList(); $("listSearch").focus(); }
+  document.querySelector(".menu").classList.remove("open");
+}
+document.querySelectorAll(".tree .node").forEach(n=>n.addEventListener("click",()=>{
+  const li=n.parentNode;
+  if(li.querySelector(":scope>ul")){ li.classList.toggle("closed"); const pm=n.querySelector(".pm"); if(pm&&!pm.classList.contains("none")) pm.textContent=li.classList.contains("closed")?"+":"−"; }
+  if(n.dataset.view){ if(n.dataset.view!=="form"||$("view-form").style.display==="none") showView(n.dataset.view); }
+  else if(!li.querySelector(":scope>ul")) toast("This menu item is not part of the e-KYC helper.");
+}));
+
+/* ---------------- profile (inputter / outlet defaults) ---------------- */
+function renderProfile(){ const p=load("ekyc_profile",{}); $("whoId").textContent=p.id||"—"; $("whoOutlet").textContent=p.branch||"—"; $("whoDate").textContent=today(); }
+function editProfile(){
+  const p=load("ekyc_profile",{});
+  const id=prompt("KYC Inputter ID (your agent login / mobile):",p.id||""); if(id===null) return;
+  const branch=prompt("Default Branch Code:",p.branch||""); if(branch===null) return;
+  const aro=prompt("Default ARO/ORO/ABRO/ABJRO ID:",p.aro||""); if(aro===null) return;
+  const productCode=prompt("Default Product Code:",p.productCode||"1000"); if(productCode===null) return;
+  const productName=prompt("Default Product Name:",p.productName||"GENERAL SAVINGS AC"); if(productName===null) return;
+  store("ekyc_profile",{id:id.trim(),branch:branch.trim(),aro:aro.trim(),productCode:productCode.trim(),productName:productName.trim()});
+  renderProfile(); $("inputterId").value=id.trim(); if(!$("branchCode").value) $("branchCode").value=branch.trim(); if(!$("aroId").value) $("aroId").value=aro.trim();
+}
+
+/* ---------------- init ---------------- */
+newForm(true); renderProfile();
+const draft=load("ekyc_draft",null);
+if(draft && (draft.customerId||draft.firstName||draft.uniqueId)){ if(confirm("Restore the unsaved form you were filling ("+(draft.firstName||draft.customerId||"draft")+")?")){ apply(draft); dirty=true; } }
+if(!load("ekyc_profile",null)) setTimeout(()=>toast("Tip: click Settings (top right) to set your Inputter ID, branch and ARO ID once.",5000),600);
+window.addEventListener("beforeunload",e=>{ if(dirty){ e.preventDefault(); e.returnValue=""; } });
+</script>
+</body>
+</html>
