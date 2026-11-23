@@ -13325,7 +13325,8 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 .sv3-tile .md{font-size:11.5px;color:#64748b;margin-top:-4px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sv3-tile .st{font-size:11px;color:#94a3b8}
 .sv3-tile .st.low{color:#b45309;font-weight:700}
-.sv3-tile:disabled{opacity:.45;cursor:default;filter:grayscale(.5)}
+.sv3-tile:disabled{opacity:.42;cursor:default;filter:grayscale(.7);pointer-events:none;box-shadow:none!important;border-color:#e8edf5!important;transform:none!important}
+.sv3-tile .st.na{color:#b42318;font-weight:700;background:#fdecec;padding:1px 8px;border-radius:999px}
 .sv3-tile .n{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--t-blue);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
 .sv3-empty{grid-column:1/-1;padding:24px 8px;text-align:center;color:#94a3b8;font-size:13.5px}
 .sv3-catfoot{display:flex;justify-content:flex-end;margin-top:8px}
@@ -13455,11 +13456,30 @@ function cats(){try{return window.QX?window.QX.cats():[]}catch(e){return []}}
 /* Search: every typed word must appear somewhere in the name, model, category or barcode — any order,
    any part of a word ("50 gp", "pen mata", "khata 100"). Spaces are ignored too ("gp50" finds "GP 50 MIN").
    Best matches first: name starts with it > a name word starts with it > anywhere. */
-function norm(t){return String(t==null?'':t).toLowerCase().replace(/\s+/g,' ').trim()}
+function norm(t){return String(t==null?'':t).replace(/[\u09E6-\u09EF]/g,function(d){return String(d.charCodeAt(0)-0x09E6)}).toLowerCase().replace(/\s+/g,' ').trim()}
+/* price words: "30 tk", "30tk", "tk30", "৳30", "30 taka", "৩০ টাকা" → price must be exactly 30.
+   A plain number ("dista 30") matches a price of 30 OR that number in the name / model. */
+var UNIT=/^(tk|taka|৳|টাকা|taka\.?|tk\.)$/;
+function parseQ(q){
+  var parts=q.replace(/(\d)(tk|taka|৳|টাকা)/g,'$1 $2').replace(/(tk|taka|৳|টাকা)(\d)/g,'$1 $2').replace(/৳/g,' ৳ ').split(' ').filter(Boolean);
+  var words=[],prices=[],nums=[];
+  for(var i=0;i<parts.length;i++){
+    var w=parts[i],isNum=/^\d+(\.\d+)?$/.test(w);
+    if(UNIT.test(w))continue;
+    if(isNum&&((parts[i+1]&&UNIT.test(parts[i+1]))||(parts[i-1]&&UNIT.test(parts[i-1]))))prices.push(+w);
+    else if(isNum)nums.push(w);
+    else words.push(w);
+  }
+  return {words:words,prices:prices,nums:nums};
+}
 function score(x,words,q){
   var name=norm(x.name),model=norm(x.model),cat=norm(x.category),bc=norm(x.barcode);
-  var all=name+' '+model+' '+cat+' '+bc,flat=all.replace(/ /g,''),sc=0;
+  var all=name+' '+model+' '+cat+' '+bc,flat=all.replace(/ /g,''),sc=0,pr=+x.price||0;
   if(bc&&bc===q)return 1000;
+  var P=parseQ(q);
+  for(var j=0;j<P.prices.length;j++){if(Math.abs(pr-P.prices[j])>0.001)return -1;sc+=8}
+  for(var k=0;k<P.nums.length;k++){var n=P.nums[k],txt=all.indexOf(n)>-1||flat.indexOf(n)>-1,eq=Math.abs(pr-(+n))<0.001;if(!txt&&!eq)return -1;sc+=(eq?5:0)+(txt?2:0)}
+  words=P.words;
   for(var i=0;i<words.length;i++){
     var w=words[i];
     if(all.indexOf(w)<0&&flat.indexOf(w)<0)return -1;
@@ -13467,7 +13487,7 @@ function score(x,words,q){
     else if((' '+model).indexOf(' '+w)>-1)sc+=2;else sc+=1;
   }
   if(name===q)sc+=20;else if(name.indexOf(q)===0)sc+=8;
-  return sc;
+  return sc+1;
 }
 window.svSearchScore=function(x,q){q=norm(q);return q?score(x,q.split(' '),q):0};
 function sortList(list,key){
@@ -13480,15 +13500,17 @@ function sortList(list,key){
 function products(){
   var q=norm($('saleSearch')&&$('saleSearch').value);
   var cat=($('pickerCategory')||{}).value||'',key=($('pickerSort')||{}).value||'nameAsc';
-  var list=(db.stock||[]).filter(function(x){return x.service||x.qty>0||inCart(x.id)});
+  var list=(db.stock||[]).slice();
   if(chip!=='all'&&window.QX)list=list.filter(function(x){return window.QX.matches(x,chip)});
   if(cat)list=list.filter(function(x){try{return catMatch(x,cat)}catch(e){return true}});
-  if(!q)return sortList(list,key);
+  var avail=function(x){return x.service||(+x.qty||0)>0};
+  var byAvail=function(arr){var a=[],n=[];arr.forEach(function(x){(avail(x)?a:n).push(x)});return a.concat(n)};   // not available ones go last
+  if(!q)return byAvail(sortList(list,key));
   var words=q.split(' '),hits=[];
   list.forEach(function(x){var sc=score(x,words,q);if(sc>=0)hits.push({x:x,s:sc})});
   if(key==='nameAsc')hits.sort(function(a,b){return b.s-a.s||String(a.x.name).localeCompare(String(b.x.name),undefined,{numeric:true})});   // default: best match first
-  else{var o=sortList(hits.map(function(h){return h.x}),key);return o}
-  return hits.map(function(h){return h.x});
+  else{return byAvail(sortList(hits.map(function(h){return h.x}),key))}
+  return byAvail(hits.map(function(h){return h.x}));
 }
 function renderLeft(){
   var host=$('sv3Left');if(!host)return;
@@ -13500,7 +13522,7 @@ function renderLeft(){
   lastSig=sig;
   $('sv3Grid').innerHTML=lim.length?lim.map(function(x){
     var n=inCart(x.id),left=x.service?Infinity:x.qty-n,ic=iconOf(x),t=tone(x);
-    var st=x.service?'':(left<=0?'<span class="st low">Out</span>':'<span class="st'+(x.qty<=3?' low':'')+'">'+x.qty+' in stock</span>');
+    var st=x.service?'':(left<=0?((+x.qty||0)<=0?'<span class="st na">Not available</span>':'<span class="st low">All in cart</span>'):'<span class="st'+(x.qty<=3?' low':'')+'">'+x.qty+' in stock</span>');
     return '<button type="button" class="sv3-tile" style="--tc:'+t+'" data-id="'+E(x.id)+'"'+(left<=0?' disabled':'')+' title="'+E(x.name)+'"><span class="ico">'+(ic||E(String(x.name||'?').trim().charAt(0).toUpperCase()))+'</span><span class="nm" data-no-i18n>'+E(x.name)+'</span>'+(x.model?'<span class="md" data-no-i18n>'+E(x.model)+'</span>':'')+'<span class="pr">'+M(x.price)+'</span>'+st+(n?'<i class="n">'+n+'</i>':'')+'</button>';
   }).join(''):'<div class="sv3-empty">'+(chip!=='all'?'No product for “'+E(chip)+'” yet. Add one in Add Product with “'+E(chip)+'” in its name or as its Category.':'No product found.')+'</div>';
   var cnt=$('sv3Count');if(cnt)cnt.textContent=ps.length+' product'+(ps.length===1?'':'s')+(ps.length>240?' · showing 240, type to narrow down':'');
@@ -13530,6 +13552,7 @@ function addTyped(){
   var st=(db.stock||[]).filter(function(a){return a.service||a.qty-inCart(a.id)>0}),best=null,bs=-1;
   st.forEach(function(a){var sc=window.svSearchScore(a,v);if(sc>bs){bs=sc;best=a}});
   var x=bs>=0?best:null;
+  if(!x){var anyHit=(db.stock||[]).some(function(a){return window.svSearchScore(a,v)>=0});if(anyHit){msg.textContent='“'+v+'” is not available (out of stock).';return}}
   if(!x){msg.textContent='No product matches “'+v+'”.';return}
   if(addToCart(x.id))inp.value='';
   inp.focus();
@@ -13586,7 +13609,7 @@ function updateTiles(){
     var id=b.getAttribute('data-id'),x=(db.stock||[]).find(function(a){return a.id===id});if(!x)return;
     var n=inCart(id),left=x.service?Infinity:x.qty-n,out=left<=0,bd=b.querySelector('.n');
     if(b.disabled!==out)b.disabled=out;
-    var st=b.querySelector('.st');if(st&&!x.service){var txt=out?'Out':x.qty+' in stock',cls='st'+((out||x.qty<=3)?' low':'');if(st.textContent!==txt)st.textContent=txt;if(st.className!==cls)st.className=cls}
+    var st=b.querySelector('.st');if(st&&!x.service){var none=(+x.qty||0)<=0,txt=out?(none?'Not available':'All in cart'):x.qty+' in stock',cls='st'+(out?(none?' na':' low'):(x.qty<=3?' low':''));if(st.textContent!==txt)st.textContent=txt;if(st.className!==cls)st.className=cls}
     if(n){if(!bd){bd=document.createElement('i');bd.className='n';b.appendChild(bd)}if(bd.textContent!==String(n))bd.textContent=n}else if(bd)bd.remove();
   });
 }
