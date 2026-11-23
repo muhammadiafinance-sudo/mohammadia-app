@@ -28,6 +28,7 @@ if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostn
   document.documentElement.lang=(localStorage.getItem('mh_lang')==='bn')?'bn':'en';
 }catch(e){}})();
 </script>
+<script>try{var a=localStorage.getItem("mh_accent");if(a&&a!=="ocean")document.documentElement.setAttribute("data-accent",a)}catch(e){}</script>
 <style>
 :root{--ink:#202124;--pine:#1a73e8;--paper:#ffffff;--paper2:#f8f9fa;--card:#ffffff;--line:#e0e0e0;--brass:#1a73e8;--brass2:#1558b0;--forest:#188038;--amber:#e37400;--maroon:#d93025;--plum:#7c3aed;--steel:#1a73e8;--teal:#0b8043;--muted:#5f6368;--txt:#202124}
 *{box-sizing:border-box}body{margin:0;background:var(--paper2);font-family:'Inter',Arial,Helvetica,sans-serif;color:var(--txt);font-size:15px}.app{max-width:1560px;margin:auto;padding:20px}
@@ -3015,20 +3016,6 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
     <div class="stat t-return"><div class="stat-top"><span class="stat-label">Returns</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg></span></div><div class="value" id="returnsCount">0</div></div>
   </section>
 
-  <section class="fu-wrap dc3 admin-only" id="followupSection" aria-label="Customer due follow-ups">
-    <div class="dc-card dc-due">
-      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M16.5 7.5c-.8-1.2-2.4-2-4.5-2-2.7 0-4.5 1.4-4.5 3.3 0 4.6 9.3 2.2 9.3 6.9 0 2-2 3.3-4.8 3.3-2.2 0-4-.8-5-2.2"/></svg></i><div><b>Latest due</b><small id="dcLatestSub"></small></div></div></div>
-      <div class="dc-list" id="dcLatestList"></div>
-    </div>
-    <div class="dc-card dc-rand">
-      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></i><div><b>Random pick</b><small id="dcRandSub"></small></div></div><button type="button" class="dc-shuf" id="dcShuf" title="Pick 5 different customers" aria-label="Shuffle customers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button></div>
-      <div class="dc-list" id="dcRandList"></div>
-    </div>
-    <div class="dc-card dc-paid">
-      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><div><b>Latest collected</b><small id="dcPaidSub"></small></div></div></div>
-      <div class="dc-list" id="dcPaidList"></div>
-    </div>
-  </section>
 
   <section class="profit-card" aria-label="Profit graph">
     <div class="pc-head">
@@ -3362,6 +3349,24 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
     </div>
   </div>
 </div></div>
+<div class="modal" id="followupModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('followupModal')" aria-label="Close">✕ Close</button><h2>Due Follow-up</h2><p class="hint">Who owes money, who to remind today, and what was collected.</p>
+  <div class="fu-kpis" id="fuKpis"></div>
+  <section class="fu-wrap dc3 admin-only" id="followupSection" aria-label="Customer due follow-ups">
+    <div class="dc-card dc-due">
+      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M16.5 7.5c-.8-1.2-2.4-2-4.5-2-2.7 0-4.5 1.4-4.5 3.3 0 4.6 9.3 2.2 9.3 6.9 0 2-2 3.3-4.8 3.3-2.2 0-4-.8-5-2.2"/></svg></i><div><b>Latest due</b><small id="dcLatestSub"></small></div></div></div>
+      <div class="dc-list" id="dcLatestList"></div>
+    </div>
+    <div class="dc-card dc-rand">
+      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></i><div><b>Random pick</b><small id="dcRandSub"></small></div></div><button type="button" class="dc-shuf" id="dcShuf" title="Pick 5 different customers" aria-label="Shuffle customers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button></div>
+      <div class="dc-list" id="dcRandList"></div>
+    </div>
+    <div class="dc-card dc-paid">
+      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><div><b>Latest collected</b><small id="dcPaidSub"></small></div></div></div>
+      <div class="dc-list" id="dcPaidList"></div>
+    </div>
+  </section>
+  <div class="fu-top"><div class="fu-top-h"><b>Highest dues</b><span id="fuTopSub"></span></div><div class="fu-tw"><table class="fu-t"><thead><tr><th>#</th><th>Customer</th><th>Phone</th><th>Last due</th><th>Waiting</th><th class="r">Due</th></tr></thead><tbody id="fuTopBody"></tbody></table></div></div>
+</div></div>
 <div class="modal" id="settingsModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('settingsModal')" aria-label="Close">✕ Close</button><h2>Settings</h2><p class="hint">Language and theme for this device.</p>
   <div class="gs">
     <div class="gs-sec">Appearance</div>
@@ -3372,6 +3377,16 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
       <div class="gs-row"><span class="gs-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" opacity=".35"/></svg></span>
         <div class="gs-tx"><div class="gs-t">Theme</div><div class="gs-d">Choose how the app looks. System default follows your phone or computer.</div></div>
         <div class="gs-seg" id="setTheme"><button type="button" data-theme="light" onclick="setTheme('light')">Light</button><button type="button" data-theme="original" onclick="setTheme('original')">Original</button><button type="button" data-theme="dark" onclick="setTheme('dark')">Dark</button><button type="button" data-theme="system" onclick="setTheme('system')">System default</button></div></div>
+      <div class="gs-row"><span class="gs-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.3" fill="currentColor"/><circle cx="12" cy="7.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="10" r="1.3" fill="currentColor"/><path d="M12 21a3 3 0 010-6h1.5a2 2 0 000-4"/></svg></span>
+        <div class="gs-tx"><div class="gs-t">Colour theme</div><div class="gs-d">Sidebar and highlight colour. Saved on this device.</div></div>
+        <div class="gs-accents" id="setAccent">
+          <button type="button" class="gs-acc" data-acc="ocean" style="--a1:#1d6bf3;--a2:#0f1f3d"><i></i>Ocean</button>
+          <button type="button" class="gs-acc" data-acc="emerald" style="--a1:#059669;--a2:#06291f"><i></i>Emerald</button>
+          <button type="button" class="gs-acc" data-acc="purple" style="--a1:#7c3aed;--a2:#1e1238"><i></i>Purple</button>
+          <button type="button" class="gs-acc" data-acc="rose" style="--a1:#e11d48;--a2:#2a0a16"><i></i>Rose</button>
+          <button type="button" class="gs-acc" data-acc="sunset" style="--a1:#ea580c;--a2:#2a1306"><i></i>Sunset</button>
+          <button type="button" class="gs-acc" data-acc="black" style="--a1:#3f3f46;--a2:#000"><i></i>Black</button>
+        </div></div>
     </div>
 
     <div class="gs-sec">Account</div>
@@ -6133,8 +6148,7 @@ function showSaleSuccess(){
   const ov=$('saleSuccessOverlay');
   if(!ov)return;
   ov.classList.remove('show');
-  void ov.offsetWidth; // restart animation if triggered again quickly
-  ov.classList.add('show');
+  requestAnimationFrame(()=>ov.classList.add('show')); // restart the animation without forcing a layout
   clearTimeout(showSaleSuccess._t);
   showSaleSuccess._t=setTimeout(()=>ov.classList.remove('show'),1000);
 }
@@ -8158,7 +8172,7 @@ setupDraggableFab($('billAlertFab'));
    the area beside the sidebar. Only the Bill Alert (and small
    helper dialogs such as the barcode scanner) stay as popups.
    ============================================================ */
-var PAGE_MODALS=['productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','paidHistoryModal','customerHistoryModal','dailyCashModal','dailyCashStatementModal','billAlertModal','stockRegisterModal','dataModal','pwModal','sessionsModal','reconModal','settingsModal'];
+var PAGE_MODALS=['followupModal','productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','paidHistoryModal','customerHistoryModal','dailyCashModal','dailyCashStatementModal','billAlertModal','stockRegisterModal','dataModal','pwModal','sessionsModal','reconModal','settingsModal'];
 function closeOtherPages(keep){PAGE_MODALS.forEach(function(id){if(id===keep)return;var m=document.getElementById(id);if(m&&m.classList.contains('show')){m.classList.remove('show');m.setAttribute('aria-hidden','true')}});syncCashOpenClass()}
 function goHome(){
   closeSidebar();
@@ -8296,7 +8310,7 @@ function drawDashChart(){
   const top=sc.max,bot=sc.min,span=(top-bot)||1;
   const y=v=>T+(top-v)/span*(H-T-B),y0=y(0);
   const slot=(W-L-Rr)/n,X=i=>L+slot*(i+.5);
-  const tone='#1d6bf3';
+  const tone=metric==='profit'?'#16a34a':'#1d6bf3'; // Profit = green, Sales = blue
   const F=anim?' anim':'';
   let g='';
   sc.ticks.forEach(t=>{const yy=y(t).toFixed(1);g+=`<line x1="${L}" x2="${W-Rr}" y1="${yy}" y2="${yy}" stroke="${t===0&&bot<0?'#cdd3de':'#eceff4'}"/>`+(hasData?`<text x="${L-10}" y="${(+yy+3.5).toFixed(1)}" text-anchor="end" font-size="10.5" fill="#8a94a6">${dashShort(t)}</text>`:'')});
@@ -8785,6 +8799,7 @@ renderWarranty();
   function startObs(){
     if(obs||!window.MutationObserver)return;
     obs=new MutationObserver(function(list){
+      if(lang!=='bn')return; // English: new text needs no translation (switching language does a full pass)
       for(var i=0;i<list.length;i++){
         var r=list[i];
         if(r.type==='characterData'){trText(r.target)}
@@ -9139,6 +9154,7 @@ renderWarranty();
   if(typeof _rd==='function'){
     window.renderDashboard=function(){var r=_rd.apply(this,arguments);try{wire();render(false)}catch(e){console.error(e)}return r};
   }
+  window.dcRender=function(fresh){try{wire();render(!!fresh)}catch(e){console.error(e)}};
   function init(){wire();render(false)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
@@ -12164,7 +12180,7 @@ var GROUPS=[
  ['Sell','sell',['salesModal','todaySalesModal','invoiceHistoryModal','salesHistoryModal']],
  ['Cash','cash',['dailyCashModal','reconModal','dailyCashStatementModal']],
  ['Stock','stock',['productModal','stockListModal','stockRegisterModal','lowStockModal']],
- ['Customers','cust',['biz:due','biz:purchase','warrantyModal','billAlertModal']],
+ ['Customers','cust',['biz:due','followupModal','biz:purchase','warrantyModal','billAlertModal']],
  ['Manage','manage',['dataModal','sessionsModal']]
 ];
 var CHEV='<svg class="sbg-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
@@ -13180,21 +13196,21 @@ try{render()}catch(e){}
 
 <style id="themeV3">
 /* ===== Theme v3: navy sidebar · light blue canvas · white cards · blue accent ===== */
-:root{--t-bg:#eef3fb;--t-card:#fff;--t-line:#e4eaf4;--t-ink:#0f172a;--t-mute:#64748b;--t-blue:#1d6bf3;--t-blue2:#0b4fd8;--t-nav:#0f1f3d;--t-nav2:#14284d;--canvas:#eef3fb;--brass:#1d6bf3;--pine:#1d6bf3}
+:root{--t-blue:#1d6bf3;--t-blue2:#0b4fd8;--t-nav:#0f1f3d;--t-nav2:#14284d;--t-bg:color-mix(in srgb,var(--t-blue) 7%,#fff);--t-card:#fff;--t-line:#e4eaf4;--t-ink:#0f172a;--t-mute:#64748b;--canvas:var(--t-bg);--brass:var(--t-blue);--pine:var(--t-blue)}
 html body{background:var(--t-bg)!important}
 html body .main{background:var(--t-bg)!important}
 /* sidebar */
 html body #sidebar{background:linear-gradient(180deg,var(--t-nav),var(--t-nav2))!important;border-right:0!important;color:#cbd5e1!important}
 html body #sidebar .sb-name{color:#fff!important;font-weight:700!important}
 html body #sidebar .sb-sub{color:#94a3b8!important}
-html body #sidebar .sb-logo{background:var(--t-blue)!important;color:#fff!important;border-radius:50%!important;font-weight:800!important;font-size:18px!important;border:0!important;box-shadow:0 2px 8px #1d6bf355!important}
+html body #sidebar .sb-logo{background:var(--t-blue)!important;color:#fff!important;border-radius:50%!important;font-weight:800!important;font-size:18px!important;border:0!important;box-shadow:0 2px 8px color-mix(in srgb,var(--t-blue) 33%,transparent)!important}
 html body #sidebar .sb-search{display:none!important}
 html body #sidebar .sbg-h,html body #sidebar .sbg-h span{color:#7f8ea8!important;background:transparent!important}
 html body #sidebar .sbg-h svg{stroke:#7f8ea8!important}
 html body #sidebar .sb-item{color:#d5dce8!important;background:transparent!important;border-radius:9px!important}
 html body #sidebar .sb-item svg{stroke:#aab6c9!important;color:#aab6c9!important}
 html body #sidebar .sb-item:hover{background:#ffffff14!important;color:#fff!important}
-html body #sidebar .sb-item[aria-current="page"]{background:var(--t-blue)!important;color:#fff!important;box-shadow:0 4px 12px #1d6bf355!important}
+html body #sidebar .sb-item[aria-current="page"]{background:var(--t-blue)!important;color:#fff!important;box-shadow:0 4px 12px color-mix(in srgb,var(--t-blue) 33%,transparent)!important}
 html body #sidebar .sb-item[aria-current="page"] svg{stroke:#fff!important;color:#fff!important}
 html body #sidebar .sb-badge{background:#ef4444!important;color:#fff!important}
 html body #sidebar .sb-badge.blue{background:#ffffff26!important}
@@ -13212,12 +13228,12 @@ html body .main .topbar .top-date{color:var(--t-mute)!important}
 html body #cloudSyncPill{background:#fff!important;border:1px solid var(--t-line)!important;color:#0f172a!important;font-weight:700!important;border-radius:999px!important;padding:7px 14px!important;box-shadow:0 1px 2px rgba(15,23,42,.05)!important}
 html body #cloudSyncPill::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:7px;vertical-align:1px}
 html body #cloudSyncPill.warn::before,html body #cloudSyncPill.bad::before{background:#f59e0b}
-.t-avatar{width:38px;height:38px;border-radius:50%;background:var(--t-blue);color:#fff;font-weight:800;font-size:15px;display:inline-flex;align-items:center;justify-content:center;flex:none;margin-left:10px;box-shadow:0 2px 8px #1d6bf355;text-transform:uppercase}
+.t-avatar{width:38px;height:38px;border-radius:50%;background:var(--t-blue);color:#fff;font-weight:800;font-size:15px;display:inline-flex;align-items:center;justify-content:center;flex:none;margin-left:10px;box-shadow:0 2px 8px color-mix(in srgb,var(--t-blue) 33%,transparent);text-transform:uppercase}
 /* cards */
 html body .main .stat,html body .main .profit-card,html body .main .dx-card,html body .main .dc-card{background:var(--t-card)!important;border:1px solid var(--t-line)!important;border-radius:14px!important;box-shadow:0 1px 3px rgba(16,24,40,.06)!important}
 html body .main .stat .stat-label{color:#334155!important;font-weight:600!important}
 html body .main .stat .value{color:var(--t-ink)!important;font-weight:800!important}
-html body .main .stat.feature{background:linear-gradient(135deg,#2a7bff,var(--t-blue2))!important;border:0!important;box-shadow:0 8px 22px #1d6bf340!important}
+html body .main .stat.feature{background:linear-gradient(135deg,color-mix(in srgb,var(--t-blue) 80%,#fff),var(--t-blue2))!important;border:0!important;box-shadow:0 8px 22px color-mix(in srgb,var(--t-blue) 25%,transparent)!important}
 html body .main .stat.feature *{color:#fff!important}
 html body .main .stat.feature .stat-ico{background:#ffffff2e!important}
 html body .main .stat.feature .stat-ico svg{stroke:#fff!important}
@@ -13235,14 +13251,14 @@ html body .main .profit-card .pc-title{font-size:15px!important;font-weight:800!
 html body .main .profit-card .pc-controls{gap:6px!important}
 html body .main .profit-card .seg{background:#f1f5fb!important;border-radius:9px!important;padding:3px!important}
 html body .main .profit-card .seg button{font-size:12px!important;padding:5px 11px!important;border-radius:7px!important;color:#64748b!important;background:transparent!important}
-html body .main .profit-card .seg button.on{background:var(--t-blue)!important;color:#fff!important;box-shadow:0 2px 6px #1d6bf344!important}
+html body .main .profit-card .seg button.on{background:var(--t-blue)!important;color:#fff!important;box-shadow:0 2px 6px color-mix(in srgb,var(--t-blue) 27%,transparent)!important}
 /* today in detail */
 html body .main #dxToday,html body .main .profit-card,html body .main .dc-card{border-top:1px solid var(--t-line)!important}
 html body .main #dxToday::before,html body .main .profit-card::before{display:none!important}
 html body .main .dc-due{border-top-color:#fde2e6!important}html body .main .dc-rand{border-top-color:#dbe7ff!important}html body .main .dc-paid{border-top-color:#d3f2df!important}
 html body #sidebar .sb-item{font-size:13.5px!important;padding-top:8px!important;padding-bottom:8px!important;min-height:0!important}
 html body #sidebar .sbg-h{padding-top:10px!important}
-html body .main #dxToday .dx-h i{background:#eaf1ff!important}
+html body .main #dxToday .dx-h i{background:color-mix(in srgb,var(--t-blue) 10%,#fff)!important}
 html body .main #dxToday .dx-foot{display:none!important}
 @media(max-width:600px){.t-avatar{display:none}html body .main .topbar h1{font-size:22px!important}html body #cloudSyncPill{padding:5px 11px!important;font-size:13px!important}}
 /* only what the design shows */
@@ -13273,7 +13289,7 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 #salePanel.sv3>.sale-left,#salePanel.sv3>.sale-right,#salePanel.sv3>.sv3-pay{background:#fff!important;border:1px solid #e4eaf4!important;border-radius:18px!important;box-shadow:0 1px 3px rgba(16,24,40,.06)!important;padding:18px!important;min-width:0;display:flex;flex-direction:column}
 #salePanel.sv3 #scCard,#salePanel.sv3 #qsaleWrap,#salePanel.sv3 #productPicker,#salePanel.sv3 .ss-filters,#salePanel.sv3 #svChips,#salePanel.sv3 #cartSummary,#salePanel.sv3 #svCount{display:none!important}
 .sv3-h{display:flex;align-items:center;gap:12px;margin:0 0 14px}
-.sv3-h .ic{width:42px;height:42px;border-radius:12px;background:#eaf1ff;color:#1d6bf3;display:flex;align-items:center;justify-content:center;flex:none}
+.sv3-h .ic{width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,var(--t-blue) 10%,#fff);color:var(--t-blue);display:flex;align-items:center;justify-content:center;flex:none}
 .sv3-h .ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sv3-h h3{margin:0;font-size:20px;font-weight:800;color:#0f172a;letter-spacing:-.2px}
 .sv3-h .sp{margin-left:auto}
@@ -13283,12 +13299,12 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 .sv3-chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
 .sv3-chip{height:36px;padding:0 16px;border-radius:10px;border:0;background:#eef2f8;color:#334155;font-size:14px;font-weight:600;cursor:pointer;box-shadow:none}
 .sv3-chip:hover{background:#e2e8f3}
-.sv3-chip.on{background:#1d6bf3;color:#fff;box-shadow:0 3px 10px #1d6bf344}
+.sv3-chip.on{background:var(--t-blue);color:#fff;box-shadow:0 3px 10px color-mix(in srgb,var(--t-blue) 27%,transparent)}
 .sv3-chip.add{background:transparent;border:1.5px dashed #b8c2cf;color:#5f6b7a}
 /* product tiles */
 .sv3-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px;overflow:auto;min-height:0;flex:1;align-content:start;padding:2px 2px 6px}
 .sv3-tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px 12px;border-radius:14px;border:1px solid #e8edf5;background:#fff;cursor:pointer;text-align:center;box-shadow:0 1px 3px rgba(16,24,40,.06);transition:transform .08s,box-shadow .12s,border-color .12s;min-width:0}
-.sv3-tile:hover{border-color:#bcd3ff;box-shadow:0 6px 16px rgba(29,107,243,.12)}
+.sv3-tile:hover{border-color:color-mix(in srgb,var(--t-blue) 30%,#fff);box-shadow:0 6px 16px rgba(29,107,243,.12)}
 .sv3-tile:active{transform:scale(.97)}
 .sv3-tile .ico{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;line-height:1;background:color-mix(in srgb,var(--tc) 12%,#fff);color:var(--tc);font-weight:800}
 .sv3-tile .nm{font-size:14px;font-weight:600;color:#0f172a;line-height:1.2;max-width:100%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
@@ -13296,7 +13312,7 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 .sv3-tile .st{font-size:11px;color:#94a3b8}
 .sv3-tile .st.low{color:#b45309;font-weight:700}
 .sv3-tile:disabled{opacity:.45;cursor:default;filter:grayscale(.5)}
-.sv3-tile .n{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#1d6bf3;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.sv3-tile .n{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--t-blue);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
 .sv3-empty{grid-column:1/-1;padding:24px 8px;text-align:center;color:#94a3b8;font-size:13.5px}
 .sv3-catfoot{display:flex;justify-content:flex-end;margin-top:8px}
 .sv3-catfoot button{border:0;background:none;color:#b42318;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:none}
@@ -13317,20 +13333,20 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 #salePanel.sv3 .carttable td.t{font-weight:700}
 .sv3-step{display:inline-flex;align-items:center;gap:4px}
 .sv3-step button{width:32px;height:32px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;color:#334155;font-size:17px;font-weight:700;line-height:1;cursor:pointer;box-shadow:none;padding:0}
-.sv3-step button:hover{border-color:#1d6bf3;color:#1d6bf3}
+.sv3-step button:hover{border-color:var(--t-blue);color:var(--t-blue)}
 .sv3-step input{width:48px;height:34px;text-align:center;border:1px solid #e2e8f0;border-radius:9px;font-size:15px;font-weight:600;padding:0}
 .sv3-x{width:28px;height:28px;border-radius:50%;border:0;background:#fde8e8;color:#dc2626;font-size:15px;font-weight:800;cursor:pointer;box-shadow:none;padding:0}
 .sv3-x:hover{background:#fbd0d0}
 .sv3-cartempty{text-align:center;color:#94a3b8;padding:40px 10px!important;border:0!important}
 .sv3-cartempty b{display:block;color:#475569;font-size:15px;margin-bottom:4px}
-.sv3-clear{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:10px;border:0;background:#eef3fb;color:#1e3a8a;font-weight:600;font-size:14px;cursor:pointer;box-shadow:none}
-.sv3-clear:hover{background:#e2eafa}
+.sv3-clear{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:10px;border:0;background:color-mix(in srgb,var(--t-blue) 7%,#fff);color:#1e3a8a;font-weight:600;font-size:14px;cursor:pointer;box-shadow:none}
+.sv3-clear:hover{background:color-mix(in srgb,var(--t-blue) 12%,#fff)}
 .sv3-clear svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sv3-addbar{display:flex;gap:10px;margin-top:12px}
 .sv3-addbar .f{flex:1;display:flex;align-items:center;gap:8px;height:48px;padding:0 14px;border:1px solid #e4eaf4;border-radius:12px;background:#f8fafd}
 .sv3-addbar .f svg{width:18px;height:18px;fill:none;stroke:#64748b;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .sv3-addbar input{flex:1;min-width:0;border:0!important;background:transparent!important;font-size:14.5px;outline:0;box-shadow:none!important;height:auto!important;padding:0!important}
-.sv3-addbar .go{width:48px;height:48px;border-radius:12px;border:0;background:#1d6bf3;color:#fff;font-size:24px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px #1d6bf344}
+.sv3-addbar .go{width:48px;height:48px;border-radius:12px;border:0;background:var(--t-blue);color:#fff;font-size:24px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px color-mix(in srgb,var(--t-blue) 27%,transparent)}
 .sv3-msg{font-size:12.5px;color:#b42318;min-height:16px;margin-top:4px}
 /* right: totals & payment */
 .sv3-total{display:flex;align-items:center;gap:16px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#e7f8ee,#d9f3e5);border:1px solid #c8ecd7}
@@ -13346,10 +13362,10 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 .sv3-row.disc #discount{width:96px!important;height:40px!important;text-align:center!important;border-radius:10px!important}
 .sv3-row.disc #svDt{display:flex}
 .sv3-row.due b{color:#dc2626}
-.sv3-pay-amt{display:flex;align-items:center;gap:12px;margin:12px 0 4px;padding:14px;border-radius:14px;background:#f3f7ff;border:1px solid #dfe9ff}
-.sv3-pay-amt .ri{width:36px;height:36px;border-radius:10px;background:#1d6bf3;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px}
+.sv3-pay-amt{display:flex;align-items:center;gap:12px;margin:12px 0 4px;padding:14px;border-radius:14px;background:color-mix(in srgb,var(--t-blue) 5%,#fff);border:1px solid color-mix(in srgb,var(--t-blue) 16%,#fff)}
+.sv3-pay-amt .ri{width:36px;height:36px;border-radius:10px;background:var(--t-blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px}
 .sv3-pay-amt span{font-size:16.5px;font-weight:800;color:#0f172a}
-.sv3-pay-amt b{margin-left:auto;font-size:26px;font-weight:800;color:#1d6bf3;font-variant-numeric:tabular-nums}
+.sv3-pay-amt b{margin-left:auto;font-size:26px;font-weight:800;color:var(--t-blue);font-variant-numeric:tabular-nums}
 .sv3-sec{font-size:15px;font-weight:800;color:#0f172a;margin:14px 0 8px}
 #salePanel.sv3 .sv3-pay .sv-row{margin:0 0 8px!important}
 #salePanel.sv3 .sv3-pay #customer{height:42px!important;border-radius:10px!important}
@@ -13374,6 +13390,30 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 .sv3-row{padding:9px 2px}
 #salePanel.sv3 .sv3-pay .sv-acts{display:grid!important;grid-template-columns:1fr auto;margin-top:12px!important}
 #salePanel.sv3 .sv3-pay .sv-acts>*:not(#svSell):not(.sv-inv){display:none!important}
+#salePanel.sv3{grid-template-columns:minmax(0,.95fr) minmax(0,1.3fr) minmax(290px,320px)!important}
+.sv3-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
+.sv3-tile,.sv3-tile:focus,.sv3-tile:active{background:#fff!important;color:inherit!important}
+.sv3-tile:focus-visible{outline:2px solid var(--t-blue);outline-offset:2px}
+#salePanel.sv3 .carttable thead th:nth-child(3){width:104px}
+#salePanel.sv3 .carttable thead th:nth-child(4){width:70px}
+#salePanel.sv3 .carttable thead th:nth-child(5){width:74px}
+#salePanel.sv3 .carttable thead th:nth-child(6){width:32px}
+.sv3-step{gap:3px}.sv3-step button{width:26px;height:26px}.sv3-step input{width:36px}
+.sv3-row.disc #discount{width:70px!important}
+.sv3-row.disc .sv-disc{gap:4px}
+.sv3-row{gap:10px}
+.sv3-pay-amt span{font-size:15px}.sv3-pay-amt b{font-size:23px}
+#salePanel.sv3 .sv3-step{display:inline-flex!important;flex-wrap:nowrap!important;width:auto!important}
+#salePanel.sv3 .sv3-step input{width:36px!important;min-width:0!important;max-width:36px!important;padding:0!important;flex:none!important;height:28px!important;font-size:14px!important;text-align:center!important}
+#salePanel.sv3 .sv3-step button{flex:none!important;min-width:0!important}
+#salePanel.sv3 .sv3-pay .sv-acts{grid-template-columns:minmax(0,1fr) 56px!important}
+#salePanel.sv3 .sv3-pay #svSell{min-width:0!important;padding:0 12px!important;font-size:16px!important;overflow:hidden;white-space:nowrap;display:flex!important;align-items:center;justify-content:center;gap:8px}
+#salePanel.sv3 .sv3-pay .sv-inv{width:56px!important;min-width:0!important;padding:0!important;display:flex!important;align-items:center;justify-content:center}
+#salePanel.sv3 .sv3-pay .sv-inv span{display:none!important}
+#salePanel.sv3 .sv3-row.disc #discount{width:60px!important}
+#salePanel.sv3 .sv3-row.disc #svDt button{padding:0 9px!important;min-width:0!important}
+#salePanel.sv3 .sv3-row.disc .sv-disc{min-width:0;flex-shrink:1}
+@media(max-width:1500px){#salePanel.sv3 .carttable thead th.u,#salePanel.sv3 .carttable td.u{display:none}}
 @media(max-width:1200px){#salePanel.sv3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}#salePanel.sv3>.sv3-pay{grid-column:1/-1}}
 @media(max-width:760px){#salePanel.sv3{grid-template-columns:1fr!important}.sv3-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:none}.sv3-tile{padding:10px 6px}.sv3-tile .ico{width:44px;height:44px;font-size:24px}#salePanel.sv3 .carttable thead th.u,#salePanel.sv3 .carttable td.u{display:none}.sv3-total b{font-size:28px}}
 html[data-theme="dark"] #salePanel.sv3>.sale-left,html[data-theme="dark"] #salePanel.sv3>.sale-right,html[data-theme="dark"] #salePanel.sv3>.sv3-pay,html[data-theme="dark"] .sv3-tile{background:#161b22!important;border-color:#30363d!important}
@@ -13389,7 +13429,7 @@ var SV={cart:'<svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle c
   bag:'<svg viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg>',
   trash:'<svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
   check:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',tag:'<svg viewBox="0 0 24 24"><path d="M3 12V3h9l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>'};
-var chip='all';
+var chip='all',lastSig='';
 /* icon for a product, from words in its name / category */
 var ICONS=[[/print/i,'🖨️'],[/photo\s*copy|photocopy|xerox|copy/i,'📄'],[/passport|photo/i,'🖼️'],[/pencil/i,'✏️'],[/(^|[^a-z])pen(?![a-z])/i,'🖊️'],[/khata|notebook|note\s*book|copy\s*book/i,'📓'],[/file|folder/i,'📁'],[/sticker/i,'⭐'],[/(^|[^a-z])cd|dvd/i,'💿'],
   [/(^|[^a-z])(gp|robi|airtel|banglalink|teletalk|grameen)(?![a-z])|recharge|mb|gb|min/i,'📱'],[/card/i,'💳'],[/type|typing|compose/i,'⌨️'],[/laminat/i,'🪪'],[/scan/i,'🖨️'],[/bag/i,'👜'],[/battery|charger|cable/i,'🔌'],[/ear|headphone/i,'🎧'],[/book/i,'📘'],[/paper|a4/i,'📃']];
@@ -13410,6 +13450,9 @@ function renderLeft(){
   var cs=cats();if(chip!=='all'&&!cs.some(function(c){return c.toLowerCase()===chip.toLowerCase()}))chip='all';
   $('sv3Chips').innerHTML='<button type="button" class="sv3-chip'+(chip==='all'?' on':'')+'" data-c="all">All</button>'+cs.map(function(c){return '<button type="button" class="sv3-chip'+(chip.toLowerCase()===c.toLowerCase()?' on':'')+'" data-c="'+E(c)+'">'+E(c)+'</button>'}).join('')+'<button type="button" class="sv3-chip add" data-c="+" title="Add a category">+ Add</button>';
   var ps=products(),lim=ps.slice(0,240);
+  var sig=chip+'|'+lim.map(function(x){return x.id+':'+x.name+':'+x.price+':'+(x.service?1:0)}).join(',');
+  if(sig===lastSig&&$('sv3Grid').childElementCount){updateTiles();return}
+  lastSig=sig;
   $('sv3Grid').innerHTML=lim.length?lim.map(function(x){
     var n=inCart(x.id),left=x.service?Infinity:x.qty-n,ic=iconOf(x),t=tone(x);
     var st=x.service?'':(left<=0?'<span class="st low">Out</span>':'<span class="st'+(x.qty<=3?' low':'')+'">'+x.qty+' in stock</span>');
@@ -13453,7 +13496,8 @@ function build(){
   var ss=$('ssBar'),box=document.createElement('div');box.id='sv3Left';box.style.cssText='display:flex;flex-direction:column;min-height:0;flex:1';
   box.innerHTML='<div class="sv3-chips" id="sv3Chips"></div><div class="sv3-grid" id="sv3Grid"></div><div class="sv3-catfoot" id="sv3CatFoot"></div>';
   if(ss&&ss.nextSibling)left.insertBefore(box,ss.nextSibling);else left.appendChild(box);
-  var si=$('saleSearch');if(si){si.placeholder='Search product name…';si.addEventListener('input',renderLeft)}
+  var si=$('saleSearch');if(si){si.placeholder='Search product name…';si.addEventListener('input',renderLeft);
+    si.addEventListener('keydown',function(e){if(e.key!=='Enter'||e.ctrlKey||!si.value.trim())return;var t=document.querySelector('#sv3Grid .sv3-tile:not([disabled])');if(t){e.preventDefault();t.click();si.value='';renderLeft()}})}
   /* middle: Current Sale */
   var mh=document.createElement('div');mh.className='sv3-h';mh.innerHTML='<span class="ic">'+SV.cart+'</span><h3>Current Sale</h3><button type="button" class="sv3-clear sp" id="sv3Clear">'+SV.trash+'Clear All</button>';
   right.insertBefore(mh,right.firstChild);
@@ -13494,6 +13538,7 @@ function updateTiles(){
     var id=b.getAttribute('data-id'),x=(db.stock||[]).find(function(a){return a.id===id});if(!x)return;
     var n=inCart(id),left=x.service?Infinity:x.qty-n,out=left<=0,bd=b.querySelector('.n');
     if(b.disabled!==out)b.disabled=out;
+    var st=b.querySelector('.st');if(st&&!x.service){var txt=out?'Out':x.qty+' in stock',cls='st'+((out||x.qty<=3)?' low':'');if(st.textContent!==txt)st.textContent=txt;if(st.className!==cls)st.className=cls}
     if(n){if(!bd){bd=document.createElement('i');bd.className='n';b.appendChild(bd)}if(bd.textContent!==String(n))bd.textContent=n}else if(bd)bd.remove();
   });
 }
@@ -13513,4 +13558,136 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+<script id="lazyViews">
+/* Speed: lists on pages that are closed are not rebuilt on every sale / stock change.
+   They are marked as out of date and rebuilt the moment their page opens. */
+(function(){
+  var MAP={renderSales:'salesHistoryModal',renderStock:'stockListModal',renderToday:'todaySalesModal',renderPicker:'salesModal'};
+  var dirty={};
+  function shown(id){var m=document.getElementById(id);return !!(m&&m.classList.contains('show'))}
+  Object.keys(MAP).forEach(function(fn){
+    var o=window[fn];if(typeof o!=='function')return;
+    var w=function(){if(shown(MAP[fn])){dirty[fn]=false;return o.apply(this,arguments)}dirty[fn]=true;if(fn==='renderStock'){try{refreshCategoryUI()}catch(e){}}};
+    w.__orig=o;window[fn]=w;
+  });
+  var _o=window.openActionModal;
+  if(typeof _o==='function')window.openActionModal=function(id){
+    var r=_o.apply(this,arguments);
+    Object.keys(MAP).forEach(function(fn){if(MAP[fn]===id&&dirty[fn]){dirty[fn]=false;try{window[fn].__orig()}catch(e){console.error(e)}}});
+    return r;
+  };
+  /* Dashboard: not redrawn while another page covers it (Cash Reconciliation needs it, so it stays live there) */
+  var dashDirty=false,_rd=window.renderDashboard;
+  function covered(){var m=document.querySelector('.modal.show');if(!m)return false;var r=document.getElementById('reconModal');return !(r&&r.classList.contains('show'))}
+  if(typeof _rd==='function')window.renderDashboard=function(){if(covered()){dashDirty=true;return}dashDirty=false;return _rd.apply(this,arguments)};
+  var _cm=window.closeActionModal;
+  if(typeof _cm==='function')window.closeActionModal=function(){var r=_cm.apply(this,arguments);if(dashDirty&&!covered()){dashDirty=false;try{_rd()}catch(e){console.error(e)}}return r};
+  /* the new Sales page shows product tiles; the old hidden list is only built if the old layout is in use */
+  var _rp=window.renderPicker;
+  if(typeof _rp==='function')window.renderPicker=function(){if(document.querySelector('#salePanel.sv3'))return;return _rp.apply(this,arguments)};
+})();
+</script>
+<style id="accentThemes">
+/* ===== 5 colour themes (Settings → Colour theme) ===== */
+html[data-accent="emerald"]{--t-blue:#059669;--t-blue2:#047857;--t-nav:#06291f;--t-nav2:#0a3a2c}
+html[data-accent="purple"]{--t-blue:#7c3aed;--t-blue2:#5b21b6;--t-nav:#1e1238;--t-nav2:#2a1a4d}
+html[data-accent="rose"]{--t-blue:#e11d48;--t-blue2:#be123c;--t-nav:#2a0a16;--t-nav2:#3d0f20}
+html[data-accent="sunset"]{--t-blue:#ea580c;--t-blue2:#c2410c;--t-nav:#2a1306;--t-nav2:#3d1c0a}
+html[data-accent="black"]{--t-blue:#18181b;--t-blue2:#000;--t-nav:#000;--t-nav2:#0c0c0e}
+html[data-accent="black"] body #sidebar .sb-item[aria-current="page"]{background:#ffffff1f!important;box-shadow:inset 3px 0 0 #fff!important}
+html[data-accent="black"] body #sidebar .sb-logo{background:#fff!important;color:#000!important;box-shadow:none!important}
+html[data-accent="black"] body .main .stat.feature{background:linear-gradient(135deg,#3f3f46,#09090b)!important;box-shadow:0 8px 22px #0000003d!important}
+.gs-accents{display:flex;gap:10px;flex-wrap:wrap}
+.gs-acc{display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 4px;border:0;background:none;cursor:pointer;box-shadow:none;font-size:12px;font-weight:600;color:#475569;min-width:58px}
+.gs-acc i{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--a1) 50%,var(--a2) 50%);box-shadow:0 0 0 2px #fff,0 0 0 3px #d5dce6;transition:box-shadow .12s,transform .1s}
+.gs-acc:hover i{transform:scale(1.06)}
+.gs-acc.on i{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--a1)}
+.gs-acc.on{color:#0f172a}
+</style>
+<script id="accentThemesJs">
+(function(){
+  var KEY='mh_accent',ALL=['ocean','emerald','purple','rose','sunset','black'];
+  function cur(){try{var a=localStorage.getItem(KEY);return ALL.indexOf(a)>-1?a:'ocean'}catch(e){return 'ocean'}}
+  function mark(){var c=cur();document.querySelectorAll('#setAccent .gs-acc').forEach(function(b){var on=b.getAttribute('data-acc')===c;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')})}
+  window.setAccent=function(a){
+    if(ALL.indexOf(a)<0)a='ocean';
+    try{localStorage.setItem(KEY,a)}catch(e){}
+    if(a==='ocean')document.documentElement.removeAttribute('data-accent');else document.documentElement.setAttribute('data-accent',a);
+    mark();
+    try{if(typeof lastDashKey!=='undefined')lastDashKey='';if(typeof renderDashboard==='function')renderDashboard()}catch(e){}  // chart line takes the new colour
+  };
+  var box=document.getElementById('setAccent');
+  if(box)box.addEventListener('click',function(e){var b=e.target.closest('.gs-acc');if(b)setAccent(b.getAttribute('data-acc'))});
+  mark();
+})();
+</script>
+<style id="fuPageCss">
+#followupModal .fu-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:6px 0 16px}
+#followupModal .fu-k{background:#fff;border:1px solid var(--t-line,#e4eaf4);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+#followupModal .fu-k small{display:block;font-size:12.5px;font-weight:600;color:#64748b}
+#followupModal .fu-k b{display:block;margin-top:6px;font-size:24px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums}
+#followupModal .fu-k em{display:block;margin-top:2px;font-style:normal;font-size:12px;color:#94a3b8}
+#followupModal .fu-k.red b{color:#dc2626}#followupModal .fu-k.green b{color:#16a34a}
+#followupModal .fu-wrap.dc3{display:grid!important;margin:0 0 16px}
+#followupModal .dc-list{max-height:none!important}
+#followupModal .fu-top{background:#fff;border:1px solid var(--t-line,#e4eaf4);border-radius:14px;padding:14px 16px}
+#followupModal .fu-top-h{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+#followupModal .fu-top-h b{font-size:15px;color:#0f172a}#followupModal .fu-top-h span{font-size:12.5px;color:#64748b}
+#followupModal .fu-tw{overflow:auto}
+#followupModal .fu-t{width:100%;border-collapse:collapse;font-size:14px}
+#followupModal .fu-t th{text-align:left;font-size:12px;font-weight:700;color:#64748b;padding:9px 8px;background:#f3f6fb;white-space:nowrap}
+#followupModal .fu-t td{padding:10px 8px;border-bottom:1px solid #eef2f7;white-space:nowrap}
+#followupModal .fu-t tr{cursor:pointer}#followupModal .fu-t tbody tr:hover td{background:#f8fafd}
+#followupModal .fu-t .r{text-align:right}#followupModal .fu-t td.r{font-weight:800;color:#dc2626;font-variant-numeric:tabular-nums}
+#followupModal .fu-t .old{color:#b45309;font-weight:700}
+@media(max-width:900px){#followupModal .fu-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+html[data-theme="dark"] #followupModal .fu-k,html[data-theme="dark"] #followupModal .fu-top{background:#161b22;border-color:#30363d}
+html[data-theme="dark"] #followupModal .fu-k b,html[data-theme="dark"] #followupModal .fu-top-h b{color:#e6edf3}
+</style>
+<script id="fuPageJs">
+(function(){
+  function $(i){return document.getElementById(i)}
+  function E(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function M(n){try{return money(n)}catch(e){return '৳'+(+n||0).toFixed(2)}}
+  function day(t){var d=new Date(t);return isNaN(d)?'—':d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}
+  function shown(){var m=$('followupModal');return !!(m&&m.classList.contains('show'))}
+  function summary(){
+    var items=[];try{items=dueItems()}catch(e){}
+    var reg=new Map();try{reg=custRegMap()}catch(e){}
+    var g=new Map(),total=0;
+    items.forEach(function(it){var n=khClean(it.customer);if(!n||n==='Walk-in'||n==='\u2014'||/^#|^\d+$/.test(n))return;var d=+it.due||0;if(d<=0)return;
+      var k=khKey(n),x=g.get(k);if(!x){var c=reg.get(k);x={key:k,name:n,due:0,newest:0,oldest:Infinity,phone:(c&&c.phone)||''};g.set(k,x)}
+      x.due+=d;total+=d;var t=+it.date||0;if(t){if(t>x.newest)x.newest=t;if(t<x.oldest)x.oldest=t}});
+    var paid=[];try{paidHistoryItems().forEach(function(p){if(p&&p.amount>0&&p.ts)paid.push(p)})}catch(e){}
+    var now=new Date(),d0=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime(),m0=new Date(now.getFullYear(),now.getMonth(),1).getTime();
+    var today=0,month=0,nt=0;paid.forEach(function(p){if(p.ts>=m0)month+=p.amount;if(p.ts>=d0){today+=p.amount;nt++}});
+    var list=Array.from(g.values()),n=list.length;
+    $('fuKpis').innerHTML='<div class="fu-k red"><small>Total due</small><b>'+M(total)+'</b><em>'+n+' customer'+(n===1?'':'s')+'</em></div>'
+      +'<div class="fu-k"><small>Average due</small><b>'+M(n?total/n:0)+'</b><em>per customer</em></div>'
+      +'<div class="fu-k green"><small>Collected today</small><b>'+M(today)+'</b><em>'+nt+' payment'+(nt===1?'':'s')+'</em></div>'
+      +'<div class="fu-k green"><small>Collected this month</small><b>'+M(month)+'</b><em>'+now.toLocaleDateString(undefined,{month:'long'})+'</em></div>';
+    list.sort(function(a,b){return b.due-a.due});var top=list.slice(0,15);
+    $('fuTopSub').textContent=n>15?'top 15 of '+n:'';
+    $('fuTopBody').innerHTML=top.length?top.map(function(x,i){var days=x.oldest<Infinity?Math.floor((Date.now()-x.oldest)/864e5):0;
+      return '<tr data-n="'+E(x.name)+'"><td>'+(i+1)+'</td><td><b>'+E(x.name)+'</b></td><td>'+E(x.phone||'—')+'</td><td>'+E(day(x.newest))+'</td><td class="'+(days>=30?'old':'')+'">'+(x.oldest<Infinity?days+' day'+(days===1?'':'s'):'—')+'</td><td class="r">'+M(x.due)+'</td></tr>'}).join('')
+      :'<tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:22px">No customer dues 🎉</td></tr>';
+  }
+  function refresh(){if(!shown())return;try{window.dcRender&&window.dcRender(false)}catch(e){}try{summary()}catch(e){console.error(e)}}
+  window.openFollowup=function(){if(typeof requireAdmin==='function'&&!requireAdmin('Due Follow-up'))return;openActionModal('followupModal');try{syncNavActive()}catch(e){}refresh()};
+  document.addEventListener('click',function(e){var tr=e.target.closest&&e.target.closest('#fuTopBody tr[data-n]');if(tr&&typeof openKhata==='function')openKhata(tr.getAttribute('data-n'))});
+  /* keep it live while open */
+  var _r=window.render;if(typeof _r==='function')window.render=function(){var x=_r.apply(this,arguments);refresh();return x};
+  /* menu item under Customers, right after Customers & Due */
+  function addNav(){
+    var nav=$('sidebarNav');if(!nav||nav.querySelector('[data-page="followupModal"]'))return;
+    var ref=nav.querySelector('.sb-item[data-page="biz:due"]')||nav.querySelector('.sbg[data-g="cust"] .sb-item');
+    var b=document.createElement('button');b.className='sb-item admin-only';b.setAttribute('data-page','followupModal');b.title='Due Follow-up';
+    b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><span>Due Follow-up</span>';
+    b.onclick=function(){openFollowup();try{closeSidebar()}catch(x){}};
+    if(ref&&ref.parentNode)ref.parentNode.insertBefore(b,ref.nextSibling);else nav.appendChild(b);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addNav);else addNav();
+  setTimeout(addNav,500);
+})();
+</script>
 </body></html>
