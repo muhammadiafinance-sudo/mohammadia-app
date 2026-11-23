@@ -1,0 +1,41 @@
+rules_version = '2';
+// Firestore Rules for the shop app (project: mohammadia-stock).
+// Paste into Firebase Console → Firestore Database → Rules → Publish.
+//
+// Two logins (emails must match ROLE_EMAILS in index.html):
+//   Shop     = admin    → everything
+//   Employee = employee → day-to-day shop work; deleting is admin-only
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function email()      { return request.auth != null ? request.auth.token.email : ''; }
+    function isAdmin()    { return email() == 'muhammadiafinance+admin@gmail.com'; }
+    function isEmployee() { return email() == 'muhammadiafinance+employee@gmail.com'; }
+    function isStaff()    { return isAdmin() || isEmployee(); }
+
+    // Shop state: stock, daily cash, purchases, settings (one document)
+    match /mohammadia_library/main_db {
+      allow read, create, update: if isStaff();
+      allow delete: if false;
+    }
+    // One document per sale / warranty phone
+    match /mohammadia_library/main_db/sales/{id} {
+      allow read, create, update: if isStaff();
+      allow delete: if isAdmin();                 // only a full backup restore deletes sales
+    }
+    match /mohammadia_library/main_db/warranty/{id} {
+      allow read, create, update: if isStaff();
+      allow delete: if isAdmin();
+    }
+    // Signed-in devices: each login manages its own record, the Shop login sees and manages all
+    match /mohammadia_library/main_db/sessions/{sid} {
+      allow read, update, delete: if isAdmin() || (isStaff() && resource.data.uid == request.auth.uid);
+      allow create: if isStaff() && request.resource.data.uid == request.auth.uid;
+    }
+    // Old Bank portal / Daily Hisab data (no longer used by this app): kept, Shop login only
+    match /mohammadia_library/main_db/{col}/{id} {
+      allow read, write: if isAdmin() && col.matches('hisab_.*');
+    }
+    // Everything else is closed.
+    match /{document=**} { allow read, write: if false; }
+  }
+}
