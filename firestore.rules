@@ -26,10 +26,13 @@ service cloud.firestore {
       allow read, create, update: if isStaff();
       allow delete: if isAdmin();
     }
-    // Signed-in devices: each login manages its own record, the Shop login sees and manages all
+    // Signed-in devices: ONLY two records can exist (slot1, slot2) → at most 2 devices in total.
+    // A new device may take over a slot (the device there signs itself out).
     match /mohammadia_library/main_db/sessions/{sid} {
-      allow read, update, delete: if isAdmin() || (isStaff() && resource.data.uid == request.auth.uid);
-      allow create: if isStaff() && request.resource.data.uid == request.auth.uid;
+      allow read: if isAdmin() || (isStaff() && sid in ['slot1', 'slot2']);
+      allow create, update: if isStaff() && sid in ['slot1', 'slot2']
+                            && (request.resource.data.uid == request.auth.uid || isAdmin());
+      allow delete: if isAdmin() || (isStaff() && resource.data.uid == request.auth.uid);
     }
     // Old Bank portal / Daily Hisab data (no longer used by this app): kept, Shop login only
     match /mohammadia_library/main_db/{col}/{id} {

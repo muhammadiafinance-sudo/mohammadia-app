@@ -2498,7 +2498,18 @@ html[data-theme="dark"] .sc-h-more{background-color:#1a2028!important;color:#e6e
 html[data-theme="dark"] .sale-cash .sc-item{border-top-color:#2a3342!important}
 html[data-theme="dark"] .sc-hist{border-top-color:#2a3342!important}
 html[data-theme="dark"] .sc-tabs button.on{background-color:var(--c)!important;border-color:var(--c)!important;color:#fff!important}
-</style><style id="bankLoginCss">
+</style><style id="slotPickerCss">
+#slotPicker{margin-top:14px;padding:14px;border:1px solid #f1dc9a;border-radius:10px;background:#fffaf0;text-align:left}
+#slotPicker .sp-h{font-weight:700;font-size:14px;color:#7a4b00}
+#slotPicker .sp-s{font-size:12.5px;color:#7a5600;margin:4px 0 10px}
+#slotPicker .sp-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #f3e6c4}
+#slotPicker .sp-d{flex:1;min-width:0}
+#slotPicker .sp-d b{display:block;font-size:13.5px;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#slotPicker .sp-d small{font-size:12px;color:#64748b}
+#slotPicker .sp-btn{flex:none;padding:8px 11px;border:0;border-radius:8px;background:#b42318;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer}
+#slotPicker .sp-cancel{display:block;margin:10px auto 0;padding:6px 12px;border:0;background:none;color:#0a2f6b;font-weight:600;cursor:pointer;box-shadow:none}
+</style>
+<style id="bankLoginCss">
 /* ===== Bank-style login (replaces the old split hero layout) ===== */
 html body #loginScreen{display:flex;flex-direction:column;min-height:100vh;padding:0;background:#eef2f7;grid-template-columns:none;font-family:'Inter',Arial,Helvetica,sans-serif;color:#0f172a}
 html[data-theme="dark"] body #loginScreen{background:#eef2f7!important}
@@ -2931,7 +2942,7 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
           <button type="button" class="role-btn active" id="roleBtnAdmin" role="tab" aria-selected="true" onclick="selectLoginRole('admin')">
             <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9v11h16V9"/><path d="M4 9a3 3 0 006 0 3 3 0 006 0 3 3 0 004 0"/><path d="M10 20v-5h4v5"/></svg>Shop</button>
           <button type="button" class="role-btn" id="roleBtnEmployee" role="tab" aria-selected="false" onclick="selectLoginRole('employee')">
-            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 21h18"/></svg>Employee</button>
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>Employee</button>
         </div>
       </div>
 
@@ -2945,6 +2956,7 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
 
       <button class="login-btn" id="loginBtn" onclick="doLogin()"><span id="loginBtnText">Sign In</span><span class="spinner" id="loginSpinner"></span></button>
       <div class="login-error" id="loginError" role="alert"></div>
+      <div id="slotPicker" style="display:none"></div>
       <div class="bk-links"><button type="button" id="forgotBtn" onclick="forgotPassword()">Forgot password?</button></div>
       <div id="forgotMsg" style="display:none;margin-top:12px;padding:10px 13px;border-radius:8px;background:#e6f4ea;color:#188038;font-size:13px;font-weight:600;text-align:center"></div>
       <div class="login-foot" id="authCloudStatus" style="display:none" aria-hidden="true"></div>
@@ -3591,15 +3603,29 @@ function deviceInfo(){
   return{os,browser:br,model,label:(model?model+' · ':'')+os+' · '+br};
 }
 
-/* ---- session document for THIS device ---- */
-let mySid=null,sessUnsub=null,sessBeat=null,adminSessUnsub=null,sessSeenConfirmed=false,sessionsCache=[],loggingOut=false,sessVisHooked=false;
-function createSessionDoc(user){
-  const sid=user.uid+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-  localStorage.setItem(SID_KEY,sid);localStorage.removeItem(SID_CONF_KEY);
-  mySid=sid;
+/* ---- 2-device limit: every signed-in device holds one of TWO slots ----
+   sessions/slot1 and sessions/slot2 are the only session records the Firestore
+   rules allow, so at most 2 devices (Shop + Employee together) can be signed in.
+   Each device keeps a random token; if another device takes over its slot the
+   token changes and this device signs itself out. */
+const SLOTS=['slot1','slot2'], TOKEN_KEY='mohammadia_tok_v1';
+let mySid=null,myToken=null,sessUnsub=null,sessBeat=null,adminSessUnsub=null,sessSeenConfirmed=false,sessionsCache=[],loggingOut=false,sessVisHooked=false;
+function slotFree(d){return !d||d.revoked}
+// Claims a free slot (or `takeOver`) for this device. Throws {code:'app/full',slots} when both are in use.
+async function claimSlot(user,takeOver){
+  const token=Math.random().toString(36).slice(2)+Date.now().toString(36);
   const d=deviceInfo(),ts=firebase.firestore.FieldValue.serverTimestamp();
-  SESSIONS_COL.doc(sid).set({uid:user.uid,email:user.email,role:roleOfUser(user),device:d.label,os:d.os,browser:d.browser,model:d.model,loginAt:ts,lastActive:ts,revoked:false})
-    .catch(e=>console.error('Could not create session record (check Firestore rules):',e));
+  let sid=null;
+  await fsdb.runTransaction(async tx=>{
+    sid=null;
+    const snaps=await Promise.all(SLOTS.map(id=>tx.get(SESSIONS_COL.doc(id))));
+    if(takeOver&&SLOTS.indexOf(takeOver)>=0)sid=takeOver;
+    else{const i=snaps.findIndex(x=>slotFree(x.exists?x.data():null));if(i>=0)sid=SLOTS[i]}
+    if(!sid)throw {code:'app/full',slots:snaps.map((x,i)=>({id:SLOTS[i],...(x.exists?x.data({serverTimestamps:'estimate'}):{})}))};
+    tx.set(SESSIONS_COL.doc(sid),{uid:user.uid,email:user.email,role:roleOfUser(user),token,device:d.label,os:d.os,browser:d.browser,model:d.model,loginAt:ts,lastActive:ts,revoked:false});
+  });
+  localStorage.setItem(SID_KEY,sid);localStorage.setItem(TOKEN_KEY,token);localStorage.removeItem(SID_CONF_KEY);
+  mySid=sid;myToken=token;
   return sid;
 }
 function sessionBeat(){
@@ -3608,16 +3634,18 @@ function sessionBeat(){
 }
 function startSessionWatch(user){
   stopSessionWatch();
-  mySid=localStorage.getItem(SID_KEY);
-  if(!mySid||mySid.indexOf(user.uid+'_')!==0)createSessionDoc(user);
+  mySid=localStorage.getItem(SID_KEY);myToken=localStorage.getItem(TOKEN_KEY);
+  if(SLOTS.indexOf(mySid)<0||!myToken){forceLogout('Please log in again — only 2 devices can be signed in at a time.');return}
   sessSeenConfirmed=localStorage.getItem(SID_CONF_KEY)===mySid;
   const ref=SESSIONS_COL.doc(mySid);
   sessUnsub=ref.onSnapshot(snap=>{
     if(snap.exists){
+      const x=snap.data();
+      if(x.token&&x.token!==myToken){hardSignOut('Another device signed in and took this device’s place (only 2 devices at a time).',false);return}
       if(!snap.metadata.hasPendingWrites){sessSeenConfirmed=true;try{localStorage.setItem(SID_CONF_KEY,mySid)}catch(e){}}
-      if(snap.data().revoked)forceLogout('An admin logged this device out. Please log in again.');
+      if(x.revoked)forceLogout('This device was logged out. Please log in again.');
     }else if(sessSeenConfirmed&&!snap.metadata.fromCache){
-      forceLogout('This device was removed by an admin. Please log in again.');
+      hardSignOut('This device was removed. Please log in again.',false);
     }
   },err=>console.error('Session watch error:',err));
   sessBeat=setInterval(sessionBeat,5*60000);
@@ -3629,25 +3657,49 @@ function stopSessionWatch(){
   try{if(adminSessUnsub)adminSessUnsub()}catch(e){}
   clearInterval(sessBeat);sessUnsub=adminSessUnsub=null;
 }
+// Frees this device's slot — but never one another device has already taken over.
+async function releaseMySlot(sid,token){
+  if(SLOTS.indexOf(sid)<0||!token)return;
+  await fsdb.runTransaction(async tx=>{const r=SESSIONS_COL.doc(sid),x=await tx.get(r);if(x.exists&&x.data().token===token)tx.delete(r)});
+}
 async function hardSignOut(msg,deleteDoc){
   if(loggingOut)return;loggingOut=true;
   stopSessionWatch();
-  const sid=mySid||localStorage.getItem(SID_KEY);
+  const sid=mySid||localStorage.getItem(SID_KEY),tok=myToken||localStorage.getItem(TOKEN_KEY);
   if(deleteDoc&&sid){
-    try{await Promise.race([SESSIONS_COL.doc(sid).delete(),new Promise(r=>setTimeout(r,2500))])}catch(e){}
+    try{await Promise.race([releaseMySlot(sid,tok),new Promise(r=>setTimeout(r,2500))])}catch(e){}
   }
   try{await fbAuth.signOut()}catch(e){}
-  localStorage.removeItem(SID_KEY);localStorage.removeItem(SID_CONF_KEY);
+  localStorage.removeItem(SID_KEY);localStorage.removeItem(SID_CONF_KEY);localStorage.removeItem(TOKEN_KEY);
   try{if(msg)sessionStorage.setItem(FORCE_MSG_KEY,msg)}catch(e){}
   location.reload();
 }
 function forceLogout(msg){hardSignOut(msg,true)}
 
+/* ---- login: both slots taken → choose a device to log out ---- */
+function showSlotPicker(user,role,slots){
+  const box=$('slotPicker');if(!box)return;
+  const now=Date.now();
+  box.innerHTML='<div class="sp-h">2 devices are already signed in</div><div class="sp-s">Only 2 devices can use the app at the same time. Log one out to use this device.</div>'+
+    slots.map(x=>{const last=tsMs(x.lastActive),on=(now-last)<6*60000;
+      return '<div class="sp-row"><div class="sp-d"><b>'+esc(x.device||'Unknown device')+'</b><small>'+(x.role==='admin'?'🏪 Shop':'👤 Employee')+' · '+(on?'● Online':'Last active '+esc(timeAgo(last)))+'</small></div>'+
+        '<button type="button" class="sp-btn" data-slot="'+esc(x.id)+'">Log out &amp; use here</button></div>'}).join('')+
+    '<button type="button" class="sp-cancel">Cancel</button>';
+  box.style.display='block';
+  box.querySelectorAll('.sp-btn').forEach(b=>b.onclick=async()=>{
+    box.querySelectorAll('button').forEach(x=>x.disabled=true);b.textContent='Signing in…';
+    try{await claimSlot(user,b.dataset.slot);box.style.display='none';startSession(role,user)}
+    catch(e){console.error(e);box.style.display='none';try{await fbAuth.signOut()}catch(x){}loginError.textContent='Could not sign in'+(e&&e.code?' ('+e.code+')':'')+'. Please try again.';loginError.classList.add('show')}
+  });
+  box.querySelector('.sp-cancel').onclick=async()=>{box.style.display='none';try{await fbAuth.signOut()}catch(e){}};
+}
+
 /* ---- Active Sessions page (admin only) ---- */
 function startAdminSessionsListener(){
   if(adminSessUnsub)return;
   adminSessUnsub=SESSIONS_COL.onSnapshot(snap=>{
-    sessionsCache=snap.docs.map(d=>({id:d.id,...d.data({serverTimestamps:'estimate'})}));
+    snap.docs.forEach(d=>{if(SLOTS.indexOf(d.id)<0)d.ref.delete().catch(()=>{})}); // records from before the 2-device limit
+    sessionsCache=snap.docs.filter(d=>SLOTS.indexOf(d.id)>=0).map(d=>({id:d.id,...d.data({serverTimestamps:'estimate'})}));
     renderSessions();
   },err=>console.error('Sessions list error:',err));
 }
@@ -3743,6 +3795,7 @@ function toggleLoginPw(){
 
 async function doLogin(){
   const pw=loginPassword.value;
+  const spk=$('slotPicker');if(spk)spk.style.display='none';
   if(!pw){loginError.textContent='Please enter a password.';loginError.classList.add('show');return}
   loginBtnText.textContent='Signing in...';
   loginSpinner.classList.add('show');
@@ -3754,7 +3807,11 @@ async function doLogin(){
     if(!role){await fbAuth.signOut();throw {code:'app/no-role'}}
     loginPassword.value='';
     loginError.classList.remove('show');
-    startSession(role,cred.user);
+    let full=null;
+    try{await claimSlot(cred.user)}
+    catch(e){if(e&&e.code==='app/full')full=e.slots;else{await fbAuth.signOut();throw e}}
+    if(full)showSlotPicker(cred.user,role,full);   // both places taken: choose a device to log out
+    else startSession(role,cred.user);
     ok=true;
   }catch(e){
     console.error('Login failed:',e);
@@ -3769,7 +3826,6 @@ async function doLogin(){
 
 function startSession(role,user){
   currentRole=role;
-  localStorage.removeItem(SID_KEY); // every login gets its own, fresh session record
   enterApp();
   startSessionWatch(user);
 }
@@ -8335,24 +8391,30 @@ window.addEventListener('resize',()=>{if(window.innerWidth>960)closeSidebar()});
   // A refresh must not bring back a device the admin has logged out:
   // check this device's session record before entering the app.
   if(user&&role){
-    const sid=localStorage.getItem(SID_KEY);
-    if(sid&&sid.indexOf(user.uid+'_')===0){
+    const sid=localStorage.getItem(SID_KEY),tok=localStorage.getItem(TOKEN_KEY);
+    if(SLOTS.indexOf(sid)<0||!tok){
+      msg='Please log in again — only 2 devices can be signed in at a time.';
+      try{await fbAuth.signOut()}catch(e){}user=null;
+    }else{
       try{
         const snap=await Promise.race([
           SESSIONS_COL.doc(sid).get({source:'server'}),
           new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))
         ]);
         const confirmed=localStorage.getItem(SID_CONF_KEY)===sid;
-        if(snap.exists&&snap.data().revoked){
-          msg='An admin logged this device out. Please log in again.';
-          try{await SESSIONS_COL.doc(sid).delete()}catch(e){}
+        if(snap.exists&&snap.data().token&&snap.data().token!==tok){
+          msg='Another device signed in and took this device\u2019s place (only 2 devices at a time).';
+          user=null;
+        }else if(snap.exists&&snap.data().revoked){
+          msg='This device was logged out. Please log in again.';
+          try{await releaseMySlot(sid,tok)}catch(e){}
           user=null;
         }else if(!snap.exists&&confirmed){
-          msg='This device was removed by an admin. Please log in again.';
+          msg='This device was removed. Please log in again.';
           user=null;
         }
       }catch(e){ /* offline or slow network: let the user in, the live watcher will catch up */ }
-      if(!user){try{await fbAuth.signOut()}catch(e){}localStorage.removeItem(SID_KEY);localStorage.removeItem(SID_CONF_KEY)}
+      if(!user){try{await fbAuth.signOut()}catch(e){}localStorage.removeItem(SID_KEY);localStorage.removeItem(SID_CONF_KEY);localStorage.removeItem(TOKEN_KEY)}
     }
   }
   if(user&&role){
