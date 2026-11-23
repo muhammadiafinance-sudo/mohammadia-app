@@ -5867,8 +5867,8 @@ async function resetQsaleColor(word){
 const QS_FIXED=[
   /* row 1 */ ['gp','GP','#1a73e8',1,/(^|[^a-z])(gp|grameenphone|grameen)(?![a-z])/i],
   ['airtel','Airtel','#d93025',1,/(^|[^a-z])airtel(?![a-z])/i],
-  ['khata','Khata','#e37400',1,/khata/i],
   ['pen','Pen','#0b8043',1,/(^|[^a-z])pen(?![a-z])/i],
+  ['khata','Khata','#e37400',1,/khata/i],
   /* row 2 */ ['print','Print','#5f6368',2,/print/i],
   ['photocopy','Photocopy','#7c3aed',2,/photo\s*copy|photocopy|xerox/i],
   ['passport','Passport Photo','#0097a7',2,/passport/i]
@@ -12480,13 +12480,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .sv-acts{grid-template-columns:minmax(0,1fr) auto!important}
 @media(min-width:961px) and (max-width:1440px){.sv-inv span{display:none}.sv-inv{padding:0 16px!important}}
 
-/* Quick Sale shows only GP / Robi / Airtel */
-#qsaleInner .qs-brand:not([data-k="gp"]):not([data-k="robi"]):not([data-k="airtel"]){display:none!important}
+/* Quick Sale shows only GP / Robi / Airtel / Pen / Khata */
+#qsaleInner .qs-brand:not([data-k="gp"]):not([data-k="robi"]):not([data-k="airtel"]):not([data-k="pen"]):not([data-k="khata"]){display:none!important}
 #qsaleInner .qs-brand[data-k]:disabled{display:flex!important;opacity:.4}
-#qsaleInner .qs-top,#qsaleInner .qs-row2:not(:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"])){display:none!important}
-#qsaleInner .qs-row:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"]){display:flex!important}
+#qsaleInner .qs-top,#qsaleInner .qs-row2:not(:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"],.qs-brand[data-k="pen"],.qs-brand[data-k="khata"])){display:none!important}
+#qsaleInner .qs-row:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"],.qs-brand[data-k="pen"],.qs-brand[data-k="khata"]){display:flex!important}
 #qsaleInner .qs-brand[data-k]{min-width:96px!important;height:54px!important;font-size:15px!important}
-#qsaleInner .qs-row:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"]){flex-wrap:nowrap!important}
+#qsaleInner .qs-row:has(.qs-brand[data-k="gp"],.qs-brand[data-k="robi"],.qs-brand[data-k="airtel"],.qs-brand[data-k="pen"],.qs-brand[data-k="khata"]){flex-wrap:wrap!important}
 #qsaleInner .qs-brand[data-k]{flex:1 1 0;min-width:0!important;max-width:160px}
 /* compact, colour-filled GP / Robi / Airtel cards */
 #salePanel #qsaleInner .qs-row:has(.qs-brand[data-k]){gap:8px!important}
@@ -12738,10 +12738,10 @@ function refreshTop(){
     if(bd){if(n){if(bd.textContent!==String(n)){bd.classList.remove('bump');void bd.offsetWidth;bd.classList.add('bump')}bd.hidden=false;bd.textContent=n}else{bd.hidden=true;bd.textContent=''}}
   });
 }
-/* Quick Sale = only the mobile-recharge cards: GP, Robi, Airtel.
+/* Quick Sale = GP, Robi, Airtel, Pen and Khata.
    Every in-stock (or service) product whose name/category/model says GP, Robi or Airtel shows here,
    no "Frequently sold" tick needed. */
-var TEL=['gp','robi','airtel'];
+var TEL=['gp','robi','airtel','pen','khata'];
 try{
   if(typeof QS_FIXED!=='undefined'&&!QS_FIXED.some(function(f){return f[0]==='robi'})){
     var ai=QS_FIXED.findIndex(function(f){return f[0]==='gp'});
