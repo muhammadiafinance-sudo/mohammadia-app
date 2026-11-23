@@ -13441,7 +13441,7 @@ function addTyped(){
   var lv=v.toLowerCase(),st=db.stock||[];
   var x=st.find(function(a){return a.barcode&&String(a.barcode).toLowerCase()===lv})||st.find(function(a){return String(a.name||'').toLowerCase()===lv})||st.find(function(a){return String(a.name||'').toLowerCase().indexOf(lv)===0})||st.find(function(a){return String(a.name||'').toLowerCase().indexOf(lv)>-1});
   if(!x){msg.textContent='No product matches “'+v+'”.';return}
-  if(addToCart(x.id)){inp.value='';try{renderCart()}catch(e){}}
+  if(addToCart(x.id))inp.value='';
   inp.focus();
 }
 function build(){
@@ -13480,19 +13480,34 @@ function build(){
     if(c==='+'){var name=(prompt('New category name (e.g. Stationery):')||'').replace(/\s+/g,' ').trim();if(!name||!window.QX)return;var list=cats();if(!list.some(function(x){return x.toLowerCase()===name.toLowerCase()}))window.QX.save(list.concat([name]));chip=name;renderLeft();return}
     chip=c;renderLeft()});
   $('sv3CatFoot').addEventListener('click',function(e){if(!e.target.closest('[data-act="rmcat"]')||chip==='all'||!window.QX)return;if(!confirm('Remove the category “'+chip+'”?\n\nIts products are not deleted.'))return;var o=chip;chip='all';window.QX.save(cats().filter(function(c){return c.toLowerCase()!==o.toLowerCase()}));renderLeft()});
-  $('sv3Grid').addEventListener('click',function(e){var b=e.target.closest('.sv3-tile');if(!b||b.disabled)return;var id=b.getAttribute('data-id');if(addToCart(id)){try{cartPop(e,id)}catch(x){}try{renderCart()}catch(x){}}});
+  $('sv3Grid').addEventListener('click',function(e){var b=e.target.closest('.sv3-tile');if(!b||b.disabled)return;var id=b.getAttribute('data-id');if(addToCart(id)){try{cartPop(e,id)}catch(x){}}});
   $('sv3Clear').addEventListener('click',function(){if(!cart.length)return;if(!confirm('Clear all items from this sale?'))return;cart.length=0;try{renderCart()}catch(e){}});
   $('sv3AddBtn').addEventListener('click',addTyped);
   $('sv3AddInp').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addTyped()}});
   return true;
 }
 /* hook into the existing renderers */
+/* one cart redraw per click: rows + totals + tile badges updated in place (no full tile rebuild) */
+function updateTiles(){
+  var g=$('sv3Grid');if(!g)return;
+  g.querySelectorAll('.sv3-tile').forEach(function(b){
+    var id=b.getAttribute('data-id'),x=(db.stock||[]).find(function(a){return a.id===id});if(!x)return;
+    var n=inCart(id),left=x.service?Infinity:x.qty-n,out=left<=0,bd=b.querySelector('.n');
+    if(b.disabled!==out)b.disabled=out;
+    if(n){if(!bd){bd=document.createElement('i');bd.className='n';b.appendChild(bd)}if(bd.textContent!==String(n))bd.textContent=n}else if(bd)bd.remove();
+  });
+}
 var _rc=window.renderCart;
-window.renderCart=function(){var r=_rc.apply(this,arguments);if(document.querySelector('#salePanel.sv3')){renderRows();renderPay();renderLeft()}return r};
+window.renderCart=function(){
+  if(!document.querySelector('#salePanel.sv3'))return _rc.apply(this,arguments);
+  renderRows();try{renderCartSummary()}catch(e){}try{renderCartFab()}catch(e){}updateTiles();
+};
 var _rs=window.renderCartSummary;
 window.renderCartSummary=function(){var r=_rs.apply(this,arguments);try{renderPay()}catch(e){}return r};
 var _rq=window.renderQuickSale;
-window.renderQuickSale=function(){var r;try{r=_rq&&_rq.apply(this,arguments)}catch(e){}try{renderLeft()}catch(e){}return r};
+window.renderQuickSale=function(){var m=$('salesModal');if(m&&!m.classList.contains('show')&&$('sv3Grid')&&$('sv3Grid').childElementCount)return;try{renderLeft()}catch(e){}};
+var _oam=window.openActionModal;
+if(typeof _oam==='function')window.openActionModal=function(id){var r=_oam.apply(this,arguments);if(id==='salesModal'){try{renderLeft()}catch(e){}}return r};
 function init(){if(build()){try{renderCart()}catch(e){}}else setTimeout(init,300)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
