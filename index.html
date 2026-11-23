@@ -28,7 +28,7 @@ if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostn
   document.documentElement.lang=(localStorage.getItem('mh_lang')==='bn')?'bn':'en';
 }catch(e){}})();
 </script>
-<script>try{var a=localStorage.getItem("mh_accent");if(a&&a!=="ocean")document.documentElement.setAttribute("data-accent",a)}catch(e){}</script>
+<script>try{var a=localStorage.getItem("mh_accent");if(a&&a!=="ocean")document.documentElement.setAttribute("data-accent",a);var f=localStorage.getItem("mh_font");if(f&&f!=="100")document.documentElement.setAttribute("data-font",f)}catch(e){}</script>
 <style>
 :root{--ink:#202124;--pine:#1a73e8;--paper:#ffffff;--paper2:#f8f9fa;--card:#ffffff;--line:#e0e0e0;--brass:#1a73e8;--brass2:#1558b0;--forest:#188038;--amber:#e37400;--maroon:#d93025;--plum:#7c3aed;--steel:#1a73e8;--teal:#0b8043;--muted:#5f6368;--txt:#202124}
 *{box-sizing:border-box}body{margin:0;background:var(--paper2);font-family:'Inter',Arial,Helvetica,sans-serif;color:var(--txt);font-size:15px}.app{max-width:1560px;margin:auto;padding:20px}
@@ -3377,6 +3377,9 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
       <div class="gs-row"><span class="gs-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" stroke="none" opacity=".35"/></svg></span>
         <div class="gs-tx"><div class="gs-t">Theme</div><div class="gs-d">Choose how the app looks. System default follows your phone or computer.</div></div>
         <div class="gs-seg" id="setTheme"><button type="button" data-theme="light" onclick="setTheme('light')">Light</button><button type="button" data-theme="original" onclick="setTheme('original')">Original</button><button type="button" data-theme="dark" onclick="setTheme('dark')">Dark</button><button type="button" data-theme="system" onclick="setTheme('system')">System default</button></div></div>
+      <div class="gs-row"><span class="gs-ic"><svg viewBox="0 0 24 24"><path d="M4 19l5-14h1l5 14M6.2 13h6.6"/><path d="M15.5 19l3-8h.5l3 8M16.6 16h4.3"/></svg></span>
+        <div class="gs-tx"><div class="gs-t">Text size</div><div class="gs-d">Make everything bigger or smaller. Saved on this device.</div></div>
+        <div class="gs-seg gs-font" id="setFont"><button type="button" data-f="85" title="Smaller (85%)"><b style="font-size:11px">A</b><small>Smaller</small></button><button type="button" data-f="92" title="Small (92%)"><b style="font-size:13px">A</b><small>Small</small></button><button type="button" data-f="100" title="Default (100%)"><b style="font-size:15px">A</b><small>Default</small></button><button type="button" data-f="110" title="Large (110%)"><b style="font-size:18px">A</b><small>Large</small></button><button type="button" data-f="120" title="Larger (120%)"><b style="font-size:21px">A</b><small>Larger</small></button></div></div>
       <div class="gs-row"><span class="gs-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.3" fill="currentColor"/><circle cx="12" cy="7.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="10" r="1.3" fill="currentColor"/><path d="M12 21a3 3 0 010-6h1.5a2 2 0 000-4"/></svg></span>
         <div class="gs-tx"><div class="gs-t">Colour theme</div><div class="gs-d">Sidebar and highlight colour. Saved on this device.</div></div>
         <div class="gs-accents" id="setAccent">
@@ -3385,7 +3388,22 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
           <button type="button" class="gs-acc" data-acc="purple" style="--a1:#7c3aed;--a2:#1e1238"><i></i>Purple</button>
           <button type="button" class="gs-acc" data-acc="rose" style="--a1:#e11d48;--a2:#2a0a16"><i></i>Rose</button>
           <button type="button" class="gs-acc" data-acc="sunset" style="--a1:#ea580c;--a2:#2a1306"><i></i>Sunset</button>
-          <button type="button" class="gs-acc" data-acc="black" style="--a1:#3f3f46;--a2:#000"><i></i>Black</button>
+          <button type="button" class="gs-acc" data-acc="black" style="--a1:#3f3f46;--a2:#000000"><i></i>Black</button>
+          <button type="button" class="gs-acc" data-acc="deepblack" style="--a1:#1d6bf3;--a2:#000000"><i></i>Deep Black</button>
+          <button type="button" class="gs-acc" data-acc="teal" style="--a1:#0d9488;--a2:#052826"><i></i>Teal</button>
+          <button type="button" class="gs-acc" data-acc="indigo" style="--a1:#4f46e5;--a2:#15133d"><i></i>Indigo</button>
+          <button type="button" class="gs-acc" data-acc="sky" style="--a1:#0284c7;--a2:#062538"><i></i>Sky</button>
+          <button type="button" class="gs-acc" data-acc="cyan" style="--a1:#0891b2;--a2:#05262e"><i></i>Cyan</button>
+          <button type="button" class="gs-acc" data-acc="forest" style="--a1:#15803d;--a2:#0a2413"><i></i>Forest</button>
+          <button type="button" class="gs-acc" data-acc="lime" style="--a1:#65a30d;--a2:#172408"><i></i>Lime</button>
+          <button type="button" class="gs-acc" data-acc="amber" style="--a1:#d97706;--a2:#2a1c05"><i></i>Amber</button>
+          <button type="button" class="gs-acc" data-acc="crimson" style="--a1:#b91c1c;--a2:#290808"><i></i>Crimson</button>
+          <button type="button" class="gs-acc" data-acc="pink" style="--a1:#db2777;--a2:#2d0a1c"><i></i>Pink</button>
+          <button type="button" class="gs-acc" data-acc="fuchsia" style="--a1:#c026d3;--a2:#2a0a2e"><i></i>Fuchsia</button>
+          <button type="button" class="gs-acc" data-acc="violet" style="--a1:#6d28d9;--a2:#1c0f3a"><i></i>Violet</button>
+          <button type="button" class="gs-acc" data-acc="navy" style="--a1:#1e40af;--a2:#0a1433"><i></i>Navy</button>
+          <button type="button" class="gs-acc" data-acc="slate" style="--a1:#475569;--a2:#0f172a"><i></i>Slate</button>
+          <button type="button" class="gs-acc" data-acc="brown" style="--a1:#92400e;--a2:#241309"><i></i>Brown</button>
         </div></div>
     </div>
 
@@ -13429,6 +13447,14 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 #salePanel.sv3 .sv3-row.disc #svDt button{padding:0 9px!important;min-width:0!important}
 #salePanel.sv3 .sv3-row.disc .sv-disc{min-width:0;flex-shrink:1}
 @media(max-width:1500px){#salePanel.sv3 .carttable thead th.u,#salePanel.sv3 .carttable td.u{display:none}}
+/* bigger text = less room: switch the Sales page to 2 columns sooner (screen width ÷ text size ≈ 1200 px) */
+@media(min-width:761px) and (max-width:1340px){html[data-font="110"] #salePanel.sv3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}html[data-font="110"] #salePanel.sv3>.sv3-pay{grid-column:1/-1}}
+@media(min-width:761px) and (max-width:1460px){html[data-font="120"] #salePanel.sv3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}html[data-font="120"] #salePanel.sv3>.sv3-pay{grid-column:1/-1}}
+/* when the Sales page is in 2 columns it scrolls as a normal page instead of squeezing into one screen */
+@media(max-width:1200px){#salePanel.sv3{flex:none!important;height:auto!important;grid-template-rows:auto!important}#salePanel.sv3>*{min-height:0;height:auto!important;overflow:visible!important}.sv3-grid{max-height:560px}}
+@media(max-width:1340px){html[data-font="110"] #salePanel.sv3{flex:none!important;height:auto!important;grid-template-rows:auto!important}html[data-font="110"] #salePanel.sv3>*{height:auto!important;overflow:visible!important}html[data-font="110"] .sv3-grid{max-height:560px}}
+@media(max-width:1460px){html[data-font="120"] #salePanel.sv3{flex:none!important;height:auto!important;grid-template-rows:auto!important}html[data-font="120"] #salePanel.sv3>*{height:auto!important;overflow:visible!important}html[data-font="120"] .sv3-grid{max-height:560px}}
+@media(min-width:1461px) and (max-width:1800px){html[data-font="120"] #salePanel.sv3 .carttable thead th.u,html[data-font="120"] #salePanel.sv3 .carttable td.u{display:none}}
 @media(max-width:1200px){#salePanel.sv3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}#salePanel.sv3>.sv3-pay{grid-column:1/-1}}
 @media(max-width:760px){#salePanel.sv3{grid-template-columns:1fr!important}.sv3-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:none}.sv3-tile{padding:10px 6px}.sv3-tile .ico{width:44px;height:44px;font-size:24px}#salePanel.sv3 .carttable thead th.u,#salePanel.sv3 .carttable td.u{display:none}.sv3-total b{font-size:28px}}
 html[data-theme="dark"] #salePanel.sv3>.sale-left,html[data-theme="dark"] #salePanel.sv3>.sale-right,html[data-theme="dark"] #salePanel.sv3>.sv3-pay,html[data-theme="dark"] .sv3-tile{background:#161b22!important;border-color:#30363d!important}
@@ -13659,17 +13685,40 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <style id="accentThemes">
-/* ===== 5 colour themes (Settings → Colour theme) ===== */
+/* ===== 20 colour themes (Settings → Colour theme) ===== */
 html[data-accent="emerald"]{--t-blue:#059669;--t-blue2:#047857;--t-nav:#06291f;--t-nav2:#0a3a2c}
 html[data-accent="purple"]{--t-blue:#7c3aed;--t-blue2:#5b21b6;--t-nav:#1e1238;--t-nav2:#2a1a4d}
 html[data-accent="rose"]{--t-blue:#e11d48;--t-blue2:#be123c;--t-nav:#2a0a16;--t-nav2:#3d0f20}
 html[data-accent="sunset"]{--t-blue:#ea580c;--t-blue2:#c2410c;--t-nav:#2a1306;--t-nav2:#3d1c0a}
-html[data-accent="black"]{--t-blue:#18181b;--t-blue2:#000;--t-nav:#000;--t-nav2:#0c0c0e}
+html[data-accent="black"]{--t-blue:#18181b;--t-blue2:#000000;--t-nav:#000000;--t-nav2:#0c0c0e}
+html[data-accent="teal"]{--t-blue:#0d9488;--t-blue2:#0f766e;--t-nav:#052826;--t-nav2:#0a3634}
+html[data-accent="indigo"]{--t-blue:#4f46e5;--t-blue2:#4338ca;--t-nav:#15133d;--t-nav2:#1e1b4b}
+html[data-accent="sky"]{--t-blue:#0284c7;--t-blue2:#0369a1;--t-nav:#062538;--t-nav2:#0b3550}
+html[data-accent="cyan"]{--t-blue:#0891b2;--t-blue2:#0e7490;--t-nav:#05262e;--t-nav2:#0a3540}
+html[data-accent="forest"]{--t-blue:#15803d;--t-blue2:#166534;--t-nav:#0a2413;--t-nav2:#10331c}
+html[data-accent="lime"]{--t-blue:#65a30d;--t-blue2:#4d7c0f;--t-nav:#172408;--t-nav2:#22330c}
+html[data-accent="amber"]{--t-blue:#d97706;--t-blue2:#b45309;--t-nav:#2a1c05;--t-nav2:#3a2808}
+html[data-accent="crimson"]{--t-blue:#b91c1c;--t-blue2:#991b1b;--t-nav:#290808;--t-nav2:#3a0d0d}
+html[data-accent="pink"]{--t-blue:#db2777;--t-blue2:#be185d;--t-nav:#2d0a1c;--t-nav2:#40102a}
+html[data-accent="fuchsia"]{--t-blue:#c026d3;--t-blue2:#a21caf;--t-nav:#2a0a2e;--t-nav2:#3b0f40}
+html[data-accent="violet"]{--t-blue:#6d28d9;--t-blue2:#5b21b6;--t-nav:#1c0f3a;--t-nav2:#28164f}
+html[data-accent="navy"]{--t-blue:#1e40af;--t-blue2:#1e3a8a;--t-nav:#0a1433;--t-nav2:#0f1d47}
+html[data-accent="slate"]{--t-blue:#475569;--t-blue2:#334155;--t-nav:#0f172a;--t-nav2:#1e293b}
+html[data-accent="deepblack"]{--t-blue:#1d6bf3;--t-blue2:#0b4fd8;--t-nav:#000000;--t-nav2:#000000}
+html[data-accent="deepblack"] body #sidebar{border-right:1px solid #1a1a1a!important}
+html[data-accent="brown"]{--t-blue:#92400e;--t-blue2:#78350f;--t-nav:#241309;--t-nav2:#331b0d}
 html[data-accent="black"] body #sidebar .sb-item[aria-current="page"]{background:#ffffff1f!important;box-shadow:inset 3px 0 0 #fff!important}
 html[data-accent="black"] body #sidebar .sb-logo{background:#fff!important;color:#000!important;box-shadow:none!important}
 html[data-accent="black"] body .main .stat.feature{background:linear-gradient(135deg,#3f3f46,#09090b)!important;box-shadow:0 8px 22px #0000003d!important}
+.gs-row:has(#setAccent),.gs-row:has(#setFont){flex-wrap:wrap}
+html[data-font="85"] body{zoom:.85}html[data-font="92"] body{zoom:.92}html[data-font="110"] body{zoom:1.1}html[data-font="120"] body{zoom:1.2}
+#setFont button{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;min-width:62px;height:54px!important;padding:6px 8px!important;line-height:1}
+#setFont button b{font-weight:800}#setFont button small{font-size:11px;font-weight:600;opacity:.8}
+#setFont button.on{background:var(--t-blue)!important;color:#fff!important}
+
+#setAccent{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px 4px;width:100%;margin-top:10px}
 .gs-accents{display:flex;gap:10px;flex-wrap:wrap}
-.gs-acc{display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 4px;border:0;background:none;cursor:pointer;box-shadow:none;font-size:12px;font-weight:600;color:#475569;min-width:58px}
+.gs-acc{display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 2px;border:0;background:none;cursor:pointer;box-shadow:none;font-size:12px;font-weight:600;color:#475569;min-width:0}
 .gs-acc i{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--a1) 50%,var(--a2) 50%);box-shadow:0 0 0 2px #fff,0 0 0 3px #d5dce6;transition:box-shadow .12s,transform .1s}
 .gs-acc:hover i{transform:scale(1.06)}
 .gs-acc.on i{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--a1)}
@@ -13677,7 +13726,7 @@ html[data-accent="black"] body .main .stat.feature{background:linear-gradient(13
 </style>
 <script id="accentThemesJs">
 (function(){
-  var KEY='mh_accent',ALL=['ocean','emerald','purple','rose','sunset','black'];
+  var KEY='mh_accent',ALL=['ocean','emerald','purple','rose','sunset','black','deepblack','teal','indigo','sky','cyan','forest','lime','amber','crimson','pink','fuchsia','violet','navy','slate','brown'];
   function cur(){try{var a=localStorage.getItem(KEY);return ALL.indexOf(a)>-1?a:'ocean'}catch(e){return 'ocean'}}
   function mark(){var c=cur();document.querySelectorAll('#setAccent .gs-acc').forEach(function(b){var on=b.getAttribute('data-acc')===c;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')})}
   window.setAccent=function(a){
@@ -13759,6 +13808,18 @@ html[data-theme="dark"] #followupModal .fu-k b,html[data-theme="dark"] #followup
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addNav);else addNav();
   setTimeout(addNav,500);
+})();
+</script>
+<script id="fontSizeJs">
+(function(){
+  var KEY='mh_font',ALL=['85','92','100','110','120'];
+  function cur(){try{var f=localStorage.getItem(KEY);return ALL.indexOf(f)>-1?f:'100'}catch(e){return '100'}}
+  function mark(){var c=cur();document.querySelectorAll('#setFont button').forEach(function(b){var on=b.getAttribute('data-f')===c;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')})}
+  window.setFontSize=function(f){if(ALL.indexOf(f)<0)f='100';try{localStorage.setItem(KEY,f)}catch(e){}
+    if(f==='100')document.documentElement.removeAttribute('data-font');else document.documentElement.setAttribute('data-font',f);
+    mark();try{lastDashKey='';renderDashboard()}catch(e){}};   // the chart re-measures its width
+  var box=document.getElementById('setFont');if(box)box.addEventListener('click',function(e){var b=e.target.closest('button[data-f]');if(b)setFontSize(b.getAttribute('data-f'))});
+  mark();
 })();
 </script>
 </body></html>
