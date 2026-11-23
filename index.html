@@ -13295,7 +13295,7 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 /* ===== Sales page v3: Products | Current Sale | Total & payment ===== */
 #salePanel.sv3{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(300px,.85fr)!important;gap:16px!important;align-items:stretch}
 #salePanel.sv3>.sale-left,#salePanel.sv3>.sale-right,#salePanel.sv3>.sv3-pay{background:#fff!important;border:1px solid #e4eaf4!important;border-radius:18px!important;box-shadow:0 1px 3px rgba(16,24,40,.06)!important;padding:18px!important;min-width:0;display:flex;flex-direction:column}
-#salePanel.sv3 #scCard,#salePanel.sv3 #qsaleWrap,#salePanel.sv3 #productPicker,#salePanel.sv3 .ss-filters,#salePanel.sv3 #svChips,#salePanel.sv3 #cartSummary,#salePanel.sv3 #svCount{display:none!important}
+#salePanel.sv3 #scCard,#salePanel.sv3 #qsaleWrap,#salePanel.sv3 #productPicker,#salePanel.sv3 .ss-scan,#salePanel.sv3 #svChips,#salePanel.sv3 #cartSummary,#salePanel.sv3 #svCount{display:none!important}
 .sv3-h{display:flex;align-items:center;gap:12px;margin:0 0 14px}
 .sv3-h .ic{width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,var(--t-blue) 10%,#fff);color:var(--t-blue);display:flex;align-items:center;justify-content:center;flex:none}
 .sv3-h .ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -13305,6 +13305,11 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 #salePanel.sv3 #saleSearch{height:46px!important;border-radius:12px!important;background:#f3f6fb!important;border:1px solid #e4eaf4!important;font-size:15px!important}
 /* chips */
 .sv3-chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
+#salePanel.sv3 .ss-bar{display:flex!important;flex-direction:column!important;gap:10px!important;margin-bottom:2px!important}
+#salePanel.sv3 .ss-field{width:100%!important;flex:none!important}
+#salePanel.sv3 .ss-filters{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+#salePanel.sv3 .ss-filters select{height:40px!important;border-radius:10px!important;border:1px solid #e4eaf4!important;background:#f8fafd!important;font-size:13.5px!important;padding:0 10px!important;min-width:0!important;width:100%!important}
+.sv3-count{font-size:12px;color:#94a3b8;margin:-6px 0 8px}
 .sv3-chip{height:36px;padding:0 16px;border-radius:10px;border:0;background:#eef2f8;color:#334155;font-size:14px;font-weight:600;cursor:pointer;box-shadow:none}
 .sv3-chip:hover{background:#e2e8f3}
 .sv3-chip.on{background:var(--t-blue);color:#fff;box-shadow:0 3px 10px color-mix(in srgb,var(--t-blue) 27%,transparent)}
@@ -13317,6 +13322,7 @@ html body .main button.primary,html body .main .btn-primary{background:var(--t-b
 .sv3-tile .ico{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;line-height:1;background:color-mix(in srgb,var(--tc) 12%,#fff);color:var(--tc);font-weight:800}
 .sv3-tile .nm{font-size:14px;font-weight:600;color:#0f172a;line-height:1.2;max-width:100%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
 .sv3-tile .pr{font-size:16px;font-weight:800;color:#0f172a}
+.sv3-tile .md{font-size:11.5px;color:#64748b;margin-top:-4px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sv3-tile .st{font-size:11px;color:#94a3b8}
 .sv3-tile .st.low{color:#b45309;font-weight:700}
 .sv3-tile:disabled{opacity:.45;cursor:default;filter:grayscale(.5)}
@@ -13446,12 +13452,43 @@ var TONES=['#1d6bf3','#ea580c','#16a34a','#7c3aed','#0891b2','#db2777','#ca8a04'
 function tone(x){var k=String(x.name||'').toLowerCase(),h=0;for(var i=0;i<k.length;i++)h=(h*31+k.charCodeAt(i))>>>0;return TONES[h%TONES.length]}
 function inCart(id){var c=cart.find(function(a){return a.id===id});return c?c.qty:0}
 function cats(){try{return window.QX?window.QX.cats():[]}catch(e){return []}}
+/* Search: every typed word must appear somewhere in the name, model, category or barcode — any order,
+   any part of a word ("50 gp", "pen mata", "khata 100"). Spaces are ignored too ("gp50" finds "GP 50 MIN").
+   Best matches first: name starts with it > a name word starts with it > anywhere. */
+function norm(t){return String(t==null?'':t).toLowerCase().replace(/\s+/g,' ').trim()}
+function score(x,words,q){
+  var name=norm(x.name),model=norm(x.model),cat=norm(x.category),bc=norm(x.barcode);
+  var all=name+' '+model+' '+cat+' '+bc,flat=all.replace(/ /g,''),sc=0;
+  if(bc&&bc===q)return 1000;
+  for(var i=0;i<words.length;i++){
+    var w=words[i];
+    if(all.indexOf(w)<0&&flat.indexOf(w)<0)return -1;
+    if(name.indexOf(w)===0)sc+=6;else if((' '+name).indexOf(' '+w)>-1)sc+=4;else if(name.indexOf(w)>-1)sc+=3;
+    else if((' '+model).indexOf(' '+w)>-1)sc+=2;else sc+=1;
+  }
+  if(name===q)sc+=20;else if(name.indexOf(q)===0)sc+=8;
+  return sc;
+}
+window.svSearchScore=function(x,q){q=norm(q);return q?score(x,q.split(' '),q):0};
+function sortList(list,key){
+  var nm=function(a,b){return String(a.name).localeCompare(String(b.name),undefined,{numeric:true,sensitivity:'base'})};
+  var qty=function(x){return x.service?Infinity:(+x.qty||0)};
+  var f={nameAsc:nm,nameDesc:function(a,b){return nm(b,a)},qtyAsc:function(a,b){return qty(a)-qty(b)||nm(a,b)},qtyDesc:function(a,b){return qty(b)-qty(a)||nm(a,b)},
+    priceAsc:function(a,b){return (+a.price||0)-(+b.price||0)||nm(a,b)},priceDesc:function(a,b){return (+b.price||0)-(+a.price||0)||nm(a,b)}}[key]||nm;
+  return list.sort(f);
+}
 function products(){
-  var q=($('saleSearch')&&$('saleSearch').value||'').trim().toLowerCase();
+  var q=norm($('saleSearch')&&$('saleSearch').value);
+  var cat=($('pickerCategory')||{}).value||'',key=($('pickerSort')||{}).value||'nameAsc';
   var list=(db.stock||[]).filter(function(x){return x.service||x.qty>0||inCart(x.id)});
   if(chip!=='all'&&window.QX)list=list.filter(function(x){return window.QX.matches(x,chip)});
-  if(q)list=list.filter(function(x){return (String(x.name||'')+' '+String(x.barcode||'')+' '+String(x.category||'')).toLowerCase().indexOf(q)>-1});
-  return list.sort(function(a,b){return String(a.name).localeCompare(String(b.name))});
+  if(cat)list=list.filter(function(x){try{return catMatch(x,cat)}catch(e){return true}});
+  if(!q)return sortList(list,key);
+  var words=q.split(' '),hits=[];
+  list.forEach(function(x){var sc=score(x,words,q);if(sc>=0)hits.push({x:x,s:sc})});
+  if(key==='nameAsc')hits.sort(function(a,b){return b.s-a.s||String(a.x.name).localeCompare(String(b.x.name),undefined,{numeric:true})});   // default: best match first
+  else{var o=sortList(hits.map(function(h){return h.x}),key);return o}
+  return hits.map(function(h){return h.x});
 }
 function renderLeft(){
   var host=$('sv3Left');if(!host)return;
@@ -13464,8 +13501,9 @@ function renderLeft(){
   $('sv3Grid').innerHTML=lim.length?lim.map(function(x){
     var n=inCart(x.id),left=x.service?Infinity:x.qty-n,ic=iconOf(x),t=tone(x);
     var st=x.service?'':(left<=0?'<span class="st low">Out</span>':'<span class="st'+(x.qty<=3?' low':'')+'">'+x.qty+' in stock</span>');
-    return '<button type="button" class="sv3-tile" style="--tc:'+t+'" data-id="'+E(x.id)+'"'+(left<=0?' disabled':'')+' title="'+E(x.name)+'"><span class="ico">'+(ic||E(String(x.name||'?').trim().charAt(0).toUpperCase()))+'</span><span class="nm" data-no-i18n>'+E(x.name)+'</span><span class="pr">'+M(x.price)+'</span>'+st+(n?'<i class="n">'+n+'</i>':'')+'</button>';
+    return '<button type="button" class="sv3-tile" style="--tc:'+t+'" data-id="'+E(x.id)+'"'+(left<=0?' disabled':'')+' title="'+E(x.name)+'"><span class="ico">'+(ic||E(String(x.name||'?').trim().charAt(0).toUpperCase()))+'</span><span class="nm" data-no-i18n>'+E(x.name)+'</span>'+(x.model?'<span class="md" data-no-i18n>'+E(x.model)+'</span>':'')+'<span class="pr">'+M(x.price)+'</span>'+st+(n?'<i class="n">'+n+'</i>':'')+'</button>';
   }).join(''):'<div class="sv3-empty">'+(chip!=='all'?'No product for “'+E(chip)+'” yet. Add one in Add Product with “'+E(chip)+'” in its name or as its Category.':'No product found.')+'</div>';
+  var cnt=$('sv3Count');if(cnt)cnt.textContent=ps.length+' product'+(ps.length===1?'':'s')+(ps.length>240?' · showing 240, type to narrow down':'');
   $('sv3CatFoot').innerHTML=chip!=='all'?'<button type="button" data-act="rmcat">Remove “'+E(chip)+'” category</button>':'';
 }
 function renderRows(){
@@ -13489,8 +13527,9 @@ function renderPay(){
 }
 function addTyped(){
   var inp=$('sv3AddInp'),v=(inp.value||'').trim(),msg=$('sv3Msg');msg.textContent='';if(!v)return inp.focus();
-  var lv=v.toLowerCase(),st=db.stock||[];
-  var x=st.find(function(a){return a.barcode&&String(a.barcode).toLowerCase()===lv})||st.find(function(a){return String(a.name||'').toLowerCase()===lv})||st.find(function(a){return String(a.name||'').toLowerCase().indexOf(lv)===0})||st.find(function(a){return String(a.name||'').toLowerCase().indexOf(lv)>-1});
+  var st=(db.stock||[]).filter(function(a){return a.service||a.qty-inCart(a.id)>0}),best=null,bs=-1;
+  st.forEach(function(a){var sc=window.svSearchScore(a,v);if(sc>bs){bs=sc;best=a}});
+  var x=bs>=0?best:null;
   if(!x){msg.textContent='No product matches “'+v+'”.';return}
   if(addToCart(x.id))inp.value='';
   inp.focus();
@@ -13502,9 +13541,10 @@ function build(){
   /* left: Products */
   var h=document.createElement('div');h.className='sv3-h';h.innerHTML='<span class="ic">'+SV.bag+'</span><h3>Products</h3>';left.insertBefore(h,left.firstChild);
   var ss=$('ssBar'),box=document.createElement('div');box.id='sv3Left';box.style.cssText='display:flex;flex-direction:column;min-height:0;flex:1';
-  box.innerHTML='<div class="sv3-chips" id="sv3Chips"></div><div class="sv3-grid" id="sv3Grid"></div><div class="sv3-catfoot" id="sv3CatFoot"></div>';
+  box.innerHTML='<div class="sv3-chips" id="sv3Chips"></div><div class="sv3-count" id="sv3Count"></div><div class="sv3-grid" id="sv3Grid"></div><div class="sv3-catfoot" id="sv3CatFoot"></div>';
+  ['pickerCategory','pickerSort'].forEach(function(id){var el=$(id);if(el)el.addEventListener('change',function(){renderLeft()})});
   if(ss&&ss.nextSibling)left.insertBefore(box,ss.nextSibling);else left.appendChild(box);
-  var si=$('saleSearch');if(si){si.placeholder='Search product name…';si.addEventListener('input',renderLeft);
+  var si=$('saleSearch');if(si){si.placeholder='Search name, model, category… (any words)';si.addEventListener('input',renderLeft);
     si.addEventListener('keydown',function(e){if(e.key!=='Enter'||e.ctrlKey||!si.value.trim())return;var t=document.querySelector('#sv3Grid .sv3-tile:not([disabled])');if(t){e.preventDefault();t.click();si.value='';renderLeft()}})}
   /* middle: Current Sale */
   var mh=document.createElement('div');mh.className='sv3-h';mh.innerHTML='<span class="ic">'+SV.cart+'</span><h3>Current Sale</h3><button type="button" class="sv3-clear sp" id="sv3Clear">'+SV.trash+'Clear All</button>';
