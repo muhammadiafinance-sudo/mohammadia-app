@@ -3016,20 +3016,6 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
     <div class="stat t-return"><div class="stat-top"><span class="stat-label">Returns</span><span class="stat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg></span></div><div class="value" id="returnsCount">0</div></div>
   </section>
 
-  <section class="fu-wrap dc3 admin-only" id="followupSection" aria-label="Customer due follow-ups">
-    <div class="dc-card dc-due">
-      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M16.5 7.5c-.8-1.2-2.4-2-4.5-2-2.7 0-4.5 1.4-4.5 3.3 0 4.6 9.3 2.2 9.3 6.9 0 2-2 3.3-4.8 3.3-2.2 0-4-.8-5-2.2"/></svg></i><div><b>Latest due</b><small id="dcLatestSub"></small></div></div></div>
-      <div class="dc-list" id="dcLatestList"></div>
-    </div>
-    <div class="dc-card dc-rand">
-      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></i><div><b>Random pick</b><small id="dcRandSub"></small></div></div><button type="button" class="dc-shuf" id="dcShuf" title="Pick 5 different customers" aria-label="Shuffle customers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button></div>
-      <div class="dc-list" id="dcRandList"></div>
-    </div>
-    <div class="dc-card dc-paid">
-      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><div><b>Latest collected</b><small id="dcPaidSub"></small></div></div></div>
-      <div class="dc-list" id="dcPaidList"></div>
-    </div>
-  </section>
 
   <section class="profit-card" aria-label="Profit graph">
     <div class="pc-head">
@@ -3363,6 +3349,24 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
     </div>
   </div>
 </div></div>
+<div class="modal" id="followupModal" aria-hidden="true"><div class="modalbox wide-modal"><button class="close" onclick="closeActionModal('followupModal')" aria-label="Close">✕ Close</button><h2>Due Follow-up</h2><p class="hint">Who owes money, who to remind today, and what was collected.</p>
+  <div class="fu-kpis" id="fuKpis"></div>
+  <section class="fu-wrap dc3 admin-only" id="followupSection" aria-label="Customer due follow-ups">
+    <div class="dc-card dc-due">
+      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M16.5 7.5c-.8-1.2-2.4-2-4.5-2-2.7 0-4.5 1.4-4.5 3.3 0 4.6 9.3 2.2 9.3 6.9 0 2-2 3.3-4.8 3.3-2.2 0-4-.8-5-2.2"/></svg></i><div><b>Latest due</b><small id="dcLatestSub"></small></div></div></div>
+      <div class="dc-list" id="dcLatestList"></div>
+    </div>
+    <div class="dc-card dc-rand">
+      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></i><div><b>Random pick</b><small id="dcRandSub"></small></div></div><button type="button" class="dc-shuf" id="dcShuf" title="Pick 5 different customers" aria-label="Shuffle customers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button></div>
+      <div class="dc-list" id="dcRandList"></div>
+    </div>
+    <div class="dc-card dc-paid">
+      <div class="dc-head"><div class="dc-ttl"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><div><b>Latest collected</b><small id="dcPaidSub"></small></div></div></div>
+      <div class="dc-list" id="dcPaidList"></div>
+    </div>
+  </section>
+  <div class="fu-top"><div class="fu-top-h"><b>Highest dues</b><span id="fuTopSub"></span></div><div class="fu-tw"><table class="fu-t"><thead><tr><th>#</th><th>Customer</th><th>Phone</th><th>Last due</th><th>Waiting</th><th class="r">Due</th></tr></thead><tbody id="fuTopBody"></tbody></table></div></div>
+</div></div>
 <div class="modal" id="settingsModal" aria-hidden="true"><div class="modalbox"><button class="close" onclick="closeActionModal('settingsModal')" aria-label="Close">✕ Close</button><h2>Settings</h2><p class="hint">Language and theme for this device.</p>
   <div class="gs">
     <div class="gs-sec">Appearance</div>
@@ -3381,6 +3385,7 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
           <button type="button" class="gs-acc" data-acc="purple" style="--a1:#7c3aed;--a2:#1e1238"><i></i>Purple</button>
           <button type="button" class="gs-acc" data-acc="rose" style="--a1:#e11d48;--a2:#2a0a16"><i></i>Rose</button>
           <button type="button" class="gs-acc" data-acc="sunset" style="--a1:#ea580c;--a2:#2a1306"><i></i>Sunset</button>
+          <button type="button" class="gs-acc" data-acc="black" style="--a1:#3f3f46;--a2:#000"><i></i>Black</button>
         </div></div>
     </div>
 
@@ -8167,7 +8172,7 @@ setupDraggableFab($('billAlertFab'));
    the area beside the sidebar. Only the Bill Alert (and small
    helper dialogs such as the barcode scanner) stay as popups.
    ============================================================ */
-var PAGE_MODALS=['productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','paidHistoryModal','customerHistoryModal','dailyCashModal','dailyCashStatementModal','billAlertModal','stockRegisterModal','dataModal','pwModal','sessionsModal','reconModal','settingsModal'];
+var PAGE_MODALS=['followupModal','productModal','salesModal','stockListModal','todaySalesModal','warrantyModal','salesHistoryModal','invoiceHistoryModal','lowStockModal','businessModal','paidHistoryModal','customerHistoryModal','dailyCashModal','dailyCashStatementModal','billAlertModal','stockRegisterModal','dataModal','pwModal','sessionsModal','reconModal','settingsModal'];
 function closeOtherPages(keep){PAGE_MODALS.forEach(function(id){if(id===keep)return;var m=document.getElementById(id);if(m&&m.classList.contains('show')){m.classList.remove('show');m.setAttribute('aria-hidden','true')}});syncCashOpenClass()}
 function goHome(){
   closeSidebar();
@@ -8305,7 +8310,7 @@ function drawDashChart(){
   const top=sc.max,bot=sc.min,span=(top-bot)||1;
   const y=v=>T+(top-v)/span*(H-T-B),y0=y(0);
   const slot=(W-L-Rr)/n,X=i=>L+slot*(i+.5);
-  const tone=(getComputedStyle(document.documentElement).getPropertyValue('--t-blue')||'#1d6bf3').trim()||'#1d6bf3';
+  const tone=metric==='profit'?'#16a34a':'#1d6bf3'; // Profit = green, Sales = blue
   const F=anim?' anim':'';
   let g='';
   sc.ticks.forEach(t=>{const yy=y(t).toFixed(1);g+=`<line x1="${L}" x2="${W-Rr}" y1="${yy}" y2="${yy}" stroke="${t===0&&bot<0?'#cdd3de':'#eceff4'}"/>`+(hasData?`<text x="${L-10}" y="${(+yy+3.5).toFixed(1)}" text-anchor="end" font-size="10.5" fill="#8a94a6">${dashShort(t)}</text>`:'')});
@@ -9149,6 +9154,7 @@ renderWarranty();
   if(typeof _rd==='function'){
     window.renderDashboard=function(){var r=_rd.apply(this,arguments);try{wire();render(false)}catch(e){console.error(e)}return r};
   }
+  window.dcRender=function(fresh){try{wire();render(!!fresh)}catch(e){console.error(e)}};
   function init(){wire();render(false)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
@@ -12174,7 +12180,7 @@ var GROUPS=[
  ['Sell','sell',['salesModal','todaySalesModal','invoiceHistoryModal','salesHistoryModal']],
  ['Cash','cash',['dailyCashModal','reconModal','dailyCashStatementModal']],
  ['Stock','stock',['productModal','stockListModal','stockRegisterModal','lowStockModal']],
- ['Customers','cust',['biz:due','biz:purchase','warrantyModal','billAlertModal']],
+ ['Customers','cust',['biz:due','followupModal','biz:purchase','warrantyModal','billAlertModal']],
  ['Manage','manage',['dataModal','sessionsModal']]
 ];
 var CHEV='<svg class="sbg-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
@@ -13587,6 +13593,10 @@ html[data-accent="emerald"]{--t-blue:#059669;--t-blue2:#047857;--t-nav:#06291f;-
 html[data-accent="purple"]{--t-blue:#7c3aed;--t-blue2:#5b21b6;--t-nav:#1e1238;--t-nav2:#2a1a4d}
 html[data-accent="rose"]{--t-blue:#e11d48;--t-blue2:#be123c;--t-nav:#2a0a16;--t-nav2:#3d0f20}
 html[data-accent="sunset"]{--t-blue:#ea580c;--t-blue2:#c2410c;--t-nav:#2a1306;--t-nav2:#3d1c0a}
+html[data-accent="black"]{--t-blue:#18181b;--t-blue2:#000;--t-nav:#000;--t-nav2:#0c0c0e}
+html[data-accent="black"] body #sidebar .sb-item[aria-current="page"]{background:#ffffff1f!important;box-shadow:inset 3px 0 0 #fff!important}
+html[data-accent="black"] body #sidebar .sb-logo{background:#fff!important;color:#000!important;box-shadow:none!important}
+html[data-accent="black"] body .main .stat.feature{background:linear-gradient(135deg,#3f3f46,#09090b)!important;box-shadow:0 8px 22px #0000003d!important}
 .gs-accents{display:flex;gap:10px;flex-wrap:wrap}
 .gs-acc{display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 4px;border:0;background:none;cursor:pointer;box-shadow:none;font-size:12px;font-weight:600;color:#475569;min-width:58px}
 .gs-acc i{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--a1) 50%,var(--a2) 50%);box-shadow:0 0 0 2px #fff,0 0 0 3px #d5dce6;transition:box-shadow .12s,transform .1s}
@@ -13596,7 +13606,7 @@ html[data-accent="sunset"]{--t-blue:#ea580c;--t-blue2:#c2410c;--t-nav:#2a1306;--
 </style>
 <script id="accentThemesJs">
 (function(){
-  var KEY='mh_accent',ALL=['ocean','emerald','purple','rose','sunset'];
+  var KEY='mh_accent',ALL=['ocean','emerald','purple','rose','sunset','black'];
   function cur(){try{var a=localStorage.getItem(KEY);return ALL.indexOf(a)>-1?a:'ocean'}catch(e){return 'ocean'}}
   function mark(){var c=cur();document.querySelectorAll('#setAccent .gs-acc').forEach(function(b){var on=b.getAttribute('data-acc')===c;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')})}
   window.setAccent=function(a){
@@ -13609,6 +13619,75 @@ html[data-accent="sunset"]{--t-blue:#ea580c;--t-blue2:#c2410c;--t-nav:#2a1306;--
   var box=document.getElementById('setAccent');
   if(box)box.addEventListener('click',function(e){var b=e.target.closest('.gs-acc');if(b)setAccent(b.getAttribute('data-acc'))});
   mark();
+})();
+</script>
+<style id="fuPageCss">
+#followupModal .fu-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:6px 0 16px}
+#followupModal .fu-k{background:#fff;border:1px solid var(--t-line,#e4eaf4);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+#followupModal .fu-k small{display:block;font-size:12.5px;font-weight:600;color:#64748b}
+#followupModal .fu-k b{display:block;margin-top:6px;font-size:24px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums}
+#followupModal .fu-k em{display:block;margin-top:2px;font-style:normal;font-size:12px;color:#94a3b8}
+#followupModal .fu-k.red b{color:#dc2626}#followupModal .fu-k.green b{color:#16a34a}
+#followupModal .fu-wrap.dc3{display:grid!important;margin:0 0 16px}
+#followupModal .dc-list{max-height:none!important}
+#followupModal .fu-top{background:#fff;border:1px solid var(--t-line,#e4eaf4);border-radius:14px;padding:14px 16px}
+#followupModal .fu-top-h{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+#followupModal .fu-top-h b{font-size:15px;color:#0f172a}#followupModal .fu-top-h span{font-size:12.5px;color:#64748b}
+#followupModal .fu-tw{overflow:auto}
+#followupModal .fu-t{width:100%;border-collapse:collapse;font-size:14px}
+#followupModal .fu-t th{text-align:left;font-size:12px;font-weight:700;color:#64748b;padding:9px 8px;background:#f3f6fb;white-space:nowrap}
+#followupModal .fu-t td{padding:10px 8px;border-bottom:1px solid #eef2f7;white-space:nowrap}
+#followupModal .fu-t tr{cursor:pointer}#followupModal .fu-t tbody tr:hover td{background:#f8fafd}
+#followupModal .fu-t .r{text-align:right}#followupModal .fu-t td.r{font-weight:800;color:#dc2626;font-variant-numeric:tabular-nums}
+#followupModal .fu-t .old{color:#b45309;font-weight:700}
+@media(max-width:900px){#followupModal .fu-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+html[data-theme="dark"] #followupModal .fu-k,html[data-theme="dark"] #followupModal .fu-top{background:#161b22;border-color:#30363d}
+html[data-theme="dark"] #followupModal .fu-k b,html[data-theme="dark"] #followupModal .fu-top-h b{color:#e6edf3}
+</style>
+<script id="fuPageJs">
+(function(){
+  function $(i){return document.getElementById(i)}
+  function E(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function M(n){try{return money(n)}catch(e){return '৳'+(+n||0).toFixed(2)}}
+  function day(t){var d=new Date(t);return isNaN(d)?'—':d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}
+  function shown(){var m=$('followupModal');return !!(m&&m.classList.contains('show'))}
+  function summary(){
+    var items=[];try{items=dueItems()}catch(e){}
+    var reg=new Map();try{reg=custRegMap()}catch(e){}
+    var g=new Map(),total=0;
+    items.forEach(function(it){var n=khClean(it.customer);if(!n||n==='Walk-in'||n==='\u2014'||/^#|^\d+$/.test(n))return;var d=+it.due||0;if(d<=0)return;
+      var k=khKey(n),x=g.get(k);if(!x){var c=reg.get(k);x={key:k,name:n,due:0,newest:0,oldest:Infinity,phone:(c&&c.phone)||''};g.set(k,x)}
+      x.due+=d;total+=d;var t=+it.date||0;if(t){if(t>x.newest)x.newest=t;if(t<x.oldest)x.oldest=t}});
+    var paid=[];try{paidHistoryItems().forEach(function(p){if(p&&p.amount>0&&p.ts)paid.push(p)})}catch(e){}
+    var now=new Date(),d0=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime(),m0=new Date(now.getFullYear(),now.getMonth(),1).getTime();
+    var today=0,month=0,nt=0;paid.forEach(function(p){if(p.ts>=m0)month+=p.amount;if(p.ts>=d0){today+=p.amount;nt++}});
+    var list=Array.from(g.values()),n=list.length;
+    $('fuKpis').innerHTML='<div class="fu-k red"><small>Total due</small><b>'+M(total)+'</b><em>'+n+' customer'+(n===1?'':'s')+'</em></div>'
+      +'<div class="fu-k"><small>Average due</small><b>'+M(n?total/n:0)+'</b><em>per customer</em></div>'
+      +'<div class="fu-k green"><small>Collected today</small><b>'+M(today)+'</b><em>'+nt+' payment'+(nt===1?'':'s')+'</em></div>'
+      +'<div class="fu-k green"><small>Collected this month</small><b>'+M(month)+'</b><em>'+now.toLocaleDateString(undefined,{month:'long'})+'</em></div>';
+    list.sort(function(a,b){return b.due-a.due});var top=list.slice(0,15);
+    $('fuTopSub').textContent=n>15?'top 15 of '+n:'';
+    $('fuTopBody').innerHTML=top.length?top.map(function(x,i){var days=x.oldest<Infinity?Math.floor((Date.now()-x.oldest)/864e5):0;
+      return '<tr data-n="'+E(x.name)+'"><td>'+(i+1)+'</td><td><b>'+E(x.name)+'</b></td><td>'+E(x.phone||'—')+'</td><td>'+E(day(x.newest))+'</td><td class="'+(days>=30?'old':'')+'">'+(x.oldest<Infinity?days+' day'+(days===1?'':'s'):'—')+'</td><td class="r">'+M(x.due)+'</td></tr>'}).join('')
+      :'<tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:22px">No customer dues 🎉</td></tr>';
+  }
+  function refresh(){if(!shown())return;try{window.dcRender&&window.dcRender(false)}catch(e){}try{summary()}catch(e){console.error(e)}}
+  window.openFollowup=function(){if(typeof requireAdmin==='function'&&!requireAdmin('Due Follow-up'))return;openActionModal('followupModal');try{syncNavActive()}catch(e){}refresh()};
+  document.addEventListener('click',function(e){var tr=e.target.closest&&e.target.closest('#fuTopBody tr[data-n]');if(tr&&typeof openKhata==='function')openKhata(tr.getAttribute('data-n'))});
+  /* keep it live while open */
+  var _r=window.render;if(typeof _r==='function')window.render=function(){var x=_r.apply(this,arguments);refresh();return x};
+  /* menu item under Customers, right after Customers & Due */
+  function addNav(){
+    var nav=$('sidebarNav');if(!nav||nav.querySelector('[data-page="followupModal"]'))return;
+    var ref=nav.querySelector('.sb-item[data-page="biz:due"]')||nav.querySelector('.sbg[data-g="cust"] .sb-item');
+    var b=document.createElement('button');b.className='sb-item admin-only';b.setAttribute('data-page','followupModal');b.title='Due Follow-up';
+    b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><span>Due Follow-up</span>';
+    b.onclick=function(){openFollowup();try{closeSidebar()}catch(x){}};
+    if(ref&&ref.parentNode)ref.parentNode.insertBefore(b,ref.nextSibling);else nav.appendChild(b);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addNav);else addNav();
+  setTimeout(addNav,500);
 })();
 </script>
 </body></html>
