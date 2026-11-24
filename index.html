@@ -3643,7 +3643,11 @@ async function passwordChangedAt(user){
     const j=await r.json();return +(j&&j.users&&j.users[0]&&j.users[0].passwordUpdatedAt)||0;
   }catch(e){return 0}
 }
-// Claims a free slot for this device. Throws {code:'app/full'} when both are in use.
+/* A permanent id for this device (kept across logouts). One device = one place, so logging in again on the
+   same PC/phone — or in a second window of the app — reuses its own place instead of taking the other one. */
+const DEV_KEY='mohammadia_dev_v1';
+function myDeviceId(){let v='';try{v=localStorage.getItem(DEV_KEY)||''}catch(e){}if(!v){v='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,10);try{localStorage.setItem(DEV_KEY,v)}catch(e){}}return v}
+// Claims a place for this device: its own old place first, else a free one. Throws {code:'app/full'} when both are in use.
 async function claimSlot(user){
   const pwAt=await passwordChangedAt(user);
   const token=Math.random().toString(36).slice(2)+Date.now().toString(36);
@@ -3652,11 +3656,15 @@ async function claimSlot(user){
   await fsdb.runTransaction(async tx=>{
     sid=null;
     const snaps=await Promise.all(SLOTS.map(id=>tx.get(SESSIONS_COL.doc(id))));
-    {const i=snaps.findIndex(x=>slotFree(x.exists?x.data():null,pwAt));if(i>=0)sid=SLOTS[i]}
+    const dev=myDeviceId();
+    {const own=snaps.findIndex(x=>x.exists&&x.data().deviceId===dev);if(own>=0)sid=SLOTS[own]}   // this device already has a place
+    /* places saved before devices had an id: same account + same device type counts as this device's own */
+    if(!sid){const old=snaps.findIndex(x=>x.exists&&!x.data().deviceId&&x.data().uid===user.uid&&x.data().device===d.label);if(old>=0)sid=SLOTS[old]}
+    if(!sid){const i=snaps.findIndex(x=>slotFree(x.exists?x.data():null,pwAt));if(i>=0)sid=SLOTS[i]}
     if(!sid)throw {code:'app/full'};
     // after a password reset: every other device that signed in before it is logged out now
     snaps.forEach((x,i)=>{if(SLOTS[i]!==sid&&x.exists&&!x.data().revoked&&slotFree(x.data(),pwAt))tx.update(x.ref,{revoked:true,revokedAt:ts,revokedBy:'password reset'})});
-    tx.set(SESSIONS_COL.doc(sid),{uid:user.uid,email:user.email,role:roleOfUser(user),token,device:d.label,os:d.os,browser:d.browser,model:d.model,loginAt:ts,lastActive:ts,revoked:false});
+    tx.set(SESSIONS_COL.doc(sid),{uid:user.uid,email:user.email,role:roleOfUser(user),token,deviceId:dev,device:d.label,os:d.os,browser:d.browser,model:d.model,loginAt:ts,lastActive:ts,revoked:false});
   });
   localStorage.setItem(SID_KEY,sid);localStorage.setItem(TOKEN_KEY,token);localStorage.removeItem(SID_CONF_KEY);
   mySid=sid;myToken=token;
@@ -3675,7 +3683,11 @@ function startSessionWatch(user){
   sessUnsub=ref.onSnapshot(snap=>{
     if(snap.exists){
       const x=snap.data();
-      if(x.token&&x.token!==myToken){hardSignOut('This device was logged out.',false);return}
+      if(x.token&&x.token!==myToken){
+        /* the same device logged in again (another window of the app): follow the new login instead of logging out */
+        let lt=null;try{lt=localStorage.getItem(TOKEN_KEY)}catch(e){}
+        if(x.deviceId&&x.deviceId===myDeviceId()&&lt===x.token&&!x.revoked){myToken=x.token;return}
+        hardSignOut('This device was logged out.',false);return}
       if(!snap.metadata.hasPendingWrites){sessSeenConfirmed=true;try{localStorage.setItem(SID_CONF_KEY,mySid)}catch(e){}}
       if(x.revoked)forceLogout('This device was logged out. Please log in again.');
     }else if(sessSeenConfirmed&&!snap.metadata.fromCache){
