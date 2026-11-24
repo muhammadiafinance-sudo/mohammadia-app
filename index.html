@@ -3034,20 +3034,20 @@ span.bnj{font-family:'SutonnyMJ','Noto Sans Bengali',sans-serif!important;font-s
 </main>
 
 <div class="workspace-panels" id="workspacePanels">
-<section class="panel admin-only" id="stockPanel"><h2>📦 Add / Update Stock</h2><div class="fs-find" id="stockFind"><div class="fs-field"><span class="fs-ico" aria-hidden="true">🔍</span><input type="search" id="stockFindInput" placeholder="Find an existing product to update — name, model, barcode…" autocomplete="off" aria-label="Find product to update"><button type="button" class="fs-x" id="stockFindX" aria-label="Clear search">✕</button></div><div class="fs-res" id="stockFindRes" hidden></div></div>
+<section class="panel admin-only" id="stockPanel"><div class="ap-tabs"><button type="button" class="ap-tab on" aria-current="page"><svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg><span>Add / Update Stock</span></button><button type="button" class="ap-tab" onclick="openStockList()"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg><span>Stock List</span></button><button type="button" class="ap-clear" onclick="cancelEdit()" title="Clear the form"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg><span>Clear All</span></button></div><div class="fs-find" id="stockFind"><div class="fs-field"><span class="fs-ico" aria-hidden="true">🔍</span><input type="search" id="stockFindInput" placeholder="Find an existing product to update — name, model, barcode…" autocomplete="off" aria-label="Find product to update"><button type="button" class="fs-x" id="stockFindX" aria-label="Clear search">✕</button></div><div class="fs-res" id="stockFindRes" hidden></div></div>
 <div class="form fform">
-<div class="fblk" style="--fc:#1a73e8"><span class="fb-l">Item name</span><input id="itemName" placeholder="Item name"></div>
-<div class="fblk" style="--fc:#7c3aed"><span class="fb-l">Model (optional)</span><input id="itemModel" autocomplete="off" placeholder="e.g. Cello Butterflow"></div>
-<div class="fblk" style="--fc:#e37400"><span class="fb-l">Category</span><input id="itemCategory" list="categoryList" autocomplete="off" placeholder="Pick or type a new one">
+<div class="fblk" style="--fc:#1a73e8"><span class="fb-l"><i class="ap-ic"><svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></i>Item Name</span><input id="itemName" placeholder="e.g. Cycle"></div>
+<div class="fblk" style="--fc:#7c3aed"><span class="fb-l"><i class="ap-ic"><svg viewBox="0 0 24 24"><path d="M3 12V3h9l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></i>Model (Optional)</span><input id="itemModel" autocomplete="off" placeholder="e.g. Cello Butterflow"></div>
+<div class="fblk" style="--fc:#e37400"><span class="fb-l"><i class="ap-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg></i>Category</span><input id="itemCategory" list="categoryList" autocomplete="off" placeholder="Select or type a category">
 <datalist id="categoryList"></datalist></div>
-<div class="fblk" style="--fc:#188038"><span class="fb-l">Quantity</span><input id="itemQty" type="number" min="0" placeholder="Quantity"></div>
-<div class="fblk" style="--fc:#0f766e"><span class="fb-l">Selling price (৳)</span><input id="itemPrice" type="number" min="0" step=".01" placeholder="Selling price (৳)"></div>
-<div class="fblk" style="--fc:#d93025"><span class="fb-l">Purchase price (৳) — hidden</span><input id="itemCost" type="number" min="0" step=".01" placeholder="Purchase price (৳)"></div>
-<div class="fblk" style="--fc:#b45309"><span class="fb-l">Low stock alert</span><input id="itemLowStock" type="number" min="0" placeholder="Alert at (e.g. 5)"></div>
-<label class="fblk fb-check full service-check" style="--fc:#0891b2"><input type="checkbox" id="itemService" onchange="toggleServiceField()"><span>🛠️ <b>Service item</b> — no stock limit (e.g. Photocopy, Print, Lamination, Binding)</span></label>
-<label class="fblk fb-check full quick-check" style="--fc:#db2777"><input type="checkbox" id="itemQuick"><span>⚡ <b>Frequently sold item</b> — show as a Quick Sale button (e.g. Pen, Khata, Kolom)</span></label>
-<div class="fblk full" style="--fc:#475569"><span class="fb-l">Barcode (optional)</span><div class="barcode-field"><input id="itemBarcode" inputmode="numeric" autocomplete="off" placeholder="Barcode (optional)"><button type="button" class="barcode-scan-btn" onclick="openBarcodeScanner('stock')">Scan with Camera</button></div></div>
-</div><div class="actions"><button id="saveStockBtn" onclick="addStock()">Save Stock</button><button class="gray" onclick="clearStock()">Clear</button><button class="steel" id="cancelEditBtn" style="display:none" onclick="cancelEdit()">Cancel Edit</button></div><div class="status" id="stockStatus">Automatically saved offline.</div></section>
+<div class="fblk" style="--fc:#188038"><span class="fb-l"><i class="ap-ic"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></i>Quantity</span><input id="itemQty" type="number" min="0" placeholder="Enter quantity"><label class="ap-low">Low stock alert at <input id="itemLowStock" type="number" min="0" placeholder="5"></label></div>
+<div class="fblk" style="--fc:#0f766e"><span class="fb-l"><i class="ap-ic"><svg viewBox="0 0 24 24"><path d="M3 12V3h9l9 9-9 9z"/><path d="M8 8h.01"/></svg></i>Selling Price (৳)</span><input id="itemPrice" type="number" min="0" step=".01" placeholder="Selling price (৳)"></div>
+<div class="fblk" style="--fc:#d93025"><span class="fb-l"><i class="ap-ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11.5l2-8H6.2"/></svg></i>Purchase Price (৳) – Hidden</span><div class="ap-pw"><input id="itemCost" type="number" min="0" step=".01" placeholder="Purchase price (৳)" class="ap-masked"><button type="button" class="ap-eye" id="apEye" aria-label="Show purchase price" title="Show / hide purchase price"><svg viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 6.2A10 10 0 0112 6c5 0 9 6 9 6a17 17 0 01-3.2 3.8M6.5 7.6C4.3 9.2 3 12 3 12s4 6 9 6a9 9 0 004.2-1"/><path d="M9.9 10a3 3 0 004.1 4.1"/></svg></button></div></div>
+
+<label class="fblk fb-check full service-check" style="--fc:#0891b2"><input type="checkbox" id="itemService" onchange="toggleServiceField()"><span><b>Service item</b> — no stock limit (e.g. Photocopy, Print, Lamination, Binding)</span></label>
+<label class="fblk fb-check full quick-check" style="--fc:#db2777"><input type="checkbox" id="itemQuick"><span><b>Frequently sold item</b> — show as a Quick Sale button (e.g. Pen, Khata, Kolom)</span></label>
+<div class="fblk full" style="--fc:#475569"><span class="fb-l"><i class="ap-ic"><svg viewBox="0 0 24 24"><path d="M4 5v14M7 5v14M11 5v14M14 5v14M17 5v14M20 5v14"/></svg></i>Barcode (Optional)</span><div class="barcode-field"><input id="itemBarcode" inputmode="numeric" autocomplete="off" placeholder="Barcode (optional)"><button type="button" class="barcode-scan-btn" onclick="openBarcodeScanner('stock')"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg><span>Scan with Camera</span></button></div></div>
+</div><div class="actions"><button id="saveStockBtn" onclick="addStock()">Save Stock</button><button class="gray ap-clr" onclick="clearStock()">Clear</button><button class="steel" id="cancelEditBtn" style="display:none" onclick="cancelEdit()">Cancel Edit</button></div><div class="status" id="stockStatus">Automatically saved offline.</div></section>
 
 <section class="panel" id="salePanel"><h2>🛒 New Sale</h2>
 <div class="sale-left"><div class="ss-bar no-print" id="ssBar">
@@ -9614,7 +9614,7 @@ function scTab(col){
 }
 function scHClear(){var q=$('scHSearch');if(q){q.value='';q.focus()}scHRender()}
 function scHRows(col){
-  var by=Object.assign({},(window.db&&db.dailyCashByDate)||{});
+  var by=Object.assign({},((typeof db!=='undefined'&&db&&db.dailyCashByDate)||{}));
   try{if(cashDraft&&cashViewDate===todayKey())by[cashViewDate]=cashDraft}catch(e){}
   var out=[];
   Object.keys(by).filter(function(k){return k===todayKey()}).sort().reverse().forEach(function(k){
@@ -9691,7 +9691,7 @@ function scHOpen(k,col,i){
   /* stock register: "12 of 240 items" + friendly empty message */
   function stockMeta(){
     var t=$('stockTable'),m=$('stockResultMeta'),q=$('stockSearch');if(!t||!m)return;
-    var rows=t.rows.length,all=(window.db&&db.stock)?db.stock.length:rows,val=q?q.value.trim():'';
+    var rows=t.rows.length,all=(typeof db!=='undefined'&&db&&db.stock)?db.stock.length:rows,val=q?q.value.trim():'';
     var cat=$('stockCategoryFilter');var filtered=!!val||(cat&&cat.value);
     if(!rows&&all){m.className='sr-meta empty';m.innerHTML='😕 No item found'+(val?' for “<b>'+esc2(val)+'</b>”':'')+'. Try fewer letters, or check the category filter.'}
     else{m.className='sr-meta';m.innerHTML=filtered?'Showing <b>'+rows+'</b> of '+all+' items':'<b>'+all+'</b> items in stock'}
@@ -9706,7 +9706,7 @@ function scHOpen(k,col,i){
     function run(){
       var raw=inp.value.trim(),q=raw.toLowerCase();box.classList.toggle('has-q',!!raw);
       if(!raw){res.hidden=true;res.innerHTML='';return}
-      var list=(window.db&&db.stock?db.stock:[]).filter(function(a){return [a.name,a.model,a.category,a.barcode].some(function(v){return String(v||'').toLowerCase().includes(q)})}).slice(0,8);
+      var list=((typeof db!=='undefined'&&db&&db.stock)?db.stock:[]).filter(function(a){return [a.name,a.model,a.category,a.barcode].some(function(v){return String(v||'').toLowerCase().includes(q)})}).slice(0,8);
       res.hidden=false;
       if(!list.length){res.innerHTML='<div class="fs-none">No product found for “'+esc2(raw)+'”.<br>Fill the boxes below to add it as a new product.</div>';return}
       res.innerHTML=list.map(function(a){
@@ -13820,6 +13820,71 @@ html[data-theme="dark"] #followupModal .fu-k b,html[data-theme="dark"] #followup
     mark();try{lastDashKey='';renderDashboard()}catch(e){}};   // the chart re-measures its width
   var box=document.getElementById('setFont');if(box)box.addEventListener('click',function(e){var b=e.target.closest('button[data-f]');if(b)setFontSize(b.getAttribute('data-f'))});
   mark();
+})();
+</script>
+<style id="apCss">
+/* ===== Add Product page (design v3) ===== */
+#productModal #stockPanel>h2{display:none!important}
+#productModal .ap-tabs{display:flex;align-items:center;gap:10px;margin:0 0 16px;flex-wrap:wrap}
+#productModal .ap-tab{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 22px;border-radius:14px;border:0;background:#eef2f8;color:#0f172a;font-size:16px;font-weight:700;cursor:pointer;box-shadow:none}
+#productModal .ap-tab.on{background:var(--t-blue,#1d6bf3);color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--t-blue,#1d6bf3) 30%,transparent)}
+#productModal .ap-tab:not(.on):hover{background:#e3e9f3}
+#productModal .ap-tabs svg,#productModal .ap-ic svg,#productModal .ap-eye svg,#productModal .barcode-scan-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+#productModal .ap-clear{margin-left:auto;display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 18px;border-radius:12px;border:0;background:color-mix(in srgb,var(--t-blue,#1d6bf3) 8%,#fff);color:var(--t-blue,#1d6bf3);font-weight:700;font-size:15px;cursor:pointer;box-shadow:none}
+#productModal .ap-clear:hover{background:color-mix(in srgb,var(--t-blue,#1d6bf3) 14%,#fff)}
+#productModal #stockFind .fs-field{background:#f3f6fb!important;border:1px solid #e4eaf4!important;border-radius:14px!important;min-height:52px}
+#productModal #stockFind input{font-size:15.5px!important}
+#productModal .fform{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+#productModal .fform>.fblk:not(.full):not(.fb-check){grid-column:auto!important}
+#productModal .fform>.fblk{border:1px solid #e8edf5!important;border-left:1px solid #e8edf5!important;border-radius:16px!important;background:#fff!important;padding:14px 14px 14px!important;box-shadow:0 1px 3px rgba(16,24,40,.05)!important}
+#productModal .fform>.fblk::before{display:none!important}
+#productModal .fblk .fb-l{display:flex!important;align-items:center;gap:10px;text-transform:none!important;letter-spacing:0!important;font-size:16px!important;font-weight:700!important;color:#0f172a!important;margin:0 0 10px!important}
+#productModal .ap-ic{display:inline-flex;color:var(--fc,#1d6bf3)}
+#productModal .fblk input:not([type=checkbox]){height:50px!important;border-radius:12px!important;background:#f3f6fb!important;border:1px solid #e4eaf4!important;font-size:16px!important;padding:0 16px!important}
+#productModal .fblk input:not([type=checkbox]):focus{background:#fff!important;border-color:var(--t-blue,#1d6bf3)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--t-blue,#1d6bf3) 18%,transparent)!important}
+#productModal #itemCategory{padding-right:40px!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 14px center!important;background-size:18px!important}
+#productModal .ap-low{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12.5px;font-weight:600;color:#64748b}
+#productModal .fblk .ap-low input{height:32px!important;width:70px!important;padding:0 8px!important;font-size:13.5px!important;border-radius:8px!important;text-align:center}
+#productModal .ap-pw{position:relative}
+#productModal .ap-pw input{padding-right:50px!important}
+#productModal .ap-masked{-webkit-text-security:disc}
+#productModal .ap-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:9px;background:transparent;color:#334155;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:none;padding:0}
+#productModal .ap-eye:hover{background:#e8edf5}
+#productModal .ap-eye.open svg path:first-child{display:none}
+#productModal .fform>.fb-check{display:flex!important;align-items:center;gap:16px;min-height:62px;font-size:15px!important;color:#475569!important;grid-column:span 1!important}
+#productModal .fform>.fb-check b{color:#0f172a}
+#productModal .fform>.fb-check input{width:22px!important;height:22px!important;border-radius:6px;flex:none;accent-color:var(--t-blue,#1d6bf3)}
+#productModal .fform>.service-check{grid-column:1 / span 1!important}
+@media(min-width:1100px){#productModal .fform>.service-check{grid-column:1 / span 1!important}#productModal .fform>.quick-check{grid-column:2 / span 2!important}}
+#productModal .fform>.fblk.full:not(.fb-check){grid-column:1/-1!important}
+#productModal .barcode-field{display:flex;gap:14px}
+#productModal .barcode-field input{flex:1}
+#productModal .barcode-scan-btn{display:inline-flex!important;align-items:center;gap:10px;height:50px!important;padding:0 22px!important;border-radius:12px!important;background:color-mix(in srgb,var(--t-blue,#1d6bf3) 9%,#fff)!important;color:var(--t-blue,#1d6bf3)!important;border:1px solid color-mix(in srgb,var(--t-blue,#1d6bf3) 20%,#fff)!important;font-weight:700!important;font-size:15.5px!important;white-space:nowrap;box-shadow:none!important}
+#productModal .pm-chip{grid-column:1/-1!important;order:1}
+#productModal .fform>.fb-check,#productModal .fform>.fblk.full{order:2}
+#productModal #stockPanel .actions{border-top:1px solid #eef2f7!important;background:rgba(255,255,255,.94)!important}
+#productModal #saveStockBtn,#productModal .ap-clr{display:inline-flex!important;align-items:center;gap:10px;height:54px!important;padding:0 26px!important;border-radius:14px!important;font-size:17px!important;font-weight:700!important}
+#productModal #saveStockBtn{background:var(--t-blue,#1d6bf3)!important;color:#fff!important;box-shadow:0 6px 16px color-mix(in srgb,var(--t-blue,#1d6bf3) 30%,transparent)!important}
+#productModal .ap-clr{background:#fff!important;color:#0f172a!important;border:1px solid #e4eaf4!important;box-shadow:0 1px 3px rgba(16,24,40,.06)!important}
+#productModal #saveStockBtn::before,#productModal .ap-clr::before,#productModal #stockStatus::before{content:"";width:20px;height:20px;flex:none;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+#productModal #saveStockBtn{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3h11l3 3v14a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z'/%3E%3Cpath d='M8 3v5h7V3M8 21v-7h8v7'/%3E%3C/svg%3E")}
+#productModal .ap-clr{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 11a8 8 0 00-14.7-4.3L3 9M3 4v5h5M4 13a8 8 0 0014.7 4.3L21 15M21 20v-5h-5'/%3E%3C/svg%3E")}
+#productModal #stockStatus{display:flex!important;align-items:center;gap:10px;font-size:14px!important;color:#475569!important}
+#productModal #stockStatus::before{width:22px;height:22px;background:#64748b;--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='black'/%3E%3Crect x='11' y='10' width='2' height='7' fill='white'/%3E%3Ccircle cx='12' cy='7' r='1.3' fill='white'/%3E%3C/svg%3E")}
+@media(max-width:1099px){#productModal .fform{grid-template-columns:repeat(2,minmax(0,1fr))!important}#productModal .fform>.service-check,#productModal .fform>.quick-check{grid-column:1/-1!important}}
+@media(max-width:640px){#productModal .fform{grid-template-columns:1fr!important}#productModal .ap-tab{height:44px;padding:0 14px;font-size:14px}#productModal .ap-clear span{display:none}#productModal .barcode-field{flex-direction:column}#productModal .barcode-scan-btn{justify-content:center}}
+html[data-theme="dark"] #productModal .fform>.fblk{background:#161b22!important;border-color:#30363d!important}
+html[data-theme="dark"] #productModal .fblk .fb-l,html[data-theme="dark"] #productModal .fform>.fb-check b{color:#e6edf3!important}
+</style>
+<script id="apJs">
+(function(){
+  /* purchase price: hidden (dots) until the eye is tapped; hidden again when the form is cleared */
+  var c=document.getElementById('itemCost'),e=document.getElementById('apEye');
+  function set(show){if(!c||!e)return;c.classList.toggle('ap-masked',!show);e.classList.toggle('open',show);e.setAttribute('aria-label',show?'Hide purchase price':'Show purchase price')}
+  if(e)e.addEventListener('click',function(){set(c.classList.contains('ap-masked'))});
+  ['clearStock','cancelEdit'].forEach(function(n){var o=window[n];if(typeof o==='function')window[n]=function(){var r=o.apply(this,arguments);set(false);return r}});
+  /* "Stock List" tab */
+  window.openStockList=window.openStockList||function(){openActionModal('stockListModal')};
 })();
 </script>
 </body></html>
