@@ -3684,6 +3684,9 @@ function startSessionWatch(user){
   sessSeenConfirmed=localStorage.getItem(SID_CONF_KEY)===mySid;
   const ref=SESSIONS_COL.doc(mySid);
   sessUnsub=ref.onSnapshot(snap=>{
+    /* decide only on the server's copy: the device's local copy can still hold the previous login of this
+       same place, which would look like "another device took it" and log out a login that just succeeded */
+    if(snap.metadata.fromCache)return;
     if(snap.exists){
       const x=snap.data();
       if(x.token&&x.token!==myToken){
@@ -3694,7 +3697,7 @@ function startSessionWatch(user){
       if(!snap.metadata.hasPendingWrites){sessSeenConfirmed=true;try{localStorage.setItem(SID_CONF_KEY,mySid)}catch(e){}}
       if(x.revoked&&x.revokedBy==='same device'&&x.deviceId===myDeviceId()){location.reload();return}   // this device logged in again (other profile / window): follow it
       if(x.revoked)forceLogout('This device was logged out. Please log in again.');
-    }else if(sessSeenConfirmed&&!snap.metadata.fromCache){
+    }else if(sessSeenConfirmed){
       hardSignOut('This device was removed. Please log in again.',false);
     }
   },err=>console.error('Session watch error:',err));
