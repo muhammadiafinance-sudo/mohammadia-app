@@ -26,14 +26,19 @@ service cloud.firestore {
       allow read, create, update: if isStaff();
       allow delete: if isAdmin();
     }
-    // Signed-in devices: ONLY two records can exist (slot1, slot2) → at most 2 devices in total.
-    // A slot is reused when its device logged out, or signed in before the last password reset.
+    // Signed-in devices: 2 per profile. Shop uses shop1/shop2, Employee uses emp1/emp2
+    // (slot1/slot2 = places from before this change, still allowed so nobody is logged out).
+    function shopSlot(id) { return id in ['shop1', 'shop2']; }
+    function empSlot(id)  { return id in ['emp1', 'emp2']; }
+    function anySlot(id)  { return shopSlot(id) || empSlot(id) || id in ['slot1', 'slot2']; }
     match /mohammadia_library/main_db/sessions/{sid} {
-      allow read: if isAdmin() || (isStaff() && sid in ['slot1', 'slot2']);
-      allow create, update: if isStaff() && sid in ['slot1', 'slot2']
-                            && (request.resource.data.uid == request.auth.uid || isAdmin());
-      // after a password reset, either login may mark the other devices as logged out (nothing else)
-      allow update: if isStaff() && sid in ['slot1', 'slot2']
+      allow read: if isAdmin() || (isStaff() && anySlot(sid));
+      // a login takes a place of its own profile only
+      allow create, update: if request.resource.data.uid == request.auth.uid
+                            && ((isAdmin() && (shopSlot(sid) || sid in ['slot1', 'slot2']))
+                             || (isEmployee() && (empSlot(sid) || sid in ['slot1', 'slot2'])));
+      // logging a device out (Active Sessions, password reset, same device moving): only the revoked fields change
+      allow update: if isStaff() && anySlot(sid)
                     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['revoked', 'revokedAt', 'revokedBy'])
                     && request.resource.data.revoked == true;
       allow delete: if isAdmin() || (isStaff() && resource.data.uid == request.auth.uid);
