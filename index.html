@@ -14059,4 +14059,28 @@ html[data-theme="dark"] #stockListModal .sr-t thead th{background:#1c2128!import
   });
 })();
 </script>
+<script id="cashFitJs">
+/* Daily Cash lists: a name that is longer than its box (e.g. bill no. 106202***2450 in a narrow column)
+   gets a smaller font so it shows in full; short names keep the normal size. Full text also on hover. */
+(function(){
+  var cv=document.createElement('canvas').getContext('2d');
+  function fit(inp){
+    var v=inp.value||'';inp.title=v;inp.style.fontSize='';
+    if(!v)return;
+    var cs=getComputedStyle(inp),base=parseFloat(cs.fontSize)||14,room=inp.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0)-2;
+    if(room<=0)return;
+    cv.font=cs.fontWeight+' '+base+'px '+cs.fontFamily;
+    var w=cv.measureText(v).width;
+    if(w>room){var fs=Math.max(10,Math.floor(base*room/w*10)/10);inp.style.fontSize=fs+'px'}
+  }
+  function fitAll(){document.querySelectorAll('#cashGrid .cash-row input[data-part="note"],#cashGrid .cash-row input[data-part="name"]').forEach(fit)}
+  window.cashFitNames=fitAll;
+  var o=window.renderDailyCash;
+  if(typeof o==='function')window.renderDailyCash=function(){var r=o.apply(this,arguments);try{requestAnimationFrame(fitAll)}catch(e){}return r};
+  var t;window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(fitAll,150)});
+  document.addEventListener('input',function(e){var x=e.target;if(x&&x.matches&&x.matches('#cashGrid .cash-row input[data-part="note"],#cashGrid .cash-row input[data-part="name"]'))fit(x)});
+  var _oam=window.openActionModal;
+  if(typeof _oam==='function')window.openActionModal=function(id){var r=_oam.apply(this,arguments);if(id==='dailyCashModal')setTimeout(fitAll,60);return r};
+})();
+</script>
 </body></html>
