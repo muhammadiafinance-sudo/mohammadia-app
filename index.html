@@ -4075,11 +4075,14 @@ function cashAddIds(col){
     :{note:'cashAdd_'+col+'_note',amount:'cashAdd_'+col+'_amount',date:col==='bill'?'cashAdd_bill_date':null};
 }
 document.addEventListener('input',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('cash-add-input')){cashFieldErr(t,false)}if(t&&t.id==='cashAdd_bill_date')cashFieldErr(t,false)},true);
+/* Electricity bill: typing only the last 4 digits of the bill/meter no. fills in the rest:
+   "2450" -> "106202***2450". Any other number is kept exactly as typed (no "#" any more). */
+const BILL_NO_PREFIX='106202***';
 function billNoteHash(el){
   if(!el)return;
   {const pe=$('cashAdd_bill_pay');if(pe&&pe.value==='self')return}
-  let v=(el.value||'').trim();
-  if(/^\d+$/.test(v))el.value='#'+v;
+  let v=(el.value||'').trim().replace(/[\u09E6-\u09EF]/g,d=>String(d.charCodeAt(0)-0x09E6));   // Bangla digits too
+  if(/^\d{4}$/.test(v))el.value=BILL_NO_PREFIX+v;
 }
 function cashFieldErr(el,on){
   if(!el)return;
@@ -6358,7 +6361,7 @@ function khataNames(force){
   const now=Date.now();if(!force&&_khCache&&now-_khAt<4000)return _khCache;
   const m=new Map();
   const delMap=new Map();(Array.isArray(db.deletedCustomers)?db.deletedCustomers:[]).forEach(x=>{if(x&&x.key)delMap.set(x.key,+x.at||0)});
-  const add=(name,ts)=>{name=khClean(name);if(!name||name==='Walk-in'||name==='—'||/^#|^\d+$/.test(name))return;const k=name.toLowerCase();{const dt=delMap.get(k);if(dt&&(+ts||0)<=dt)return}let e=m.get(k);if(!e){e={forms:new Map(),count:0,last:0};m.set(k,e)}e.forms.set(name,(e.forms.get(name)||0)+1);e.count++;if(ts>e.last)e.last=ts};
+  const add=(name,ts)=>{name=khClean(name);if(!name||name==='Walk-in'||name==='—'||/^#|^\d+$|^\d*\*+\d+$/.test(name))return;const k=name.toLowerCase();{const dt=delMap.get(k);if(dt&&(+ts||0)<=dt)return}let e=m.get(k);if(!e){e={forms:new Map(),count:0,last:0};m.set(k,e)}e.forms.set(name,(e.forms.get(name)||0)+1);e.count++;if(ts>e.last)e.last=ts};
   (db.sales||[]).forEach(x=>{if(x&&!x.returned&&x.customer)add(x.customer,+new Date(x.date)||0)});
   (db.manualDues||[]).forEach(x=>{if(x&&x.customer)add(x.customer,+x.at||0)});
   (db.manualJoma||[]).forEach(x=>{if(x&&x.customer)add(x.customer,+x.at||0)});
@@ -6379,7 +6382,7 @@ function khataNames(force){
   _khJoma=jm;
   _khCache=out;_khDue=dm;_khAt=now;return out;
 }
-function khataCanon(n){const c=khClean(n);if(!c||/^#|^\d+$/.test(c))return c;const e=khataNames(true).find(x=>x.key===c.toLowerCase());return e?e.name:c}
+function khataCanon(n){const c=khClean(n);if(!c||/^#|^\d+$|^\d*\*+\d+$/.test(c))return c;const e=khataNames(true).find(x=>x.key===c.toLowerCase());return e?e.name:c}
 
 /* ---- name suggestions while typing (sale customer, electricity-bill customer, Due Paid name) ---- */
 const KH_INPUTS=['customer','cashAdd_bill_note','cashAdd_due_name'];
@@ -6393,7 +6396,7 @@ function khPaint(){
 function khShow(inp){
   if(inp.id==='cashAdd_bill_note'){const pe=$('cashAdd_bill_pay');if(pe&&pe.value==='self'){khHide();return}}
   const q=khKey(inp.value);
-  if(!q||/^#|^\d+$/.test(q)){khHide();return}
+  if(!q||/^#|^\d+$|^\d*\*+\d+$/.test(q)){khHide();return}
   const typed=khClean(inp.value);
   let l=khataNames().filter(n=>n.key.includes(q)&&n.name!==typed);
   l.sort((a,b)=>(b.key.startsWith(q)-a.key.startsWith(q))||(b.count-a.count)||(b.last-a.last));
@@ -9125,7 +9128,7 @@ renderWarranty();
     try{items=dueItems();reg=custRegMap();khataNames(false)}catch(e){return m}
     items.forEach(function(it){
       var n=khClean(it.customer);
-      if(!n||n==='Walk-in'||n==='\u2014'||/^#|^\d+$/.test(n))return;
+      if(!n||n==='Walk-in'||n==='\u2014'||/^#|^\d+$|^\d*\*+\d+$/.test(n))return;
       /* a customer who has an advance (joma) never shows in Latest due / Random pick */
       if(((typeof _khJoma!=='undefined'&&_khJoma&&_khJoma.get(khKey(n)))||0)>0.009)return;
       var k=khKey(n),g=m.get(k);
@@ -13810,7 +13813,7 @@ html[data-theme="dark"] #followupModal .fu-k b,html[data-theme="dark"] #followup
     var items=[];try{items=dueItems()}catch(e){}
     var reg=new Map();try{reg=custRegMap()}catch(e){}
     var g=new Map(),total=0;
-    items.forEach(function(it){var n=khClean(it.customer);if(!n||n==='Walk-in'||n==='\u2014'||/^#|^\d+$/.test(n))return;var d=+it.due||0;if(d<=0)return;
+    items.forEach(function(it){var n=khClean(it.customer);if(!n||n==='Walk-in'||n==='\u2014'||/^#|^\d+$|^\d*\*+\d+$/.test(n))return;var d=+it.due||0;if(d<=0)return;
       var k=khKey(n),x=g.get(k);if(!x){var c=reg.get(k);x={key:k,name:n,due:0,newest:0,oldest:Infinity,phone:(c&&c.phone)||''};g.set(k,x)}
       x.due+=d;total+=d;var t=+it.date||0;if(t){if(t>x.newest)x.newest=t;if(t<x.oldest)x.oldest=t}});
     var paid=[];try{paidHistoryItems().forEach(function(p){if(p&&p.amount>0&&p.ts)paid.push(p)})}catch(e){}
